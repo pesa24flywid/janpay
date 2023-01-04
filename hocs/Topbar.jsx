@@ -54,32 +54,6 @@ const Topbar = ({title, aeps, dmt, prepaid, notification}) => {
                         >
                             <Box
                                 boxSize={'8'}
-                                bg={'#6C00FF'} color={'white'}
-                                rounded={'full'}
-                                display={'grid'} placeContent={'center'}
-                            >
-                                <BsWallet />
-                            </Box>
-                            <VStack w={'auto'} spacing={0}
-                                alignItems={'flex-start'}
-                                justifyContent={'center'}
-                            >
-                                <Text fontSize={'xs'} color={'#888'} mb={0}>DMT</Text>
-                                <h2>₹ {dmt || 0}</h2>
-                            </VStack>
-                        </HStack>
-                    </Link>
-
-                    <Link href={'#'}>
-                        <HStack boxShadow={'md'}
-                            p={1} px={3} w={'auto'}
-                            spacing={2}
-                            rounded={'full'}
-                            bg={'white'}
-                            justifyContent={'flex-start'}
-                        >
-                            <Box
-                                boxSize={'8'}
                                 bg={'#FFB100'} color={'white'}
                                 rounded={'full'}
                                 display={'grid'} placeContent={'center'}
@@ -90,7 +64,7 @@ const Topbar = ({title, aeps, dmt, prepaid, notification}) => {
                                 alignItems={'flex-start'}
                                 justifyContent={'center'}
                             >
-                                <Text fontSize={'xs'} color={'#888'} mb={0}>Prepaid</Text>
+                                <Text fontSize={'xs'} color={'#888'} mb={0}>Wallet</Text>
                                 <h2>₹ {prepaid || 0}</h2>
                             </VStack>
                         </HStack>
