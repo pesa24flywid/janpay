@@ -30,6 +30,7 @@ import { FaMobile, FaMoneyBillAlt } from 'react-icons/fa'
 import DataCard from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
 import BankDetails from '../../hocs/BankDetails'
+import DashboardWrapper from '../../hocs/DashboardLayout'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
@@ -117,102 +118,74 @@ const Dashboard = () => {
 
   return (
     <>
-      <Head><title>Pesa24 - Dashboard</title></Head>
-      <Box
-        bg={'aliceblue'} p={[0, 4]}
-        w={'full'} minH={'100vh'}>
-        <HStack spacing={8} alignItems={'flex-start'}>
-          {/* Sidebar */}
-          <Sidebar />
+      <DashboardWrapper title={'Dashboard'}>
+        <Stack direction={['column', 'row']}
+          w={'full'} py={8} spacing={[2, 4]}
+          justifyContent={'space-between'}
+        >
+          <DataCard
+            title={'AePS Transactions'}
+            data={5600}
+            icon={<GiReceiveMoney color='white' size={'32'} />}
+            color={'#FF7B54'}
+          />
+          <DataCard
+            title={'DMT Transactions'}
+            data={5200}
+            icon={<FaMoneyBillAlt color='white' size={'32'} />}
+            color={'#6C00FF'}
+          />
+          <DataCard
+            title={'Mobile Recharge'}
+            data={4800}
+            icon={<FaMobile color='white' size={'32'} />}
+            color={'#FFB100'}
+          />
+          <DataCard
+            title={'Your Earnings'}
+            data={1800}
+            icon={<GiTakeMyMoney color='white' size={'32'} />}
+            color={'#88A47C'}
+          />
+        </Stack>
 
-          {/* Main Dashboard Container */}
+
+        <Stack
+          direction={['column', 'row']}
+          justifyContent={['flex-start', 'space-between']}
+        >
           <Box
-            display={'flex'}
-            flexDir={'column'}
-            flex={['unset', 7]}
-            w={'full'}
+            w={['full', 'md', 'xl']}
+            p={4} rounded={12}
+            bg={'white'}
+            boxShadow={'md'}
           >
-            <Topbar
-              title={'Overview'}
-              aeps={8000}
-              dmt={6400}
-              prepaid={2600}
-              notification={true}
+            <Text mb={2}>Recent Transactions</Text>
+            <Line
+              width={'inherit'}
+              data={chartData}
+              options={options}
             />
-
-            <Stack direction={['column', 'row']}
-              w={'full'} py={8} spacing={[2, 4]}
-              justifyContent={'space-between'}
-            >
-              <DataCard
-                title={'AePS Transactions'}
-                data={5600}
-                icon={<GiReceiveMoney color='white' size={'32'} />}
-                color={'#FF7B54'}
-              />
-              <DataCard
-                title={'DMT Transactions'}
-                data={5200}
-                icon={<FaMoneyBillAlt color='white' size={'32'} />}
-                color={'#6C00FF'}
-              />
-              <DataCard
-                title={'Mobile Recharge'}
-                data={4800}
-                icon={<FaMobile color='white' size={'32'} />}
-                color={'#FFB100'}
-              />
-              <DataCard
-                title={'Your Earnings'}
-                data={1800}
-                icon={<GiTakeMyMoney color='white' size={'32'} />}
-                color={'#88A47C'}
-              />
-            </Stack>
-
-
-            <Stack
-              direction={['column', 'row']}
-              justifyContent={['flex-start', 'space-between']}
-            >
-              <Box
-                w={['full', 'md', 'xl']}
-                p={4} rounded={12}
-                bg={'white'}
-                boxShadow={'md'}
-              >
-                <Text mb={2}>Recent Transactions</Text>
-                <Line
-                  width={'inherit'}
-                  data={chartData}
-                  options={options}
-                />
-              </Box>
-              <Box
-                w={'md'}
-                p={4} rounded={12}
-                bg={'white'}
-                boxShadow={'md'}
-              >
-                <Text mb={4}>New Notifications</Text>
-                {newNotification ? (
-                  notifications.map((notification, key) =>
-                    <SimpleAccordion
-                      key={key}
-                      title={notification.title}
-                      content={notification.content}
-                    />
-                  )
-                ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
-              </Box>
-            </Stack>
-
-            <BankDetails />
           </Box>
-
-
-        </HStack>
-      </Box>
+          <Box
+            w={'md'}
+            p={4} rounded={12}
+            bg={'white'}
+            boxShadow={'md'}
+          >
+            <Text mb={4}>New Notifications</Text>
+            {newNotification ? (
+              notifications.map((notification, key) =>
+                <SimpleAccordion
+                  key={key}
+                  title={notification.title}
+                  content={notification.content}
+                />
+              )
+            ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
+          </Box>
+        </Stack>
+      </DashboardWrapper>
     </>
   )
 }

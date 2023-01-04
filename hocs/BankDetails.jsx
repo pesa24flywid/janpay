@@ -47,7 +47,7 @@ const BankDetails = () => {
                 >
                     {bankDetails.map((detail) => (
                         <Box
-                            key={detail.account}
+                            key={detail.ifsc}
                             border={'1px'} rounded={'inherit'}
                             borderColor={'gray.200'} p={2}
                         >
