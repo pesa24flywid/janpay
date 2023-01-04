@@ -1,5 +1,5 @@
 import React from 'react'
-import DashboardWrapper from '../../hocs/DashboardLayout'
+import DashboardWrapper from '../../../hocs/DashboardLayout'
 
 const Aeps = () => {
   return (
