@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Color Palette */
+/* Primary - #6C00FF */
+/* Secondary - #3C79F5 */
+/* Tertiary - #2DCDDF */
+/* Additional - #F2DEBA */
+
+.menu-dropdown-item:not(:last-of-type){
+    border-bottom: 1px solid #999;
+}
+
+.sidebar::-webkit-scrollbar-track{
+    border-radius: 12px !important;
+}
+.sidebar::-webkit-scrollbar-thumb{
+    background-color: darkslategray !important;
+    border-radius: 12px !important;
+}
