@@ -118,7 +118,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <DashboardWrapper title={'Dashboard'}>
+      <DashboardWrapper titleText='Dashboard'>
         <Stack direction={['column', 'row']}
           w={'full'} py={8} spacing={[2, 4]}
           justifyContent={'space-between'}

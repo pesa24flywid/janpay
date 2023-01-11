@@ -4,7 +4,7 @@ import DashboardWrapper from '../../../hocs/DashboardLayout'
 const Aeps = () => {
   return (
     <>
-        <DashboardWrapper title={'AePS Transaction'}>
+        <DashboardWrapper titleText={'AePS Transaction'}>
 
         </DashboardWrapper>
     </>

@@ -13,7 +13,7 @@ const Topbar = ({title, aeps, dmt, prepaid, notification}) => {
     return (
         <>
 
-            <HStack>
+            <HStack pb={2} px={[0,2]}>
                 <Text fontSize={'xl'} fontWeight={'500'} color={'#333'}>{title}</Text>
                 <Spacer />
                 <HStack spacing={4} w={'auto'}>

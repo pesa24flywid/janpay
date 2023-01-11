@@ -21,7 +21,7 @@ const DashboardWrapper = (props) => {
 
     return (
         <>
-            <Head><title>Pesa24 - {props.title}</title></Head>
+            <Head><title>{`Pesa24 - ${props.titleText}`}</title></Head>
             <Box
                 bg={'aliceblue'} p={[0, 4]}
                 w={'full'} minH={'100vh'}>
@@ -37,7 +37,7 @@ const DashboardWrapper = (props) => {
                         w={'full'}
                     >
                         <Topbar
-                            title={props.title}
+                            title={props.titleText}
                             aeps={8000}
                             dmt={6400}
                             prepaid={2600}
