@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import {
     Box,
@@ -8,7 +8,6 @@ import {
     Text,
     Input,
     Button,
-    Flex,
     Image,
     FormLabel,
     InputGroup,
@@ -23,6 +22,9 @@ import Navbar from '../../hocs/Navbar'
 import { FiPhone, FiMail } from 'react-icons/fi'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import axios from '../../lib/axios'
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
 
 const Login = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
@@ -31,15 +33,35 @@ const Login = () => {
     const [loginBtnDisabled, setLoginBtnDisabled] = useState(true)
     const [authMethod, setAuthMethod] = useState("phone")
     const [otp, setOtp] = useState("")
+    const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
+    const Router = useRouter()
 
+    useEffect(() => {
+        axios.get("/sanctum/csrf-cookie")
+    
+    }, [])
+    
 
     // Sending the OTP
     async function sendOtp() {
-        return {
-            status: "success",
-            title: "OTP Sent!",
-            message: `We have sent an OTP to your ${authMethod}`,
+        try {
+            await axios.post("/send-otp", JSON.stringify({
+                authMethod: authMethod,
+                user_id: formik.values.user_id,
+                password: formik.values.password
+            }))
+            return {
+                status: "success",
+                title: "OTP Sent!",
+                message: `We have sent an OTP to your ${authMethod}`,
+            }
+        } catch (error) {
+            return {
+                status: "error",
+                title: "Error Occured",
+                message: error.response.data.message || error.message,
+            }
         }
     }
 
@@ -51,7 +73,7 @@ const Login = () => {
         },
         onSubmit: async (values) => {
             // Submitting the login request to backend
-            const otpSuccess = await sendOtp()
+            const otpSuccess = await sendOtp(values)
             setOtpBtnDisabled(true)
             toast({
                 title: otpSuccess.title,
@@ -81,8 +103,33 @@ const Login = () => {
     }
 
 
-    function handleLogin(e) {
-        e.preventDefault
+    // Handling login after OTP submission
+    async function handleLogin() {
+        setIsBtnLoading(true)
+        try {
+            await axios.post("/login", JSON.stringify({
+                "authMethod": authMethod,
+                ...(authMethod === "email" && {"email": formik.values.user_id}),
+                ...(authMethod === "phone" && {"phone": formik.values.user_id}),
+                "otp": otp,
+                "password": formik.values.password,
+                "remember": 1,
+            })).then(()=>{
+                Cookies.set("verified", true)
+            })
+            Router.push("/dashboard")
+            
+        } catch (error) {
+            toast({
+                status: "error",
+                title: "Error Occured",
+                description: error.message,
+                isClosable: true,
+                duration: 3000,
+                position: "top-right"
+            })
+            setIsBtnLoading(false)
+        }
     }
 
 
@@ -116,7 +163,7 @@ const Login = () => {
                                         textAlign={'left'} mb={0}
                                         color={'darkslategray'}>Phone Number or Email ID
                                     </FormLabel>
-                                    <InputGroup w={['xs','sm']}>
+                                    <InputGroup w={['xs', 'sm']}>
                                         <InputLeftAddon
                                             children={authMethod == "phone" ? <FiPhone /> : <FiMail />} rounded={'full'}
                                         />
@@ -136,7 +183,7 @@ const Login = () => {
                                         textAlign={'left'} mb={0}
                                         color={'darkslategray'}>Password
                                     </FormLabel>
-                                    <InputGroup w={['xs','sm']}>
+                                    <InputGroup w={['xs', 'sm']}>
                                         <Input
                                             rounded={'full'}
                                             type={passwordVisible ? 'text' : 'password'} name={'password'}
@@ -168,16 +215,16 @@ const Login = () => {
                                         </InputRightElement>
                                     </InputGroup>
                                     <Link href={'../auth/reset-password'}>
-                                        <Text 
-                                        pt={2}
-                                        fontSize={'sm'}
-                                        color={'blue'} 
-                                        textAlign={'right'}>Reset Password</Text>
+                                        <Text
+                                            pt={2}
+                                            fontSize={'sm'}
+                                            color={'blue'}
+                                            textAlign={'right'}>Reset Password</Text>
                                     </Link>
                                 </Box>
                                 <Box pt={6}>
                                     <Button
-                                        w={['xs','sm']}
+                                        w={['xs', 'sm']}
                                         rounded={'full'}
                                         colorScheme={'blue'}
                                         variant={'outline'}
@@ -190,31 +237,32 @@ const Login = () => {
                             </VStack>
                             {
                                 otpSent ?
-                                    <form action="#" method="post" onSubmit={handleLogin}>
+                                    <>
                                         <VStack>
                                             <Text>Enter OTP</Text>
                                             <input type="hidden" name="user_id" value={formik.values.user_id} />
                                             <HStack>
-                                                <PinInput type='number' otp onComplete={(value) => {setOtp(value); setLoginBtnDisabled(false)}}>
-                                                    <PinInputField bg={'blue.100'} required />
-                                                    <PinInputField bg={'blue.100'} required />
-                                                    <PinInputField bg={'blue.100'} required />
-                                                    <PinInputField bg={'blue.100'} required />
+                                                <PinInput type='number' otp onComplete={(value) => { setOtp(value); setLoginBtnDisabled(false) }}>
+                                                    <PinInputField bg={'blue.100'} />
+                                                    <PinInputField bg={'blue.100'} />
+                                                    <PinInputField bg={'blue.100'} />
+                                                    <PinInputField bg={'blue.100'} />
                                                 </PinInput>
                                             </HStack>
                                             <Box pt={4}>
                                                 <Button
-                                                    w={['xs','sm']} type={'submit'}
+                                                    w={['xs', 'sm']} onClick={handleLogin}
                                                     rounded={'full'}
                                                     colorScheme={'blue'}
                                                     bg={'#6C00FF'}
                                                     disabled={loginBtnDisabled}
+                                                    isLoading={isBtnLoading}
                                                 >
                                                     Login
                                                 </Button>
                                             </Box>
                                         </VStack>
-                                    </form> : null
+                                    </> : null
 
                             }
                         </VStack>

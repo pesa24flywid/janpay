@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
+import axios from '../../lib/axios'
 import {
     Box,
     VStack,
@@ -24,47 +24,48 @@ const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
     const [isDistributorDisabled, setIsDistributorDisabled] = useState(false)
     const [isSuperDistributorDisabled, seSupertIsDistributorDisabled] = useState(true)
+    const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
 
     useEffect(() => {
-        // Check for avalability of registration types
-
+        axios.get("/sanctum/csrf-cookie")
+    
     }, [])
-
-    const register = async (values) => {
-        const registerationResponse = await fetch("http://localhost:8000/register", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(values),
-        })
-    }
 
     const formik = useFormik({
         initialValues: {
             first_name: "",
             last_name: "",
             email: "",
-            user_type: "",
+            user_type: "Retailer",
             referral_id: "",
         },
         onSubmit: async (values) => {
-            // Handling registration API
-            await register(values).then(() => {
+            // Handling registration
+            setIsBtnLoading(true)
+            try {
+                await axios.post("/register", JSON.stringify(values)).then(() => {
+                    toast({
+                        status: "success",
+                        title: "Credentials Sent",
+                        description: "Check your mail for login steps.",
+                        duration: 3000,
+                        isClosable: true,
+                        position: 'top-right'
+                    })
+                    setIsBtnLoading(false)
+                })
+            } catch (error) {
                 toast({
-                    status: "success",
-                    title: "Credentials Sent",
-                    description: "Check your mail for further steps.",
+                    status: "error",
+                    title: "Error Occured",
+                    description: error.response.data.message,
                     duration: 3000,
                     isClosable: true,
                     position: 'top-right'
                 })
-            })
+                setIsBtnLoading(false)
+            }
         }
     })
 
@@ -177,7 +178,7 @@ const Register = () => {
                                         textAlign={'left'}
                                         color={'darkslategray'}>Register as:
                                     </FormLabel>
-                                    <RadioGroup name={'user_type'} onChange={formik.handleChange}>
+                                    <RadioGroup name={'user_type'} onChange={formik.handleChange} defaultValue={formik.values.user_type}>
                                         <Stack direction={['column', 'row']} spacing={[3, 6]}>
                                             <Radio isDisabled={isRetailerDisabled} value={'Retailer'}>Retailer</Radio>
                                             <Radio isDisabled={isDistributorDisabled} value={'Distributor'}>Distributor</Radio>
@@ -190,6 +191,7 @@ const Register = () => {
                                     rounded={'full'}
                                     colorScheme={'blue'}
                                     bg={'#6C00FF'}
+                                    isLoading={isBtnLoading}
                                 >
                                     Register
                                 </Button>

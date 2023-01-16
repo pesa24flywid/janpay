@@ -1,10 +1,21 @@
 import React from "react";
 import Link from "next/link";
 import { Box, HStack, VStack, Image, Text } from "@chakra-ui/react";
-import { BiRupee, BiUser } from "react-icons/bi";
+import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
+import axios from "../lib/axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const Sidebar = () => {
+  const Router = useRouter()
+
+  async function signout(){
+    await axios.post("/logout").then(()=>{
+      Cookies.remove("verified")
+    })
+    Router.push("/auth/login")
+  }
   return (
     <>
       <Box w={"xs"} h={"auto"} position={"relative"} display={"flex"} flex={2}>
@@ -85,6 +96,22 @@ const Sidebar = () => {
                 <Text>Services</Text>
               </HStack>
             </Link>
+
+              <HStack
+                spacing={2}
+                w={"full"}
+                borderRadius={"full"}
+                px={3}
+                py={2}
+                color={"#333"}
+                _hover={{ bg: "aqua" }}
+                onClick={signout}
+                cursor={'pointer'}
+              >
+                <BiPowerOff />
+                <Text>Sign Out</Text>
+              </HStack>
+
           </VStack>
         </VStack>
       </Box>
