@@ -46,6 +46,7 @@ const Login = () => {
     // Sending the OTP
     async function sendOtp() {
         try {
+            setOtpBtnDisabled(true)
             await axios.post("/send-otp", JSON.stringify({
                 authMethod: authMethod,
                 user_id: formik.values.user_id,
@@ -57,6 +58,7 @@ const Login = () => {
                 message: `We have sent an OTP to your ${authMethod}`,
             }
         } catch (error) {
+            setOtpBtnDisabled(false)
             return {
                 status: "error",
                 title: "Error Occured",
@@ -82,7 +84,7 @@ const Login = () => {
                 position: 'top-right',
                 duration: 3000
             })
-            otpSuccess.status == "success" ? setOtpSent(true) : null
+            otpSuccess.status == "success" ? setOtpSent(true) : setOtpBtnDisabled(false)
             setTimeout(() => {
                 setOtpBtnDisabled(false)
             }, 10000)

@@ -37,6 +37,7 @@ const BankDetails = () => {
     return (
         <>
             <Box
+                w={['full', 'auto']}
                 my={8} bg={'white'} p={4}
                 rounded={8} boxShadow={'md'}
             >

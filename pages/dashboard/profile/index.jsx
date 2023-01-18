@@ -34,7 +34,7 @@ const Profile = () => {
           <Stack>
             <Box
               display={"flex"}
-              px="4"
+              px={[0,4]}
               flexWrap="wrap"
               justifyContent={[
                 "space-around",

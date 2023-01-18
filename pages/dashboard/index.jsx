@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  HStack,
-  VStack,
-  Image,
   Text,
-  Button,
   Stack,
+  Button,
+  useDisclosure,
+  Modal,
+  ModalBody,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  useToast,
 } from '@chakra-ui/react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Sidebar from '../../hocs/Sidebar'
-import Topbar from '../../hocs/Topbar'
 import {
   Chart as ChartJs,
   Tooltip,
@@ -29,8 +30,9 @@ import { GiReceiveMoney, GiTakeMyMoney } from 'react-icons/gi'
 import { FaMobile, FaMoneyBillAlt } from 'react-icons/fa'
 import DataCard from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
-import BankDetails from '../../hocs/BankDetails'
 import DashboardWrapper from '../../hocs/DashboardLayout'
+import axios from '../../lib/axios'
+import Link from 'next/link'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
@@ -40,10 +42,39 @@ const Dashboard = () => {
       content: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque pariatur aut eos quae quisquam eveniet incidunt ad odio magni at."
     }
   ])
+  let isProfileComplete
+  let userName
+  let userType
+  const [profileAlert, setProfileAlert] = useState(false)
+  const Toast = useToast()
+
+  const fetchProfile = () => {
+    axios.get("/dfjsbnj").then((res) => {
+      localStorage.setItem("isProfileComplete", true)
+      localStorage.setItem("userName", "Sangam Kumar")
+      localStorage.setItem("userType", "Retailer")
+      setProfileAlert(true)
+    }).catch((error) => {
+      Toast({
+        position: "top-right",
+        title: "Error Occured",
+        description: error.message,
+        duration: 3000,
+        isClosable: true
+      })
+    })
+  }
 
   useEffect(() => {
+    isProfileComplete = localStorage.getItem("isProfileComplete")
+    userName = localStorage.getItem("userName")
+    userType = localStorage.getItem("userType")
+    if (!isProfileComplete) {
+      fetchProfile()
+    }
 
     // Check for new notifications
+
 
   }, [])
 
@@ -119,9 +150,10 @@ const Dashboard = () => {
   return (
     <>
       <DashboardWrapper titleText='Dashboard'>
-        <Stack direction={['column', 'row']}
-          w={'full'} py={8} spacing={[2, 4]}
+        <Stack direction={['row']}
+          w={'full'} py={8} spacing={[0, 4]}
           justifyContent={'space-between'}
+          flexWrap={'wrap'} alignItems={['flex-start']}
         >
           <DataCard
             title={'AePS Transactions'}
@@ -151,7 +183,7 @@ const Dashboard = () => {
 
 
         <Stack
-          direction={['column', 'row']}
+          direction={['column-reverse', 'row']}
           justifyContent={['flex-start', 'space-between']}
         >
           <Box
@@ -168,7 +200,7 @@ const Dashboard = () => {
             />
           </Box>
           <Box
-            w={'md'}
+            w={['full', 'md']}
             p={4} rounded={12}
             bg={'white'}
             boxShadow={'md'}
@@ -185,6 +217,26 @@ const Dashboard = () => {
             ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
           </Box>
         </Stack>
+
+        {/* Profile Incompletion Alert */}
+        <Modal isOpen={profileAlert}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Incomplete Profile</ModalHeader>
+            <ModalBody>
+              Your profile is incomplete. Please complete your profile to start using our services.
+            </ModalBody>
+
+            <ModalFooter>
+              <Link href={'/dashboard/profile/edit'}>
+                <Button colorScheme='blue' mr={3}>
+                  Complete Now
+                </Button>
+              </Link>
+              <Button variant='ghost' onClick={()=>setProfileAlert(false)}>Finish Later</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </DashboardWrapper>
     </>
   )

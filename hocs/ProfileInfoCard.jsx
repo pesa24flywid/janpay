@@ -27,12 +27,12 @@ const ProfileInfoCard = ({
 }) => {
   return (
     <>
-      <Box w={["full", "md", "xl"]} rounded={12} my="4" mx="2">
+      <Box w={["full", "md", "xl"]} rounded={12} my="4" mx={[0,2]}>
         <Card
           maxW={"md"}
           variant={"outline"}
           w={["full", "md", "xl"]}
-          p={4}
+          p={[0,4]}
           rounded={12}
           bg={"white"}
           boxShadow={"md"}
@@ -43,7 +43,7 @@ const ProfileInfoCard = ({
             alignItems={"center"}
           >
             <Heading size="md">Personal Info</Heading>
-            <Link href={"/dashboard/profile/editprofile"}>
+            <Link href={"/dashboard/profile/edit"}>
               <Button colorScheme="red" variant="solid">
                 <Icon as={MdEdit} color={"white"} mr={"2"} />
                 Edit Info
