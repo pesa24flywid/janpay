@@ -43,34 +43,14 @@ const Dashboard = () => {
     }
   ])
   let isProfileComplete
-  let userName
-  let userType
   const [profileAlert, setProfileAlert] = useState(false)
-  const Toast = useToast()
-
-  const fetchProfile = () => {
-    axios.get("/dfjsbnj").then((res) => {
-      localStorage.setItem("isProfileComplete", true)
-      localStorage.setItem("userName", "Sangam Kumar")
-      localStorage.setItem("userType", "Retailer")
-      setProfileAlert(true)
-    }).catch((error) => {
-      Toast({
-        position: "top-right",
-        title: "Error Occured",
-        description: error.message,
-        duration: 3000,
-        isClosable: true
-      })
-    })
-  }
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
-    isProfileComplete = localStorage.getItem("isProfileComplete")
-    userName = localStorage.getItem("userName")
-    userType = localStorage.getItem("userType")
+    isProfileComplete = (localStorage.getItem("isProfileComplete")==="true")
     if (!isProfileComplete) {
-      fetchProfile()
+      setProfileAlert(true)
+      console.log("Profile InComplete")
     }
 
     // Check for new notifications
@@ -219,7 +199,7 @@ const Dashboard = () => {
         </Stack>
 
         {/* Profile Incompletion Alert */}
-        <Modal isOpen={profileAlert}>
+        <Modal isOpen={profileAlert} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Incomplete Profile</ModalHeader>
@@ -233,7 +213,7 @@ const Dashboard = () => {
                   Complete Now
                 </Button>
               </Link>
-              <Button variant='ghost' onClick={()=>setProfileAlert(false)}>Finish Later</Button>
+              <Button variant='ghost' onClick={() => setProfileAlert(false)}>Finish Later</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

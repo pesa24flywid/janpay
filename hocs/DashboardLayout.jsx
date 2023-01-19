@@ -28,28 +28,16 @@ import axios from '../lib/axios'
 
 const DashboardWrapper = (props) => {
     const [newNotification, setNewNotification] = useState(true)
-    let isProfileComplete
-    let userName
-    let userType
-    let userImage
+    const [isProfileComplete, setIsProfileComplete] = useState(false)
+    const [userName, setUserName] = useState("No Name")
+    const [userType, setUserType] = useState("Undefined")
+    const [userImage, setUserImage] = useState("/avatar.png")
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const fetchProfile = async () => {
-        await axios.get("/").then(() => {
-            localStorage.setItem("isProfileComplete", true)
-            localStorage.setItem("userName", "Sangam Kumar")
-            localStorage.setItem("userType", "Retailer")
-            localStorage.setItem("userImage", "")
-        })
-    }
-
     useEffect(() => {
-        isProfileComplete = localStorage.getItem("isProfileComplete")
-        userName = localStorage.getItem("userName")
-        userType = localStorage.getItem("userType")
-        if (!isProfileComplete) {
-            fetchProfile()
-        }
+        setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
+        setUserName(localStorage.getItem("userName"))
+        setUserType(localStorage.getItem("userType"))
 
         // Check for new notifications
 
@@ -65,9 +53,9 @@ const DashboardWrapper = (props) => {
                     {/* Sidebar */}
                     <Sidebar
                         isProfileComplete={isProfileComplete}
-                        userName={userName || "No Name"}
-                        userType={userType || "Undefined"}
-                        userImage={userImage || "/avatar.png"}
+                        userName={userName}
+                        userType={userType.toUpperCase()}
+                        userImage={userImage}
                     />
 
                     {/* Main Dashboard Container */}

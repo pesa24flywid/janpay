@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Box, HStack, VStack, Image, Text, Hide, Show } from "@chakra-ui/react";
+import { Box, HStack, VStack, Image, Text, Show } from "@chakra-ui/react";
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
 import axios from "../lib/axios";

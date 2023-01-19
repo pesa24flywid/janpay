@@ -39,9 +39,9 @@ const Login = () => {
 
     useEffect(() => {
         axios.get("/sanctum/csrf-cookie")
-    
+
     }, [])
-    
+
 
     // Sending the OTP
     async function sendOtp() {
@@ -111,16 +111,21 @@ const Login = () => {
         try {
             await axios.post("/login", JSON.stringify({
                 "authMethod": authMethod,
-                ...(authMethod === "email" && {"email": formik.values.user_id}),
-                ...(authMethod === "phone" && {"phone": formik.values.user_id}),
+                ...(authMethod === "email" && { "email": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
                 "otp": otp,
                 "password": formik.values.password,
                 "remember": 1,
-            })).then(()=>{
+            })).then((res) => {
                 Cookies.set("verified", true)
+                localStorage.setItem("userId", res.data.id)
+                localStorage.setItem("userName", res.data.name)
+                localStorage.setItem("userType", res.data.role[0].name)
+                if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
+                if(res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             })
             Router.push("/dashboard")
-            
+
         } catch (error) {
             toast({
                 status: "error",
