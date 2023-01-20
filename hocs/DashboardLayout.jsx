@@ -23,7 +23,6 @@ import Link from 'next/link'
 import Head from 'next/head'
 import Sidebar from './Sidebar'
 import BankDetails from './BankDetails'
-import axios from '../lib/axios'
 
 
 const DashboardWrapper = (props) => {
