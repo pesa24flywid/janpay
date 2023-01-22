@@ -23,6 +23,10 @@ import Link from 'next/link'
 import Head from 'next/head'
 import Sidebar from './Sidebar'
 import BankDetails from './BankDetails'
+import Cookies from 'js-cookie';
+let bcrypt = require('bcryptjs')
+import { useRouter } from 'next/router';
+import axios from '../lib/axios';
 
 
 const DashboardWrapper = (props) => {
@@ -32,15 +36,30 @@ const DashboardWrapper = (props) => {
     const [userType, setUserType] = useState("Undefined")
     const [userImage, setUserImage] = useState("/avatar.png")
     const { isOpen, onOpen, onClose } = useDisclosure()
+    var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
+    const Router = useRouter()
 
     useEffect(() => {
         setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
         setUserName(localStorage.getItem("userName"))
         setUserType(localStorage.getItem("userType"))
+        Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
         // Check for new notifications
 
     }, [])
+
+    useEffect(() => {
+        async () => {
+            let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
+            if (!authentic) {
+                await axios.post("/logout").then(() => {
+                    Cookies.remove("verified")
+                })
+                Router.push("/auth/login")
+            }
+        }
+    })
 
     return (
         <>

@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 const Middleware = (req) => {
     
     const verified = req.cookies.get("verified")
+
     const url = req.url
     
     if(!verified && url.includes("/dashboard")){

@@ -15,7 +15,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  useDisclosure,
   ModalBody,
   ModalCloseButton,
   PinInput,
@@ -33,11 +32,16 @@ import axios from "../../../lib/axios";
 import Cookies from "js-cookie";
 
 const EditProfile = () => {
-  const [isOtpDisabled, setIsOtpDisabled] = useState(true)
+  const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
+  const [isAadhaarOtpDisabled, setIsAadhaarOtpDisabled] = useState(true)
+  const [isPanOtpDisabled, setIsPanOtpDisabled] = useState(true)
   const [otpSent, setOtpSent] = useState(false)
   const [newPhone, setNewPhone] = useState("")
+  const [newAadhaar, setNewAadhaar] = useState("")
+  const [newPan, setNewPan] = useState("")
   const [otp, setOtp] = useState("")
-  const { isOpen, onClose, onOpen } = useDisclosure()
+  const [phoneModal, setPhoneModal] = useState(false)
+  const [aadhaarModal, setAadhaarModal] = useState(false)
   const Toast = useToast()
 
   // Form Data handling
@@ -48,7 +52,7 @@ const EditProfile = () => {
       contactNo: "",
       email: "",
       dob: "",
-      aadharNo: "",
+      verifiedAadhaar: "",
       pan: "",
       companyName: "",
       line: "",
@@ -83,13 +87,16 @@ const EditProfile = () => {
   }, [])
 
   useEffect(() => {
-    setIsOtpDisabled(true)
-    if (parseInt(newPhone) > 4000000000 && parseInt(newPhone) < 9999999999) setIsOtpDisabled(false)
-    console.log(Cookies.get("XSRF-TOKEN"))
-  }, [newPhone])
+    setIsPhoneOtpDisabled(true)
+    setIsAadhaarOtpDisabled(true)
+    setIsPanOtpDisabled(true)
+    if (parseInt(newPhone) > 4000000000 && parseInt(newPhone) < 9999999999) setIsPhoneOtpDisabled(false)
+    if (parseInt(newAadhaar) > 100000000000 && parseInt(newAadhaar) < 999999999999) setIsAadhaarOtpDisabled(false)
+    
+  }, [newPhone, newAadhaar, newPan])
 
 
-  async function sendOtp() {
+  async function sendPhoneOtp() {
     axios.post(`/api/users/otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone
@@ -114,11 +121,35 @@ const EditProfile = () => {
     })
   }
 
-  function verifyOtp() {
-    axios.post(`/api/users/verify-otp`, {
+  async function verifyPhoneOtp() {
+    await axios.post(`/api/users/verify-otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone,
       otp: otp
+    }).then((res) => {
+      if (res.status == 200) {
+        setPhoneModal(false)
+        formik.setFieldValue("contactNo", newPhone)
+      }
+    }).catch((err)=>{
+      Toast({
+        status: "error",
+        title: "Error Occured",
+        description: err.message
+      })
+    })
+    setOtpSent(false)
+  }
+
+  function sendAadhaarOtp(){
+    fetch("https://api.apiclub.in/uat/v1/aadhaar_v2/send_otp", {
+      headers: {
+        "API-KEY": process.env.APICLUB_API_KEY, //API Club API KEY
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        aadhaar_no: newAadhaar,
+      })
     })
   }
 
@@ -184,7 +215,7 @@ const EditProfile = () => {
                   _placeholder={{ color: "gray.500" }}
                   type="number"
                   value={formik.values.contactNo}
-                  onClick={onOpen}
+                  onClick={() => setPhoneModal(true)}
                   readOnly
                   cursor={'pointer'}
                 />
@@ -213,14 +244,14 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="aadharNo" isRequired>
+              <FormControl py={2} id="verifiedAadhaar" isRequired>
                 <FormLabel>Aadhar Number</FormLabel>
                 <Input
                   placeholder="Aadhar number"
                   _placeholder={{ color: "gray.500" }}
-                  type="number"
-                  value={formik.values.aadharNo}
-                  onChange={formik.handleChange}
+                  type="number" readOnly
+                  value={formik.values.verifiedAadhaar}
+                  onClick={() => setAadhaarModal(true)}
                 />
               </FormControl>
               <FormControl py={2} id="pan" isRequired>
@@ -345,8 +376,8 @@ const EditProfile = () => {
         </Flex>
       </DashboardWrapper>
 
-      {/* Phone Number Add */}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      {/* Phone Number Addition */}
+      <Modal isOpen={phoneModal} onClose={() => {setPhoneModal(false);setOtpSent(false)}} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -359,7 +390,7 @@ const EditProfile = () => {
               <Input type={'tel'} placeholder={'Your Phone Number'} value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
             </InputGroup>
             <HStack justifyContent={'flex-end'} py={2}>
-              <Button colorScheme={'twitter'} disabled={isOtpDisabled} size={'xs'} onClick={sendOtp}>Send OTP</Button>
+              <Button colorScheme={'twitter'} disabled={isPhoneOtpDisabled} size={'xs'} onClick={sendPhoneOtp}>Send OTP</Button>
             </HStack>
 
             <VStack display={otpSent ? "flex" : "none"}>
@@ -372,7 +403,38 @@ const EditProfile = () => {
                   <PinInputField />
                 </PinInput>
               </HStack>
-              <Button colorScheme={'twitter'} onClick={verifyOtp}>Verify</Button>
+              <Button colorScheme={'twitter'} onClick={verifyPhoneOtp}>Verify</Button>
+            </VStack>
+
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Aadhaar Number Add */}
+      <Modal isOpen={aadhaarModal} onClose={() => {setAadhaarModal(false);setOtpSent(false)}} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalHeader>
+            Add Your Aadhaar
+          </ModalHeader>
+          <ModalBody>
+            <Input type={'tel'} placeholder={'Your Aadhaar Number'} value={newAadhaar} onChange={(e) => setNewAadhaar(e.target.value)} />
+            <HStack justifyContent={'flex-end'} py={2}>
+              <Button colorScheme={'twitter'} disabled={isAadhaarOtpDisabled} size={'xs'} onClick={sendAadhaarOtp}>Send OTP</Button>
+            </HStack>
+
+            <VStack display={otpSent ? "flex" : "none"}>
+              <Text>Enter OTP</Text>
+              <HStack py={2}>
+                <PinInput otp onComplete={(value) => setOtp(value)}>
+                  <PinInputField />
+                  <PinInputField />
+                  <PinInputField />
+                  <PinInputField />
+                </PinInput>
+              </HStack>
+              <Button colorScheme={'twitter'} onClick={verifyPhoneOtp}>Verify</Button>
             </VStack>
 
           </ModalBody>
