@@ -27,6 +27,7 @@ import Cookies from 'js-cookie';
 let bcrypt = require('bcryptjs')
 import { useRouter } from 'next/router';
 import axios from '../lib/axios';
+import Topbar from './Topbar';
 
 
 const DashboardWrapper = (props) => {
@@ -50,23 +51,31 @@ const DashboardWrapper = (props) => {
     }, [])
 
     useEffect(() => {
-        async () => {
             let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
-            if (!authentic) {
-                await axios.post("/logout").then(() => {
+            if (authentic != true) {
+                axios.post("/logout").then(() => {
                     Cookies.remove("verified")
                 })
-                Router.push("/auth/login")
+                setTimeout(()=>Router.push("/auth/login"), 2000)
             }
-        }
+            console.log(authentic)
+        
     })
+    async function signout() {
+      await axios.post("/logout").then(() => {
+        Cookies.remove("verified")
+      })
+      setTimeout(()=>Router.push("/auth/login"), 2000)
+    }
 
     return (
         <>
             <Head><title>{`Pesa24 - ${props.titleText}`}</title></Head>
+
             <Box
-                bg={'aliceblue'} p={[4, 4]}
+                bg={'aliceblue'}
                 w={'full'} minH={'100vh'}>
+
                 <HStack spacing={8} alignItems={'flex-start'}>
                     {/* Sidebar */}
                     <Sidebar
@@ -78,11 +87,14 @@ const DashboardWrapper = (props) => {
 
                     {/* Main Dashboard Container */}
                     <Box
+                        p={4}
                         display={'flex'}
                         flexDir={'column'}
-                        flex={['unset', 7]}
-                        w={'full'}
+                        flex={['unset', 8]}
+                        w={'full'} h={'100vh'}
+                        overflowY={'scroll'}
                     >
+                        <Topbar />
 
                         {/* Topbar Starts */}
                         <HStack
@@ -172,7 +184,6 @@ const DashboardWrapper = (props) => {
 
                         {props.children}
 
-                        <BankDetails />
                     </Box>
 
 
@@ -227,6 +238,7 @@ const DashboardWrapper = (props) => {
 
                             </VStack>
 
+                            <BankDetails />
                         </DrawerBody>
 
                         <DrawerFooter justifyContent={'center'}>
@@ -241,7 +253,7 @@ const DashboardWrapper = (props) => {
                                         <Text fontSize={'xl'}>₹ {props.prepaid || 0}</Text>
                                     </Box>
                                 </HStack>
-                                <HStack spacing={2} color={'red'}>
+                                <HStack spacing={2} color={'red'} onClick={()=>signout()}>
                                     <BiPowerOff fontSize={'1.5rem'} />
                                     <Text fontSize={'lg'}>
                                         Sign Out

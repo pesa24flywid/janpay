@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DashboardWrapper from '../../../hocs/DashboardLayout'
 import $ from 'jquery'
 import {
   Box,
-  HStack,
-  VStack,
   Input,
   InputGroup,
   InputLeftAddon,
-  Text,
   Button,
   FormControl,
   FormLabel,
@@ -20,6 +17,7 @@ import { useFormik } from 'formik'
 import axios from '../../../lib/axios'
 
 const Aeps = () => {
+  const [isBtnLoading, setIsBtnLoading] = useState(false)
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -33,12 +31,13 @@ const Aeps = () => {
       amount: "",
       transctionId: ""
     },
-    onSubmit: (values)=>{
+    onSubmit: (values) => {
       axios.post("/api/aeps", values)
     }
   })
 
   function getMantra() {
+    setIsBtnLoading(true)
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -155,6 +154,8 @@ const Aeps = () => {
             alert("Error : " + Message);
           }
 
+          setIsBtnLoading(true)
+
         }
       });
     }
@@ -165,6 +166,7 @@ const Aeps = () => {
         description: "Please connect your device and refresh this page.",
         position: "top-right"
       })
+      setIsBtnLoading(false)
     }
   }
 
@@ -238,11 +240,11 @@ const Aeps = () => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
   }, [formik.values.serviceCode])
 
-  function handleSubmit(){
-    if(formik.values.serviceCode == "2"){
+  function handleSubmit() {
+    if (formik.values.serviceCode == "2") {
       getMantra()
     }
-    else{
+    else {
       formik.handleSubmit
     }
   }
@@ -251,19 +253,26 @@ const Aeps = () => {
     <>
       <DashboardWrapper titleText={'AePS Transaction'}>
         <Box my={4} w={['full', 'md', 'full']} p={6} boxShadow={'md'} bg={'white'}>
-          <Text>Fill this form to make AePS transaction</Text>
-          <FormControl w={'xs'} py={6} pb={8}>
+          <FormControl w={'xs'} pb={8}>
             <FormLabel>Select Service</FormLabel>
             <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
               <option value={2}>Cash Withdrawal</option>
               <option value={3}>Balance Inquiry</option>
               <option value={4}>Mini Statement</option>
-              <option value={39}>Fund Settlement</option>
-              <option value={99}>Transaction Inquiry</option>
             </Select>
           </FormControl>
+
+          {/* Cash Withdrawal Form */}
           {
             formik.values.serviceCode == "2" ? <>
+              <FormControl w={'xs'} pb={6}>
+                <FormLabel>Select Bank</FormLabel>
+                <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
+                  <option value="sbi">State Bank of India</option>
+                  <option value="bob">Bank of Baroda</option>
+                  <option value="hdfc">HDFC Bank</option>
+                </Select>
+              </FormControl>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
                 <FormControl w={'full'}>
                   <FormLabel>Aadhaar Number</FormLabel>
@@ -287,6 +296,7 @@ const Aeps = () => {
             </> : null
           }
 
+          {/* Balance Enquiry Form */}
           {
             formik.values.serviceCode == "3" ? <>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
@@ -313,6 +323,7 @@ const Aeps = () => {
             </> : null
           }
 
+          {/* Mini Statement Form */}
           {
             formik.values.serviceCode == "4" ? <>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
@@ -339,40 +350,7 @@ const Aeps = () => {
             </> : null
           }
 
-          {
-            formik.values.serviceCode == "39" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Select Your Bank Account</FormLabel>
-                  <Select name='bankAccountNo' value={formik.values.bankAccountNo} onChange={formik.handleChange}>
-                    <option value="4684651316879684">4684651316879684 (SBI)</option>
-                    <option value="4684651316879685">4684651316879685 (BOB)</option>
-                    <option value="4684651316879686">4684651316879686 (HDFC)</option>
-                  </Select>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Settlement Amount</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={"₹"} />
-                    <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
-
-          {
-            formik.values.serviceCode == "39" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Enter Transaction ID</FormLabel>
-                  <Input name='transactionId' value={formik.values.transctionId} onChange={formik.handleChange} />
-                </FormControl>
-              </Stack>
-            </> : null
-          }
-
-          <Button colorScheme={'twitter'} onClick={() => getMantra()}>Submit</Button>
+          <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
         </Box>
       </DashboardWrapper>
     </>

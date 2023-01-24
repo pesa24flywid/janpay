@@ -4,7 +4,8 @@ import {
   Text,
   Stack,
   Button,
-  useDisclosure,
+  HStack,
+  Select,
   Modal,
   ModalBody,
   ModalOverlay,
@@ -17,21 +18,20 @@ import {
   Chart as ChartJs,
   Tooltip,
   Legend,
-  LineElement,
+  ArcElement,
   PointElement,
   Filler,
   CategoryScale,
   LinearScale
 } from 'chart.js'
 import {
-  Line
+  Pie
 } from 'react-chartjs-2'
 import { GiReceiveMoney, GiTakeMyMoney } from 'react-icons/gi'
 import { FaMobile, FaMoneyBillAlt } from 'react-icons/fa'
-import DataCard from '../../hocs/DataCard'
+import DataCard, { TransactionCard } from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
 import DashboardWrapper from '../../hocs/DashboardLayout'
-import axios from '../../lib/axios'
 import Link from 'next/link'
 
 const Dashboard = () => {
@@ -44,13 +44,11 @@ const Dashboard = () => {
   ])
   let isProfileComplete
   const [profileAlert, setProfileAlert] = useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
-    isProfileComplete = (localStorage.getItem("isProfileComplete")==="true")
+    isProfileComplete = (localStorage.getItem("isProfileComplete") === "true")
     if (!isProfileComplete) {
       setProfileAlert(true)
-      console.log("Profile InComplete")
     }
 
     // Check for new notifications
@@ -59,7 +57,7 @@ const Dashboard = () => {
   }, [])
 
   // ChartJS Configuration
-  ChartJs.register(LineElement, Tooltip, Legend, Filler, PointElement, CategoryScale, LinearScale)
+  ChartJs.register(ArcElement, Tooltip, Legend, Filler, PointElement, CategoryScale, LinearScale)
   const options = {
     responsive: true,
     plugins: {
@@ -71,57 +69,37 @@ const Dashboard = () => {
       },
     },
   };
-  const labels = ['January', 'February', 'March', 'April', 'May'];
+  const labels = ['AePS', 'BBPS', 'DMT', 'PAN', 'LIC', 'CMS', 'Recharges', 'Fund Request'];
 
-  // Sample Data for AePS Transactions
-  const aepsData = [
+  // Sample Data for Chart
+  const transactionData = [
     1200,
     2500,
     1100,
     800,
     1500,
-  ]
-
-
-  // Sample Data for DMT Transactions
-  const dmtData = [
-    3200,
-    1500,
-    8100,
-    1200,
-    1300,
-  ]
-
-
-  // Sample Data for Mobile Recharge
-  const rechargeData = [
-    867,
-    1300,
-    1800,
-    912,
-    1678,
+    2600,
+    900,
+    1800
   ]
 
   const chartData = {
     labels,
     datasets: [
       {
-        label: "AePS",
-        data: aepsData,
-        borderColor: '#FF7B54',
-        backgroundColor: '#FF7B54',
-      },
-      {
-        label: "DMT",
-        data: dmtData,
-        borderColor: '#6C00FF',
-        backgroundColor: '#6C00FF',
-      },
-      {
-        label: "Mob. Recharge",
-        data: rechargeData,
-        borderColor: '#FFB100',
-        backgroundColor: '#FFB100',
+        label: "Earning Overview",
+        data: transactionData,
+        borderColor: '#FFFFFF',
+        backgroundColor: [
+          '#6C00FF',
+          '#3C79F5',
+          '#2DCDDF',
+          '#F2DEBA',
+          '#FF8B13',
+          '#13005A',
+          '#ABC270',
+          '#678983',
+        ],
       },
     ]
   }
@@ -161,26 +139,115 @@ const Dashboard = () => {
           />
         </Stack>
 
+        <HStack justifyContent={'space-between'} py={4}>
+          <Text>Your Earning Statistics</Text>
+          <Select name='earningStatsDuration' w={'xs'} bg={'white'}>
+            <option value="today">Today</option>
+            <option value="month">1 Month</option>
+            <option value="year">1 Year</option>
+          </Select>
+        </HStack>
+        <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+
+          <TransactionCard
+            color={'#6C00FF'}
+            title={"AePS"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+          <TransactionCard
+            color={'#3C79F5'}
+            title={"BBPS"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+          <TransactionCard
+            color={'#2DCDDF'}
+            title={"DMT"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+        </Stack>
 
         <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+          <TransactionCard
+            color={'#F2DEBA'}
+            title={"PAN"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+          <TransactionCard
+            color={'#FF8B13'}
+            title={"LIC"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+          <TransactionCard
+            color={'#13005A'}
+            title={"CMS"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+        </Stack>
+
+        <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+          <TransactionCard
+            color={'#ABC270'}
+            title={"Recharges"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+          <TransactionCard
+            color={'#678983'}
+            title={"Fund Requests"}
+            quantity={"8"}
+            amount={"8600"}
+          />
+
+        </Stack>
+
+        <Stack
+          pt={4}
           direction={['column-reverse', 'row']}
           justifyContent={['flex-start', 'space-between']}
         >
           <Box
-            w={['full', 'md', 'xl']}
+            w={['full', 'md']}
             p={4} rounded={12}
             bg={'white'}
             boxShadow={'md'}
           >
-            <Text mb={2}>Recent Transactions</Text>
-            <Line
+            <HStack justifyContent={'space-between'} pb={4}>
+              <Text>Your Earning Overview</Text>
+              <Select name='earningChartDuration' w={'fit-content'} bg={'white'}>
+                <option value="today">Today</option>
+                <option value="month">1 Month</option>
+                <option value="year">1 Year</option>
+              </Select>
+            </HStack>
+            <Pie
               width={'inherit'}
               data={chartData}
               options={options}
             />
           </Box>
           <Box
-            w={['full', 'md']}
+            w={['full', 'md', 'xl']}
             p={4} rounded={12}
             bg={'white'}
             boxShadow={'md'}

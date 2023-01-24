@@ -14,10 +14,6 @@
     border-bottom: 1px solid #999;
 }
 
-.sidebar::-webkit-scrollbar-track{
-    border-radius: 12px !important;
-}
-.sidebar::-webkit-scrollbar-thumb{
-    background-color: darkslategray !important;
-    border-radius: 12px !important;
+body::-webkit-scrollbar{
+    display: none;
 }

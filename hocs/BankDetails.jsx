@@ -38,12 +38,11 @@ const BankDetails = () => {
         <>
             <Box
                 w={['full', 'auto']}
-                my={8} bg={'white'} p={4}
-                rounded={8} boxShadow={'md'}
+                bg={'white'} py={4}
             >
-                <Text mb={2}>You can deposit your money to any of these accounts</Text>
+                <Text mb={2} fontSize={'xs'}>You can deposit your money to any of these accounts</Text>
                 <Stack
-                    direction={['column', 'row']}
+                    direction={'column'}
                     gap={2}
                 >
                     {bankDetails.map((detail) => (

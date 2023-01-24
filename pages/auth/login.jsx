@@ -25,6 +25,7 @@ import Link from 'next/link'
 import axios from '../../lib/axios'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { param } from 'jquery'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
@@ -118,7 +119,7 @@ const Login = () => {
                 "password": formik.values.password,
                 "remember": 1,
             })).then((res) => {
-                var hashedValue = bcrypt.hashSync(`${res.data.id+res.data.name}`, 2)
+                var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
                 localStorage.setItem("userId", res.data.id)
                 Cookies.set("userId", res.data.id)
@@ -126,9 +127,9 @@ const Login = () => {
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
-                if(res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+                if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             })
-            Router.push("/dashboard")
+            Router.push("/dashboard?pageId=dashboard")
 
         } catch (error) {
             toast({
