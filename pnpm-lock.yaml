@@ -14,6 +14,8 @@ specifiers:
   cookies-next: ^2.1.1
   formik: ^2.2.9
   framer-motion: ^8.0.2
+  gridjs: ^6.0.5
+  gridjs-react: ^6.0.1
   jquery: ^3.6.3
   js-cookie: ^3.0.1
   next: 13.1.1
@@ -37,6 +39,8 @@ dependencies:
   cookies-next: 2.1.1
   formik: 2.2.9_react@18.2.0
   framer-motion: 8.0.2_biqbaboplfbrettd7655fr4n2y
+  gridjs: 6.0.5
+  gridjs-react: 6.0.1_gridjs@6.0.5+react@18.2.0
   jquery: 3.6.3
   js-cookie: 3.0.1
   next: 13.1.1_7xlrwlvvs7cv2obrs6a5y6oxxq
@@ -2172,6 +2176,22 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
+  /gridjs-react/6.0.1_gridjs@6.0.5+react@18.2.0:
+    resolution: {integrity: sha512-Cb9tti25vlQH7qn1J61NMzu+1sRYxGCbTdlj+/iJmhWTe+8C0VI6snr6Gi2LKDsvcUhlBSb56T6IZQ8UF3D6aQ==}
+    peerDependencies:
+      gridjs: ^6.0.1
+      react: '>=17.x'
+    dependencies:
+      gridjs: 6.0.5
+      react: 18.2.0
+    dev: false
+
+  /gridjs/6.0.5:
+    resolution: {integrity: sha512-dpGi1eK27tnplumOOrYOIQEJJaPZcx6kzexQTqtNN0CBKEVJBpFvbCJgk7xZyRMF42RoCT6BYRcQjzXCpQXbvQ==}
+    dependencies:
+      preact: 10.11.3
+    dev: false
+
   /has-flag/3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -2531,6 +2551,10 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: false
+
+  /preact/10.11.3:
+    resolution: {integrity: sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==}
     dev: false
 
   /prop-types/15.8.1:

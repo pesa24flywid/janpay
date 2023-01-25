@@ -21,6 +21,8 @@
     "cookies-next": "^2.1.1",
     "formik": "^2.2.9",
     "framer-motion": "^8.0.2",
+    "gridjs": "^6.0.5",
+    "gridjs-react": "^6.0.1",
     "jquery": "^3.6.3",
     "js-cookie": "^3.0.1",
     "next": "13.1.1",

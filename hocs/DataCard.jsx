@@ -1,6 +1,7 @@
 import React from 'react'
 import { VStack, Box, Text, HStack, Show } from '@chakra-ui/react'
 import Link from "next/link"
+import { FaUserSecret } from 'react-icons/fa'
 
 const DataCard = ({ title, data, icon, color }) => {
   return (
@@ -67,12 +68,13 @@ export const ServiceCard = ({ text, url }) => {
           my={2} mr={4} ml={0} p={4}
           bg={'white'}
           boxShadow={'base'}
-          rounded={12}
+          rounded={16}
           w={['full', '56']}
           transitionDuration={'.3s'}
           transitionTimingFunction={'ease'}
           _hover={{ bg: '#1da1f2', color: 'white' }}
         >
+          <FaUserSecret fontSize={'2rem'} /><br />
           <Text fontWeight={'medium'} textTransform={'capitalize'}>{text}</Text>
         </Box>
       </Link>

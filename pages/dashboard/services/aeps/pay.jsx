@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import DashboardWrapper from '../../../hocs/DashboardLayout'
+import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import $ from 'jquery'
 import {
   Box,
@@ -11,12 +11,16 @@ import {
   FormLabel,
   Select,
   Stack,
+  HStack,
   useToast,
+  Radio,
+  RadioGroup,
+  Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../lib/axios'
+import axios from '../../../../lib/axios'
 
-const Aeps = () => {
+const AadhaarPay = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const Toast = useToast()
   const formik = useFormik({
@@ -32,7 +36,7 @@ const Aeps = () => {
       transctionId: ""
     },
     onSubmit: (values) => {
-      axios.post("/api/aeps", values)
+      axios.post("/api/aadhaar-pay", values)
     }
   })
 
@@ -251,32 +255,67 @@ const Aeps = () => {
 
   return (
     <>
-      <DashboardWrapper titleText={'AePS Transaction'}>
+      <DashboardWrapper titleText={'Aadhaar Pay'}>
         <Box my={4} w={['full', 'md', 'full']} p={6} boxShadow={'md'} bg={'white'}>
           <FormControl w={'xs'} pb={8}>
             <FormLabel>Select Service</FormLabel>
             <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
               <option value={2}>Cash Withdrawal</option>
-              <option value={3}>Balance Inquiry</option>
-              <option value={4}>Mini Statement</option>
             </Select>
+          </FormControl>
+
+          <FormControl pb={6}>
+            <FormLabel>Choose Device</FormLabel>
+            <RadioGroup name={'rdDevice'}>
+              <Stack direction={['column', 'row']} spacing={4}>
+              <Radio value='mantra'>Mantra</Radio>
+              <Radio value='morpho'>Morpho</Radio>
+              <Radio value='secugen'>Secugen</Radio>
+              <Radio value='startek'>Startek</Radio>
+              </Stack>
+            </RadioGroup>
           </FormControl>
 
           {/* Cash Withdrawal Form */}
           {
             formik.values.serviceCode == "2" ? <>
-              <FormControl w={'xs'} pb={6}>
+              <FormControl w={'full'} pb={6}>
                 <FormLabel>Select Bank</FormLabel>
-                <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
+                <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange} w={'xs'}>
                   <option value="sbi">State Bank of India</option>
-                  <option value="bob">Bank of Baroda</option>
-                  <option value="hdfc">HDFC Bank</option>
+                  <option value="pnb">Punjab National Bank</option>
+                  <option value="cb">City Bank</option>
+                  <option value="yb">Yes Bank</option>
                 </Select>
+                <HStack spacing={2} py={2}>
+
+                  <Button
+                    fontSize={'xs'}
+                    value={"sbi"}
+                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+                  >State Bank of India</Button>
+
+                  <Button
+                    fontSize={'xs'}
+                    value={"pnb"}
+                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+                  >Punjab National Bank</Button>
+
+                  <Button
+                    fontSize={'xs'}
+                    value={"yb"}
+                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+                  >Yes Bank</Button>
+
+                </HStack>
               </FormControl>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
                 <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                  <FormLabel>Aadhaar Number / VID</FormLabel>
+                  <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                  <HStack py={2}>
+                    <Checkbox name={'isVID'}>It is a VID</Checkbox>
+                  </HStack>
                 </FormControl>
                 <FormControl w={'full'}>
                   <FormLabel>Phone Number</FormLabel>
@@ -291,60 +330,27 @@ const Aeps = () => {
                     <InputLeftAddon children={"₹"} />
                     <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
                   </InputGroup>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
+                  <HStack spacing={2} py={2}>
 
-          {/* Balance Enquiry Form */}
-          {
-            formik.values.serviceCode == "3" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="sbi">State Bank of India</option>
-                    <option value="bob">Bank of Baroda</option>
-                    <option value="hdfc">HDFC Bank</option>
-                  </Select>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
+                    <Button
+                      fontSize={'xs'}
+                      value={1000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >1000</Button>
 
-          {/* Mini Statement Form */}
-          {
-            formik.values.serviceCode == "4" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="sbi">State Bank of India</option>
-                    <option value="bob">Bank of Baroda</option>
-                    <option value="hdfc">HDFC Bank</option>
-                  </Select>
+                    <Button
+                      fontSize={'xs'}
+                      value={2000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >2000</Button>
+
+                    <Button
+                      fontSize={'xs'}
+                      value={5000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >5000</Button>
+
+                  </HStack>
                 </FormControl>
               </Stack>
             </> : null
@@ -357,4 +363,4 @@ const Aeps = () => {
   )
 }
 
-export default Aeps
+export default AadhaarPay

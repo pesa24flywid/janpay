@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { BsFileEarmarkBarGraph, BsBank } from "react-icons/bs";
 import { GiReceiveMoney } from 'react-icons/gi'
+import { HiUsers } from 'react-icons/hi'
 import BankDetails from "./BankDetails";
 
 const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
@@ -104,7 +105,7 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
               </HStack>
             </Link>
 
-            <Accordion defaultIndex={[0]} allowMultiple allowToggle w={'full'}>
+            <Accordion defaultIndex={[0]} allowToggle w={'full'}>
 
               <AccordionItem isDisabled={isProfileComplete}>
                 <AccordionButton px={3} _expanded={{ bg: 'aqua' }}>
@@ -127,6 +128,32 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
                   >
                     <Link href={'/dashboard/services/aeps?pageId=aeps'} style={{ width: '100%' }}>
                       <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>AePS Services</Text>
+                    </Link>
+                  </VStack>
+
+                  <VStack
+                    w={'full'}
+                    alignItems={'flex-start'}
+                    justifyContent={'flex-start'}
+                    spacing={2} rounded={'full'}
+                    overflow={'hidden'}
+                    id={'aadhaar-pay'}
+                  >
+                    <Link href={'/dashboard/services/aeps/pay?pageId=aadhaar-pay'} style={{ width: '100%' }}>
+                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Aadhaar Pay</Text>
+                    </Link>
+                  </VStack>
+
+                  <VStack
+                    w={'full'}
+                    alignItems={'flex-start'}
+                    justifyContent={'flex-start'}
+                    spacing={2} rounded={'full'}
+                    overflow={'hidden'}
+                    id={'dmt'}
+                  >
+                    <Link href={'/dashboard/services/dmt?pageId=dmt'} style={{ width: '100%' }}>
+                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>DMT Services</Text>
                     </Link>
                   </VStack>
 
@@ -245,6 +272,65 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
                 <Text>Fund Request</Text>
               </HStack>
             </Link>
+
+            
+            <Accordion defaultIndex={[0]} allowMultiple allowToggle w={'full'}>
+
+              <AccordionItem isDisabled={isProfileComplete}>
+                <AccordionButton px={3} _expanded={{ bg: 'aqua' }}>
+                  <HStack spacing={2} flex={1}>
+                    <HiUsers fontSize={'1.125rem'} />
+                    <Text>Members</Text>
+                  </HStack>
+                  <AccordionIcon />
+                </AccordionButton>
+
+                <AccordionPanel px={0}>
+
+                  <VStack
+                    w={'full'}
+                    alignItems={'flex-start'}
+                    justifyContent={'flex-start'}
+                    spacing={2} rounded={'full'}
+                    overflow={'hidden'}
+                    id={'create-user'}
+                  >
+                    <Link href={'/dashboard/distributor/create-user?pageId=create-user'} style={{ width: '100%' }}>
+                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Create User</Text>
+                    </Link>
+                  </VStack>
+
+                  <VStack
+                    w={'full'}
+                    alignItems={'flex-start'}
+                    justifyContent={'flex-start'}
+                    spacing={2} rounded={'full'}
+                    overflow={'hidden'}
+                    id={'view-user'}
+                  >
+                    <Link href={'/dashboard/distributor/view-user?pageId=view-user'} style={{ width: '100%' }}>
+                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>View User</Text>
+                    </Link>
+                  </VStack>
+
+                  <VStack
+                    w={'full'}
+                    alignItems={'flex-start'}
+                    justifyContent={'flex-start'}
+                    spacing={2} rounded={'full'}
+                    overflow={'hidden'}
+                    id={'user-report'}
+                  >
+                    <Link href={'/dashboard/distributor/user-report?pageId=user-report'} style={{ width: '100%' }}>
+                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>User Report</Text>
+                    </Link>
+                  </VStack>
+
+                </AccordionPanel>
+
+              </AccordionItem>
+
+            </Accordion>
 
             <Link href={"/dashboard/settlements?pageId=settlements"} style={{ width: "100%" }}>
               <HStack

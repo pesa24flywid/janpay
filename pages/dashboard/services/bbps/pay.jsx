@@ -26,6 +26,12 @@ const Pay = () => {
             p={6} rounded={12}
             >
                 <Text fontSize={'lg'}>BBPS <span style={{textTransform: 'capitalize'}}>{serviceName}</span></Text>
+                <FormControl id={'operator'}>
+                  <FormLabel>Select Operator</FormLabel>
+                  <Select>
+                    
+                  </Select>
+                </FormControl>
             </Box>
         </DashboardWrapper>
     </>
