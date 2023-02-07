@@ -275,7 +275,7 @@ const Dashboard = () => {
             </ModalBody>
 
             <ModalFooter>
-              <Link href={'/dashboard/profile/edit'}>
+              <Link href={'/dashboard/profile/edit?pageId=profile'}>
                 <Button colorScheme='blue' mr={3}>
                   Complete Now
                 </Button>

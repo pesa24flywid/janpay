@@ -36,14 +36,33 @@ const Login = () => {
     const [authMethod, setAuthMethod] = useState("phone")
     const [otp, setOtp] = useState("")
     const [isBtnLoading, setIsBtnLoading] = useState(false)
+    const [latlong, setLatlong] = useState("")
     const toast = useToast()
     const Router = useRouter()
+    let location
 
     useEffect(() => {
         axios.get("/sanctum/csrf-cookie")
-
+        getLocation()
     }, [])
 
+
+    // Getting user location
+    function getLocation() {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position)=>{
+                Cookies.set("latlong", position.coords.latitude+","+position.coords.longitude)
+            })
+        } else{
+            toast({
+                status: "error",
+                title: "Location Error",
+                description: "No GPS detected. Try logging in with another device."
+            })
+            setOtpBtnDisabled(true)
+            setLoginBtnDisabled(true)
+        }
+    }
 
     // Sending the OTP
     async function sendOtp() {
@@ -118,6 +137,7 @@ const Login = () => {
                 "otp": otp,
                 "password": formik.values.password,
                 "remember": 1,
+                "latlong": Cookies.get("latlong"),
             })).then((res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)

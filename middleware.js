@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
  
 const Middleware = (req) => {
     
@@ -7,10 +7,10 @@ const Middleware = (req) => {
     const url = req.url
     
     if(!verified && url.includes("/dashboard")){
-        return NextResponse.redirect(process.env.FRONTEND_URL+"/auth/login")
+        return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/auth/login")
     }
     else if(verified && url.includes("/auth")){
-        return NextResponse.redirect(process.env.FRONTEND_URL+"/dashboard")
+        return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/dashboard")
     }
 }
 

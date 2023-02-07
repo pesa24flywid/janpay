@@ -23,7 +23,7 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { HiUsers } from 'react-icons/hi'
 import BankDetails from "./BankDetails";
 
-const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
+export const ServicesAccordion = ({isProfileComplete}) => {
   const Router = useRouter()
   const { pageId } = Router.query
 
@@ -35,6 +35,151 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
     }
   }, [])
 
+  return (
+
+    <Accordion defaultIndex={[0]} allowToggle w={'full'}>
+
+      <AccordionItem isDisabled={isProfileComplete}>
+        <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+          <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
+            <BiRupee fontSize={'1.25rem'} />
+            <Text>Services</Text>
+          </HStack>
+          <AccordionIcon />
+        </AccordionButton>
+
+        <AccordionPanel px={0}>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'aeps'}
+          >
+            <Link href={'/dashboard/services/aeps?pageId=aeps'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>AePS Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'aadhaar-pay'}
+          >
+            <Link href={'/dashboard/services/aeps/pay?pageId=aadhaar-pay'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Aadhaar Pay</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'dmt'}
+          >
+            <Link href={'/dashboard/services/dmt?pageId=dmt'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>DMT Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'bbps'}
+          >
+            <Link href={'/dashboard/services/bbps?pageId=bbps'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>BBPS Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'recharge'}
+          >
+            <Link href={'/dashboard/services/recharge?pageId=recharge'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Recharge Services</Text>
+              
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'banking'}
+          >
+            <Link href={'/dashboard/services/banking?pageId=banking'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Banking Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'pan'}
+          >
+            <Link href={'/dashboard/services/pan?pageId=pan'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>PAN Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'lic'}
+          >
+            <Link href={'/dashboard/services/lic?pageId=lic'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>LIC Services</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
+            id={'cms'}
+          >
+            <Link href={'/dashboard/services/cms?pageId=cms'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>CMS Services</Text>
+            </Link>
+          </VStack>
+
+        </AccordionPanel>
+
+      </AccordionItem>
+
+    </Accordion>
+  )
+}
+
+const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
+
+  const Router = useRouter()
+  
   async function signout() {
     await axios.post("/logout").then(() => {
       Cookies.remove("verified")
@@ -105,141 +250,9 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
               </HStack>
             </Link>
 
-            <Accordion defaultIndex={[0]} allowToggle w={'full'}>
 
-              <AccordionItem isDisabled={isProfileComplete}>
-                <AccordionButton px={3} _expanded={{ bg: 'aqua' }}>
-                  <HStack spacing={2} flex={1}>
-                    <BiRupee fontSize={'1.125rem'} />
-                    <Text>Services</Text>
-                  </HStack>
-                  <AccordionIcon />
-                </AccordionButton>
+            <ServicesAccordion />
 
-                <AccordionPanel px={0}>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'aeps'}
-                  >
-                    <Link href={'/dashboard/services/aeps?pageId=aeps'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>AePS Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'aadhaar-pay'}
-                  >
-                    <Link href={'/dashboard/services/aeps/pay?pageId=aadhaar-pay'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Aadhaar Pay</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'dmt'}
-                  >
-                    <Link href={'/dashboard/services/dmt?pageId=dmt'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>DMT Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'bbps'}
-                  >
-                    <Link href={'/dashboard/services/bbps?pageId=bbps'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>BBPS Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'recharge'}
-                  >
-                    <Link href={'/dashboard/services/recharge?pageId=recharge'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Recharge Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'banking'}
-                  >
-                    <Link href={'/dashboard/services/banking?pageId=banking'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Banking Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'pan'}
-                  >
-                    <Link href={'/dashboard/services/pan?pageId=pan'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>PAN Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'lic'}
-                  >
-                    <Link href={'/dashboard/services/lic?pageId=lic'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>LIC Services</Text>
-                    </Link>
-                  </VStack>
-
-                  <VStack
-                    w={'full'}
-                    alignItems={'flex-start'}
-                    justifyContent={'flex-start'}
-                    spacing={2} rounded={'full'}
-                    overflow={'hidden'}
-                    id={'cms'}
-                  >
-                    <Link href={'/dashboard/services/cms?pageId=cms'} style={{ width: '100%' }}>
-                      <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>CMS Services</Text>
-                    </Link>
-                  </VStack>
-
-                </AccordionPanel>
-
-              </AccordionItem>
-
-            </Accordion>
 
             <Link href={"/dashboard/ledger?pageId=ledger"} style={{ width: "100%" }}>
               <HStack
@@ -273,8 +286,8 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
               </HStack>
             </Link>
 
-            
-            <Accordion defaultIndex={[0]} allowMultiple allowToggle w={'full'}>
+
+            <Accordion defaultIndex={[0]} allowToggle w={'full'}>
 
               <AccordionItem isDisabled={isProfileComplete}>
                 <AccordionButton px={3} _expanded={{ bg: 'aqua' }}>

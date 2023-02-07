@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import Head from 'next/head'
-import Sidebar from './Sidebar'
+import Sidebar, { ServicesAccordion } from './Sidebar'
 import BankDetails from './BankDetails'
 import Cookies from 'js-cookie';
 let bcrypt = require('bcryptjs')
@@ -51,21 +51,19 @@ const DashboardWrapper = (props) => {
     }, [])
 
     useEffect(() => {
-            let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
-            if (authentic != true) {
-                axios.post("/logout").then(() => {
-                    Cookies.remove("verified")
-                })
-                setTimeout(()=>Router.push("/auth/login"), 2000)
-            }
-            console.log(authentic)
-        
+        let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
+        if (authentic != true) {
+            axios.post("/logout").then(() => {
+                Cookies.remove("verified")
+            })
+            setTimeout(() => Router.push("/auth/login"), 2000)
+        }
     })
     async function signout() {
-      await axios.post("/logout").then(() => {
-        Cookies.remove("verified")
-      })
-      setTimeout(()=>Router.push("/auth/login"), 2000)
+        await axios.post("/logout").then(() => {
+            Cookies.remove("verified")
+        })
+        setTimeout(() => Router.push("/auth/login"), 2000)
     }
 
     return (
@@ -226,14 +224,7 @@ const DashboardWrapper = (props) => {
                                     </HStack>
                                 </Link>
 
-                                <Link href={'/dashboard/services'} style={{ width: '100%' }}>
-                                    <HStack spacing={2}>
-                                        <BiRupee fontSize={'1.5rem'} />
-                                        <Text fontSize={'lg'}>
-                                            Services
-                                        </Text>
-                                    </HStack>
-                                </Link>
+                                <ServicesAccordion />
 
 
                             </VStack>
@@ -253,7 +244,7 @@ const DashboardWrapper = (props) => {
                                         <Text fontSize={'xl'}>₹ {props.prepaid || 0}</Text>
                                     </Box>
                                 </HStack>
-                                <HStack spacing={2} color={'red'} onClick={()=>signout()}>
+                                <HStack spacing={2} color={'red'} onClick={() => signout()}>
                                     <BiPowerOff fontSize={'1.5rem'} />
                                     <Text fontSize={'lg'}>
                                         Sign Out

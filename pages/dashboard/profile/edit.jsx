@@ -22,7 +22,7 @@ import {
   InputGroup,
   InputLeftAddon,
   useToast,
-
+  Select,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useFormik } from "formik";
@@ -30,6 +30,7 @@ import DashboardWrapper from "../../../hocs/DashboardLayout";
 // import axios from "axios";
 import axios from "../../../lib/axios";
 import Cookies from "js-cookie";
+import { states } from "../../../lib/states";
 
 const EditProfile = () => {
   const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
@@ -49,51 +50,62 @@ const EditProfile = () => {
     initialValues: {
       firstName: "",
       lastName: "",
-      contactNo: "",
+      phone: null,
       email: "",
       dob: "",
-      verifiedAadhaar: "",
+      aadhaar: null,
       pan: "",
       companyName: "",
       line: "",
       city: "",
       state: "",
-      pincode: "",
-      profilePicture: "",
-      eAadharFront: "",
-      eAadharBack: "",
-      panCard: "",
+      pincode: ""
     },
     onSubmit: async (values) => {
       // Handle submit
+      axios.post('api/user/update', {
+        values
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
   });
 
-  useEffect(() => {
-    if (parseInt(formik.values.pincode) > 100000 && parseInt(formik.values.pincode) < 999999) {
-      fetch(`https://api.postalpincode.in/pincode/${formik.values.pincode}`).then((res) => {
-        if (res.data[0].PostOffice[0].State) formik.setFieldValue("state", res.data[0].PostOffice[0].State)
-        if (!res.data[0].PostOffice[0].State) formik.setFieldValue("state", "Wrong Pincode")
-      })
+  const profileFormik = useFormik({
+    initialValues: {
+      profilePicture: null,
+      eAadharFront: null,
+      eAadharBack: null,
+      panCard: null,
     }
-  }, [formik])
+  })
+
 
   useEffect(() => {
-    axios.get(`/api/users/${localStorage.getItem("userId")}`).then((res) => {
-      formik.setFieldValue("firstName", res.data.data.first_name)
-      formik.setFieldValue("lastName", res.data.data.last_name)
-      formik.setFieldValue("email", res.data.data.email)
-    })
+    formik.setFieldValue("firstName", localStorage.getItem("firstName"))
+    formik.setFieldValue("lastName", localStorage.getItem("lastName"))
+    formik.setFieldValue("phone", localStorage.getItem("phone"))
+    formik.setFieldValue("email", localStorage.getItem("userEmail"))
+    formik.setFieldValue("aadhaar", localStorage.getItem("aadhaar"))
+    formik.setFieldValue("pan", localStorage.getItem("pan"))
+    formik.setFieldValue("dob", localStorage.getItem("dob"))
+    formik.setFieldValue("companyName", localStorage.getItem("companyName"))
+    formik.setFieldValue("line", localStorage.getItem("line"))
+    formik.setFieldValue("city", localStorage.getItem("city"))
+    formik.setFieldValue("state", localStorage.getItem("state"))
+    formik.setFieldValue("pincode", localStorage.getItem("pincode"))
   }, [])
 
   useEffect(() => {
     setIsPhoneOtpDisabled(true)
     setIsAadhaarOtpDisabled(true)
     setIsPanOtpDisabled(true)
-    if (parseInt(newPhone) > 4000000000 && parseInt(newPhone) < 9999999999) setIsPhoneOtpDisabled(false)
-    if (parseInt(newAadhaar) > 100000000000 && parseInt(newAadhaar) < 999999999999) setIsAadhaarOtpDisabled(false)
-    
-  }, [newPhone, newAadhaar, newPan])
+    if (parseInt(newPhone) > 4000000000) setIsPhoneOtpDisabled(false)
+    if (parseInt(newAadhaar) > 100000000000) setIsAadhaarOtpDisabled(false)
+
+  }, [newPhone, newAadhaar])
 
 
   async function sendPhoneOtp() {
@@ -129,9 +141,9 @@ const EditProfile = () => {
     }).then((res) => {
       if (res.status == 200) {
         setPhoneModal(false)
-        formik.setFieldValue("contactNo", newPhone)
+        formik.setFieldValue("phone", newPhone)
       }
-    }).catch((err)=>{
+    }).catch((err) => {
       Toast({
         status: "error",
         title: "Error Occured",
@@ -141,7 +153,7 @@ const EditProfile = () => {
     setOtpSent(false)
   }
 
-  function sendAadhaarOtp(){
+  function sendAadhaarOtp() {
     fetch("https://api.apiclub.in/uat/v1/aadhaar_v2/send_otp", {
       headers: {
         "API-KEY": process.env.APICLUB_API_KEY, //API Club API KEY
@@ -159,23 +171,18 @@ const EditProfile = () => {
         <title>Pesa24 - Edit Profile</title>
       </Head>
       <DashboardWrapper titleText="Edit Profile">
-
-        <Flex minH={"100vh"} align={"center"} justify={"center"}>
+        <Stack direction={['column', 'row']} my={4} spacing={4} alignItems={'flex-start'}>
           <Stack
             spacing={4}
-            w={"3xl"}
-            maxW={"3xl"}
-            bg={useColorModeValue("white", "gray.700")}
+            maxW={"2xl"}
+            bg={"white"}
             boxShadow={"lg"}
             rounded={"xl"}
-            p={8}
-            my={12}
-            px={"10"}
+            p={[4, 6]}
+            mx={'auto'}
           >
-            <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
-              Edit Info
-            </Heading>
             {/* Edit info Form */}
+            <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Personal Details</Text>
             <Stack direction={["column", "row"]} spacing="8">
               <FormControl py={2} id="firstName" isRequired>
                 <FormLabel>First Name</FormLabel>
@@ -208,13 +215,13 @@ const EditProfile = () => {
                   disabled
                 />
               </FormControl>
-              <FormControl py={2} id="contactNo" isRequired>
+              <FormControl py={2} id="phone" isRequired>
                 <FormLabel>Contact Number</FormLabel>
                 <Input
                   placeholder="Phone number"
                   _placeholder={{ color: "gray.500" }}
                   type="number"
-                  value={formik.values.contactNo}
+                  value={formik.values.phone}
                   onClick={() => setPhoneModal(true)}
                   readOnly
                   cursor={'pointer'}
@@ -249,8 +256,8 @@ const EditProfile = () => {
                 <Input
                   placeholder="Aadhar number"
                   _placeholder={{ color: "gray.500" }}
-                  type="number" readOnly
-                  value={formik.values.verifiedAadhaar}
+                  type="number" readOnly cursor={'pointer'}
+                  value={formik.values.aadhaar}
                   onClick={() => setAadhaarModal(true)}
                 />
               </FormControl>
@@ -259,7 +266,6 @@ const EditProfile = () => {
                 <Input
                   placeholder="Peresonal Account Number"
                   _placeholder={{ color: "gray.500" }}
-                  type="number"
                   value={formik.values.pan}
                   onChange={formik.handleChange}
                 />
@@ -267,8 +273,8 @@ const EditProfile = () => {
             </Stack>
 
             <VStack alignItems={'flex-start'} py={8}>
-              <Text pb={2}>Address Details</Text>
-              <Stack direction={['column', 'row']} spacing={8}>
+              <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Address Details</Text>
+              <Stack direction={['column', 'row']} w={'full'} spacing={8}>
                 <FormControl py={2} id="line" isRequired>
                   <FormLabel>Street Address</FormLabel>
                   <Input
@@ -279,6 +285,8 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
+              </Stack>
+              <Stack direction={['column', 'row']} spacing={8}>
                 <FormControl py={2} id="city" isRequired>
                   <FormLabel>City</FormLabel>
                   <Input
@@ -289,8 +297,6 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-              </Stack>
-              <Stack direction={['column', 'row']} spacing={8}>
                 <FormControl py={2} id="pincode" isRequired>
                   <FormLabel>Pincode</FormLabel>
                   <Input
@@ -303,52 +309,16 @@ const EditProfile = () => {
                 </FormControl>
                 <FormControl py={2} id="state" isRequired>
                   <FormLabel>State</FormLabel>
-                  <Input
-                    placeholder="Enter pincode first"
-                    _placeholder={{ color: "gray.500" }}
-                    type="text"
-                    value={formik.values.state}
-                    readOnly
-                  />
+                  <Select name="state" placeholder="Select State" value={formik.values.state} onChange={formik.handleChange}>
+                    {states.map((state, key) => {
+                      return (
+                        <option value={state} key={key}>{state}</option>
+                      )
+                    })}
+                  </Select>
                 </FormControl>
               </Stack>
             </VStack>
-            <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="profilePicture" isRequired>
-                <FormLabel>Profile Picture</FormLabel>
-                <Input
-                  type="file"
-                  value={formik.values.profilePicture}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
-              <FormControl py={2} id="eAadharFront" isRequired>
-                <FormLabel>eAadhar (Front)</FormLabel>
-                <Input
-                  type="file"
-                  value={formik.values.eAadharFront}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
-            </Stack>
-            <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="eAadharBack" isRequired>
-                <FormLabel>eAadhar (Back)</FormLabel>
-                <Input
-                  type="file"
-                  value={formik.values.eAadharBack}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
-              <FormControl py={2} id="panCard" isRequired>
-                <FormLabel>Pan Card</FormLabel>
-                <Input
-                  type="file"
-                  value={formik.values.panCard}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
-            </Stack>
 
             <Stack spacing={6} direction={["column", "row"]}>
               <Button
@@ -368,16 +338,58 @@ const EditProfile = () => {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={formik.handleSubmit}
               >
                 Submit
               </Button>
             </Stack>
           </Stack>
-        </Flex>
+
+          <Stack w={['full', 'sm']} rounded={12} bg={'white'} p={4} boxShadow={'lg'}>
+            <Text fontSize={'lg'} fontWeight={'medium'} color={'#333'}>Upload Documents</Text>
+            <Stack direction={["column"]} spacing="6" pb={6}>
+              <FormControl py={2} id="profilePicture" isRequired>
+                <FormLabel>Profile Picture</FormLabel>
+                <Input
+                  type="file"
+                  onChange={(e) => profileFormik.setFieldValue("profilePicture", e.currentTarget.files[0])}
+                  accept={"image/png, image/jpg, image/jpeg"}
+                />
+              </FormControl>
+              <FormControl py={2} id="panCard" isRequired>
+                <FormLabel>Pan Card</FormLabel>
+                <Input
+                  type="file"
+                  onChange={(e) => profileFormik.setFieldValue("panCard", e.currentTarget.files[0])}
+                  accept={"image/png, image/jpg, image/jpeg, application/pdf"}
+                />
+              </FormControl>
+            </Stack>
+            <Stack direction={["column"]} spacing="6" pb={6}>
+              <FormControl py={2} id="eAadharBack" isRequired>
+                <FormLabel>eAadhar (Back)</FormLabel>
+                <Input
+                  type="file"
+                  onChange={(e) => profileFormik.setFieldValue("eAadharBack", e.currentTarget.files[0])}
+                  accept={"image/png, image/jpg, image/jpeg, application/pdf"}
+                />
+              </FormControl>
+              <FormControl py={2} id="eAadharFront" isRequired>
+                <FormLabel>eAadhar (Front)</FormLabel>
+                <Input
+                  type="file"
+                  onChange={(e) => profileFormik.setFieldValue("eAadharFront", e.currentTarget.files[0])}
+                  accept={"image/png, image/jpg, image/jpeg, application/pdf"}
+                />
+              </FormControl>
+            </Stack>
+            <Button colorScheme={'orange'} onClick={profileFormik.handleSubmit}>Upload</Button>
+          </Stack>
+        </Stack>
       </DashboardWrapper>
 
       {/* Phone Number Addition */}
-      <Modal isOpen={phoneModal} onClose={() => {setPhoneModal(false);setOtpSent(false)}} isCentered>
+      <Modal isOpen={phoneModal} onClose={() => { setPhoneModal(false); setOtpSent(false) }} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -387,7 +399,7 @@ const EditProfile = () => {
           <ModalBody>
             <InputGroup>
               <InputLeftAddon children={"+91"} />
-              <Input type={'tel'} placeholder={'Your Phone Number'} value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
+              <Input type={'tel'} maxLength={10} placeholder={'Your Phone Number'} value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
             </InputGroup>
             <HStack justifyContent={'flex-end'} py={2}>
               <Button colorScheme={'twitter'} disabled={isPhoneOtpDisabled} size={'xs'} onClick={sendPhoneOtp}>Send OTP</Button>
@@ -411,7 +423,7 @@ const EditProfile = () => {
       </Modal>
 
       {/* Aadhaar Number Add */}
-      <Modal isOpen={aadhaarModal} onClose={() => {setAadhaarModal(false);setOtpSent(false)}} isCentered>
+      <Modal isOpen={aadhaarModal} onClose={() => { setAadhaarModal(false); setOtpSent(false) }} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -419,7 +431,7 @@ const EditProfile = () => {
             Add Your Aadhaar
           </ModalHeader>
           <ModalBody>
-            <Input type={'tel'} placeholder={'Your Aadhaar Number'} value={newAadhaar} onChange={(e) => setNewAadhaar(e.target.value)} />
+            <Input type={'tel'} placeholder={'Your Aadhaar Number'} maxLength={12} value={newAadhaar} onChange={(e) => setNewAadhaar(e.target.value)} />
             <HStack justifyContent={'flex-end'} py={2}>
               <Button colorScheme={'twitter'} disabled={isAadhaarOtpDisabled} size={'xs'} onClick={sendAadhaarOtp}>Send OTP</Button>
             </HStack>

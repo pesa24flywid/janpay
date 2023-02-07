@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Text,
+  HStack,
   Card,
   CardHeader,
   CardBody,
@@ -12,7 +13,7 @@ import {
   Icon,
   Box,
 } from "@chakra-ui/react";
-import { MdVerifiedUser, MdEdit } from "react-icons/md";
+import { MdVerifiedUser, MdEdit, MdError } from "react-icons/md";
 import Link from "next/link";
 
 const ProfileInfoCard = ({
@@ -27,13 +28,11 @@ const ProfileInfoCard = ({
 }) => {
   return (
     <>
-      <Box w={["full", "md", "xl"]} rounded={12} my="4" mx={[0,2]}>
         <Card
-          maxW={"md"}
           variant={"outline"}
-          w={["full", "md", "xl"]}
-          p={[0,4]}
-          rounded={12}
+          w={["full", "md", "2xl"]}
+          p={[0,4]} my={4}
+          rounded={12} mx={[0,2]}
           bg={"white"}
           boxShadow={"md"}
         >
@@ -43,7 +42,7 @@ const ProfileInfoCard = ({
             alignItems={"center"}
           >
             <Heading size="md">Personal Info</Heading>
-            <Link href={"/dashboard/profile/edit"}>
+            <Link href={"/dashboard/profile/edit?pageId=profile"}>
               <Button colorScheme="red" variant="solid">
                 <Icon as={MdEdit} color={"white"} mr={"2"} />
                 Edit Info
@@ -57,15 +56,15 @@ const ProfileInfoCard = ({
                 <Heading size="xs" textTransform="uppercase">
                   KYC Status
                 </Heading>
-                <Text pt="2" fontSize="sm" display={"flex"} alignItems="center">
+                <HStack pt={2}>
                   <Icon
-                    as={MdVerifiedUser}
+                    as={ kycStatus ? MdVerifiedUser : MdError}
                     color={kycStatus ? "green.500" : "red.500"}
                   />
                   <Text ml="1" textColor={kycStatus ? "green.500" : "red.500"}>
                     {kycStatus ? "Verified" : "Not Verified"}
                   </Text>
-                </Text>
+                </HStack>
               </Box>
               <Box>
                 <Heading size="xs" textTransform="uppercase">
@@ -101,7 +100,7 @@ const ProfileInfoCard = ({
               </Box>
               <Box>
                 <Heading size="xs" textTransform="uppercase">
-                  Merchant ID
+                  Merchant ID (EKO)
                 </Heading>
                 <Text pt="2" fontSize="sm">
                   {merchantId}
@@ -126,7 +125,6 @@ const ProfileInfoCard = ({
             </Stack>
           </CardBody>
         </Card>
-      </Box>
     </>
   );
 };
