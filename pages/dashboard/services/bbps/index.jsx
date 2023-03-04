@@ -93,7 +93,8 @@ const Bbps = () => {
     })
   }
 
-  function fetchBill() {
+  function fetchBill(e) {
+    e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
     FormAxios.post("api/eko/bbps/fetch-bill",
       formData
