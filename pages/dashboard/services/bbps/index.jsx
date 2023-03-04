@@ -21,6 +21,7 @@ import {
   BsDropletFill,
   BsHouseDoorFill,
   BsEmojiSmileFill,
+  BsPlayBtnFill,
 } from 'react-icons/bs'
 import { AiFillFire } from 'react-icons/ai'
 import { FiMonitor } from 'react-icons/fi'
@@ -52,7 +53,7 @@ const Bbps = () => {
 
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
 
-  const formRef = useRef()
+  const formRef = useRef(null)
 
 
   const [latlong, setLatlong] = useState("")
@@ -99,6 +100,12 @@ const Bbps = () => {
     FormAxios.post("api/eko/bbps/fetch-bill",
       formData
     )
+  }
+
+  function payBill(e){
+    e.preventDefault()
+    let formData = new FormData(document.getElementById('bbpsForm'))
+
   }
 
   return (
@@ -268,8 +275,8 @@ const Bbps = () => {
                   </Stack>
                   {
                     fetchBillBtn ?
-                      <Button colorScheme={'facebook'} onClick={() => fetchBill()}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} type={'submit'}>Submit</Button>
+                      <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
+                      <Button colorScheme={'twitter'} onClick={(e)=> payBill(e)}>Submit</Button>
                   }
                 </form> : null
             }
