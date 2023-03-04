@@ -37,6 +37,7 @@ import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
 import axios from '../../../../lib/axios'
 import { FormAxios } from '../../../../lib/axios'
+import Cookies from 'js-cookie'
 
 
 const Bbps = () => {
@@ -44,6 +45,7 @@ const Bbps = () => {
   const [selectedCategory, setSelectedCategory] = useState()
 
   const [operators, setOperators] = useState()
+  const [operatorListDisabled, setOperatorListDisabled] = useState(false)
   const [selectedOperator, setSelectedOperator] = useState()
 
   const [operatorParams, setOperatorParams] = useState()
@@ -51,6 +53,9 @@ const Bbps = () => {
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
 
   const formRef = useRef()
+
+
+  const [latlong, setLatlong] = useState("")
 
 
   // Fetch all available categories
@@ -61,6 +66,11 @@ const Bbps = () => {
       console.log(err)
     })
   }, [])
+
+  useEffect(()=>{
+    setLatlong(Cookies.get("latlong"))
+    console.log(latlong)
+  })
 
 
   function fetchOperators(category_id) {
@@ -83,10 +93,10 @@ const Bbps = () => {
     })
   }
 
-  function fetchBill(){
+  function fetchBill() {
     let formData = new FormData(document.getElementById('bbpsForm'))
-    FormAxios.post("api/eko/bbps/fetch-bill", 
-    formData
+    FormAxios.post("api/eko/bbps/fetch-bill",
+      formData
     )
   }
 
@@ -239,11 +249,26 @@ const Bbps = () => {
                       })
                     }
 
+                    {
+                      fetchBillBtn &&
+                      <>
+                        <FormControl id={'senderName'} w={['full', 'xs']} pb={6}>
+                          <FormLabel>Sender Name</FormLabel>
+                          <Input name='sender_name' />
+                        </FormControl>
+                        <FormControl id={'senderName'} w={['full', 'xs']} pb={6}>
+                          <FormLabel>Confirmation Mobile Number</FormLabel>
+                          <Input type={'tel'} maxLength={10} name='confirmation_mobile_no' />
+                        </FormControl>
+                        <input type="hidden" name='latlong' value={latlong} />
+                      </>
+                    }
+
                   </Stack>
                   {
-                    fetchBillBtn ? 
-                    <Button colorScheme={'facebook'} onClick={()=>fetchBill()}>Fetch Bill</Button> :
-                    <Button colorScheme={'twitter'} type={'submit'}>Submit</Button>
+                    fetchBillBtn ?
+                      <Button colorScheme={'facebook'} onClick={() => fetchBill()}>Fetch Bill</Button> :
+                      <Button colorScheme={'twitter'} type={'submit'}>Submit</Button>
                   }
                 </form> : null
             }

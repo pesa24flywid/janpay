@@ -15,8 +15,15 @@ import {
     InputLeftAddon,
     PinInput,
     PinInputField,
-    useToast
-
+    useToast,
+    RadioGroup,
+    Radio,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
 } from '@chakra-ui/react'
 import Navbar from '../../hocs/Navbar'
 import { FiPhone, FiMail } from 'react-icons/fi'
@@ -25,7 +32,6 @@ import Link from 'next/link'
 import axios from '../../lib/axios'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
-import { param } from 'jquery'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
@@ -36,10 +42,12 @@ const Login = () => {
     const [authMethod, setAuthMethod] = useState("phone")
     const [otp, setOtp] = useState("")
     const [isBtnLoading, setIsBtnLoading] = useState(false)
-    const [latlong, setLatlong] = useState("")
     const toast = useToast()
     const Router = useRouter()
-    let location
+
+    const [loginPreference, setLoginPreference] = useState('otp')
+    const [ModalStatus, setModalStatus] = useState(false)
+    const [mpin, setMpin] = useState(null)
 
     useEffect(() => {
         axios.get("/sanctum/csrf-cookie")
@@ -49,11 +57,11 @@ const Login = () => {
 
     // Getting user location
     function getLocation() {
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position)=>{
-                Cookies.set("latlong", position.coords.latitude+","+position.coords.longitude)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                Cookies.set("latlong", position.coords.latitude + "," + position.coords.longitude)
             })
-        } else{
+        } else {
             toast({
                 status: "error",
                 title: "Location Error",
@@ -70,7 +78,8 @@ const Login = () => {
             setOtpBtnDisabled(true)
             await axios.post("/send-otp", JSON.stringify({
                 authMethod: authMethod,
-                user_id: formik.values.user_id,
+                ...(authMethod === "email" && { "email": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
                 password: formik.values.password
             }))
             return {
@@ -96,19 +105,24 @@ const Login = () => {
         },
         onSubmit: async (values) => {
             // Submitting the login request to backend
-            const otpSuccess = await sendOtp(values)
-            setOtpBtnDisabled(true)
-            toast({
-                title: otpSuccess.title,
-                description: otpSuccess.message,
-                status: otpSuccess.status,
-                position: 'top-right',
-                duration: 3000
-            })
-            otpSuccess.status == "success" ? setOtpSent(true) : setOtpBtnDisabled(false)
-            setTimeout(() => {
-                setOtpBtnDisabled(false)
-            }, 10000)
+            if (loginPreference == 'otp') {
+                const otpSuccess = await sendOtp(values)
+                setOtpBtnDisabled(true)
+                toast({
+                    title: otpSuccess.title,
+                    description: otpSuccess.message,
+                    status: otpSuccess.status,
+                    position: 'top-right',
+                    duration: 3000
+                })
+                otpSuccess.status == "success" ? setOtpSent(true) : setOtpBtnDisabled(false)
+                setTimeout(() => {
+                    setOtpBtnDisabled(false)
+                }, 10000)
+            }
+            else {
+                setModalStatus(true)
+            }
         }
     })
 
@@ -133,7 +147,7 @@ const Login = () => {
             await axios.post("/login", JSON.stringify({
                 "authMethod": authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
-                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
                 "otp": otp,
                 "password": formik.values.password,
                 "remember": 1,
@@ -146,6 +160,7 @@ const Login = () => {
                 localStorage.setItem("userName", res.data.name)
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
+                localStorage.setItem("balance", res.data.wallet)
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             })
@@ -165,6 +180,37 @@ const Login = () => {
     }
 
 
+    // Handling MPIN Login
+    async function handleMpin() {
+        try {
+            await axios.post('/login', JSON.stringify({
+                authMethod: authMethod,
+                ...(authMethod === "email" && { "email": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
+                password: formik.values.password,
+                mpin: mpin,
+            })).then((res)=>{
+                var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
+                Cookies.set("verified", hashedValue)
+                localStorage.setItem("userId", res.data.id)
+                Cookies.set("userId", res.data.id)
+                localStorage.setItem("userName", res.data.name)
+                Cookies.set("userName", res.data.name)
+                localStorage.setItem("userType", res.data.role[0].name)
+                if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
+                if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            })
+            Router.push("/dashboard?pageId=dashboard")
+        } catch (err) {
+            toast({
+                status: 'error',
+                description: err.message,
+                title: 'Error Occured',
+                position: 'top-right'
+            })
+        }
+    }
+
     return (
         <>
             <Head>
@@ -177,7 +223,7 @@ const Login = () => {
                     boxShadow={['none', 'lg']}
                     bg={['white']} border={'1px'}
                     borderColor={'rgb(224,224,224)'}
-                    rounded={['unset', 12]} h={['100vh', 'xl']}
+                    rounded={['unset', 12]} h={['auto', 'auto']}
                     alignItems={'center'} justifyContent={'center'}
                 >
                     <form action="#" method="post" onSubmit={formik.handleSubmit}>
@@ -254,6 +300,15 @@ const Login = () => {
                                             textAlign={'right'}>Reset Password</Text>
                                     </Link>
                                 </Box>
+                                <HStack spacing={6}>
+                                    <Text>Login Preference</Text>
+                                    <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
+                                        <HStack spacing={4}>
+                                            <Radio value='otp'>OTP</Radio>
+                                            <Radio value='mpin'>MPIN</Radio>
+                                        </HStack>
+                                    </RadioGroup>
+                                </HStack>
                                 <Box pt={6}>
                                     <Button
                                         w={['xs', 'sm']}
@@ -263,9 +318,10 @@ const Login = () => {
                                         disabled={otpBtnDisabled}
                                         type={'submit'}
                                     >
-                                        {otpSent ? `Resend OTP` : `Send OTP`}
+                                        Login
                                     </Button>
                                 </Box>
+
                             </VStack>
                             {
                                 otpSent ?
@@ -297,6 +353,12 @@ const Login = () => {
                                     </> : null
 
                             }
+                            <Link href={'/auth/reset-mpin'}>
+                            </Link>
+
+                            <Link href={'/auth/register'}>
+                                <Text color={'blue.700'} fontWeight={'semibold'}>Not a member yet? Register here.</Text>
+                            </Link>
                         </VStack>
                     </form>
 
@@ -311,6 +373,38 @@ const Login = () => {
                     </VStack>
                 </HStack>
             </Box>
+
+
+            {/* MPIN Modal */}
+            <Modal
+                isOpen={ModalStatus}
+                onClose={() => setModalStatus(false)}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>
+                        <Text>Enter your MPIN</Text>
+                    </ModalHeader>
+                    <ModalBody>
+                        <HStack spacing={4} justifyContent={'center'}>
+                            <PinInput otp onChange={(values) => setMpin(values)}>
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                            </PinInput>
+                        </HStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <HStack justifyContent={'flex-end'} spacing={6}>
+                            <Link href={'/auth/reset-mpin'}>
+                                <Button>Reset MPIN</Button>
+                            </Link>
+                            <Button colorScheme={'twitter'} onClick={() => handleMpin()}>Login</Button>
+                        </HStack>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     )
 }

@@ -19,6 +19,7 @@ import {
 } from '@chakra-ui/react'
 import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
+import Link from 'next/link'
 
 const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
@@ -196,6 +197,9 @@ const Register = () => {
                                     Register
                                 </Button>
                             </VStack>
+                            <Link href={'/auth/login'}>
+                                <Text color={'blue.700'} fontWeight={'semibold'}>Already a member? Login here.</Text>
+                            </Link>
                         </VStack>
                     </form>
 

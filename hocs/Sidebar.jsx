@@ -95,6 +95,19 @@ export const ServicesAccordion = ({isProfileComplete}) => {
             justifyContent={'flex-start'}
             spacing={2} rounded={'full'}
             overflow={'hidden'}
+            id={'payout'}
+          >
+            <Link href={'/dashboard/services/payout?pageId=payout'} style={{ width: '100%' }}>
+              <Text w={'full'} textAlign={'left'} px={3} py={2} _hover={{ bg: 'aqua' }}>Payout</Text>
+            </Link>
+          </VStack>
+
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            justifyContent={'flex-start'}
+            spacing={2} rounded={'full'}
+            overflow={'hidden'}
             id={'bbps'}
           >
             <Link href={'/dashboard/services/bbps?pageId=bbps'} style={{ width: '100%' }}>
@@ -289,7 +302,8 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
 
             <Accordion defaultIndex={[0]} allowToggle w={'full'}>
 
-              <AccordionItem isDisabled={isProfileComplete}>
+              {/* Disable Accordion if profile is not completed */}
+              <AccordionItem isDisabled={false}>
                 <AccordionButton px={3} _expanded={{ bg: 'aqua' }}>
                   <HStack spacing={2} flex={1}>
                     <HiUsers fontSize={'1.125rem'} />
