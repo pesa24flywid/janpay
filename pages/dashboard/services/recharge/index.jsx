@@ -110,9 +110,10 @@ const Bbps = () => {
   }
 
   function fetchParams(operator_id, operator_name) {
-    axios.get(`api/paysprint/bbps/mobile-recharge/parameter/${operator_id}`).then((res) => {
-      setSelectedOperatorId(operator_id)
-      setSelectedOperatorName(operator_name)
+    setSelectedOperatorId(operator_id)
+    setSelectedOperatorName(operator_name)
+    setOperatorParams()
+    axios.get(`api/paysprint/bbps/mobile-operators/parameter/${operator_id}`).then((res) => {
       setOperatorParams(Object.values(res.data))
       keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
       keyword == "PREPAID" ? setFetchInfoBtn(true) : setFetchInfoBtn(false)

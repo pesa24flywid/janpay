@@ -47,6 +47,8 @@ const Dmt = () => {
     const [customerUsedLimit, setCustomerUsedLimit] = useState(20000)
     const [customerRemainingLimit, setCustomerRemainingLimit] = useState(30000)
 
+    const [recipients, setRecipients] = useState([])
+
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const [isBtnHidden, setIsBtnHidden] = useState(true)
     const [customerId, setCustomerId] = useState("")
@@ -101,7 +103,7 @@ const Dmt = () => {
         }
     })
 
-    useEffect(()=>{
+    useEffect(() => {
         registrationFormik.setFieldValue("customerId", customerId)
     }, [customerId])
 
@@ -133,14 +135,14 @@ const Dmt = () => {
             ifsc: "",
             phone: "",
         },
-        onSubmit: (values)=>{
+        onSubmit: (values) => {
             // Adding New Recipient
             axios.post("api/eko/dmt/add-recipient", {
                 values,
                 customerId,
-            }).then((res)=>{
+            }).then((res) => {
                 console.log(res)
-            }).catch((err)=>{
+            }).catch((err) => {
                 Toast({
                     status: "error",
                     title: "Error Occured",
@@ -168,15 +170,15 @@ const Dmt = () => {
             axios.post("api/eko/dmt/customer-info", {
                 customerId
             }).then((res) => {
-                if (res.data.status == 463 && res.data.response_status_id == 1) {
+                if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
                     registrationFormik.setFieldValue("customerId", customerId)
                     setCustomerStatus("unregistered")
                 }
-                if (res.data.status == 0 && res.data.response_status_id == 0) {
-                    setCustomerRemainingLimit(res.data.data.available_limit)
-                    setCustomerUsedLimit(res.data.data.used_limit)
-                    setCustomerTotalLimit(res.data.data.total_limit)
-                    setCustomerName(res.data.data.name)
+                if (res.data.response.status == 0 && res.data.response.response_status_id == 0) {
+                    setCustomerRemainingLimit(res.data.response.data.available_limit)
+                    setCustomerUsedLimit(res.data.response.data.used_limit)
+                    setCustomerTotalLimit(res.data.response.data.total_limit)
+                    setCustomerName(res.data.response.data.name)
                     setCustomerStatus("registered")
                 }
                 if (res.data.status == 0 && res.data.response_status_id == -1) {
@@ -192,6 +194,7 @@ const Dmt = () => {
                     position: "top-right"
                 })
             })
+            setIsBtnLoading(false)
         }
     }
 
@@ -269,9 +272,10 @@ const Dmt = () => {
         })
     }
 
-    function activateDmt(){
+    function activateDmt() {
 
     }
+
 
 
     return (
@@ -308,7 +312,7 @@ const Dmt = () => {
                                 </FormControl>
                                 <FormControl id='customerId' w={['full', 'xs']} isRequired>
                                     <FormLabel>Customer Phone</FormLabel>
-                                    <Input name='customerId' placeholder='Enter Phone' maxLength={10} value={customerId} onChange={(e)=>setCustomerId(e.target.value)} />
+                                    <Input name='customerId' placeholder='Enter Phone' maxLength={10} value={customerId} onChange={(e) => setCustomerId(e.target.value)} />
                                 </FormControl>
                                 <FormControl id='customerDob' w={['full', 'xs']} isRequired>
                                     <FormLabel>Date of Birth</FormLabel>
@@ -413,57 +417,65 @@ const Dmt = () => {
                                         h={'sm'} overflowY={'scroll'}
                                         spacing={4}
                                     >
-                                        <Box
-                                            w={'full'} rounded={'inherit'}
-                                            h={'auto'} boxShadow={'md'}
-                                            overflow={'hidden'} pos={'relative'}
-                                        >
-                                            <Text
-                                                w={'full'} px={4} py={1}
-                                                textTransform={'uppercase'}
-                                                fontWeight={'semibold'}
-                                                fontSize={'xs'} bg={'blanchedalmond'}
-                                            >
-                                                state bank of india
-                                            </Text>
-                                            <Box w={'full'} p={4} fontSize={'xs'}>
-                                                <Text mb={2}>
-                                                    <span style={{ paddingRight: ".5rem" }}><b>Beneficiary: </b></span>
-                                                    Sangam Kumar
-                                                </Text>
-                                                <Text mb={2} fontSize={'sm'}>
-                                                    <span style={{ paddingRight: ".5rem" }}><b>Account No: </b></span>
-                                                    39486516779846
-                                                </Text>
-                                                <Text mb={2}>
-                                                    <span style={{ paddingRight: "1.20rem" }}><b>Bank IFSC: </b></span>
-                                                    SBIN0032284
-                                                </Text>
-                                            </Box>
-                                            <Stack direction={['row-reverse', 'column']} spacing={[0, 4]} pos={['relative', 'absolute']} top={[0, '2.25rem']} right={[0, '1rem']}>
-                                                <Button
-                                                    leftIcon={<FiSend />}
-                                                    w={['full', 'fit-content']}
-                                                    fontSize={['unset', 'xs']}
-                                                    rounded={['0', 'full']}
-                                                    colorScheme={'twitter'}
-                                                    value={"39486516779846"}
-                                                    onClick={(e) => handleRecipientSelection(e.target.value)}
-                                                >Transfer</Button>
-                                                <Button
-                                                    boxSize={['unset', 8]}
-                                                    w={['full', 'unset']}
-                                                    leftIcon={[<BsTrash />]}
-                                                    display={['flex']}
-                                                    fontSize={['unset', 'xs']}
-                                                    placeContent={['unset', 'center']}
-                                                    rounded={['0', 'full']}
-                                                    colorScheme={'red'}
-                                                >
-                                                    <Text>Delete</Text>
-                                                </Button>
-                                            </Stack>
-                                        </Box>
+                                        {
+                                            recipients ? (
+                                                recipients.map((item, key) => {
+                                                    return (
+                                                        <Box
+                                                            w={'full'} rounded={'inherit'}
+                                                            h={'auto'} boxShadow={'md'}
+                                                            overflow={'hidden'} pos={'relative'}
+                                                        >
+                                                            <Text
+                                                                w={'full'} px={4} py={1}
+                                                                textTransform={'uppercase'}
+                                                                fontWeight={'semibold'}
+                                                                fontSize={'xs'} bg={'blanchedalmond'}
+                                                            >
+                                                                state bank of india
+                                                            </Text>
+                                                            <Box w={'full'} p={4} fontSize={'xs'}>
+                                                                <Text mb={2}>
+                                                                    <span style={{ paddingRight: ".5rem" }}><b>Beneficiary: </b></span>
+                                                                    Sangam Kumar
+                                                                </Text>
+                                                                <Text mb={2} fontSize={'sm'}>
+                                                                    <span style={{ paddingRight: ".5rem" }}><b>Account No: </b></span>
+                                                                    39486516779846
+                                                                </Text>
+                                                                <Text mb={2}>
+                                                                    <span style={{ paddingRight: "1.20rem" }}><b>Bank IFSC: </b></span>
+                                                                    SBIN0032284
+                                                                </Text>
+                                                            </Box>
+                                                            <Stack direction={['row-reverse', 'column']} spacing={[0, 4]} pos={['relative', 'absolute']} top={[0, '2.25rem']} right={[0, '1rem']}>
+                                                                <Button
+                                                                    leftIcon={<FiSend />}
+                                                                    w={['full', 'fit-content']}
+                                                                    fontSize={['unset', 'xs']}
+                                                                    rounded={['0', 'full']}
+                                                                    colorScheme={'twitter'}
+                                                                    value={"39486516779846"}
+                                                                    onClick={(e) => handleRecipientSelection(e.target.value)}
+                                                                >Transfer</Button>
+                                                                <Button
+                                                                    boxSize={['unset', 8]}
+                                                                    w={['full', 'unset']}
+                                                                    leftIcon={[<BsTrash />]}
+                                                                    display={['flex']}
+                                                                    fontSize={['unset', 'xs']}
+                                                                    placeContent={['unset', 'center']}
+                                                                    rounded={['0', 'full']}
+                                                                    colorScheme={'red'}
+                                                                >
+                                                                    <Text>Delete</Text>
+                                                                </Button>
+                                                            </Stack>
+                                                        </Box>
+                                                    )
+                                                })
+                                            ) : null
+                                        }
                                     </VStack>
                                 </Box>
                             </Stack>
@@ -536,10 +548,10 @@ const Dmt = () => {
                     >
                         <FormControl id='bankCode' pb={4}>
                             <FormLabel>Select Bank</FormLabel>
-                            <Select 
-                            name='bankCode' placeholder='Select Bank'
-                            value={addRecipientFormik.values.bankCode} 
-                            onChange={addRecipientFormik.handleChange}
+                            <Select
+                                name='bankCode' placeholder='Select Bank'
+                                value={addRecipientFormik.values.bankCode}
+                                onChange={addRecipientFormik.handleChange}
                             >
                                 <option value="2">Bank of Baroda</option>
                                 <option value="108">State Bank of India</option>
@@ -566,7 +578,7 @@ const Dmt = () => {
                         </HStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button variant='ghost' onClick={()=>setNewRecipientModal(false)}>Cancel</Button>
+                        <Button variant='ghost' onClick={() => setNewRecipientModal(false)}>Cancel</Button>
                         <Button colorScheme='blue' mr={3} onClick={addRecipientFormik.handleSubmit}>
                             Add Account
                         </Button>
