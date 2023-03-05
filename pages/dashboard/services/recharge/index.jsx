@@ -197,12 +197,18 @@ const Bbps = () => {
     )
   }
 
-  function doRecharge(){
+  function doRecharge() {
     event.preventDefault()
     let formData = new FormData(document.getElementById('psRechargeForm'))
-    FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res)=>{
+    FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res) => {
+      Toast({
+        status: 'success',
+        title: 'Transaction Successful',
+        description: res.data.message,
+        position: 'top-right'
+      })
       console.log(res.data)
-    }).catch(err=>{
+    }).catch(err => {
       Toast({
         status: 'error',
         title: 'Transaction Failed!',
@@ -322,29 +328,19 @@ const Bbps = () => {
               operatorParams ?
                 <form action="" method='POST' ref={formRef} id={'psRechargeForm'}>
                   <input type="hidden" name="operator" value={selectedOperatorId} />
-                  <Stack
-                    my={6}
-                    direction={['column']}
-                    spacing={6}
-                  >
-                    {
-                      operatorParams.map((parameter, key) => {
-
-                        {
-                          return (
-                            <FormControl id={"canumber"} w={['full', 'xs']} key={key}>
-                              <FormLabel>{parameter.displayname || "Enter Number"}</FormLabel>
-                              <Input type={'text'} pattern={parameter.regex} name={"canumber"} />
-                            </FormControl>
-                          )
-                        }
-
-                      })
-                    }
-
-                  </Stack>
                   {
-                    circleForm ?
+                    operatorParams ?
+                    <>
+                      <Stack
+                        my={6}
+                        direction={['column']}
+                        spacing={6}
+                      >
+                        <FormControl id={"canumber"} w={['full', 'xs']}>
+                          <FormLabel>Enter Number</FormLabel>
+                          <Input type={'text'} maxLength={10} name={"canumber"} />
+                        </FormControl>
+                      </Stack>
                       <Stack
                         my={6}
                         direction={['column']}
@@ -380,8 +376,11 @@ const Bbps = () => {
                           </Select>
                         </FormControl>
                         <Button onClick={() => browsePlan()}>Browse Plans</Button>
-                      </Stack> : null
+                      </Stack>
+                    </> : null
+
                   }
+
 
                   {
                     plans &&
@@ -396,7 +395,7 @@ const Bbps = () => {
                                 colorScheme={'twitter'}
                                 variant={'outline'}
                                 key={key}
-                                onClick={() => {setSelectedPlanCategory(true);setAvailablePlans(planValues[planCategory])}}
+                                onClick={() => { setSelectedPlanCategory(true); setAvailablePlans(planValues[planCategory]) }}
                                 _focus={{ bg: 'facebook.400', color: 'white' }}
                               >
                                 {planCategory}
@@ -409,51 +408,51 @@ const Bbps = () => {
                   }
                   {
                     selectedPlanCategory ?
-                    <>
-                      <RadioGroup
-                        name="planAmount" p={4}
-                        id="planAmount" mb={6}
-                        value={amount}
-                        onChange={(value) => { setAmount(value) }}
-                        w={['full', '2xl']}
-                        overflowX={'scroll'}
-                        bg={'aqua'}
-                        rounded={12}
-                      >
-                        <HStack w={'max'}>
-                          {
-                            availablePlans ?
-                            availablePlans.map((plan, key) => {
-                              
-                              return (
-                                <Box
-                                  p={3} key={key}
-                                  w={['full', '56']}
-                                  bg={'white'}
-                                  rounded={12}
-                                  boxShadow={'lg'}
-                                >
-                                  <Radio value={plan.rs} w={'full'}>
-                                    <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
-                                    <Text fontSize={'xs'}>{plan.desc}</Text>
-                                  </Radio>
-                                </Box>
-                              )
-                            
-                            }) : <Text>No plans available</Text>
-                          }
-                        </HStack>
-                      </RadioGroup>
+                      <>
+                        <RadioGroup
+                          name="planAmount" p={4}
+                          id="planAmount" mb={6}
+                          value={amount}
+                          onChange={(value) => { setAmount(value) }}
+                          w={['full', '2xl']}
+                          overflowX={'scroll'}
+                          bg={'aqua'}
+                          rounded={12}
+                        >
+                          <HStack w={'max'}>
+                            {
+                              availablePlans ?
+                                availablePlans.map((plan, key) => {
 
-                      <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
-                        <FormLabel>or enter custom amount</FormLabel>
-                        <InputGroup>
-                          <InputLeftAddon children={'₹'} />
-                          <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
-                        </InputGroup>
-                      </FormControl>
-                      <Button colorScheme={'whatsapp'} onClick={(e)=>doRecharge(e)}>Pay Now</Button>
-                    </> : null
+                                  return (
+                                    <Box
+                                      p={3} key={key}
+                                      w={['full', '56']}
+                                      bg={'white'}
+                                      rounded={12}
+                                      boxShadow={'lg'}
+                                    >
+                                      <Radio value={plan.rs} w={'full'}>
+                                        <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
+                                        <Text fontSize={'xs'}>{plan.desc}</Text>
+                                      </Radio>
+                                    </Box>
+                                  )
+
+                                }) : <Text>No plans available</Text>
+                            }
+                          </HStack>
+                        </RadioGroup>
+
+                        <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
+                          <FormLabel>or enter custom amount</FormLabel>
+                          <InputGroup>
+                            <InputLeftAddon children={'₹'} />
+                            <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
+                          </InputGroup>
+                        </FormControl>
+                        <Button colorScheme={'whatsapp'} onClick={(e) => doRecharge(e)}>Pay Now</Button>
+                      </> : null
                   }
 
 
