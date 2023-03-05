@@ -38,7 +38,7 @@ const Aeps = () => {
       transctionId: ""
     },
     onSubmit: (values) => {
-      axios.post("/api/aeps", values)
+      axios.post("/api/eko/aeps/money-transfer", values)
     }
   })
 

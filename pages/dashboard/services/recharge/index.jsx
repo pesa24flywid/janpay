@@ -18,7 +18,10 @@ import {
   RadioGroup,
   Radio,
   InputGroup,
-  InputLeftAddon
+  InputLeftAddon,
+  Tabs, TabList,
+  TabPanels,
+  Tab, TabPanel
 } from '@chakra-ui/react'
 import { HiServerStack } from 'react-icons/hi2'
 import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
@@ -64,8 +67,16 @@ const Bbps = () => {
   const [circleForm, setCircleForm] = useState(false)
 
   const [hlrResponse, setHlrResponse] = useState([])
+
   const [plans, setPlans] = useState()
+  const [planCategories, setPlanCategories] = useState([])
+  const [planValues, setPlanValues] = useState([])
+
+  const [availablePlans, setAvailablePlans] = useState(null)
+
   const [selectedPlan, setSelectedPlan] = useState('')
+  const [selectedPlanCategory, setSelectedPlanCategory] = useState()
+  const [selectedPlanValue, setSelectedPlanValue] = useState("")
   const [amount, setAmount] = useState(selectedPlan)
 
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
@@ -95,6 +106,7 @@ const Bbps = () => {
     setOperatorParams()
     setCircleForm(false)
     setPlans()
+    setSelectedPlanCategory(false)
     setKeyword(keyword)
     axios.get(`api/paysprint/bbps/mobile-operators/${keyword}`).then((res) => {
       setOperators(Object.values(res.data))
@@ -109,11 +121,15 @@ const Bbps = () => {
     })
   }
 
-  function fetchParams(operator_id, operator_name) {
-    setSelectedOperatorId(operator_id)
-    setSelectedOperatorName(operator_name)
+  function fetchParams(operator_value) {
     setOperatorParams()
-    axios.get(`api/paysprint/bbps/mobile-operators/parameter/${operator_id}`).then((res) => {
+    setCircleForm(false)
+    setPlans()
+    setSelectedPlanCategory(false)
+    let operatorValueArray = operator_value.split("|")
+    setSelectedOperatorId(operatorValueArray[0])
+    setSelectedOperatorName(operatorValueArray[1])
+    axios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
       setOperatorParams(Object.values(res.data))
       keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
       keyword == "PREPAID" ? setFetchInfoBtn(true) : setFetchInfoBtn(false)
@@ -125,12 +141,15 @@ const Bbps = () => {
 
 
   function browsePlan() {
+    setSelectedPlanCategory(false)
     setPlans()
     axios.post(`api/paysprint/bbps/mobile-recharge/browse`, {
       selectedOperatorName,
       networkCircle,
     }).then((res) => {
-      setPlans(res.data.TOPUP)
+      setPlans(res.data)
+      setPlanValues(res.data.info)
+      setPlanCategories(Object.keys(res.data.info))
     }).catch((err) => {
       Toast({
         status: "error",
@@ -176,6 +195,21 @@ const Bbps = () => {
     FormAxios.post("api/eko/bbps/fetch-bill",
       formData
     )
+  }
+
+  function doRecharge(){
+    event.preventDefault()
+    let formData = new FormData(document.getElementById('psRechargeForm'))
+    FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res)=>{
+      console.log(res.data)
+    }).catch(err=>{
+      Toast({
+        status: 'error',
+        title: 'Transaction Failed!',
+        description: err.message,
+        position: 'top-right'
+      })
+    })
   }
 
 
@@ -263,15 +297,19 @@ const Bbps = () => {
                   <FormLabel>Select Operator</FormLabel>
                   <Select
                     name={'operator'} w={['full', 'xs']}
-                    value={selectedOperatorId}
-                    onChange={(e) => fetchParams(e.target.value, e.target.title)}
+                    onChange={(e) => { fetchParams(e.target.value) }}
                     isDisabled={!operatorMenuStatus}
                     placeholder={'Select Operator'}
                   >
                     {
                       operators.map((operator) => {
                         return (
-                          <option value={operator.id} title={operator.name}>{operator.name}</option>
+                          <option
+                            value={`${operator.id}|${operator.name}`}
+                            title={operator.name}
+                          >
+                            {operator.name}
+                          </option>
                         )
                       })
                     }
@@ -283,7 +321,7 @@ const Bbps = () => {
             {
               operatorParams ?
                 <form action="" method='POST' ref={formRef} id={'psRechargeForm'}>
-                  <input type="hidden" name="operator_id" value={selectedOperatorName} />
+                  <input type="hidden" name="operator" value={selectedOperatorId} />
                   <Stack
                     my={6}
                     direction={['column']}
@@ -313,9 +351,9 @@ const Bbps = () => {
                         spacing={6}
                         w={['full', 'xs']}
                       >
-                        <FormControl id='networkCircle'>
+                        <FormControl id='location'>
                           <FormLabel>Select Network Circle</FormLabel>
-                          <Select name='networkCircle' placeholder='Select Circle' onChange={(e) => setNetworkCircle(e.target.value)}>
+                          <Select name='location' placeholder='Select Circle' onChange={(e) => setNetworkCircle(e.target.value)}>
                             <option value="Andhra Pradesh Mobileangana">Andhra Pradesh Mobileangana</option>
                             <option value="Assam">Assam</option>
                             <option value="Bihar Jharkhand">Bihar Jharkhand</option>
@@ -346,50 +384,76 @@ const Bbps = () => {
                   }
 
                   {
-                    plans ?
-                      <>
-                        <FormLabel mt={6}>Select Plan</FormLabel>
-                        <RadioGroup
-                          name="plan" p={4}
-                          id="plan" mb={6}
-                          value={selectedPlan}
-                          onChange={(value)=>{setSelectedPlan(value)}}
-                          w={['full', '2xl']}
-                          overflowX={'scroll'}
-                          bg={'aqua'}
-                          rounded={12}
-                        >
-                          <HStack w={'max'}>
-                            {
-                              plans.map((plan, key) => {
-                                return (
-                                  <Box
-                                    p={3} key={key}
-                                    w={['full', '56']}
-                                    bg={'white'}
-                                    rounded={12}
-                                    boxShadow={'lg'}
-                                  >
-                                    <Radio value={plan.rs} w={'full'}>
-                                      <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
-                                      <Text fontSize={'xs'}>{plan.desc}</Text>
-                                    </Radio>
-                                  </Box>
-                                )
-                              })
-                            }
-                          </HStack>
-                        </RadioGroup>
+                    plans &&
+                    <>
+                      <FormLabel mt={6}>Select Plan</FormLabel>
+                      <HStack overflowX={'scroll'} py={6}>
+                        {
+                          planCategories.map((planCategory, key) => {
+                            return (
+                              <Button
+                                rounded={'full'}
+                                colorScheme={'twitter'}
+                                variant={'outline'}
+                                key={key}
+                                onClick={() => {setSelectedPlanCategory(true);setAvailablePlans(planValues[planCategory])}}
+                                _focus={{ bg: 'facebook.400', color: 'white' }}
+                              >
+                                {planCategory}
+                              </Button>
+                            )
+                          })
+                        }
+                      </HStack>
+                    </>
+                  }
+                  {
+                    selectedPlanCategory ?
+                    <>
+                      <RadioGroup
+                        name="planAmount" p={4}
+                        id="planAmount" mb={6}
+                        value={amount}
+                        onChange={(value) => { setAmount(value) }}
+                        w={['full', '2xl']}
+                        overflowX={'scroll'}
+                        bg={'aqua'}
+                        rounded={12}
+                      >
+                        <HStack w={'max'}>
+                          {
+                            availablePlans ?
+                            availablePlans.map((plan, key) => {
+                              
+                              return (
+                                <Box
+                                  p={3} key={key}
+                                  w={['full', '56']}
+                                  bg={'white'}
+                                  rounded={12}
+                                  boxShadow={'lg'}
+                                >
+                                  <Radio value={plan.rs} w={'full'}>
+                                    <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
+                                    <Text fontSize={'xs'}>{plan.desc}</Text>
+                                  </Radio>
+                                </Box>
+                              )
+                            
+                            }) : <Text>No plans available</Text>
+                          }
+                        </HStack>
+                      </RadioGroup>
 
-                        <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
-                          <FormLabel>or enter custom amount</FormLabel>
-                          <InputGroup>
+                      <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
+                        <FormLabel>or enter custom amount</FormLabel>
+                        <InputGroup>
                           <InputLeftAddon children={'₹'} />
-                          <Input type={'number'} value={ selectedPlan || amount } onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
-                          </InputGroup>
-                        </FormControl>
-                        <Button colorScheme={'whatsapp'}>Pay Now</Button>
-                      </> : null
+                          <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
+                        </InputGroup>
+                      </FormControl>
+                      <Button colorScheme={'whatsapp'} onClick={(e)=>doRecharge(e)}>Pay Now</Button>
+                    </> : null
                   }
 
 
