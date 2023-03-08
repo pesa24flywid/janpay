@@ -23,6 +23,7 @@ import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
 
 const Aeps = () => {
+  let MethodInfo
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const Toast = useToast()
   const formik = useFormik({
