@@ -15,7 +15,6 @@ import {
     useToast,
     Radio,
     RadioGroup
-
 } from '@chakra-ui/react'
 import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
@@ -23,7 +22,7 @@ import Link from 'next/link'
 
 const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
-    const [isDistributorDisabled, setIsDistributorDisabled] = useState(false)
+    const [isDistributorDisabled, setIsDistributorDisabled] = useState(true)
     const [isSuperDistributorDisabled, seSupertIsDistributorDisabled] = useState(true)
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
@@ -38,6 +37,7 @@ const Register = () => {
             first_name: "",
             last_name: "",
             email: "",
+            phone: "",
             user_type: "Retailer",
             referral_id: "",
         },
@@ -49,7 +49,7 @@ const Register = () => {
                     toast({
                         status: "success",
                         title: "Credentials Sent",
-                        description: "Check your mail for login steps.",
+                        description: "Check your phone for login steps.",
                         duration: 3000,
                         isClosable: true,
                         position: 'top-right'
@@ -73,7 +73,7 @@ const Register = () => {
     return (
         <>
             <Head>
-                <title>Pesa24 - Register</title>
+                <title>RPay - Register</title>
             </Head>
             <Navbar />
 
@@ -154,6 +154,25 @@ const Register = () => {
                                             placeholder={'Your Email'}
                                             bg={'blue.100'} type={'email'}
                                             required value={formik.values.email}
+                                            onChange={formik.handleChange}
+                                        />
+                                    </InputGroup>
+                                </Box>
+                                <Box>
+                                    <FormLabel pl={2}
+                                        htmlFor='user_id'
+                                        textAlign={'left'} mb={0}
+                                        color={'darkslategray'}
+                                    >
+                                        Phone Number
+                                    </FormLabel>
+                                    <InputGroup w={['xs', 'sm']}>
+                                        <Input
+                                            rounded={'full'}
+                                            name={'phone'}
+                                            placeholder={'Your Phone Number'}
+                                            bg={'blue.100'} type={'tel'}
+                                            required value={formik.values.phone}
                                             onChange={formik.handleChange}
                                         />
                                     </InputGroup>
