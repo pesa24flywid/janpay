@@ -81,6 +81,7 @@ const Bbps = () => {
 
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
   const [fetchInfoBtn, setFetchInfoBtn] = useState(false)
+  const [isPaymentProgress, setIsPaymentProgress] = useState(false)
 
   const formRef = useRef()
   const Toast = useToast()
@@ -197,10 +198,11 @@ const Bbps = () => {
     )
   }
 
-  function doRecharge() {
+  async function doRecharge() {
     event.preventDefault()
+    setIsPaymentProgress(true)
     let formData = new FormData(document.getElementById('psRechargeForm'))
-    FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res) => {
+    await FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res) => {
       Toast({
         status: 'success',
         title: 'Transaction Successful',
@@ -216,6 +218,7 @@ const Bbps = () => {
         position: 'top-right'
       })
     })
+    setIsPaymentProgress(false)
   }
 
 
@@ -414,12 +417,11 @@ const Bbps = () => {
                           id="planAmount" mb={6}
                           value={amount}
                           onChange={(value) => { setAmount(value) }}
-                          w={['full', '2xl']}
-                          overflowX={'scroll'}
+                          w={['full']}
                           bg={'aqua'}
                           rounded={12}
                         >
-                          <HStack w={'max'}>
+                          <VStack w={'full'}>
                             {
                               availablePlans ?
                                 availablePlans.map((plan, key) => {
@@ -427,21 +429,21 @@ const Bbps = () => {
                                   return (
                                     <Box
                                       p={3} key={key}
-                                      w={['full', '56']}
+                                      w={['full']}
                                       bg={'white'}
                                       rounded={12}
                                       boxShadow={'lg'}
                                     >
                                       <Radio value={plan.rs} w={'full'}>
                                         <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
-                                        <Text fontSize={'xs'}>{plan.desc}</Text>
+                                        <Text fontSize={'sm'}>{plan.desc}</Text>
                                       </Radio>
                                     </Box>
                                   )
 
                                 }) : <Text>No plans available</Text>
                             }
-                          </HStack>
+                          </VStack>
                         </RadioGroup>
 
                         <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
@@ -451,7 +453,7 @@ const Bbps = () => {
                             <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
                           </InputGroup>
                         </FormControl>
-                        <Button colorScheme={'whatsapp'} onClick={(e) => doRecharge(e)}>Pay Now</Button>
+                        <Button colorScheme={'whatsapp'} onClick={(e) => doRecharge(e)} isLoading={isPaymentProgress}>Pay Now</Button>
                       </> : null
                   }
 

@@ -23,7 +23,9 @@ import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
 
 const Aeps = () => {
+  let MethodInfo
   const [isBtnLoading, setIsBtnLoading] = useState(false)
+  const [biometricDevice, setBiometricDevice] = useState("")
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -34,11 +36,24 @@ const Aeps = () => {
       ifsc: "",
       serviceCode: "2",
       pid: "",
-      amount: "",
-      transctionId: ""
+      amount: ""
     },
-    onSubmit: (values) => {
-      axios.post("/api/eko/aeps/money-transfer", values)
+    onSubmit: async (values) => {
+      setIsBtnLoading(true)
+      await axios.post("/api/eko/aeps/money-transfer", values).then((res)=>{
+        Toast({
+          description: res.data.message,
+          position: 'top-right'
+        })
+        console.log(res.data)
+      }).catch((err)=>{
+        Toast({
+          title: 'Transaction Failed',
+          description: err.message,
+          position: 'top-right',
+        })
+      })
+      setIsBtnLoading(false)
     }
   })
 
@@ -47,7 +62,6 @@ const Aeps = () => {
   ]
 
   function getMantra() {
-    setIsBtnLoading(true)
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -156,15 +170,13 @@ const Aeps = () => {
               title: "Fingerprint Captured",
               position: "top-right"
             })
-            await formik.setFieldValue("pid", data)
-            formik.handleSubmit
-            // console.log("PidData: " + PidData)
+            formik.setFieldValue("pid", data).then(() => {
+              formik.handleSubmit()
+            })
           }
           else {
             alert("Error : " + Message);
           }
-
-          setIsBtnLoading(true)
 
         }
       });
@@ -180,7 +192,8 @@ const Aeps = () => {
     }
   }
 
-  useEffect(() => {
+  function searchMantra() {
+
     var GetCustomDomName = "127.0.0.1";
     var primaryUrl = "http://" + GetCustomDomName + ":";
     var url = "";
@@ -214,20 +227,7 @@ const Aeps = () => {
         var CmbData2 = $($doc).find('RDService').attr('info');
         if (CmbData1 == "READY") {
           MantraFound = 1;
-          if (RegExp('\\b' + 'Mantra' + '\\b').test(CmbData2) == true) {
-            if ($($doc).find('Interface').eq(0).attr('path') == "/rd/capture") {
-              MethodCapture = $($doc).find('Interface').eq(0).attr('path');
-            }
-            if ($($doc).find('Interface').eq(1).attr('path') == "/rd/capture") {
-              MethodCapture = $($doc).find('Interface').eq(1).attr('path');
-            }
-            if ($($doc).find('Interface').eq(0).attr('path') == "/rd/info") {
-              MethodInfo = $($doc).find('Interface').eq(0).attr('path');
-            }
-            if ($($doc).find('Interface').eq(1).attr('path') == "/rd/info") {
-              MethodInfo = $($doc).find('Interface').eq(1).attr('path');
-            }
-          }
+          setBiometricDevice("mantra")
         }
         else {
           MantraFound = 0;
@@ -243,7 +243,10 @@ const Aeps = () => {
         position: "top-right"
       })
     }
+  }
 
+  useEffect(() => {
+    searchMantra()
   }, [])
 
   useEffect(() => {
@@ -274,12 +277,12 @@ const Aeps = () => {
 
           <FormControl pb={6}>
             <FormLabel>Choose Device</FormLabel>
-            <RadioGroup name={'rdDevice'}>
+            <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
               <Stack direction={['column', 'row']} spacing={4}>
-              <Radio value='mantra'>Mantra</Radio>
-              <Radio value='morpho'>Morpho</Radio>
-              <Radio value='secugen'>Secugen</Radio>
-              <Radio value='startek'>Startek</Radio>
+                <Radio value='mantra'>Mantra</Radio>
+                <Radio value='morpho'>Morpho</Radio>
+                <Radio value='secugen'>Secugen</Radio>
+                <Radio value='startek'>Startek</Radio>
               </Stack>
             </RadioGroup>
           </FormControl>
@@ -290,7 +293,7 @@ const Aeps = () => {
               <FormControl w={'full'} pb={6}>
                 <FormLabel>Select Bank</FormLabel>
                 <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange} w={'xs'}>
-                  <option value="sbi">State Bank of India</option>
+                  <option value="SBIN">State Bank of India</option>
                   <option value="pnb">Punjab National Bank</option>
                   <option value="cb">City Bank</option>
                   <option value="yb">Yes Bank</option>
@@ -299,7 +302,7 @@ const Aeps = () => {
 
                   <Button
                     fontSize={'xs'}
-                    value={"sbi"}
+                    value={"SBIN"}
                     onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
                   >State Bank of India</Button>
 
@@ -382,7 +385,7 @@ const Aeps = () => {
                 <FormControl w={'full'}>
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="sbi">State Bank of India</option>
+                    <option value="SBIN">State Bank of India</option>
                     <option value="bob">Bank of Baroda</option>
                     <option value="hdfc">HDFC Bank</option>
                   </Select>
@@ -409,7 +412,7 @@ const Aeps = () => {
                 <FormControl w={'full'}>
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="sbi">State Bank of India</option>
+                    <option value="SBIN">State Bank of India</option>
                     <option value="bob">Bank of Baroda</option>
                     <option value="hdfc">HDFC Bank</option>
                   </Select>
@@ -422,9 +425,9 @@ const Aeps = () => {
         </Box>
 
         <Grid
-        data={transactions}
-        columns={['Date', 'Member ID', 'Transaction ID', "Transaction Type", "Status", "Opening Balance", "Amount", "Closing Balance", "Remarks"]}
-        
+          data={transactions}
+          columns={['Date', 'Member ID', 'Transaction ID', "Transaction Type", "Status", "Opening Balance", "Amount", "Closing Balance", "Remarks"]}
+
         />
       </DashboardWrapper>
     </>
