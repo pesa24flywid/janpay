@@ -18,12 +18,11 @@ const Profile = () => {
     pan: "NA",
     merchantId: "NA",
     companyName: "NA",
-    address: "NA"
+    address: "NA",
   })
 
   function fetchProfile() {
     axios.post("api/user/info").then((res) => {
-      console.log(res.data.data)
       localStorage.setItem("kycStatus", false)
       localStorage.setItem("firstName", res.data.data.first_name)
       localStorage.setItem("lastName", res.data.data.last_name)
@@ -33,7 +32,7 @@ const Profile = () => {
       localStorage.setItem("aadhaar", res.data.data.aadhaar)
       localStorage.setItem("pan", res.data.data.pan_number)
       localStorage.setItem("merchantId", res.data.data.user_code)
-      localStorage.setItem("companyName", res.data.data.company_name)
+      localStorage.setItem("companyName", res.data.data.company_name + " " + res.data.data.firm_type)
       localStorage.setItem("line", res.data.data.line)
       localStorage.setItem("city", res.data.data.city)
       localStorage.setItem("state", res.data.data.state)

@@ -397,9 +397,6 @@ const Login = () => {
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'} spacing={6}>
-                            <Link href={'/auth/reset-mpin'}>
-                                <Button>Reset MPIN</Button>
-                            </Link>
                             <Button colorScheme={'twitter'} onClick={() => handleMpin()}>Login</Button>
                         </HStack>
                     </ModalFooter>

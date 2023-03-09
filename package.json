@@ -14,7 +14,11 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@next/font": "13.1.1",
+    "@react-pdf/renderer": "^3.1.7",
     "@types/js-cookie": "^3.0.3",
+    "@types/react": "^18.0.28",
+    "ag-grid-community": "^29.1.0",
+    "ag-grid-react": "^29.1.0",
     "axios": "^1.2.2",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
@@ -37,6 +41,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/jquery": "^3.5.16"
   }
 }

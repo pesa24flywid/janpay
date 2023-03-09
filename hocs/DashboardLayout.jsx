@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BsWallet, BsBell } from 'react-icons/bs'
+import { BsWallet, BsBell, BsPeopleFill } from 'react-icons/bs'
 import { FiMenu } from 'react-icons/fi'
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
@@ -11,6 +11,11 @@ import {
     Spacer,
     Show,
     useDisclosure,
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
     Drawer,
     DrawerBody,
     DrawerFooter,
@@ -21,7 +26,7 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import Head from 'next/head'
-import Sidebar, { ServicesAccordion } from './Sidebar'
+import Sidebar, { ServicesAccordion, SidebarOptions } from './Sidebar'
 import BankDetails from './BankDetails'
 import Cookies from 'js-cookie';
 let bcrypt = require('bcryptjs')
@@ -36,6 +41,7 @@ const DashboardWrapper = (props) => {
     const [userName, setUserName] = useState("No Name")
     const [userType, setUserType] = useState("Undefined")
     const [userImage, setUserImage] = useState("/avatar.png")
+    const [wallet, setWallet] = useState("0")
     const { isOpen, onOpen, onClose } = useDisclosure()
     var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
     const Router = useRouter()
@@ -47,6 +53,13 @@ const DashboardWrapper = (props) => {
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
         // Check for new notifications
+
+        // Check wallet balance
+        axios.post('/api/user/wallet').then((res) => {
+            setWallet(res.data[0].wallet)
+        }).catch((err) => {
+            setWallet('Error')
+        })
 
     }, [])
 
@@ -113,32 +126,6 @@ const DashboardWrapper = (props) => {
                                 display={["none", "flex"]}
                             >
 
-                                {/* <Link href={'#'}>
-                                    <HStack boxShadow={'md'}
-                                        p={1} px={3} w={'auto'}
-                                        spacing={2}
-                                        rounded={'full'}
-                                        bg={'white'}
-                                        justifyContent={'flex-start'}
-                                    >
-                                        <Box
-                                            boxSize={'8'}
-                                            bg={'#FF7B54'} color={'white'}
-                                            rounded={'full'}
-                                            display={'grid'} placeContent={'center'}
-                                        >
-                                            <BsWallet />
-                                        </Box>
-                                        <VStack w={'auto'} spacing={0}
-                                            alignItems={'flex-start'}
-                                            justifyContent={'center'}
-                                        >
-                                            <Text fontSize={'xs'} color={'#888'} mb={0}>DMT</Text>
-                                            <h2>₹ {props.dmt || 0}</h2>
-                                        </VStack>
-                                    </HStack>
-                                </Link> */}
-
                                 <Link href={'#'}>
                                     <HStack boxShadow={'md'}
                                         p={1} px={3} w={'auto'}
@@ -160,7 +147,7 @@ const DashboardWrapper = (props) => {
                                             justifyContent={'center'}
                                         >
                                             <Text fontSize={'xs'} color={'#888'} mb={0}>Wallet</Text>
-                                            <h2>₹ {props.prepaid || 0}</h2>
+                                            <h2>₹ {wallet}</h2>
                                         </VStack>
                                     </HStack>
                                 </Link>
@@ -206,25 +193,133 @@ const DashboardWrapper = (props) => {
                         <DrawerBody mt={8}>
 
                             <VStack spacing={6}>
-                                <Link href={'/dashboard'} style={{ width: '100%' }}>
-                                    <HStack spacing={2}>
-                                        <VscDashboard fontSize={'1.5rem'} />
-                                        <Text fontSize={'lg'}>
-                                            Dashboard
-                                        </Text>
-                                    </HStack>
-                                </Link>
 
-                                <Link href={'/dashboard/profile'} style={{ width: '100%' }}>
-                                    <HStack spacing={2}>
-                                        <BiUser fontSize={'1.5rem'} />
-                                        <Text fontSize={'lg'}>
-                                            Profile
-                                        </Text>
-                                    </HStack>
-                                </Link>
+                                {
+                                    SidebarOptions.map((option, key) => {
+                                        if (option.type == 'link') {
+                                            return (
+                                                <Link href={option.link} key={key} style={{ width: "100%" }}>
+                                                    <HStack
+                                                        px={3}
+                                                        py={2}
+                                                        rounded={'full'}
+                                                        overflow={'hidden'}
+                                                        _hover={{ bg: 'aqua' }}
+                                                        id={option.id || option.title}
+                                                    >
+                                                        {option.icon}
+                                                        <Text textTransform={'capitalize'}>{option.title}</Text>
+                                                    </HStack>
+                                                </Link>
+                                            )
+                                        }
 
-                                <ServicesAccordion />
+                                        if (option.type == 'accordion') {
+                                            return (
+                                                <Accordion allowToggle w={'full'}>
+
+                                                    <AccordionItem>
+                                                        <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+                                                            <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
+                                                                {option.icon}
+                                                                <Text textTransform={'capitalize'}>{option.title}</Text>
+                                                            </HStack>
+                                                            <AccordionIcon />
+                                                        </AccordionButton>
+
+                                                        <AccordionPanel px={0}>
+
+
+                                                            <VStack
+                                                                w={'full'}
+                                                                alignItems={'flex-start'}
+                                                                justifyContent={'flex-start'}
+                                                                spacing={2}
+                                                                overflow={'hidden'}
+                                                                id={'payout'}
+                                                            >
+
+                                                                {option.children.map((item, key) => {
+                                                                    return (
+                                                                        <Link href={item.link} style={{ width: '100%' }}>
+                                                                            <Text
+                                                                                w={'full'} textAlign={'left'}
+                                                                                px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                                textTransform={'capitalize'}
+                                                                            >{item.title}</Text>
+                                                                        </Link>
+                                                                    )
+                                                                })}
+                                                            </VStack>
+
+                                                        </AccordionPanel>
+
+                                                    </AccordionItem>
+
+                                                </Accordion>
+                                            )
+
+                                        }
+                                    })
+                                }
+
+                                {
+                                    userType != "retailer" &&
+
+                                    <Accordion allowToggle w={'full'}>
+
+                                        <AccordionItem>
+                                            <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+                                                <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
+                                                    <BsPeopleFill />
+                                                    <Text textTransform={'capitalize'}>Manage Users</Text>
+                                                </HStack>
+                                                <AccordionIcon />
+                                            </AccordionButton>
+
+                                            <AccordionPanel px={0}>
+
+
+                                                <VStack
+                                                    w={'full'}
+                                                    alignItems={'flex-start'}
+                                                    justifyContent={'flex-start'}
+                                                    spacing={2}
+                                                    overflow={'hidden'}
+                                                    id={'users'}
+                                                >
+                                                    <Link href={"/users/create-user?pageId=users"} style={{ width: '100%' }}>
+                                                        <Text
+                                                            w={'full'} textAlign={'left'}
+                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                            textTransform={'capitalize'}
+                                                        >Create User</Text>
+                                                    </Link>
+
+                                                    <Link href={"/users/users-list?pageId=users"} style={{ width: '100%' }}>
+                                                        <Text
+                                                            w={'full'} textAlign={'left'}
+                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                            textTransform={'capitalize'}
+                                                        >View User</Text>
+                                                    </Link>
+
+                                                    <Link href={"/users/users-report?pageId=users"} style={{ width: '100%' }}>
+                                                        <Text
+                                                            w={'full'} textAlign={'left'}
+                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                            textTransform={'capitalize'}
+                                                        >Users Report</Text>
+                                                    </Link>
+
+                                                </VStack>
+
+                                            </AccordionPanel>
+
+                                        </AccordionItem>
+
+                                    </Accordion>
+                                }
 
 
                             </VStack>
