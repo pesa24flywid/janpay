@@ -113,7 +113,7 @@ const DashboardWrapper = (props) => {
                                 display={["none", "flex"]}
                             >
 
-                                <Link href={'#'}>
+                                {/* <Link href={'#'}>
                                     <HStack boxShadow={'md'}
                                         p={1} px={3} w={'auto'}
                                         spacing={2}
@@ -137,7 +137,7 @@ const DashboardWrapper = (props) => {
                                             <h2>₹ {props.dmt || 0}</h2>
                                         </VStack>
                                     </HStack>
-                                </Link>
+                                </Link> */}
 
                                 <Link href={'#'}>
                                     <HStack boxShadow={'md'}
