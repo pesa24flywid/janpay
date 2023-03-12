@@ -35,7 +35,7 @@ const Index = () => {
             alternativePhone: "",
             dob: null,
             gender: "",
-            firstName: "",
+            firmName: "",
             companyType: "",
             aadhaarNum: "",
             panNum: "",
