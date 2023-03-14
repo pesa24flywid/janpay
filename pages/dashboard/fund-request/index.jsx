@@ -25,6 +25,42 @@ import { useFormik } from 'formik'
 import { Grid } from "gridjs";
 import "gridjs/dist/theme/mermaid.css";
 import axios, { ClientAxios, FormAxios } from '../../../lib/axios';
+import jsPDF from 'jspdf';
+import "jspdf-autotable"
+import { useMemo } from 'react';
+
+
+
+const ExportPDF = (currentRowData) => {
+    const doc = new jsPDF('landscape')
+    const columnDefs = [
+        '#',
+        'Amount',
+        'Bank Name',
+        'Trnxn ID',
+        'Status',
+        'Trnxn Date',
+        'Admin Remarks',
+    ]
+
+    doc.autoTable(columnDefs, currentRowData.map((item, key)=> {
+        return (
+            [
+                `${key+1}`,
+                `${item.amount} - ${item.transaction_type}`,
+                `${item.bank_name}`,
+                `${item.transaction_id}`,
+                `${item.status}`,
+                `${item.transaction_date}`,
+                `${item.remarks}`,
+                `${item.admin_remarks}`,
+            ]
+        )
+    }))
+    doc.setCharSpace(4)
+    //This is a key for printing
+    doc.output('dataurlnewwindow');
+}
 
 
 const FundRequest = () => {
@@ -36,94 +72,95 @@ const FundRequest = () => {
     const [userName, setUserName] = useState("No Name")
     const [bankDetails, setBankDetails] = useState([])
 
-    let parent
-    let grandParent
-    let greatGrandParent
-    const [availableParents, setAvailableParents] = useState([])
 
-    function getParents(userData) {
-        setAvailableParents([])
-        if (userData.parents_roles[0].parents_roles.length == 0) {
-            parent = userData.parents_roles[0]
-            parent = userData.parents_roles[0]
+    // let parent
+    // let grandParent
+    // let greatGrandParent
+    // const [availableParents, setAvailableParents] = useState([])
+    // function getParents(userData) {
+    //     setAvailableParents([])
+    //     if (userData.parents_roles[0].parents_roles.length == 0) {
+    //         parent = userData.parents_roles[0]
+    //         parent = userData.parents_roles[0]
 
-            setAvailableParents([
-                {
-                    myParentId: parent.id,
-                    myParentName: parent.name,
-                    myParentRole: parent.roles[0].name.replace("_", " ")
-                }
-            ])
+    //         setAvailableParents([
+    //             {
+    //                 myParentId: parent.id,
+    //                 myParentName: parent.name,
+    //                 myParentRole: parent.roles[0].name.replace("_", " ")
+    //             }
+    //         ])
 
-            console.log("Parent Found")
-        }
-        if (userData.parents_roles[0].parents_roles[0].parents_roles.length == 0) {
-            parent = userData.parents_roles[0]
-            parent = userData.parents_roles[0]
-            grandParent = userData.parents_roles[0].parents_roles[0]
-            grandParent = userData.parents_roles[0].parents_roles[0]
+    //         console.log("Parent Found")
+    //     }
+    //     if (userData.parents_roles[0].parents_roles[0].parents_roles.length == 0) {
+    //         parent = userData.parents_roles[0]
+    //         parent = userData.parents_roles[0]
+    //         grandParent = userData.parents_roles[0].parents_roles[0]
+    //         grandParent = userData.parents_roles[0].parents_roles[0]
 
-            setAvailableParents([
-                {
-                    myParentId: parent.id,
-                    myParentName: parent.name,
-                    myParentRole: parent.roles[0].name.replace("_", " ")
-                },
-                {
-                    myParentId: grandParent.id,
-                    myParentName: grandParent.name,
-                    myParentRole: grandParent.roles[0].name.replace("_", " ")
-                },
-            ])
+    //         setAvailableParents([
+    //             {
+    //                 myParentId: parent.id,
+    //                 myParentName: parent.name,
+    //                 myParentRole: parent.roles[0].name.replace("_", " ")
+    //             },
+    //             {
+    //                 myParentId: grandParent.id,
+    //                 myParentName: grandParent.name,
+    //                 myParentRole: grandParent.roles[0].name.replace("_", " ")
+    //             },
+    //         ])
 
-            console.log("Parent Found")
-        }
+    //         console.log("Parent Found")
+    //     }
 
-        else {
-            parentName = userData.parents_roles[0]
-            parentId = userData.parents_roles[0]
-            grandParent = userData.parents_roles[0].parents_roles[0]
-            grandParent = userData.parents_roles[0].parents_roles[0]
-            greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
-            greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
+    //     else {
+    //         parentName = userData.parents_roles[0]
+    //         parentId = userData.parents_roles[0]
+    //         grandParent = userData.parents_roles[0].parents_roles[0]
+    //         grandParent = userData.parents_roles[0].parents_roles[0]
+    //         greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
+    //         greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
 
-            setAvailableParents([
-                {
-                    myParentId: parent.id,
-                    myParentName: parent.name,
-                    myParentRole: parent.roles[0].name.replace("_", " ")
-                },
-                {
-                    myParentId: grandParent.id,
-                    myParentName: grandParent.name,
-                    myParentRole: grandParent.roles[0].name.replace("_", " ")
-                },
-                {
-                    myParentId: greatGrandParent.id,
-                    myParentName: greatGrandParent.name,
-                    myParentRole: greatGrandParent.roles[0].name.replace("_", " ")
-                },
-            ])
+    //         setAvailableParents([
+    //             {
+    //                 myParentId: parent.id,
+    //                 myParentName: parent.name,
+    //                 myParentRole: parent.roles[0].name.replace("_", " ")
+    //             },
+    //             {
+    //                 myParentId: grandParent.id,
+    //                 myParentName: grandParent.name,
+    //                 myParentRole: grandParent.roles[0].name.replace("_", " ")
+    //             },
+    //             {
+    //                 myParentId: greatGrandParent.id,
+    //                 myParentName: greatGrandParent.name,
+    //                 myParentRole: greatGrandParent.roles[0].name.replace("_", " ")
+    //             },
+    //         ])
 
-            console.log("Parent Found")
-        }
+    //         console.log("Parent Found")
+    //     }
 
-        console.log(availableParents)
-    }
+    //     console.log(availableParents)
+    // }
+
+    // useEffect(() => {
+    //     // Fetch parents
+    //     axios.get('/api/fund/fetch-parents').then((res) => {
+    //         getParents(res.data[0])
+    //     }).catch((err) => {
+    //         console.log(err)
+    //     })
+    // }, [])
+
 
     useEffect(() => {
         // Fetch available Banks
         ClientAxios.post('/api/cms/banks/fetch').then((res) => {
             setBankDetails(res.data)
-        })
-    }, [])
-
-    useEffect(() => {
-        // Fetch parents
-        axios.get('/api/fund/fetch-parents').then((res) => {
-            getParents(res.data[0])
-        }).catch((err) => {
-            console.log(err)
         })
     }, [])
 
@@ -189,7 +226,6 @@ const FundRequest = () => {
             grid.updateConfig({
                 data: res.data
             }).forceRender()
-
         }).catch(err => {
             console.log(err)
         })
@@ -213,7 +249,7 @@ const FundRequest = () => {
             FormAxios.post('/api/fund/request-fund', formData).then((res) => {
                 Toast({
                     position: 'top-right',
-                    description: res.message,
+                    description: res.data,
                 })
             }).catch(err => {
                 Toast({
@@ -295,7 +331,7 @@ const FundRequest = () => {
                                 </Select>
                             </FormControl>
 
-                            <FormControl w={['full', 'xs']}>
+                            {/* <FormControl w={['full', 'xs']}>
                                 <FormLabel>Request From*</FormLabel>
                                 <Select
                                     name={'requestFrom'}
@@ -314,7 +350,7 @@ const FundRequest = () => {
                                         })
                                     }
                                 </Select>
-                            </FormControl>
+                            </FormControl> */}
 
                         </Stack>
 
@@ -397,7 +433,7 @@ const FundRequest = () => {
                     <HStack justifyContent={'space-between'}>
                         <Text fontSize={'lg'} pb={6}>Your Past Fund Requests</Text>
 
-                        <Button colorScheme={'red'}>Export PDF</Button>
+                        <Button colorScheme={'red'} onClick={()=>ExportPDF(grid.config.data)}>Export PDF</Button>
                     </HStack>
                     <div ref={wrapperRef}>
 

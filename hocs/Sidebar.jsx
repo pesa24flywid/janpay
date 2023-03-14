@@ -56,13 +56,18 @@ export const SidebarOptions = [
     icon: <BiRupee />,
     children: [
       {
+        title: 'Activate services',
+        link: '/dashboard/services/activate?pageId=services',
+        soon: false,
+      },
+      {
         title: 'AePS services',
         link: '/dashboard/services/aeps?pageId=services',
         soon: false,
       },
       {
         title: 'DMT services',
-        link: '/dashboard/services/bbps?pageId=services',
+        link: '/dashboard/services/dmt?pageId=services',
         soon: false,
       },
       {

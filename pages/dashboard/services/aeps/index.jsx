@@ -18,11 +18,30 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import axios, { ClientAxios } from '../../../../lib/axios'
 import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Aeps = () => {
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if (res.data[0].allowed_pages.includes('aepsBasic') == false) {
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   let MethodInfo
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
@@ -40,13 +59,13 @@ const Aeps = () => {
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await axios.post("/api/eko/aeps/money-transfer", values).then((res)=>{
+      await axios.post("/api/eko/aeps/money-transfer", values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'
         })
         console.log(res.data)
-      }).catch((err)=>{
+      }).catch((err) => {
         Toast({
           title: 'Transaction Failed',
           description: err.message,

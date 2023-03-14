@@ -37,11 +37,30 @@ import {
 import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
 import axios from '../../../../lib/axios'
-import { FormAxios } from '../../../../lib/axios'
+import { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 
 const Bbps = () => {
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if (res.data[0].allowed_pages.includes('bbps') == false) {
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState()
 
@@ -68,7 +87,7 @@ const Bbps = () => {
     })
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setLatlong(Cookies.get("latlong"))
     console.log(latlong)
   })
@@ -102,7 +121,7 @@ const Bbps = () => {
     )
   }
 
-  function payBill(e){
+  function payBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
 
@@ -276,7 +295,7 @@ const Bbps = () => {
                   {
                     fetchBillBtn ?
                       <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} onClick={(e)=> payBill(e)}>Submit</Button>
+                      <Button colorScheme={'twitter'} onClick={(e) => payBill(e)}>Submit</Button>
                   }
                 </form> : null
             }

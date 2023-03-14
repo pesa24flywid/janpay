@@ -32,14 +32,33 @@ import {
     DrawerCloseButton
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import axios, { ClientAxios } from '../../../../lib/axios'
 import { states } from '../../../../lib/states'
 import { useToast } from '@chakra-ui/react'
 import { FiSend } from 'react-icons/fi'
 import { BsTrash } from 'react-icons/bs'
 import { AiOutlinePlus } from 'react-icons/ai'
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Dmt = () => {
+
+    useEffect(() => {
+
+        ClientAxios.post('/api/user/fetch', {
+            user_id: localStorage.getItem('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            if (res.data[0].allowed_pages.includes('dmt') == false) {
+                window.location.assign('/dashboard/not-allowed')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
+
     const [customerStatus, setCustomerStatus] = useState("hidden") // Available options - hidden, registered, unregistered
 
     const [customerName, setCustomerName] = useState("")
