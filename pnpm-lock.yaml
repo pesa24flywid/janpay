@@ -19,12 +19,14 @@ specifiers:
   chart.js: ^4.1.1
   cookies-next: ^2.1.1
   date-fns: ^2.29.3
+  deepdash-es: ^5.3.9
   formik: ^2.2.9
   framer-motion: ^8.0.2
   gridjs: ^6.0.5
   gridjs-react: ^6.0.1
   jquery: ^3.6.3
   js-cookie: ^3.0.1
+  lodash-es: ^4.17.21
   mongoose: ^6.9.0
   next: 13.1.1
   nextjs-progressbar: ^0.0.16
@@ -51,12 +53,14 @@ dependencies:
   chart.js: 4.1.1
   cookies-next: 2.1.1
   date-fns: 2.29.3
+  deepdash-es: 5.3.9
   formik: 2.2.9_react@18.2.0
   framer-motion: 8.0.2_biqbaboplfbrettd7655fr4n2y
   gridjs: 6.0.5
   gridjs-react: 6.0.1_gridjs@6.0.5+react@18.2.0
   jquery: 3.6.3
   js-cookie: 3.0.1
+  lodash-es: 4.17.21
   mongoose: 6.9.0
   next: 13.1.1_7xlrwlvvs7cv2obrs6a5y6oxxq
   nextjs-progressbar: 0.0.16_next@13.1.1+react@18.2.0
@@ -3098,6 +3102,12 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
+    dev: false
+
+  /deepdash-es/5.3.9:
+    resolution: {integrity: sha512-p/pFjNW8RgkWiTderYZpFA3yLo/ABjr2bR5ZSkT13nvpXIvrv66PYo31MAzaauJnU/kXwNpkiSR2kTLQbjhwJQ==}
+    dependencies:
+      lodash-es: 4.17.21
     dev: false
 
   /deepmerge/2.2.1:

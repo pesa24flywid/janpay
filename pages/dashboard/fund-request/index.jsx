@@ -24,126 +24,108 @@ import {
 import { useFormik } from 'formik'
 import { Grid } from "gridjs";
 import "gridjs/dist/theme/mermaid.css";
-import axios, { FormAxios } from '../../../lib/axios';
-import {
-    Document,
-    Page, Line,
-    PDFDownloadLink,
-    StyleSheet,
-    Text as PText,
-    Image, View,
-} from '@react-pdf/renderer'
-
-const PrintDoc = () => {
-    const [userName, setUserName] = useState("No Name")
-    const [rowData, setRowData] = useState([])
-    useEffect(() => {
-        setUserName(localStorage.getItem("userName"))
-    }, [])
-
-    useLayoutEffect(() => {
-        axios.get(('api/fund/fetch-fund')).then((res) => {
-            setRowData(res.data)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [])
-
-
-    const styles = StyleSheet.create({
-        page: {
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-        },
-        logo: {
-            width: '28px',
-            marginBottom: '8px'
-        },
-        title: {
-            textAlign: 'center',
-            margin: '0 auto',
-        },
-        tableRow: {
-            margin: '16px auto 0',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-        },
-        tableHead: {
-            padding: '4px 8px',
-            backgroundColor: 'aqua',
-            border: '1px solid #333',
-            fontSize: '8px',
-            minWidth: '84px'
-        },
-        tableData: {
-            padding: '4px 8px',
-            border: '1px solid #333',
-            fontSize: '8px',
-            minWidth: '84px'
-        }
-    })
-    return (
-        <Document>
-            <Page style={styles.page} orientation={'landscape'}>
-                <Image src={'/logo.png'} style={styles.logo} />
-                <PText style={styles.title}>RPAY Fund Requests by {userName}</PText>
-                <View style={styles.tableRow}>
-                    <PText style={{
-                        padding: '4px 8px',
-                        backgroundColor: 'aqua',
-                        border: '1px solid #333',
-                        fontSize: '8px',
-                    }}>#</PText>
-                    <PText style={styles.tableHead}>Amount (Rs.)</PText>
-                    <PText style={styles.tableHead}>Bank Name</PText>
-                    <PText style={styles.tableHead}>Transaction ID</PText>
-                    <PText style={styles.tableHead}>Type</PText>
-                    <PText style={styles.tableHead}>Trnxn Date</PText>
-                    <PText style={styles.tableHead}>Status</PText>
-                    <PText style={styles.tableHead}>Created At</PText>
-                    <PText style={styles.tableHead}>Updated At</PText>
-                </View>
-                {
-                    rowData.map((item, key) => {
-                        <View style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start',
-                        }} key={key}>
-                            <PText style={{
-                                padding: '4px 8px',
-                                border: '1px solid #333',
-                                fontSize: '8px',
-                            }}>1</PText>
-                            <PText style={styles.tableData}>{item.amount || "0"}</PText>
-                            <PText style={styles.tableData}>{item.bank_name || "NA"}</PText>
-                            <PText style={styles.tableData}>{item.transaction_id || "NA"}</PText>
-                            <PText style={styles.tableData}>{item.transaction_type || "Cash"}</PText>
-                            <PText style={styles.tableData}>{item.transaction_date || "Wrong Format"}</PText>
-                            <PText style={styles.tableData}>{item.status || "Pending"}</PText>
-                            <PText style={styles.tableData}>{item.created_at || "Wrong Format"}</PText>
-                            <PText style={styles.tableData}>{item.updated_at || "Wrong Format"}</PText>
-                        </View>
-                    })
-                }
-
-            </Page>
-        </Document>
-    )
-}
+import axios, { ClientAxios, FormAxios } from '../../../lib/axios';
 
 
 const FundRequest = () => {
     const wrapperRef = useRef(null);
-    const Toast = useToast()
+    const Toast = useToast({
+        position: 'top-right'
+    })
     const [clientLoaded, setClientLoaded] = useState(false)
     const [userName, setUserName] = useState("No Name")
+    const [bankDetails, setBankDetails] = useState([])
+
+    let parent
+    let grandParent
+    let greatGrandParent
+    const [availableParents, setAvailableParents] = useState([])
+
+    function getParents(userData) {
+        setAvailableParents([])
+        if (userData.parents_roles[0].parents_roles.length == 0) {
+            parent = userData.parents_roles[0]
+            parent = userData.parents_roles[0]
+
+            setAvailableParents([
+                {
+                    myParentId: parent.id,
+                    myParentName: parent.name,
+                    myParentRole: parent.roles[0].name.replace("_", " ")
+                }
+            ])
+
+            console.log("Parent Found")
+        }
+        if (userData.parents_roles[0].parents_roles[0].parents_roles.length == 0) {
+            parent = userData.parents_roles[0]
+            parent = userData.parents_roles[0]
+            grandParent = userData.parents_roles[0].parents_roles[0]
+            grandParent = userData.parents_roles[0].parents_roles[0]
+
+            setAvailableParents([
+                {
+                    myParentId: parent.id,
+                    myParentName: parent.name,
+                    myParentRole: parent.roles[0].name.replace("_", " ")
+                },
+                {
+                    myParentId: grandParent.id,
+                    myParentName: grandParent.name,
+                    myParentRole: grandParent.roles[0].name.replace("_", " ")
+                },
+            ])
+
+            console.log("Parent Found")
+        }
+
+        else {
+            parentName = userData.parents_roles[0]
+            parentId = userData.parents_roles[0]
+            grandParent = userData.parents_roles[0].parents_roles[0]
+            grandParent = userData.parents_roles[0].parents_roles[0]
+            greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
+            greatGrandParent = userData.parents_roles[0].parents_roles[0].parents_roles[0]
+
+            setAvailableParents([
+                {
+                    myParentId: parent.id,
+                    myParentName: parent.name,
+                    myParentRole: parent.roles[0].name.replace("_", " ")
+                },
+                {
+                    myParentId: grandParent.id,
+                    myParentName: grandParent.name,
+                    myParentRole: grandParent.roles[0].name.replace("_", " ")
+                },
+                {
+                    myParentId: greatGrandParent.id,
+                    myParentName: greatGrandParent.name,
+                    myParentRole: greatGrandParent.roles[0].name.replace("_", " ")
+                },
+            ])
+
+            console.log("Parent Found")
+        }
+
+        console.log(availableParents)
+    }
+
+    useEffect(() => {
+        // Fetch available Banks
+        ClientAxios.post('/api/cms/banks/fetch').then((res) => {
+            setBankDetails(res.data)
+        })
+    }, [])
+
+    useEffect(() => {
+        // Fetch parents
+        axios.get('/api/fund/fetch-parents').then((res) => {
+            getParents(res.data[0])
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
 
     const [columns, setColumns] = useState([
         {
@@ -208,22 +190,17 @@ const FundRequest = () => {
                 data: res.data
             }).forceRender()
 
-            PrintDoc()
-
         }).catch(err => {
             console.log(err)
         })
     }, [])
-
-    useEffect(() => {
-        setClientLoaded(true)
-    })
 
 
     const Formik = useFormik({
         initialValues: {
             amount: "",
             bankName: "",
+            requestFrom: "",
             transactionId: "",
             transactionType: "",
             transactionDate: "",
@@ -232,13 +209,7 @@ const FundRequest = () => {
             remarks: "",
         },
         onSubmit: (values) => {
-            var formData = new FormData
-            formData.append('amount', values.amount,)
-            formData.append('bankName', values.bankName,)
-            formData.append('transactionId', values.transactionId,)
-            formData.append('transactionType', values.transactionType,)
-            formData.append('transactionDate', values.transactionDate,)
-            formData.append('receipt', values.receipt,)
+            var formData = new FormData(document.getElementById('request-form'))
             FormAxios.post('/api/fund/request-fund', formData).then((res) => {
                 Toast({
                     position: 'top-right',
@@ -253,7 +224,6 @@ const FundRequest = () => {
             })
         }
     })
-
 
 
     const grid = new Grid({
@@ -271,18 +241,14 @@ const FundRequest = () => {
         resizable: true,
         fixedHeader: true,
     });
-
-
     useEffect(() => {
         grid.render(wrapperRef.current)
-    }, []);
-
+    }, [])
 
     return (
         <>
             <DashboardWrapper titleText={'Fund Request'}>
                 <form
-                    action={process.env.NEXT_PUBLIC_BACKEND_URL + '/api/fund/request-fund'}
                     method='POST' id={'request-form'}
                 >
                     <Box
@@ -317,24 +283,36 @@ const FundRequest = () => {
                                     placeholder={'Select Here'}
                                     value={Formik.values.bankName}
                                 >
-                                    <option value="state bank of india">state bank of india</option>
+                                    {
+                                        bankDetails.map((bank, key) => {
+                                            return (
+                                                <option key={key} value={`${bank.bank_name}-${bank.account}`}>
+                                                    {bank.bank_name} - {bank.account}
+                                                </option>
+                                            )
+                                        })
+                                    }
                                 </Select>
                             </FormControl>
 
                             <FormControl w={['full', 'xs']}>
-                                <FormLabel>Transaction Type*</FormLabel>
+                                <FormLabel>Request From*</FormLabel>
                                 <Select
-                                    name={'transactionType'}
+                                    name={'requestFrom'}
                                     onChange={Formik.handleChange}
                                     textTransform={'capitalize'}
                                     placeholder={'Select Here'}
-                                    value={Formik.values.transactionType}
+                                    value={Formik.values.requestFrom}
                                 >
-                                    <option value="cash">Cash</option>
-                                    <option value="imps">IMPS</option>
-                                    <option value="neft">NEFT</option>
-                                    <option value="rtgs">RTGS</option>
-                                    <option value="upi">UPI</option>
+                                    {
+                                        availableParents.map((parent, key) => {
+                                            return (
+                                                <option key={key} value={parent.myParentId}>
+                                                    {parent.myParentRole}
+                                                </option>
+                                            )
+                                        })
+                                    }
                                 </Select>
                             </FormControl>
 
@@ -363,21 +341,38 @@ const FundRequest = () => {
                                 />
                             </FormControl>
                             <FormControl w={['full', 'xs']}>
-                                <FormLabel>Transaction Receipt</FormLabel>
-                                <Input
-                                    name={'receipt'}
-                                    onChange={(e) => Formik.setFieldValue('receipt', e.currentTarget.files[0])}
-                                    type={'file'} accept={'image/jpeg, image/jpg, image/png, pdf'}
-                                />
+                                <FormLabel>Transaction Type*</FormLabel>
+                                <Select
+                                    name={'transactionType'}
+                                    onChange={Formik.handleChange}
+                                    textTransform={'capitalize'}
+                                    placeholder={'Select Here'}
+                                    value={Formik.values.transactionType}
+                                >
+                                    <option value="cash">Cash</option>
+                                    <option value="imps">IMPS</option>
+                                    <option value="neft">NEFT</option>
+                                    <option value="rtgs">RTGS</option>
+                                    <option value="upi">UPI</option>
+                                </Select>
                             </FormControl>
                         </Stack>
-                        <Stack p={4}>
+                        <Stack direction={['column', 'row']} p={4} spacing={6}>
                             <FormControl w={['full', 'sm']}>
                                 <FormLabel>Remarks</FormLabel>
                                 <Input
                                     name={'remarks'}
                                     value={Formik.values.remarks}
                                     onChange={Formik.handleChange}
+                                />
+                            </FormControl>
+
+                            <FormControl w={['full', 'sm']}>
+                                <FormLabel>Transaction Receipt</FormLabel>
+                                <Input
+                                    name={'receipt'}
+                                    onChange={(e) => Formik.setFieldValue('receipt', e.currentTarget.files[0])}
+                                    type={'file'} accept={'image/jpeg, image/jpg, image/png, pdf'}
                                 />
                             </FormControl>
                         </Stack>
@@ -400,18 +395,9 @@ const FundRequest = () => {
                 >
 
                     <HStack justifyContent={'space-between'}>
-                        <Text fontSize={'lg'}>Fund Requests Details</Text>
-                        {
-                            clientLoaded &&
-                            <PDFDownloadLink document={<PrintDoc rowData={rowData} />} fileName="rpay-fund-requests.pdf">
-                                {({ blob, url, loading, error }) =>
-                                    loading ?
-                                        'loading...' :
-                                        <Button colorScheme={'red'}>Export PDF</Button>
-                                }
-                            </PDFDownloadLink>
-                        }
-                        {/* <Button colorScheme={'red'}>Export PDF</Button> */}
+                        <Text fontSize={'lg'} pb={6}>Your Past Fund Requests</Text>
+
+                        <Button colorScheme={'red'}>Export PDF</Button>
                     </HStack>
                     <div ref={wrapperRef}>
 

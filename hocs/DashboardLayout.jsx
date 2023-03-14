@@ -241,7 +241,7 @@ const DashboardWrapper = (props) => {
 
                                                                 {option.children.map((item, key) => {
                                                                     return (
-                                                                        <Link href={item.link} style={{ width: '100%' }}>
+                                                                        <Link key={key} href={item.link} style={{ width: '100%' }}>
                                                                             <Text
                                                                                 w={'full'} textAlign={'left'}
                                                                                 px={3} py={2} _hover={{ bg: 'aqua' }}
