@@ -56,13 +56,18 @@ export const SidebarOptions = [
     icon: <BiRupee />,
     children: [
       {
+        title: 'Activate services',
+        link: '/dashboard/services/activate?pageId=services',
+        soon: false,
+      },
+      {
         title: 'AePS services',
         link: '/dashboard/services/aeps?pageId=services',
         soon: false,
       },
       {
         title: 'DMT services',
-        link: '/dashboard/services/bbps?pageId=services',
+        link: '/dashboard/services/dmt?pageId=services',
         soon: false,
       },
       {
@@ -171,10 +176,11 @@ export const SidebarOptions = [
   },
 ]
 
-const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
+const Sidebar = ({ isProfileComplete, userName, userImage }) => {
 
   const Router = useRouter()
   const { pageId } = Router.query
+  const [userType, setUserType] = useState("")
 
   useEffect(() => {
     const activePage = typeof window !== 'undefined' ? document.getElementById(pageId) : document.getElementById("dashboard")
@@ -182,6 +188,8 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
       activePage.style.background = "#3C79F5"
       activePage.style.color = "#FFF"
     }
+
+    setUserType(localStorage.getItem("userType"))
   }, [])
 
   async function signout() {
@@ -219,7 +227,11 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
                 borderColor={"gray.200"}
               />
               <Text fontSize={"xl"}>{userName}</Text>
-              <Text fontSize={"sm"} color={"darkslategray"}>{userType}</Text>
+              <Text
+                fontSize={"sm"}
+                color={"darkslategray"}
+                textTransform={'capitalize'}
+              >{userType.replace("_", " ")}</Text>
             </VStack>
           </Link>
 
@@ -272,7 +284,7 @@ const Sidebar = ({ isProfileComplete, userName, userType, userImage }) => {
 
                             {option.children.map((item, key) => {
                               return (
-                                <Link href={item.link} style={{ width: '100%' }}>
+                                <Link key={key} href={item.link} style={{ width: '100%' }}>
                                   <Text
                                     w={'full'} textAlign={'left'}
                                     px={3} py={2} _hover={{ bg: 'aqua' }}

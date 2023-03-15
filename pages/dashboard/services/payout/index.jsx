@@ -31,7 +31,7 @@ import {
     Td,
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import axios, {ClientAxios} from '../../../../lib/axios'
 import { useToast } from '@chakra-ui/react'
 import { Document, Page, Text as PText, StyleSheet, View, Image, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
 
@@ -71,6 +71,23 @@ const PaymentReceipt = ({ amount, payout_id, name, account }) => {
 }
 
 const Payout = () => {
+
+    useEffect(() => {
+
+        ClientAxios.post('/api/user/fetch', {
+            user_id: localStorage.getItem('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            if (res.data[0].allowed_pages.includes('payout') == false) {
+                window.location.assign('/dashboard/not-allowed')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
 
     const { isOpen, onClose, onOpen } = useDisclosure()
     const Toast = useToast()

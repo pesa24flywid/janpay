@@ -31,12 +31,18 @@ import BankDetails from './BankDetails'
 import Cookies from 'js-cookie';
 let bcrypt = require('bcryptjs')
 import { useRouter } from 'next/router';
-import axios from '../lib/axios';
+import axios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
+import SimpleAccordion from './SimpleAccordion';
 
 
 const DashboardWrapper = (props) => {
-    const [newNotification, setNewNotification] = useState(true)
+    const [openNotification, setOpenNotification] = useState(false)
+    const [newNotification, setNewNotification] = useState(false)
+    const [globalNotifications, setGlobalNotifications] = useState([])
+    const [organisationNotifications, setOrganisationNotifications] = useState([])
+    const [userNotifications, setUserNotifications] = useState([])
+
     const [isProfileComplete, setIsProfileComplete] = useState(false)
     const [userName, setUserName] = useState("No Name")
     const [userType, setUserType] = useState("Undefined")
@@ -52,8 +58,6 @@ const DashboardWrapper = (props) => {
         setUserType(localStorage.getItem("userType"))
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
-        // Check for new notifications
-
         // Check wallet balance
         axios.post('/api/user/wallet').then((res) => {
             setWallet(res.data[0].wallet)
@@ -61,7 +65,27 @@ const DashboardWrapper = (props) => {
             setWallet('Error')
         })
 
+        // Fetch all notifications
+        ClientAxios.post('/api/user/fetch', {
+            user_id: localStorage.getItem('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            setUserNotifications(res.data[0].notifications)
+        }).catch((err) => {
+            console.log(err)
+        })
+
     }, [])
+
+    useEffect(() => {
+        // Check for new notifications
+        if (globalNotifications.length != 0 || organisationNotifications != 0 || userNotifications != 0) {
+            setNewNotification(true)
+        }
+    }, [globalNotifications, organisationNotifications, userNotifications])
 
     useEffect(() => {
         let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
@@ -158,6 +182,7 @@ const DashboardWrapper = (props) => {
                                     color={'gray.600'} boxShadow={'md'}
                                     rounded={'full'} bg={'white'}
                                     display={'grid'} placeContent={'center'}
+                                    onClick={() => setOpenNotification(true)}
                                 >
                                     <BsBell fontSize={'20'} />
                                     {newNotification ? <Box boxSize={'2'} rounded={'full'} bg={'red'} position={'absolute'} top={'3'} right={'3'}></Box> : null}
@@ -241,7 +266,7 @@ const DashboardWrapper = (props) => {
 
                                                                 {option.children.map((item, key) => {
                                                                     return (
-                                                                        <Link href={item.link} style={{ width: '100%' }}>
+                                                                        <Link key={key} href={item.link} style={{ width: '100%' }}>
                                                                             <Text
                                                                                 w={'full'} textAlign={'left'}
                                                                                 px={3} py={2} _hover={{ bg: 'aqua' }}
@@ -350,6 +375,57 @@ const DashboardWrapper = (props) => {
                     </DrawerContent>
                 </Drawer>
             </Show>
+
+
+            {/* Notifications Drawer */}
+            <Drawer
+                isOpen={openNotification}
+                onClose={() => setOpenNotification(false)}
+                placement={'right'}
+            >
+                <DrawerOverlay />
+                <DrawerContent>
+                    <DrawerHeader>
+                        Notifications
+                    </DrawerHeader>
+                    <DrawerBody>
+                        {
+                            globalNotifications.map((notification, key) => {
+                                return (
+                                    <SimpleAccordion
+                                        key={key}
+                                        title={notification.title}
+                                        content={notification.content}
+                                    />
+                                )
+                            })
+                        }
+                        {
+                            organisationNotifications.map((notification, key) => {
+                                return (
+                                    <SimpleAccordion
+                                        key={key}
+                                        title={notification.title}
+                                        content={notification.content}
+                                    />
+                                )
+                            })
+                        }
+                        {
+                            userNotifications.map((notification, key) => {
+                                return (
+                                    <SimpleAccordion
+                                        key={key}
+                                        title={notification.title}
+                                        content={notification.content}
+                                    />
+                                )
+                            })
+                        }
+                    </DrawerBody>
+                </DrawerContent>
+            </Drawer>
+
         </>
     )
 }

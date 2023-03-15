@@ -4,12 +4,12 @@ import {
     Stack,
     Text
 } from '@chakra-ui/react'
-import axios from 'axios'
+import { ClientAxios } from '../lib/axios'
 
 const BankDetails = () => {
     const [bankDetails, setBankDetails] = useState([])
     useEffect(()=>{
-        axios.post('/api/cms/banks/fetch').then((res)=>{
+        ClientAxios.post('/api/cms/banks/fetch').then((res)=>{
             setBankDetails(res.data)
         })
     }, [])
@@ -25,9 +25,9 @@ const BankDetails = () => {
                     direction={'column'}
                     gap={2}
                 >
-                    {bankDetails.map((detail) => (
+                    {bankDetails.map((detail, key) => (
                         <Box
-                            key={detail.ifsc}
+                            key={key}
                             border={'1px'} rounded={'inherit'}
                             borderColor={'gray.200'} p={2}
                         >

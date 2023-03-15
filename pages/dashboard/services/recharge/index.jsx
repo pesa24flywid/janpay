@@ -46,11 +46,29 @@ import {
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
-import axios, { ClientAxios } from '../../../../lib/axios'
-import { FormAxios } from '../../../../lib/axios'
+import axios, { ClientAxios, FormAxios } from '../../../../lib/axios'
 
 
 const Bbps = () => {
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if(res.data[0].allowed_pages.includes('bbps') == false){
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
+
   const [keyword, setKeyword] = useState("")
 
   const [categories, setCategories] = useState()

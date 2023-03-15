@@ -18,9 +18,27 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import axios, {ClientAxios} from '../../../../lib/axios'
 
 const AadhaarPay = () => {
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if(res.data[0].allowed_pages.includes('aadhaarPay') == false){
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const Toast = useToast()
   const formik = useFormik({
