@@ -152,6 +152,7 @@ const Login = () => {
                 "password": formik.values.password,
                 "remember": 1,
                 "latlong": Cookies.get("latlong"),
+                organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
             })).then((res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
@@ -189,6 +190,7 @@ const Login = () => {
                 ...(authMethod === "phone" && { "phone": formik.values.user_id }),
                 password: formik.values.password,
                 mpin: mpin,
+                organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
             })).then((res)=>{
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)

@@ -40,6 +40,7 @@ const Register = () => {
             phone: "",
             user_type: "Retailer",
             referral_id: "",
+            organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase()
         },
         onSubmit: async (values) => {
             // Handling registration
