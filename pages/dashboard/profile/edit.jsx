@@ -163,27 +163,13 @@ const EditProfile = () => {
 
   // Send OTP for Aadhaar Verification
   function sendAadhaarOtp() {
-    DefaultAxios.post(`https://api.apiclub.in/${process.env.NEXT_PUBLIC_APICLUB_ENV}/v1/aadhaar_v2/send_otp`, {
+    axios.post(`api/user/verify/aadhaar/send-otp`, {
       aadhaar_no: newAadhaar,
-    }, {
-      headers: {
-        'API-KEY': process.env.NEXT_PUBLIC_APICLUB_API_KEY
-      }
     }).then((res) => {
-      if (res.data.code == 200) {
         setOtpSent(true)
-        setAadhaarOtpRefNo(res.data.response.ref_id)
         Toast({
           description: 'OTP sent to aadhaar linked mobile number'
         })
-      }
-      if (res.data.code == 404) {
-        Toast({
-          status: "error",
-          title: "Error Occured",
-          description: res.data.response
-        })
-      }
     }).catch((err) => {
       setOtpSent(false)
       Toast({
@@ -198,30 +184,16 @@ const EditProfile = () => {
 
   // Verifying Aadhaar OTP
   function verifyAadhaarOtp() {
-    DefaultAxios.post(`https://api.apiclub.in/${process.env.NEXT_PUBLIC_APICLUB_ENV}/v1/aadhaar_v2/send_otp`, {
-      ref_id: aadhaarOtpRefNo,
+    axios.post(`api/user/verify/aadhaar/verify-otp`, {
       otp: otp,
-    }, {
-      headers: {
-        'API-KEY': process.env.NEXT_PUBLIC_APICLUB_API_KEY
-      }
     }).then((res) => {
-      if (res.data.code == 200) {
         formik.setFieldValue("aadhaar", newAadhaar)
         localStorage.setItem("aadhaar", newAadhaar)
         Toast({
           status: "success",
           title: "Success",
-          description: 'Your aadhaar has been verified!'
+          description: res.data.message
         })
-      }
-      if (res.data.code == 404) {
-        Toast({
-          status: "error",
-          title: "Verification Error",
-          description: res.data.response
-        })
-      }
     }).catch((err) => {
       setOtpSent(false)
       Toast({
@@ -231,42 +203,22 @@ const EditProfile = () => {
       })
       console.log(err)
     })
+    setOtp("")
   }
 
 
   // Verifying PAN
   function verifyPan() {
     if (formik.values.firstName && formik.values.lastName && formik.values.pan) {
-      DefaultAxios.post(`https://api.apiclub.in/${process.env.NEXT_PUBLIC_APICLUB_ENV}/v1/verify_pan`, {
+      axios.post(`/api/user/verify/pan/verify-pan`, {
         pan_no: formik.values.pan,
-      }, {
-        headers: {
-          'API-KEY': process.env.NEXT_PUBLIC_APICLUB_API_KEY
-        }
       }).then((res) => {
-        if (res.data.code == 200) {
-          if (res.data.response.registered_name.toUpperCase() == formik.values.firstName.toUpperCase() + formik.values.lastName.toUpperCase()) {
-            Toast({
-              description: 'PAN verified successfully!'
-            })
-
-            localStorage.setItem("pan", formik.values.pan)
-          }
-          else {
-            Toast({
-              status: "error",
-              title: "PAN name did not match",
-              description: "Your name on this portal and on PAN card should be same."
-            })
-          }
-        }
-        if (res.data.code == 404) {
           Toast({
-            status: "error",
-            title: "Error Occured",
+            status: "success",
+            title: "PAN Verified",
             description: res.data.response
           })
-        }
+          localStorage.setItem("pan", formik.values.pan)
       }).catch((err) => {
         setOtpSent(false)
         Toast({
@@ -568,6 +520,8 @@ const EditProfile = () => {
               <Text>Enter OTP</Text>
               <HStack py={2}>
                 <PinInput otp onComplete={(value) => setOtp(value)}>
+                  <PinInputField />
+                  <PinInputField />
                   <PinInputField />
                   <PinInputField />
                   <PinInputField />

@@ -99,6 +99,7 @@ const DashboardWrapper = (props) => {
     async function signout() {
         await axios.post("/logout").then(() => {
             Cookies.remove("verified")
+            localStorage.clear()
         })
         setTimeout(() => Router.push("/auth/login"), 2000)
     }
