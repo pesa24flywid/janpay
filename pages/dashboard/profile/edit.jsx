@@ -30,6 +30,17 @@ import DashboardWrapper from "../../../hocs/DashboardLayout";
 import axios, { FormAxios, DefaultAxios } from "../../../lib/axios";
 import { states } from '../../../lib/states'
 const EditProfile = () => {
+  const [profile, setProfile] = useState({
+    kycStatus: false,
+    fullName: "",
+    phone: "NA",
+    dob: "NA",
+    aadhaarNumber: "NA",
+    pan: "NA",
+    merchantId: "NA",
+    companyName: "NA",
+    address: "NA",
+  })
   const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
   const [isAadhaarOtpDisabled, setIsAadhaarOtpDisabled] = useState(true)
   const [isPanOtpDisabled, setIsPanOtpDisabled] = useState(true)
@@ -91,7 +102,46 @@ const EditProfile = () => {
 
 
 
+  function fetchProfile() {
+    axios.post("api/user/info").then((res) => {
+      localStorage.setItem("kycStatus", res.data.data.kyc)
+      localStorage.setItem("firstName", res.data.data.first_name || "")
+      localStorage.setItem("lastName", res.data.data.last_name || "")
+      localStorage.setItem("phone", res.data.data.phone_number || "")
+      localStorage.setItem("userEmail", res.data.data.email || "")
+      localStorage.setItem("dob", res.data.data.dob || "")
+      localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
+      localStorage.setItem("pan", res.data.data.pan_number || "")
+      localStorage.setItem("merchantId", res.data.data.user_code || "")
+      localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+      localStorage.setItem("line", res.data.data.line || "")
+      localStorage.setItem("city", res.data.data.city || "")
+      localStorage.setItem("state", res.data.data.state || "")
+      localStorage.setItem("pincode", res.data.data.pincode || "")
+    }).catch((err) => {
+      Toast({
+        status: "error",
+        title: "Error Occured",
+        description: err.message
+      })
+      console.log(err)
+    })
+    setProfile({
+      ...profile,
+      fullName: localStorage.getItem("userName"),
+      kycStatus: localStorage.getItem("kycStatus"),
+      phone: localStorage.getItem("phone"),
+      dob: localStorage.getItem("dob"),
+      aadhaarNumber: localStorage.getItem("aadhaar"),
+      pan: localStorage.getItem("pan"),
+      merchantId: localStorage.getItem("merchantId"),
+      companyName: localStorage.getItem("companyName"),
+      address: localStorage.getItem("line") + " " + localStorage.getItem("city") + " " + localStorage.getItem("state") + " " + localStorage.getItem("pincode"),
+    })
+  }
+
   useEffect(() => {
+    fetchProfile()
     formik.setFieldValue("firstName", localStorage.getItem("firstName"))
     formik.setFieldValue("lastName", localStorage.getItem("lastName"))
     formik.setFieldValue("phone", localStorage.getItem("phone"))
@@ -166,10 +216,10 @@ const EditProfile = () => {
     axios.post(`api/user/verify/aadhaar/send-otp`, {
       aadhaar_no: newAadhaar,
     }).then((res) => {
-        setOtpSent(true)
-        Toast({
-          description: 'OTP sent to aadhaar linked mobile number'
-        })
+      setOtpSent(true)
+      Toast({
+        description: 'OTP sent to aadhaar linked mobile number'
+      })
     }).catch((err) => {
       setOtpSent(false)
       Toast({
@@ -187,13 +237,13 @@ const EditProfile = () => {
     axios.post(`api/user/verify/aadhaar/verify-otp`, {
       otp: otp,
     }).then((res) => {
-        formik.setFieldValue("aadhaar", newAadhaar)
-        localStorage.setItem("aadhaar", newAadhaar)
-        Toast({
-          status: "success",
-          title: "Success",
-          description: res.data.message
-        })
+      formik.setFieldValue("aadhaar", newAadhaar)
+      localStorage.setItem("aadhaar", newAadhaar)
+      Toast({
+        status: "success",
+        title: "Success",
+        description: res.data.message
+      })
     }).catch((err) => {
       setOtpSent(false)
       Toast({
@@ -213,12 +263,12 @@ const EditProfile = () => {
       axios.post(`/api/user/verify/pan/verify-pan`, {
         pan_no: formik.values.pan,
       }).then((res) => {
-          Toast({
-            status: "success",
-            title: "PAN Verified",
-            description: res.data.response
-          })
-          localStorage.setItem("pan", formik.values.pan)
+        Toast({
+          status: "success",
+          title: "PAN Verified",
+          description: res.data.response
+        })
+        localStorage.setItem("pan", formik.values.pan)
       }).catch((err) => {
         setOtpSent(false)
         Toast({
