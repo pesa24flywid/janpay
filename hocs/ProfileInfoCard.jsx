@@ -58,11 +58,11 @@ const ProfileInfoCard = ({
                 </Heading>
                 <HStack pt={2}>
                   <Icon
-                    as={ kycStatus ? MdVerifiedUser : MdError}
-                    color={kycStatus ? "green.500" : "red.500"}
+                    as={ kycStatus == 1 ? MdVerifiedUser : MdError}
+                    color={kycStatus == 1 ? "green.500" : "red.500"}
                   />
                   <Text ml="1" textColor={kycStatus ? "green.500" : "red.500"}>
-                    {kycStatus ? "Verified" : "Not Verified"}
+                    {kycStatus == 0 ? "Not Verified" : "Verified"}
                   </Text>
                 </HStack>
               </Box>

@@ -23,20 +23,20 @@ const Profile = () => {
 
   function fetchProfile() {
     axios.post("api/user/info").then((res) => {
-      localStorage.setItem("kycStatus", false)
-      localStorage.setItem("firstName", res.data.data.first_name)
-      localStorage.setItem("lastName", res.data.data.last_name)
-      localStorage.setItem("phone", res.data.data.phone_number)
-      localStorage.setItem("userEmail", res.data.data.email)
-      localStorage.setItem("dob", res.data.data.dob)
-      localStorage.setItem("aadhaar", res.data.data.aadhaar)
-      localStorage.setItem("pan", res.data.data.pan_number)
-      localStorage.setItem("merchantId", res.data.data.user_code)
-      localStorage.setItem("companyName", res.data.data.company_name + " " + res.data.data.firm_type)
-      localStorage.setItem("line", res.data.data.line)
-      localStorage.setItem("city", res.data.data.city)
-      localStorage.setItem("state", res.data.data.state)
-      localStorage.setItem("pincode", res.data.data.pincode)
+      localStorage.setItem("kycStatus", res.data.data.kyc)
+      localStorage.setItem("firstName", res.data.data.first_name || "")
+      localStorage.setItem("lastName", res.data.data.last_name || "")
+      localStorage.setItem("phone", res.data.data.phone_number || "")
+      localStorage.setItem("userEmail", res.data.data.email || "")
+      localStorage.setItem("dob", res.data.data.dob || "")
+      localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
+      localStorage.setItem("pan", res.data.data.pan_number || "")
+      localStorage.setItem("merchantId", res.data.data.user_code || "")
+      localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+      localStorage.setItem("line", res.data.data.line || "")
+      localStorage.setItem("city", res.data.data.city || "")
+      localStorage.setItem("state", res.data.data.state || "")
+      localStorage.setItem("pincode", res.data.data.pincode || "")
     }).catch((err)=>{
       Toast({
         status: "error",
