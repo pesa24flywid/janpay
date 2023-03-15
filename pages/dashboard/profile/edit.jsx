@@ -238,35 +238,44 @@ const EditProfile = () => {
   function verifyPan() {
     if (formik.values.firstName && formik.values.lastName && formik.values.pan) {
       DefaultAxios.post(`https://api.apiclub.in/${process.env.NEXT_PUBLIC_APICLUB_ENV}/v1/verify_pan`, {
-      pan_no: formik.values.pan,
-    }, {
-      headers: {
-        'API-KEY': process.env.NEXT_PUBLIC_APICLUB_API_KEY
-      }
-    }).then((res) => {
-      if (res.data.code == 200) {
-        setOtpSent(true)
-        setAadhaarOtpRefNo(res.data.response.ref_id)
-        Toast({
-          description: 'PAN verified successfully!'
-        })
-      }
-      if (res.data.code == 404) {
+        pan_no: formik.values.pan,
+      }, {
+        headers: {
+          'API-KEY': process.env.NEXT_PUBLIC_APICLUB_API_KEY
+        }
+      }).then((res) => {
+        if (res.data.code == 200) {
+          if (res.data.response.registered_name.toUpperCase() == formik.values.firstName.toUpperCase() + formik.values.lastName.toUpperCase()) {
+            Toast({
+              description: 'PAN verified successfully!'
+            })
+
+            localStorage.setItem("pan", formik.values.pan)
+          }
+          else {
+            Toast({
+              status: "error",
+              title: "PAN name did not match",
+              description: "Your name on this portal and on PAN card should be same."
+            })
+          }
+        }
+        if (res.data.code == 404) {
+          Toast({
+            status: "error",
+            title: "Error Occured",
+            description: res.data.response
+          })
+        }
+      }).catch((err) => {
+        setOtpSent(false)
         Toast({
           status: "error",
           title: "Error Occured",
-          description: res.data.response
+          description: "Couldn't verify your PAN",
         })
-      }
-    }).catch((err) => {
-      setOtpSent(false)
-      Toast({
-        status: "error",
-        title: "Error Occured",
-        description: "Couldn't verify your PAN",
+        console.log(err)
       })
-      console.log(err)
-    })
     }
     else {
       Toast({
