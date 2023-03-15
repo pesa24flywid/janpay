@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
+import { IoMdHelpBuoy } from "react-icons/io";
 import axios from "../lib/axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -22,162 +23,193 @@ import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
 import { GiReceiveMoney } from 'react-icons/gi'
 import { HiUsers } from 'react-icons/hi'
 import BankDetails from "./BankDetails";
+import { useMemo } from "react";
 
 
-export const SidebarOptions = [
-  {
-    type: 'accordion',
-    title: 'profile',
-    icon: <BiUser />,
-    children: [
-      {
-        title: 'view profile',
-        link: '/dashboard/profile?pageId=profile',
-      },
-      {
-        title: 'reset MPIN',
-        link: '/dashboard/profile/reset-mpin?pageId=profile',
-      },
-      {
-        title: 'reset password',
-        link: '/dashboard/profile/reset-password?pageId=profile',
-      },
-    ]
-  },
-  {
-    type: 'link',
-    title: 'dashboard',
-    icon: <VscDashboard />,
-    link: '/dashboard?pageId=dashboard',
-  },
-  {
-    type: 'accordion',
-    title: 'services',
-    icon: <BiRupee />,
-    children: [
-      {
-        title: 'Activate services',
-        link: '/dashboard/services/activate?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'AePS services',
-        link: '/dashboard/services/aeps?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'DMT services',
-        link: '/dashboard/services/dmt?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'BBPS services',
-        link: '/dashboard/services/bbps?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'recharge',
-        link: '/dashboard/services/recharge?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'payout',
-        link: '/dashboard/services/payout?pageId=services',
-        soon: false,
-      },
-      {
-        title: 'axis account opening',
-        link: '/dashboard/services/payout?pageId=services',
-        soon: true,
-      },
-      {
-        title: 'LIC services',
-        link: '/dashboard/services/payout?pageId=services',
-        soon: true,
-      },
-      {
-        title: 'PAN services',
-        link: '/dashboard/services/payout?pageId=services',
-        soon: true,
-      },
-      {
-        title: 'CMS services',
-        link: '/dashboard/services/payout?pageId=services',
-        soon: true,
-      },
-    ]
-  },
-  {
-    type: 'link',
-    title: 'fund request',
-    id: 'request',
-    icon: <GiReceiveMoney />,
-    link: '/dashboard/fund-request?pageId=request',
-  },
-  {
-    type: 'link',
-    title: 'fund settlement',
-    id: 'request',
-    icon: <BsBank />,
-    link: '/dashboard/fund-request?pageId=request',
-  },
-  {
-    type: 'accordion',
-    title: 'reports',
-    id: 'reports',
-    icon: <BsFileEarmarkBarGraph />,
-    children: [
-      {
-        title: 'AePS reports',
-        link: '/dashboard/reports/aeps?pageId=reports',
-        soon: false,
-      },
-      {
-        title: 'BBPS reports',
-        link: '/dashboard/reports/bbps?pageId=reports',
-        soon: false,
-      },
-      {
-        title: 'recharge reports',
-        link: '/dashboard/reports/recharge?pageId=reports',
-        soon: false,
-      },
-      {
-        title: 'DMT reports',
-        link: '/dashboard/reports/dmt?pageId=reports',
-        soon: false,
-      },
-      {
-        title: 'payout reports',
-        link: '/dashboard/reports/payout?pageId=reports',
-        soon: false,
-      },
-      {
-        title: 'LIC reports',
-        link: '/dashboard/reports/lic?pageId=reports',
-        soon: true,
-      },
-      {
-        title: 'PAN reports',
-        link: '/dashboard/reports/pan?pageId=reports',
-        soon: true,
-      },
-      {
-        title: 'CMS reports',
-        link: '/dashboard/reports/pan?pageId=reports',
-        soon: true,
-      },
-      {
-        title: 'axis accounts',
-        link: '/dashboard/reports/axis?pageId=reports',
-        soon: true,
-      },
-    ]
-  },
-]
+export const SidebarOptions =
+  [
+    {
+      type: 'accordion',
+      title: 'profile',
+      icon: <BiUser />,
+      children: [
+        {
+          title: 'view profile',
+          link: '/dashboard/profile?pageId=profile',
+          id: "view-profile"
+        },
+        {
+          title: 'reset MPIN',
+          link: '/dashboard/profile/reset-mpin?pageId=profile',
+          id: "reset-mpin"
+        },
+        {
+          title: 'reset password',
+          link: '/dashboard/profile/reset-password?pageId=profile',
+          id: "reset-mpin"
+        },
+      ]
+    },
+    {
+      type: 'link',
+      title: 'dashboard',
+      icon: <VscDashboard />,
+      link: '/dashboard?pageId=dashboard',
+    },
+    {
+      type: 'accordion',
+      title: 'services',
+      icon: <BiRupee />,
+      children: [
+        {
+          title: 'Activate services',
+          link: '/dashboard/services/activate?pageId=services',
+          id: "",
+          soon: false,
+        },
+        {
+          title: 'AePS services',
+          link: '/dashboard/services/aeps?pageId=services',
+          id: "aeps",
+          soon: false,
+        },
+        {
+          title: 'DMT services',
+          link: '/dashboard/services/dmt?pageId=services',
+          id: "dmt",
+          soon: false,
+        },
+        {
+          title: 'BBPS services',
+          link: '/dashboard/services/bbps?pageId=services',
+          id: "bbps",
+          soon: false,
+        },
+        {
+          title: 'recharge',
+          link: '/dashboard/services/recharge?pageId=services',
+          id: "recharge",
+          soon: false,
+        },
+        {
+          title: 'payout',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "payout",
+          soon: false,
+        },
+        {
+          title: 'axis account opening',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "axis",
+          soon: true,
+        },
+        {
+          title: 'LIC services',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "lic",
+          soon: true,
+        },
+        {
+          title: 'PAN services',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "pan",
+          soon: true,
+        },
+        {
+          title: 'CMS services',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "cms",
+          soon: true,
+        },
+      ]
+    },
+    {
+      type: 'link',
+      title: 'fund request',
+      id: 'request',
+      icon: <GiReceiveMoney />,
+      link: '/dashboard/fund-request?pageId=request',
+    },
+    {
+      type: 'link',
+      title: 'fund settlement',
+      id: 'request',
+      icon: <BsBank />,
+      link: '/dashboard/fund-request?pageId=request',
+    },
+    {
+      type: 'accordion',
+      title: 'reports',
+      id: 'reports',
+      icon: <BsFileEarmarkBarGraph />,
+      children: [
+        {
+          title: 'AePS reports',
+          link: '/dashboard/reports/aeps?pageId=reports',
+          id: "aepsReports",
+          soon: false,
+        },
+        {
+          title: 'BBPS reports',
+          link: '/dashboard/reports/bbps?pageId=reports',
+          id: "bbpsReports",
+          soon: false,
+        },
+        {
+          title: 'recharge reports',
+          link: '/dashboard/reports/recharge?pageId=reports',
+          id: "rechargeReports",
+          soon: false,
+        },
+        {
+          title: 'DMT reports',
+          link: '/dashboard/reports/dmt?pageId=reports',
+          id: "dmtReports",
+          soon: false,
+        },
+        {
+          title: 'payout reports',
+          link: '/dashboard/reports/payout?pageId=reports',
+          id: "payoutReports",
+          soon: false,
+        },
+        {
+          title: 'LIC reports',
+          link: '/dashboard/reports/lic?pageId=reports',
+          id: "licReports",
+          soon: true,
+        },
+        {
+          title: 'PAN reports',
+          link: '/dashboard/reports/pan?pageId=reports',
+          id: "panReports",
+          soon: true,
+        },
+        {
+          title: 'CMS reports',
+          link: '/dashboard/reports/pan?pageId=reports',
+          id: "cmsReports",
+          soon: true,
+        },
+        {
+          title: 'axis accounts',
+          link: '/dashboard/reports/axis?pageId=reports',
+          id: "axisReports",
+          soon: true,
+        },
+      ]
+    },
+    {
+      type: 'link',
+      title: 'support tickets',
+      id: 'support',
+      icon: <IoMdHelpBuoy />,
+      link: '/dashboard/support-tickets?pageId=support',
+    },
+  ]
 
 const Sidebar = ({ isProfileComplete, userName, userImage }) => {
-
+  const [activeServices, setActiveServices] = useState([])
   const Router = useRouter()
   const { pageId } = Router.query
   const [userType, setUserType] = useState("")
@@ -198,6 +230,16 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
     })
     Router.push("/auth/login")
   }
+
+
+  useMemo(() => {
+    axios.get('/api/user/services').then((res) => {
+      setActiveServices(res.data.map((item)=>item.type))
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   return (
     <>
       <Hide below={"md"}>

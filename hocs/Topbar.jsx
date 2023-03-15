@@ -1,20 +1,65 @@
 import React from 'react'
-import { BsWallet, BsBell } from 'react-icons/bs'
-import { FiMenu } from 'react-icons/fi'
 import {
     HStack,
     Text,
     Box,
     Image,
-    VStack,
     Spacer,
+    useToast,
     Show,
     Button,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    ModalCloseButton,
+    useDisclosure,
+    FormControl,
+    FormLabel,
+    Input,
+    Textarea
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { IoMdHelpBuoy } from 'react-icons/io'
+import { useFormik } from 'formik'
+import { FormAxios } from '../lib/axios'
 
 const Topbar = () => {
+    const { isOpen, onClose, onOpen } = useDisclosure()
+    const Toast = useToast({
+        position: 'top-right'
+    })
+    const Formik = useFormik({
+        initialValues: {
+            transactionId: "",
+            title: "",
+            message: "",
+            attachments: null,
+        },
+        onSubmit: (values) => {
+            FormAxios.post('/api/tickets', {
+                transactionId: values.transactionId,
+                title: values.title,
+                body: values.message,
+                attachments: values.attachments,
+            }).then((res) => {
+                Toast({
+                    status: 'success',
+                    title: 'Ticket Raised',
+                    description: 'We will reply you soon.'
+                })
+            }).catch((err) => {
+                console.log(err)
+                Toast({
+                    status: 'error',
+                    title: 'Error Occured',
+                    description: 'Please contact support.'
+                })
+            })
+        }
+    })
     return (
         <>
             <HStack
@@ -23,12 +68,12 @@ const Topbar = () => {
                 boxShadow={'base'}
             >
                 <Image
-                w={'20'}
+                    w={'20'}
                     src={'/logo_long.png'}
                 />
                 <Spacer />
                 <Show above={'md'}>
-                    <Link href={'tel:+9178380742'} style={{paddingRight: '2rem'}}>
+                    <Link href={'tel:+9178380742'} style={{ paddingRight: '2rem' }}>
                         <Text fontSize={'xs'} color={'#666'}>
                             Helpline Number
                         </Text>
@@ -37,8 +82,49 @@ const Topbar = () => {
                         </Text>
                     </Link>
                 </Show>
-                <Button leftIcon={<IoMdHelpBuoy fontSize={'1.25rem'} />} rounded={'full'} colorScheme={'twitter'}>New Ticket</Button>
+                <Button
+                    leftIcon={<IoMdHelpBuoy fontSize={'1.25rem'} />}
+                    rounded={'full'} colorScheme={'twitter'}
+                    onClick={onOpen}
+                >New Ticket</Button>
             </HStack>
+
+
+
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Raise New Ticket</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormControl>
+                            <FormLabel>Title</FormLabel>
+                            <Input name='title' onChange={Formik.handleChange} />
+                        </FormControl>
+                        <FormControl py={6}>
+                            <FormLabel>Message</FormLabel>
+                            <Textarea name='message'
+                                onChange={Formik.handleChange}
+                                resize={'none'}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Attachments</FormLabel>
+                            <Input
+                                name='attachments' type={'file'}
+                                onChange={(e) => Formik.setFieldValue("attachments", e.currentTarget.files[0])}
+                                accept={'image/jpeg, image/png, image/jpg'}
+                                />
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme={'twitter'} onClick={Formik.handleSubmit}>Send</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     )
 }
