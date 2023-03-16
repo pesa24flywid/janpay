@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
-import axios from '../../lib/axios'
+import axios from 'axios'
 import {
     Box,
     VStack,
@@ -19,6 +19,7 @@ import {
 import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import Cookies from 'js-cookie'
 
 const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
@@ -28,8 +29,15 @@ const Register = () => {
     const toast = useToast()
 
     useEffect(() => {
-        axios.get("/sanctum/csrf-cookie")
-    
+        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
+        //     withCredentials: true,
+        //     headers: {
+        //         'Accept': 'application/json, text/plain, */*',
+        //         'Content-Type': 'application/json',
+        //         'X-Requested-With': 'XMLHttpRequest'
+        //     },
+        // })
+
     }, [])
 
     const formik = useFormik({
@@ -46,7 +54,15 @@ const Register = () => {
             // Handling registration
             setIsBtnLoading(true)
             try {
-                await axios.post("/register", JSON.stringify(values)).then(() => {
+                await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register`, JSON.stringify(values), {
+                    withCredentials: true,
+                    headers: {
+                        "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                }).then(() => {
                     toast({
                         status: "success",
                         title: "Credentials Sent",

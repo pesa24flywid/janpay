@@ -18,7 +18,7 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios, {ClientAxios} from '../../../../lib/axios'
+import BackendAxios, {ClientAxios} from '../../../../lib/axios'
 
 const AadhaarPay = () => {
 
@@ -54,7 +54,7 @@ const AadhaarPay = () => {
       transctionId: ""
     },
     onSubmit: (values) => {
-      axios.post("/api/aadhaar-pay", values)
+      BackendAxios.post("/api/aadhaar-pay", values)
     }
   })
 

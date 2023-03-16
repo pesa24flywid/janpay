@@ -18,7 +18,7 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios, { ClientAxios } from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
@@ -59,7 +59,7 @@ const Aeps = () => {
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await axios.post("/api/eko/aeps/money-transfer", values).then((res) => {
+      await BackendAxios.post("/api/eko/aeps/money-transfer", values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'

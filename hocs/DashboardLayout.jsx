@@ -31,7 +31,7 @@ import BankDetails from './BankDetails'
 import Cookies from 'js-cookie';
 let bcrypt = require('bcryptjs')
 import { useRouter } from 'next/router';
-import axios, { ClientAxios } from '../lib/axios';
+import BackendAxios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
 import SimpleAccordion from './SimpleAccordion';
 
@@ -40,7 +40,7 @@ const DashboardWrapper = (props) => {
 
     // Check if user has paid onboarding fee or not
     useEffect(() => {
-        axios.get('/api/user/check/onboard-fee').then((res) => {
+        BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
             if (res.data[0].onboard_fee == 0) {
                 if(!window.location.href.includes(`/services/activate`)){
                     if(!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`)){
@@ -74,7 +74,7 @@ const DashboardWrapper = (props) => {
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
         // Check wallet balance
-        axios.post('/api/user/wallet').then((res) => {
+        BackendAxios.post('/api/user/wallet').then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
             setWallet('Error')
@@ -105,14 +105,14 @@ const DashboardWrapper = (props) => {
     useEffect(() => {
         let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
         if (authentic != true) {
-            axios.post("/logout").then(() => {
+            BackendAxios.post("/logout").then(() => {
                 Cookies.remove("verified")
             })
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
     })
     async function signout() {
-        await axios.post("/logout").then(() => {
+        await BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
             localStorage.clear()
         })

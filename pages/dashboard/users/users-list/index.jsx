@@ -39,7 +39,7 @@ import {
     useToast,
 } from '@chakra-ui/react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
-import axios, { FormAxios } from '../../../../lib/axios'
+import BackendAxios, { FormAxios } from '../../../../lib/axios'
 import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFileCsv, FaFilePdf, FaPrint } from 'react-icons/fa'
 import { BsChevronDown } from 'react-icons/bs'
@@ -129,7 +129,7 @@ const Index = () => {
     // Fetching users
     function fetchUsersList() {
         setFetchedUsers([])
-        axios.get(`/api/admin/users-list/${selectedTab}`).then((res) => {
+        BackendAxios.get(`/api/admin/users-list/${selectedTab}`).then((res) => {
             console.log(res.data)
             setFetchedUsers(res.data)
         }).catch((err) => {
@@ -147,7 +147,7 @@ const Index = () => {
 
 
     function changeUserStatus(userId, updateTo) {
-        axios.get(`/api/admin/user/status/${userId}/${updateTo}`).then(() => {
+        BackendAxios.get(`/api/admin/user/status/${userId}/${updateTo}`).then(() => {
             fetchUsersList
         }).catch((err) => {
             console.log(err)

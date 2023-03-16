@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useFormik } from "formik";
 import DashboardWrapper from '../../../hocs/DashboardLayout';
-import axios from '../../../lib/axios';
+import BackendAxios from '../../../lib/axios';
 
 const ResetMpin = () => {
     const Toast = useToast({
@@ -30,7 +30,7 @@ const ResetMpin = () => {
     })
 
     function handleMpinReset() {
-        axios.post('/api/user/new-mpin', JSON.stringify({
+        BackendAxios.post('/api/user/new-mpin', JSON.stringify({
             old_mpin: MpinFormik.values.old_mpin,
             new_mpin: MpinFormik.values.new_mpin,
             new_mpin_confirmation: MpinFormik.values.new_mpin_confirmation,

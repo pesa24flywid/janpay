@@ -37,7 +37,7 @@ const ResetPassword = () => {
         },
         onSubmit: (values) => {
             // Handling registration API
-            axios.post('/forgot-password', JSON.stringify({
+            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/forgot-password`, JSON.stringify({
                 email: values.email,
                 mpin: values.mpin,
             })).then((res) => {

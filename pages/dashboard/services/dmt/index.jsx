@@ -32,7 +32,7 @@ import {
     DrawerCloseButton
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios, { ClientAxios } from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { states } from '../../../../lib/states'
 import { useToast } from '@chakra-ui/react'
 import { FiSend } from 'react-icons/fi'
@@ -92,7 +92,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             setIsBtnLoading(true)
-            axios.post("api/eko/dmt/create-customer", {
+            BackendAxios.post("api/eko/dmt/create-customer", {
                 values
             }).then((res) => {
                 if (res.status == 200) {
@@ -156,7 +156,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             // Adding New Recipient
-            axios.post("api/eko/dmt/add-recipient", {
+            BackendAxios.post("api/eko/dmt/add-recipient", {
                 values,
                 customerId,
             }).then((res) => {
@@ -186,7 +186,7 @@ const Dmt = () => {
             setIsBtnLoading(false)
         }
         else {
-            axios.post("api/eko/dmt/customer-info", {
+            BackendAxios.post("api/eko/dmt/customer-info", {
                 customerId
             }).then((res) => {
                 if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
@@ -233,7 +233,7 @@ const Dmt = () => {
 
     // Send OTP for account verification
     function sendOtp() {
-        axios.post("api/eko/dmt/resend-otp", {
+        BackendAxios.post("api/eko/dmt/resend-otp", {
             customerId
         }).then((res) => {
             if (res.status == 200) {
@@ -257,7 +257,7 @@ const Dmt = () => {
     }
 
     function verifyOtp() {
-        axios.post("api/eko/dmt/verify-customer", {
+        BackendAxios.post("api/eko/dmt/verify-customer", {
             customerId: registrationFormik.values.customerId,
             otp
         }).then((res) => {

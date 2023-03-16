@@ -8,7 +8,7 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react'
-import axios, { ClientAxios } from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 
 const Activate = () => {
     const [isOnboarded, setIsOnboarded] = useState(false)
@@ -22,7 +22,7 @@ const Activate = () => {
 
     // Check if user has paid onboarding fee or not
     useEffect(()=>{
-        axios.get('/api/user/check/onboard-fee').then((res)=>{
+        BackendAxios.get('/api/user/check/onboard-fee').then((res)=>{
             setOnboardFee(res.data[1].fee)
             if(res.data[0].onboard_fee == 1){
                 setIsOnboarded(true)
@@ -45,7 +45,7 @@ const Activate = () => {
         })
 
 
-        axios.get('/api/services').then((res) => {
+        BackendAxios.get('/api/services').then((res) => {
             setServices(res.data)
         }).catch((err) => {
             Toast({
@@ -58,7 +58,7 @@ const Activate = () => {
     }, [])
 
     function onboardMe(){
-        axios.get('/api/user/pay/onboard-fee').then((res)=>{
+        BackendAxios.get('/api/user/pay/onboard-fee').then((res)=>{
             Toast({
                 status: 'success',
                 title: 'Welcome on board!',

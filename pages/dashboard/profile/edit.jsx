@@ -27,7 +27,7 @@ import {
 import Head from "next/head";
 import { useFormik } from "formik";
 import DashboardWrapper from "../../../hocs/DashboardLayout";
-import axios, { FormAxios, DefaultAxios } from "../../../lib/axios";
+import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
 import { states } from '../../../lib/states'
 const EditProfile = () => {
   const [profile, setProfile] = useState({
@@ -103,7 +103,7 @@ const EditProfile = () => {
 
 
   function fetchProfile() {
-    axios.post("api/user/info").then((res) => {
+    BackendAxios.post("api/user/info").then((res) => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
       localStorage.setItem("firstName", res.data.data.first_name || "")
       localStorage.setItem("lastName", res.data.data.last_name || "")
@@ -167,7 +167,7 @@ const EditProfile = () => {
 
 
   async function sendPhoneOtp() {
-    axios.post(`/api/users/otp`, {
+    BackendAxios.post(`/api/users/otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone
     }).then((res) => {
@@ -187,7 +187,7 @@ const EditProfile = () => {
   }
 
   async function verifyPhoneOtp() {
-    await axios.post(`/api/users/verify-otp`, {
+    await BackendAxios.post(`/api/users/verify-otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone,
       otp: otp
@@ -213,7 +213,7 @@ const EditProfile = () => {
 
   // Send OTP for Aadhaar Verification
   function sendAadhaarOtp() {
-    axios.post(`api/user/verify/aadhaar/send-otp`, {
+    BackendAxios.post(`api/user/verify/aadhaar/send-otp`, {
       aadhaar_no: newAadhaar,
     }).then((res) => {
       setOtpSent(true)
@@ -234,7 +234,7 @@ const EditProfile = () => {
 
   // Verifying Aadhaar OTP
   function verifyAadhaarOtp() {
-    axios.post(`api/user/verify/aadhaar/verify-otp`, {
+    BackendAxios.post(`api/user/verify/aadhaar/verify-otp`, {
       otp: otp,
     }).then((res) => {
       formik.setFieldValue("aadhaar", newAadhaar)
@@ -260,7 +260,7 @@ const EditProfile = () => {
   // Verifying PAN
   function verifyPan() {
     if (formik.values.firstName && formik.values.lastName && formik.values.pan) {
-      axios.post(`/api/user/verify/pan/verify-pan`, {
+      BackendAxios.post(`/api/user/verify/pan/verify-pan`, {
         pan_no: formik.values.pan,
       }).then((res) => {
         Toast({

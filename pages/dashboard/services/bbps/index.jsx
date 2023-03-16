@@ -36,8 +36,7 @@ import {
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
-import { FormAxios, ClientAxios } from '../../../../lib/axios'
+import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
@@ -80,7 +79,7 @@ const Bbps = () => {
 
   // Fetch all available categories
   useEffect(() => {
-    axios.get("api/eko/bbps/operators/categories").then((res) => {
+    BackendAxios.get("api/eko/bbps/operators/categories").then((res) => {
       setCategories(res.data.data)
     }).catch((err) => {
       console.log(err)
@@ -96,7 +95,7 @@ const Bbps = () => {
   function fetchOperators(category_id) {
     setSelectedOperator(null)
     setOperatorParams()
-    axios.get(`api/eko/bbps/operators/${category_id}`).then((res) => {
+    BackendAxios.get(`api/eko/bbps/operators/${category_id}`).then((res) => {
       setOperators(res.data.data)
     }).catch((err) => {
       console.log(err)
@@ -104,7 +103,7 @@ const Bbps = () => {
   }
 
   function fetchParams(operator_id) {
-    axios.get(`api/eko/bbps/operators/fields/${operator_id}`).then((res) => {
+    BackendAxios.get(`api/eko/bbps/operators/fields/${operator_id}`).then((res) => {
       setSelectedOperator(operator_id)
       setOperatorParams(res.data.data)
       res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)

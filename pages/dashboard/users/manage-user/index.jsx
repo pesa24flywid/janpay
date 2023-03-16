@@ -25,7 +25,7 @@ import {
 import { useFormik } from 'formik'
 import { useRef } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
-import axios, { FormAxios } from '../../../../lib/axios'
+import BackendAxios, { FormAxios } from '../../../../lib/axios'
 
 const ManageUser = () => {
     const initialFocusRef = useRef()
@@ -47,7 +47,7 @@ const ManageUser = () => {
 
     function fetchUsersList() {
         setAvailableUsers([])
-        axios.get(`/api/admin/users-list/${SearchFormik.values.selectedRole}`).then((res) => {
+        BackendAxios.get(`/api/admin/users-list/${SearchFormik.values.selectedRole}`).then((res) => {
             console.log(res.data)
             setAvailableUsers(res.data)
         }).catch((err) => {

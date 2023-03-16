@@ -16,7 +16,7 @@ import {
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
 import { IoMdHelpBuoy } from "react-icons/io";
-import axios from "../lib/axios";
+import BackendAxios from "../lib/axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
@@ -225,7 +225,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
   }, [])
 
   async function signout() {
-    await axios.post("/logout").then(() => {
+    await BackendAxios.post("/logout").then(() => {
       Cookies.remove("verified")
     })
     Router.push("/auth/login")
@@ -233,7 +233,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
 
 
   useMemo(() => {
-    axios.get('/api/user/services').then((res) => {
+    BackendAxios.get('/api/user/services').then((res) => {
       setActiveServices(res.data.map((item)=>item.type))
     }).catch((err) => {
       console.log(err)

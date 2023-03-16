@@ -5,7 +5,7 @@ import Head from "next/head";
 import ProfileInfoCard from "../../../hocs/ProfileInfoCard";
 import KycDocsCard from "../../../hocs/KycDocsCard";
 import DashboardWrapper from "../../../hocs/DashboardLayout";
-import axios from "../../../lib/axios";
+import BackendAxios from "../../../lib/axios";
 
 const Profile = () => {
   const Toast = useToast()
@@ -22,7 +22,7 @@ const Profile = () => {
   })
 
   function fetchProfile() {
-    axios.post("api/user/info").then((res) => {
+    BackendAxios.post("api/user/info").then((res) => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
       localStorage.setItem("firstName", res.data.data.first_name || "")
       localStorage.setItem("lastName", res.data.data.last_name || "")

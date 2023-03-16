@@ -33,6 +33,7 @@ import DataCard, { TransactionCard } from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
 import DashboardWrapper from '../../hocs/DashboardLayout'
 import Link from 'next/link'
+import BackendAxios from '../../lib/axios'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
@@ -50,9 +51,6 @@ const Dashboard = () => {
     if (!isProfileComplete) {
       setProfileAlert(true)
     }
-
-    // Check for new notifications
-
 
   }, [])
 

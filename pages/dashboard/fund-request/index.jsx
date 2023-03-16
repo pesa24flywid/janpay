@@ -24,7 +24,7 @@ import {
 import { useFormik } from 'formik'
 import { Grid } from "gridjs";
 import "gridjs/dist/theme/mermaid.css";
-import axios, { ClientAxios, FormAxios } from '../../../lib/axios';
+import BackendAxios, { ClientAxios, FormAxios } from '../../../lib/axios';
 import jsPDF from 'jspdf';
 import "jspdf-autotable"
 import { useMemo } from 'react';
@@ -149,7 +149,7 @@ const FundRequest = () => {
 
     // useEffect(() => {
     //     // Fetch parents
-    //     axios.get('/api/fund/fetch-parents').then((res) => {
+    //     BackendAxios.get('/api/fund/fetch-parents').then((res) => {
     //         getParents(res.data[0])
     //     }).catch((err) => {
     //         console.log(err)
@@ -221,7 +221,7 @@ const FundRequest = () => {
 
     useEffect(() => {
         setUserName(localStorage.getItem("userName"))
-        axios.get(('api/fund/fetch-fund')).then((res) => {
+        BackendAxios.get(('api/fund/fetch-fund')).then((res) => {
             setRowData(res.data)
             grid.updateConfig({
                 data: res.data

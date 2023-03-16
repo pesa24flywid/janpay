@@ -20,7 +20,7 @@ import {
     useToast,
 } from '@chakra-ui/react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
-import axios, { FormAxios } from '../../../../lib/axios'
+import BackendAxios, { FormAxios } from '../../../../lib/axios'
 
 const Index = () => {
     const [availablePlans, setAvailablePlans] = useState([])
@@ -88,7 +88,7 @@ const Index = () => {
         setIsParentInputDisabled(true)
         setIsPlanInputDisabled(true)
         if (Formik.values.userType) {
-            axios.get(`/api/admin/packages/${Formik.values.userType}`).then((res) => {
+            BackendAxios.get(`/api/admin/packages/${Formik.values.userType}`).then((res) => {
                 setAvailablePlans(res.data[0].roles.map((plan) => {
                     return {
                         planName: plan.pivot.name,
@@ -102,7 +102,7 @@ const Index = () => {
                 if (Formik.values.userType == "3") userToFetch = "distributor"
                 if (Formik.values.userType == "2") userToFetch = "super_distributor"
                 if (Formik.values.userType == "4") userToFetch = "admin"
-                axios.get(
+                BackendAxios.get(
                     `/api/admin/get-users/${userToFetch}`).then((res) => {
                         setAvailableParents(
                             res.data.map((child) => {

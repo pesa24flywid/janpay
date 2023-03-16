@@ -29,7 +29,7 @@ import Navbar from '../../hocs/Navbar'
 import { FiPhone, FiMail } from 'react-icons/fi'
 import { useFormik } from 'formik'
 import Link from 'next/link'
-import axios from '../../lib/axios'
+import axios from 'axios'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 var bcrypt = require('bcryptjs')
@@ -50,7 +50,14 @@ const Login = () => {
     const [mpin, setMpin] = useState(null)
 
     useEffect(() => {
-        axios.get("/sanctum/csrf-cookie")
+        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
+        //     withCredentials: true,
+        //     headers: {
+        //         'Accept': 'application/json, text/plain, */*',
+        //         'Content-Type': 'application/json',
+        //         'X-Requested-With': 'XMLHttpRequest'
+        //     },
+        // })
         getLocation()
     }, [])
 
@@ -76,12 +83,20 @@ const Login = () => {
     async function sendOtp() {
         try {
             setOtpBtnDisabled(true)
-            await axios.post("/send-otp", JSON.stringify({
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-otp`, JSON.stringify({
                 authMethod: authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
                 ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
                 password: formik.values.password
-            }))
+            }), {
+                withCredentials: true,
+                headers: {
+                    "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            })
             return {
                 status: "success",
                 title: "OTP Sent!",
@@ -144,7 +159,7 @@ const Login = () => {
     async function handleLogin() {
         setIsBtnLoading(true)
         try {
-            await axios.post("/login", JSON.stringify({
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 "authMethod": authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
                 ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
@@ -153,7 +168,15 @@ const Login = () => {
                 "remember": 1,
                 "latlong": Cookies.get("latlong"),
                 organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
-            })).then((res) => {
+            }), {
+                withCredentials: true,
+                headers: {
+                    "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            }).then((res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
                 localStorage.setItem("userId", res.data.id)
@@ -162,6 +185,9 @@ const Login = () => {
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
                 localStorage.setItem("balance", res.data.wallet)
+
+
+                Cookies.set('access-token', res.data.token.original.access_token)
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             })
@@ -184,14 +210,22 @@ const Login = () => {
     // Handling MPIN Login
     async function handleMpin() {
         try {
-            await axios.post('/login', JSON.stringify({
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 authMethod: authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
                 ...(authMethod === "phone" && { "phone": formik.values.user_id }),
                 password: formik.values.password,
                 mpin: mpin,
                 organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
-            })).then((res)=>{
+            }), {
+                withCredentials: true,
+                headers: {
+                    "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            }).then((res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
                 localStorage.setItem("userId", res.data.id)
@@ -199,6 +233,10 @@ const Login = () => {
                 localStorage.setItem("userName", res.data.name)
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
+                localStorage.setItem("balance", res.data.wallet)
+
+                Cookies.set('access-token', res.data.token.original.access_token)
+
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             })

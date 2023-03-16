@@ -31,7 +31,7 @@ import {
     Td,
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios, {ClientAxios} from '../../../../lib/axios'
+import BackendAxios, {ClientAxios} from '../../../../lib/axios'
 import { useToast } from '@chakra-ui/react'
 import { Document, Page, Text as PText, StyleSheet, View, Image, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
 
@@ -109,7 +109,7 @@ const Payout = () => {
 
     function makePayout() {
         setIsLoading(true)
-        axios.post('/api/razorpay/payout/new-payout', JSON.stringify({
+        BackendAxios.post('/api/razorpay/payout/new-payout', JSON.stringify({
             beneficiaryName: Formik.values.beneficiaryName,
             account: Formik.values.account,
             ifsc: Formik.values.ifsc,
@@ -133,7 +133,7 @@ const Payout = () => {
 
     const [rowdata, setRowdata] = useState([])
     useEffect(() => {
-        axios.get('/api/razorpay/fetch-payout').then((res) => {
+        BackendAxios.get('/api/razorpay/fetch-payout').then((res) => {
             setRowdata(res.data)
         }).catch((err) => {
             console.log(err)

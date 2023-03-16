@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useFormik } from "formik";
 import DashboardWrapper from '../../../hocs/DashboardLayout';
-import axios from '../../../lib/axios';
+import BackendAxios from '../../../lib/axios';
 
 const ResetPassword = () => {
   const Toast = useToast({
@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
 
   function handlePasswordReset() {
-    axios.post('/api/user/new-password', JSON.stringify({
+    BackendAxios.post('/api/user/new-password', JSON.stringify({
       old_password: PasswordFormik.values.old_password,
       new_password: PasswordFormik.values.new_password,
       new_password_confirmation: PasswordFormik.values.new_password_confirmation,
