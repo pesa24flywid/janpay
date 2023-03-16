@@ -107,6 +107,7 @@ const DashboardWrapper = (props) => {
         if (authentic != true) {
             BackendAxios.post("/logout").then(() => {
                 Cookies.remove("verified")
+                localStorage.clear()
             })
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
