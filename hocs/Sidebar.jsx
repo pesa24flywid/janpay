@@ -39,6 +39,11 @@ export const SidebarOptions =
           id: "view-profile"
         },
         {
+          title: 'edit profile',
+          link: '/dashboard/profile/edit?pageId=profile',
+          id: "edit-profile"
+        },
+        {
           title: 'reset MPIN',
           link: '/dashboard/profile/reset-mpin?pageId=profile',
           id: "reset-mpin"
