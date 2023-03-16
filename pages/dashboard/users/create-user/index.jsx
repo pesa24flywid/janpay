@@ -19,8 +19,8 @@ import {
     Switch,
     useToast,
 } from '@chakra-ui/react'
-import Layout from '../../layout'
-import axios, { FormAxios } from '@/lib/utils/axios'
+import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import axios, { FormAxios } from '../../../../lib/axios'
 
 const Index = () => {
     const [availablePlans, setAvailablePlans] = useState([])
@@ -132,7 +132,7 @@ const Index = () => {
     return (
         <>
             <form onSubmit={Formik.handleSubmit} id={'createUserForm'}>
-                <Layout pageTitle={'Create User'}>
+                <DashboardWrapper titleText={'Create User'}>
                     <Text fontWeight={'semibold'} fontSize={'lg'}>Create New User</Text>
 
                     <Stack
@@ -664,7 +664,7 @@ const Index = () => {
                         <Button type={'reset'} onClick={Formik.handleReset}>Clear Form</Button>
                         <Button type={'submit'} colorScheme={'twitter'}>Submit</Button>
                     </HStack>
-                </Layout>
+                </DashboardWrapper>
             </form>
         </>
     )

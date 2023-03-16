@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import Layout from '../../layout'
 import {
     Box,
     HStack,
@@ -23,9 +22,10 @@ import {
     Checkbox,
     FormLabel
 } from '@chakra-ui/react'
-import { Formik, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import { useRef } from 'react'
-import axios from '@/lib/utils/axios'
+import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import axios, { FormAxios } from '../../../../lib/axios'
 
 const ManageUser = () => {
     const initialFocusRef = useRef()
@@ -88,7 +88,7 @@ const ManageUser = () => {
 
     return (
         <>
-            <Layout pageTitle={'Manage User'}>
+            <DashboardWrapper titleText={'Manage User'}>
                 <Stack
                     direction={['column', 'row']}
                 >
@@ -185,7 +185,7 @@ const ManageUser = () => {
                         </Select>
                     </FormControl>
                 </Stack>
-            </Layout>
+            </DashboardWrapper>
         </>
     )
 }

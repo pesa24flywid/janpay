@@ -38,13 +38,13 @@ import {
     VisuallyHidden,
     useToast,
 } from '@chakra-ui/react'
+import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import axios, { FormAxios } from '../../../../lib/axios'
 import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFileCsv, FaFilePdf, FaPrint } from 'react-icons/fa'
 import { BsChevronDown } from 'react-icons/bs'
-import Layout from '../../layout';
 import jsPDF from 'jspdf';
 import "jspdf-autotable"
-import axios, { ClientAxios } from '@/lib/utils/axios'
 import CheckboxTree from 'react-checkbox-tree'
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import Script from 'next/script'
@@ -225,7 +225,7 @@ const Index = () => {
                 src='https://kit.fontawesome.com/2aa643340e.js'
                 crossOrigin='anonymous'
             />
-            <Layout pageTitle={'Users List'}>
+            <DashboardWrapper titleText={'Users List'}>
                 <Tabs
                     variant='soft-rounded'
                     colorScheme='green'
@@ -628,7 +628,7 @@ const Index = () => {
                     </DrawerContent>
                 </Drawer>
 
-            </Layout >
+            </DashboardWrapper >
         </>
     )
 }

@@ -34,6 +34,7 @@ specifiers:
   nextjs-progressbar: ^0.0.16
   react: 18.2.0
   react-chartjs-2: ^5.1.0
+  react-checkbox-tree: ^1.8.0
   react-dom: 18.2.0
   react-icons: ^4.7.1
   yup: ^0.32.11
@@ -70,6 +71,7 @@ dependencies:
   nextjs-progressbar: 0.0.16_next@13.1.1+react@18.2.0
   react: 18.2.0
   react-chartjs-2: 5.1.0_dxa6kz4w32vmgoazz4fv7vwm2e
+  react-checkbox-tree: 1.8.0_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-icons: 4.7.1_react@18.2.0
   yup: 0.32.11
@@ -3020,6 +3022,10 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: false
+
   /client-only/0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
     dev: false
@@ -3977,6 +3983,18 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       chart.js: 4.1.1
+      react: 18.2.0
+    dev: false
+
+  /react-checkbox-tree/1.8.0_react@18.2.0:
+    resolution: {integrity: sha512-ufC4aorihOvjLpvY1beab2hjVLGZbDTFRzw62foG0+th+KX7e/sdmWu/nD1ZS/U5Yr0rWGwedGH5GOtR0IkUXw==}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      classnames: 2.3.2
+      lodash: 4.17.21
+      nanoid: 3.3.4
+      prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
