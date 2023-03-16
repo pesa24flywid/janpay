@@ -39,14 +39,17 @@ import SimpleAccordion from './SimpleAccordion';
 const DashboardWrapper = (props) => {
 
     // Check if user has paid onboarding fee or not
-    useEffect(()=>{
-        axios.get('/api/user/check/onboard-fee').then((res)=>{
-            if(res.data[0].onboard_fee == 0){
-                if(!window.location.href.includes(`/services/activate`) || !window.location.href.includes(`/profile`) )
-                window.location.assign('/dashboard/services/activate?pageId=services')
+    useEffect(() => {
+        axios.get('/api/user/check/onboard-fee').then((res) => {
+            if (res.data[0].onboard_fee == 0) {
+                if(!window.location.href.includes(`/services/activate`)){
+                    if(!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`)){
+                        window.location.assign('/dashboard/services/activate?pageId=services')
+                    }
+                }
             }
         })
-    },[])
+    }, [])
 
 
     const [openNotification, setOpenNotification] = useState(false)
