@@ -76,6 +76,19 @@ const Activate = () => {
             })
         })
     }
+
+    function activateService(){
+        BackendAxios.post(`/api/activate-service/${23}`).then((res)=>{
+            console.log(res.data)
+        }).catch((err)=>{
+            Toast({
+                status: 'error',
+                title: 'Error Occured',
+                description: err.message
+            })
+        })
+    }
+
     return (
         <>
             <DashboardWrapper titleText={'Activate Services'}>
@@ -132,6 +145,7 @@ const Activate = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
+                                        onClick={activateService}
                                     >Activate (₹{service.price})</Button>
                                 </Box>
                             )
