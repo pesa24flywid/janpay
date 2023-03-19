@@ -55,7 +55,8 @@ const Aeps = () => {
       ifsc: "",
       serviceCode: "2",
       pid: "",
-      amount: ""
+      amount: "",
+      serviceId: "23"
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
