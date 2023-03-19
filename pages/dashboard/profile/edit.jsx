@@ -78,6 +78,8 @@ const EditProfile = () => {
       aadhaarFront: null,
       aadhaarBack: null,
       panCard: null,
+      modelName: "",
+      deviceNumber: "",
     },
     onSubmit: async (values) => {
       // Handle submit
@@ -118,6 +120,8 @@ const EditProfile = () => {
       localStorage.setItem("city", res.data.data.city || "")
       localStorage.setItem("state", res.data.data.state || "")
       localStorage.setItem("pincode", res.data.data.pincode || "")
+      localStorage.setItem("modelName", res.data.data.model_name || "")
+      localStorage.setItem("deviceNumber", res.data.data.device_number || "")
     }).catch((err) => {
       Toast({
         status: "error",
@@ -395,7 +399,7 @@ const EditProfile = () => {
                   <Button
                     size={'xs'}
                     colorScheme={'twitter'}
-                    isDisabled={formik.values.pan.length != 10}
+                    isDisabled={formik.values.pan.length != 10 ? true : true}
                     onClick={verifyPan}
                   >Verify</Button>
                 </HStack>
@@ -449,6 +453,33 @@ const EditProfile = () => {
                 </FormControl>
               </Stack>
             </VStack>
+
+
+            <VStack alignItems={'flex-start'} py={8}>
+              <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Biometric Device Details</Text>
+
+              <Stack direction={['column', 'row']} spacing={8}>
+                <FormControl py={2} id="modelName" isRequired>
+                  <FormLabel>Model Name</FormLabel>
+                  <Input
+                    placeholder="Enter here..."
+                    _placeholder={{ color: "gray.500" }}
+                    value={formik.values.modelName}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+                <FormControl py={2} id="deviceNumber" isRequired>
+                  <FormLabel>Device Number</FormLabel>
+                  <Input
+                    placeholder="Enter here..."
+                    _placeholder={{ color: "gray.500" }}
+                    value={formik.values.deviceNumber}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+              </Stack>
+            </VStack>
+
 
             <Stack spacing={6} direction={["column", "row"]}>
               <Button
