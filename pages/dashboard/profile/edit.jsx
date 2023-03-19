@@ -399,7 +399,7 @@ const EditProfile = () => {
                   <Button
                     size={'xs'}
                     colorScheme={'twitter'}
-                    isDisabled={formik.values.pan.length != 10 ? true : true}
+                    isDisabled={formik.values.pan.length == 10 ? true : true}
                     onClick={verifyPan}
                   >Verify</Button>
                 </HStack>
