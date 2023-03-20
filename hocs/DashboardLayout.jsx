@@ -98,7 +98,7 @@ const DashboardWrapper = (props) => {
     const availablePages = useMemo(() => {
 
         ClientAxios.post('/api/user/fetch', {
-            user_id: localStorage.getItem('userId')
+            user_id: Cookies.get('userId')
         }, {
             headers: {
                 'Content-Type': 'application/json'
