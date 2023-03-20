@@ -41,7 +41,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Dmt = () => {
-
+    const serviceId = 24
     useEffect(() => {
 
         ClientAxios.post('/api/user/fetch', {
@@ -73,6 +73,7 @@ const Dmt = () => {
     const [customerId, setCustomerId] = useState("")
     const [isOtpSent, setIsOtpSent] = useState(false)
     const [otp, setOtp] = useState("")
+    const [otpRefId, setOtpRefId] = useState("")
 
     const [newRecipientModal, setNewRecipientModal] = useState(false)
 
@@ -92,7 +93,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             setIsBtnLoading(true)
-            BackendAxios.post("api/eko/dmt/create-customer", {
+            BackendAxios.post(`api/eko/dmt/create-customer/${serviceId}`, {
                 values
             }).then((res) => {
                 if (res.status == 200) {
@@ -156,7 +157,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             // Adding New Recipient
-            BackendAxios.post("api/eko/dmt/add-recipient", {
+            BackendAxios.post(`api/eko/dmt/add-recipient/${serviceId}`, {
                 values,
                 customerId,
             }).then((res) => {
@@ -186,7 +187,7 @@ const Dmt = () => {
             setIsBtnLoading(false)
         }
         else {
-            BackendAxios.post("api/eko/dmt/customer-info", {
+            BackendAxios.post(`api/eko/dmt/customer-info/${serviceId}`, {
                 customerId
             }).then((res) => {
                 if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
@@ -200,7 +201,7 @@ const Dmt = () => {
                     setCustomerName(res.data.response.data.name)
                     setCustomerStatus("registered")
                 }
-                if (res.data.status == 0 && res.data.response_status_id == -1) {
+                if (res.data.response.status == 0 && res.data.response.response_status_id == -1) {
                     sendOtp()
                 }
                 setIsBtnLoading(false)
@@ -233,10 +234,11 @@ const Dmt = () => {
 
     // Send OTP for account verification
     function sendOtp() {
-        BackendAxios.post("api/eko/dmt/resend-otp", {
+        BackendAxios.post(`api/eko/dmt/resend-otp/${serviceId}`, {
             customerId
         }).then((res) => {
             if (res.status == 200) {
+                setOtpRefId(res.data)
                 setIsOtpSent(true)
                 Toast({
                     status: "info",
@@ -257,9 +259,10 @@ const Dmt = () => {
     }
 
     function verifyOtp() {
-        BackendAxios.post("api/eko/dmt/verify-customer", {
+        BackendAxios.post(`api/eko/dmt/verify-customer/${serviceId}`, {
             customerId: registrationFormik.values.customerId,
-            otp
+            otp,
+            otp_ref_id: otpRefId,
         }).then((res) => {
             if (res.data.response_status_id == 0 && res.data.status == 0) {
                 Toast({

@@ -18,17 +18,17 @@ const Activate = () => {
     const Toast = useToast({
         position: 'top-right'
     })
-    
+
 
     // Check if user has paid onboarding fee or not
-    useEffect(()=>{
-        BackendAxios.get('/api/user/check/onboard-fee').then((res)=>{
+    useEffect(() => {
+        BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
             setOnboardFee(res.data[1].fee)
-            if(res.data[0].onboard_fee == 1){
+            if (res.data[0].onboard_fee == 1) {
                 setIsOnboarded(true)
             }
         })
-    },[])
+    }, [])
 
 
     useEffect(() => {
@@ -57,17 +57,17 @@ const Activate = () => {
         })
     }, [])
 
-    function onboardMe(){
-        BackendAxios.get('/api/user/pay/onboard-fee').then((res)=>{
+    function onboardMe() {
+        BackendAxios.get('/api/user/pay/onboard-fee').then((res) => {
             Toast({
                 status: 'success',
                 title: 'Welcome on board!',
                 description: 'The page will refresh automatically'
             })
-            setTimeout(()=>{
+            setTimeout(() => {
                 window.location.reload()
             }, 1000)
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
             Toast({
                 status: 'error',
@@ -77,16 +77,16 @@ const Activate = () => {
         })
     }
 
-    function activateService(){
-        BackendAxios.post(`/api/activate-service/${23}`).then((res)=>{
-            console.log(res.data)
-        }).catch((err)=>{
-            Toast({
-                status: 'error',
-                title: 'Error Occured',
-                description: err.message
+    function activateService(serviceId) {
+            BackendAxios.post(`/api/activate-service/${serviceId}`).then((res) => {
+                console.log(res.data)
+            }).catch((err) => {
+                Toast({
+                    status: 'error',
+                    title: 'Error Occured',
+                    description: err.message
+                })
             })
-        })
     }
 
     return (
@@ -117,7 +117,7 @@ const Activate = () => {
                         <Button
                             colorScheme={'twitter'}
                             isDisabled={isOnboarded}
-                            onClick={()=>onboardMe()}
+                            onClick={() => onboardMe()}
                         >Pay ₹ {onboardFee}</Button>
                     </Box>
                     {
@@ -145,7 +145,7 @@ const Activate = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
-                                        onClick={activateService}
+                                        onClick={()=>activateService(service.id)}
                                     >Activate (₹{service.price})</Button>
                                 </Box>
                             )

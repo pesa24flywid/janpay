@@ -72,23 +72,7 @@ const PaymentReceipt = ({ amount, payout_id, name, account }) => {
 
 const Payout = () => {
 
-    useEffect(() => {
-
-        ClientAxios.post('/api/user/fetch', {
-            user_id: localStorage.getItem('userId')
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((res) => {
-            if (res.data[0].allowed_pages.includes('payout') == false) {
-                window.location.assign('/dashboard/not-allowed')
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
-    }, [])
-
+    const [serviceId, setServiceId] = useState("25")
     const { isOpen, onClose, onOpen } = useDisclosure()
     const Toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
@@ -109,7 +93,7 @@ const Payout = () => {
 
     function makePayout() {
         setIsLoading(true)
-        BackendAxios.post('/api/razorpay/payout/new-payout', JSON.stringify({
+        BackendAxios.post(`/api/razorpay/payout/new-payout/${serviceId}`, JSON.stringify({
             beneficiaryName: Formik.values.beneficiaryName,
             account: Formik.values.account,
             ifsc: Formik.values.ifsc,
@@ -133,7 +117,7 @@ const Payout = () => {
 
     const [rowdata, setRowdata] = useState([])
     useEffect(() => {
-        BackendAxios.get('/api/razorpay/fetch-payout').then((res) => {
+        BackendAxios.get(`/api/razorpay/fetch-payout/${serviceId}`).then((res) => {
             setRowdata(res.data)
         }).catch((err) => {
             console.log(err)
