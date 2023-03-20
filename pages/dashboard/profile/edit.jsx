@@ -221,6 +221,7 @@ const EditProfile = () => {
       aadhaar_no: newAadhaar,
     }).then((res) => {
       setOtpSent(true)
+      setAadhaarOtpRefNo(res.data.message)
       Toast({
         description: 'OTP sent to aadhaar linked mobile number'
       })
@@ -240,6 +241,7 @@ const EditProfile = () => {
   function verifyAadhaarOtp() {
     BackendAxios.post(`api/user/verify/aadhaar/verify-otp`, {
       otp: otp,
+      refId: aadhaarOtpRefNo,
     }).then((res) => {
       formik.setFieldValue("aadhaar", newAadhaar)
       localStorage.setItem("aadhaar", newAadhaar)
