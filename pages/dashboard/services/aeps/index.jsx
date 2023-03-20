@@ -53,14 +53,14 @@ const Aeps = () => {
       bankCode: "",
       bankAccountNo: "",
       ifsc: "",
-      serviceCode: "2",
+      serviceCode: "2",         // Services Code as per service provider
       pid: "",
       amount: "",
-      serviceId: "23"
+      serviceId: "20"           // Services ID as per Pesa24 Portal
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post("/api/eko/aeps/money-transfer", values).then((res) => {
+      await BackendAxios.post(`/api/eko/aeps/money-transfer/${values.serviceId}`, values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'
@@ -271,6 +271,7 @@ const Aeps = () => {
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
+    formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
   function handleSubmit() {
