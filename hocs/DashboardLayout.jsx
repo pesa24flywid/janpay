@@ -151,6 +151,7 @@ const DashboardWrapper = (props) => {
                         userName={userName}
                         userType={userType.toUpperCase()}
                         userImage={userImage}
+                        availablePages={availablePages}
                     />
 
                     {/* Main Dashboard Container */}
