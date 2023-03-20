@@ -37,6 +37,31 @@ import SimpleAccordion from './SimpleAccordion';
 
 
 const DashboardWrapper = (props) => {
+    const foreverAllowedPages = [
+        'view-profile',
+        'edit-profile',
+        'reset-mpin',
+        'reset-password',
+        'activate',
+        'request',
+        'support',
+    ]
+
+    const availablePages = useMemo(() => {
+
+        ClientAxios.post('/api/user/fetch', {
+            user_id: Cookies.get('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            return foreverAllowedPages.concat(res.data[0].allowed_pages)
+        }).catch((err) => {
+            console.log(err)
+            return null
+        })
+    }, [])
 
     // Check if user has paid onboarding fee or not
     useEffect(() => {
@@ -95,21 +120,6 @@ const DashboardWrapper = (props) => {
 
     }, [])
 
-    const availablePages = useMemo(() => {
-
-        ClientAxios.post('/api/user/fetch', {
-            user_id: Cookies.get('userId')
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((res) => {
-            return res.data[0].allowed_pages
-        }).catch((err) => {
-            console.log(err)
-            return null
-        })
-    }, [])
 
     useEffect(() => {
         // Check for new notifications

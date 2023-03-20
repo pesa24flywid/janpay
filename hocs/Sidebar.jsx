@@ -53,7 +53,7 @@ export const SidebarOptions =
         {
           title: 'reset password',
           link: '/dashboard/profile/reset-password?pageId=profile',
-          id: "reset-mpin",
+          id: "reset-password",
           soon: false,
         },
       ]
@@ -72,7 +72,7 @@ export const SidebarOptions =
         {
           title: 'Activate services',
           link: '/dashboard/services/activate?pageId=services',
-          id: "",
+          id: "activate",
           soon: false,
         },
         {
@@ -141,7 +141,7 @@ export const SidebarOptions =
     {
       type: 'link',
       title: 'fund settlement',
-      id: 'request',
+      id: 'settlement',
       icon: <BsBank />,
       link: '/dashboard/fund-request?pageId=request',
     },
