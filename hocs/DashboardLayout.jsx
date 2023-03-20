@@ -37,6 +37,7 @@ import SimpleAccordion from './SimpleAccordion';
 
 
 const DashboardWrapper = (props) => {
+    const [availablePages, setAvailablePages] = useState([])
     const foreverAllowedPages = [
         'view-profile',
         'edit-profile',
@@ -47,8 +48,7 @@ const DashboardWrapper = (props) => {
         'support',
     ]
 
-    const availablePages = useMemo(() => {
-
+    useEffect(() => {
         ClientAxios.post('/api/user/fetch', {
             user_id: Cookies.get('userId')
         }, {
@@ -56,10 +56,10 @@ const DashboardWrapper = (props) => {
                 'Content-Type': 'application/json'
             }
         }).then((res) => {
-            return foreverAllowedPages.concat(res.data[0].allowed_pages)
+            foreverAllowedPages.concat(res.data[0].allowed_pages)
+            setAvailablePages(foreverAllowedPages.concat(res.data[0].allowed_pages))
         }).catch((err) => {
             console.log(err)
-            return null
         })
     }, [])
 
