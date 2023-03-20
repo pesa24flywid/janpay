@@ -333,7 +333,18 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                           >
 
                             {option.children.map((item, key) => {
-                              if (availablePages.includes(item.id)) {
+                              if (availablePages.includes(item.id) != null) {
+                                return (
+                                  <Link key={key} href={item.link} style={{ width: '100%' }}>
+                                    <Text
+                                      w={'full'} textAlign={'left'}
+                                      px={3} py={2} _hover={{ bg: 'aqua' }}
+                                      textTransform={'capitalize'}
+                                    >{item.title}</Text>
+                                  </Link>
+                                )
+                              }
+                              else {
                                 return (
                                   <Link key={key} href={item.link} style={{ width: '100%' }}>
                                     <Text
