@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -23,7 +23,6 @@ import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
 import { GiReceiveMoney } from 'react-icons/gi'
 import { HiUsers } from 'react-icons/hi'
 import BankDetails from "./BankDetails";
-import { useMemo } from "react";
 
 
 export const SidebarOptions =
@@ -36,22 +35,26 @@ export const SidebarOptions =
         {
           title: 'view profile',
           link: '/dashboard/profile?pageId=profile',
-          id: "view-profile"
+          id: "view-profile",
+          soon: false,
         },
         {
           title: 'edit profile',
           link: '/dashboard/profile/edit?pageId=profile',
-          id: "edit-profile"
+          id: "edit-profile",
+          soon: false,
         },
         {
           title: 'reset MPIN',
           link: '/dashboard/profile/reset-mpin?pageId=profile',
-          id: "reset-mpin"
+          id: "reset-mpin",
+          soon: false,
         },
         {
           title: 'reset password',
           link: '/dashboard/profile/reset-password?pageId=profile',
-          id: "reset-mpin"
+          id: "reset-mpin",
+          soon: false,
         },
       ]
     },
@@ -213,7 +216,7 @@ export const SidebarOptions =
     },
   ]
 
-const Sidebar = ({ isProfileComplete, userName, userImage }) => {
+const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => {
   const [activeServices, setActiveServices] = useState([])
   const Router = useRouter()
   const { pageId } = Router.query
@@ -239,7 +242,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
 
   useMemo(() => {
     BackendAxios.get('/api/user/services').then((res) => {
-      setActiveServices(res.data.map((item)=>item.type))
+      setActiveServices(res.data.map((item) => item.type))
     }).catch((err) => {
       console.log(err)
     })
@@ -330,15 +333,17 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                           >
 
                             {option.children.map((item, key) => {
-                              return (
-                                <Link key={key} href={item.link} style={{ width: '100%' }}>
-                                  <Text
-                                    w={'full'} textAlign={'left'}
-                                    px={3} py={2} _hover={{ bg: 'aqua' }}
-                                    textTransform={'capitalize'}
-                                  >{item.title}</Text>
-                                </Link>
-                              )
+                              if (availablePages.includes(item.id)) {
+                                return (
+                                  <Link key={key} href={item.link} style={{ width: '100%' }}>
+                                    <Text
+                                      w={'full'} textAlign={'left'}
+                                      px={3} py={2} _hover={{ bg: 'aqua' }}
+                                      textTransform={'capitalize'}
+                                    >{item.title}</Text>
+                                  </Link>
+                                )
+                              }
                             })}
                           </VStack>
 
