@@ -118,7 +118,7 @@ const Activate = () => {
                             colorScheme={'twitter'}
                             isDisabled={isOnboarded}
                             onClick={()=>onboardMe()}
-                        >Pay ₹ {onboardFee}</Button>
+                        >Onboard Now</Button>
                     </Box>
                     {
                         services.map((service, key) => {
@@ -146,7 +146,7 @@ const Activate = () => {
                                         colorScheme={'twitter'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
                                         onClick={activateService}
-                                    >Activate (₹{service.price})</Button>
+                                    >Activate</Button>
                                 </Box>
                             )
                         })
