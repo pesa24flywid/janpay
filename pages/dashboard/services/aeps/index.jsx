@@ -24,6 +24,7 @@ import "gridjs/dist/theme/mermaid.css";
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Aeps = () => {
+  const [aepsProvider, setAepsProvider] = useState("eko")
 
   useEffect(() => {
 
@@ -40,6 +41,16 @@ const Aeps = () => {
     }).catch((err) => {
       console.log(err)
     })
+
+    ClientAxios.get(`/api/global`).then(res => {
+      setAepsProvider(res.data[0].aeps_provider)
+    }).catch(err => {
+      Toast({
+        title: 'Try again later',
+        description: 'We are facing some issues.'
+      })
+    })
+
   }, [])
 
   let MethodInfo
@@ -60,7 +71,7 @@ const Aeps = () => {
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post(`/api/eko/aeps/money-transfer/${values.serviceId}`, values).then((res) => {
+      await BackendAxios.post(`/api/eko/${aepsProvider}/money-transfer/${values.serviceId}`, values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'
