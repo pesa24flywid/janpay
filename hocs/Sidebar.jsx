@@ -143,7 +143,7 @@ export const SidebarOptions =
       title: 'fund settlement',
       id: 'settlement',
       icon: <BsBank />,
-      link: '/dashboard/fund-request?pageId=request',
+      link: '/dashboard/fund-settlement?pageId=settlement',
     },
     {
       type: 'accordion',
