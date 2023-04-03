@@ -105,7 +105,6 @@ const Dmt = () => {
 
     const registrationFormik = useFormik({
         initialValues: {
-            customerId: customerId,
             customerName: "",
             customerDob: "",
             street: "",
@@ -117,7 +116,7 @@ const Dmt = () => {
             setIsBtnLoading(true)
             if (dmtProvider == "eko") {
                 BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
-                    values
+                    values, customerId
                 }).then((res) => {
                     if (res.status == 200) {
                         setIsOtpSent(true)
@@ -156,7 +155,6 @@ const Dmt = () => {
 
     const paymentFormik = useFormik({
         initialValues: {
-            customerId: customerId,
             amount: "",
             selectedBank: "",
             selectedBankCode: "",
@@ -168,7 +166,7 @@ const Dmt = () => {
         },
         onSubmit: values => {
             if (dmtProvider == "paysprint") {
-                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, values).then(res => {
+                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, {values, customerId}).then(res => {
                     Toast({
                         status: 'success',
                         description: 'Transaction successful!'
