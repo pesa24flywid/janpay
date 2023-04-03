@@ -753,8 +753,8 @@ const Dmt = () => {
                                 value={addRecipientFormik.values.bankCode}
                                 onChange={addRecipientFormik.handleChange}
                             >
-                                <option value="2">Bank of Baroda</option>
-                                <option value="108">State Bank of India</option>
+                                <option value="62">Bank of Baroda</option>
+                                <option value="426">State Bank of India</option>
                             </Select>
                         </FormControl>
                         <FormControl id='ifsc' pb={4}>
