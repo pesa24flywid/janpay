@@ -116,7 +116,7 @@ const Dmt = () => {
             setIsBtnLoading(true)
             if (dmtProvider == "eko") {
                 BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
-                    values, customerId
+                    ...values, customerId: customerId
                 }).then((res) => {
                     if (res.status == 200) {
                         setIsOtpSent(true)
@@ -149,9 +149,9 @@ const Dmt = () => {
         }
     })
 
-    useEffect(() => {
-        registrationFormik.setFieldValue("customerId", customerId)
-    }, [customerId])
+    // useEffect(() => {
+    //     registrationFormik.setFieldValue("customerId", customerId)
+    // }, [customerId])
 
     const paymentFormik = useFormik({
         initialValues: {
@@ -166,7 +166,7 @@ const Dmt = () => {
         },
         onSubmit: values => {
             if (dmtProvider == "paysprint") {
-                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, {values, customerId}).then(res => {
+                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, {...values, customerId: customerId}).then(res => {
                     Toast({
                         status: 'success',
                         description: 'Transaction successful!'
@@ -198,8 +198,8 @@ const Dmt = () => {
         onSubmit: (values) => {
             // Adding New Recipient
             BackendAxios.post(`api/${dmtProvider}/dmt/add-recipient/${serviceId}`, {
-                values,
-                customerId,
+                ...values,
+                customerId: customerId,
             }).then((res) => {
                 if (dmtProvider == "paysprint") {
                     Toast({
@@ -236,7 +236,6 @@ const Dmt = () => {
             }).then((res) => {
                 if (dmtProvider == "eko") {
                     if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
-                        registrationFormik.setFieldValue("customerId", customerId)
                         setCustomerStatus("unregistered")
                     }
                     if (res.data.response.status == 0 && res.data.response.response_status_id == 0) {
@@ -251,7 +250,6 @@ const Dmt = () => {
                     }
                 }
                 if (dmtProvider == "paysprint") {
-                    registrationFormik.setFieldValue("customerId", customerId)
                     if (res.data.response_code == 0) {
                         setCustomerStatus("unregistered")
                         setOtpRefId(res.data.stateresp)
