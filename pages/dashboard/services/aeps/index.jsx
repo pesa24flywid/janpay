@@ -56,7 +56,6 @@ const Aeps = () => {
   let MethodInfo
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
-  const [biometricDevice, setBiometricDevice] = useState("")
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
