@@ -105,7 +105,7 @@ const Dmt = () => {
 
     const registrationFormik = useFormik({
         initialValues: {
-            customerId: "",
+            customerId: customerId,
             customerName: "",
             customerDob: "",
             street: "",
@@ -156,7 +156,7 @@ const Dmt = () => {
 
     const paymentFormik = useFormik({
         initialValues: {
-            customerId: "7838074742",
+            customerId: customerId,
             amount: "",
             selectedBank: "",
             selectedBankCode: "",
