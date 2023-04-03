@@ -158,6 +158,15 @@ const Login = () => {
     // Handling login after OTP submission
     async function handleLogin() {
         setIsBtnLoading(true)
+        if(!Cookies.get("latlong")){
+            toast({
+                position: 'top-right',
+                status: 'warning',
+                title: 'Location Not Found!',
+                description: 'Please allow location access to login'
+            })
+            return
+        }
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 "authMethod": authMethod,
@@ -209,6 +218,15 @@ const Login = () => {
 
     // Handling MPIN Login
     async function handleMpin() {
+        if(!Cookies.get("latlong")){
+            toast({
+                position: 'top-right',
+                status: 'warning',
+                title: 'Location Not Found!',
+                description: 'Please allow location access to login'
+            })
+            return
+        }
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 authMethod: authMethod,
@@ -217,6 +235,7 @@ const Login = () => {
                 password: formik.values.password,
                 mpin: mpin,
                 organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
+                latlong: Cookies.get("latlong"),
             }), {
                 withCredentials: true,
                 headers: {
