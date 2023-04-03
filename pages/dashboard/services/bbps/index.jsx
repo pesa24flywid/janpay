@@ -36,12 +36,30 @@ import {
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
-import { FormAxios } from '../../../../lib/axios'
+import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 
 const Bbps = () => {
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if (res.data[0].allowed_pages.includes('bbps') == false) {
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState()
 
@@ -61,14 +79,14 @@ const Bbps = () => {
 
   // Fetch all available categories
   useEffect(() => {
-    axios.get("api/eko/bbps/operators/categories").then((res) => {
+    BackendAxios.get("api/eko/bbps/operators/categories").then((res) => {
       setCategories(res.data.data)
     }).catch((err) => {
       console.log(err)
     })
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setLatlong(Cookies.get("latlong"))
     console.log(latlong)
   })
@@ -77,7 +95,7 @@ const Bbps = () => {
   function fetchOperators(category_id) {
     setSelectedOperator(null)
     setOperatorParams()
-    axios.get(`api/eko/bbps/operators/${category_id}`).then((res) => {
+    BackendAxios.get(`api/eko/bbps/operators/${category_id}`).then((res) => {
       setOperators(res.data.data)
     }).catch((err) => {
       console.log(err)
@@ -85,7 +103,7 @@ const Bbps = () => {
   }
 
   function fetchParams(operator_id) {
-    axios.get(`api/eko/bbps/operators/fields/${operator_id}`).then((res) => {
+    BackendAxios.get(`api/eko/bbps/operators/fields/${operator_id}`).then((res) => {
       setSelectedOperator(operator_id)
       setOperatorParams(res.data.data)
       res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)
@@ -102,7 +120,7 @@ const Bbps = () => {
     )
   }
 
-  function payBill(e){
+  function payBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
 
@@ -276,7 +294,7 @@ const Bbps = () => {
                   {
                     fetchBillBtn ?
                       <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} onClick={(e)=> payBill(e)}>Submit</Button>
+                      <Button colorScheme={'twitter'} onClick={(e) => payBill(e)}>Submit</Button>
                   }
                 </form> : null
             }

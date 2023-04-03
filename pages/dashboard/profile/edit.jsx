@@ -27,23 +27,37 @@ import {
 import Head from "next/head";
 import { useFormik } from "formik";
 import DashboardWrapper from "../../../hocs/DashboardLayout";
-// import axios from "axios";
-import axios from "../../../lib/axios";
-import Cookies from "js-cookie";
-import { states } from "../../../lib/states";
-
+import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
+import { states } from '../../../lib/states'
 const EditProfile = () => {
+  const [profile, setProfile] = useState({
+    kycStatus: false,
+    fullName: "",
+    phone: "NA",
+    dob: "NA",
+    aadhaarNumber: "NA",
+    pan: "NA",
+    merchantId: "NA",
+    companyName: "NA",
+    address: "NA",
+  })
   const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
   const [isAadhaarOtpDisabled, setIsAadhaarOtpDisabled] = useState(true)
   const [isPanOtpDisabled, setIsPanOtpDisabled] = useState(true)
   const [otpSent, setOtpSent] = useState(false)
   const [newPhone, setNewPhone] = useState("")
+
   const [newAadhaar, setNewAadhaar] = useState("")
+  const [aadhaarOtpRefNo, setAadhaarOtpRefNo] = useState("")
+
   const [newPan, setNewPan] = useState("")
   const [otp, setOtp] = useState("")
   const [phoneModal, setPhoneModal] = useState(false)
   const [aadhaarModal, setAadhaarModal] = useState(false)
-  const Toast = useToast()
+
+  const Toast = useToast({
+    position: "top-right",
+  })
 
   // Form Data handling
   const formik = useFormik({
@@ -59,11 +73,17 @@ const EditProfile = () => {
       line: "",
       city: "",
       state: "",
-      pincode: ""
+      pincode: "",
+      profilePicture: null,
+      aadhaarFront: null,
+      aadhaarBack: null,
+      panCard: null,
+      modelName: "",
+      deviceNumber: "",
     },
     onSubmit: async (values) => {
       // Handle submit
-      axios.post('api/user/update', {
+      FormAxios.post('api/user/update', {
         values
       }).then((res) => {
         console.log(res)
@@ -83,7 +103,49 @@ const EditProfile = () => {
   })
 
 
+
+  function fetchProfile() {
+    BackendAxios.post("api/user/info").then((res) => {
+      localStorage.setItem("kycStatus", res.data.data.kyc)
+      localStorage.setItem("firstName", res.data.data.first_name || "")
+      localStorage.setItem("lastName", res.data.data.last_name || "")
+      localStorage.setItem("phone", res.data.data.phone_number || "")
+      localStorage.setItem("userEmail", res.data.data.email || "")
+      localStorage.setItem("dob", res.data.data.dob || "")
+      localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
+      localStorage.setItem("pan", res.data.data.pan_number || "")
+      localStorage.setItem("merchantId", res.data.data.user_code || "")
+      localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+      localStorage.setItem("line", res.data.data.line || "")
+      localStorage.setItem("city", res.data.data.city || "")
+      localStorage.setItem("state", res.data.data.state || "")
+      localStorage.setItem("pincode", res.data.data.pincode || "")
+      localStorage.setItem("modelName", res.data.data.model_name || "")
+      localStorage.setItem("deviceNumber", res.data.data.device_number || "")
+    }).catch((err) => {
+      Toast({
+        status: "error",
+        title: "Error Occured",
+        description: err.message
+      })
+      console.log(err)
+    })
+    setProfile({
+      ...profile,
+      fullName: localStorage.getItem("userName"),
+      kycStatus: localStorage.getItem("kycStatus"),
+      phone: localStorage.getItem("phone"),
+      dob: localStorage.getItem("dob"),
+      aadhaarNumber: localStorage.getItem("aadhaar"),
+      pan: localStorage.getItem("pan"),
+      merchantId: localStorage.getItem("merchantId"),
+      companyName: localStorage.getItem("companyName"),
+      address: localStorage.getItem("line") + " " + localStorage.getItem("city") + " " + localStorage.getItem("state") + " " + localStorage.getItem("pincode"),
+    })
+  }
+
   useEffect(() => {
+    fetchProfile()
     formik.setFieldValue("firstName", localStorage.getItem("firstName"))
     formik.setFieldValue("lastName", localStorage.getItem("lastName"))
     formik.setFieldValue("phone", localStorage.getItem("phone"))
@@ -109,32 +171,27 @@ const EditProfile = () => {
 
 
   async function sendPhoneOtp() {
-    axios.post(`/api/users/otp`, {
+    BackendAxios.post(`/api/users/otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone
-    }, {
-      headers: {
-        "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
     }).then((res) => {
       setOtpSent(true)
+      Toast({
+        status: "success",
+        description: `OTP sent to ${newPhone}`
+      })
     }).catch((error) => {
       Toast({
         status: "error",
         title: `Error Occured`,
         description: error.message,
-        position: "top-right",
-        duration: 3000
       })
       setOtpSent(false)
     })
   }
 
   async function verifyPhoneOtp() {
-    await axios.post(`/api/users/verify-otp`, {
+    await BackendAxios.post(`/api/users/verify-otp`, {
       userId: localStorage.getItem("userId"),
       newNumber: newPhone,
       otp: otp
@@ -142,6 +199,11 @@ const EditProfile = () => {
       if (res.status == 200) {
         setPhoneModal(false)
         formik.setFieldValue("phone", newPhone)
+        localStorage.setItem("phone", newPhone)
+        Toast({
+          status: "success",
+          description: 'Phone number updated!'
+        })
       }
     }).catch((err) => {
       Toast({
@@ -153,16 +215,81 @@ const EditProfile = () => {
     setOtpSent(false)
   }
 
+  // Send OTP for Aadhaar Verification
   function sendAadhaarOtp() {
-    fetch("https://api.apiclub.in/uat/v1/aadhaar_v2/send_otp", {
-      headers: {
-        "API-KEY": process.env.APICLUB_API_KEY, //API Club API KEY
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        aadhaar_no: newAadhaar,
+    BackendAxios.post(`api/user/verify/aadhaar/send-otp`, {
+      aadhaar_no: newAadhaar,
+    }).then((res) => {
+      setOtpSent(true)
+      setAadhaarOtpRefNo(res.data.message)
+      Toast({
+        description: 'OTP sent to aadhaar linked mobile number'
       })
+    }).catch((err) => {
+      setOtpSent(false)
+      Toast({
+        status: "error",
+        title: "Error Occured",
+        description: "Couldn't send OTP",
+      })
+      console.log(err)
     })
+
+  }
+
+  // Verifying Aadhaar OTP
+  function verifyAadhaarOtp() {
+    BackendAxios.post(`api/user/verify/aadhaar/verify-otp`, {
+      otp: otp,
+      refId: aadhaarOtpRefNo,
+    }).then((res) => {
+      formik.setFieldValue("aadhaar", newAadhaar)
+      localStorage.setItem("aadhaar", newAadhaar)
+      Toast({
+        status: "success",
+        title: "Success",
+        description: res.data.message
+      })
+    }).catch((err) => {
+      setOtpSent(false)
+      Toast({
+        status: "error",
+        title: "Error Occured",
+        description: "Couldn't send OTP",
+      })
+      console.log(err)
+    })
+    setOtp("")
+  }
+
+
+  // Verifying PAN
+  function verifyPan() {
+    if (formik.values.firstName && formik.values.lastName && formik.values.pan) {
+      BackendAxios.post(`/api/user/verify/pan/verify-pan`, {
+        pan_no: formik.values.pan,
+      }).then((res) => {
+        Toast({
+          status: "success",
+          title: "PAN Verified",
+          description: res.data.response
+        })
+        localStorage.setItem("pan", formik.values.pan)
+      }).catch((err) => {
+        setOtpSent(false)
+        Toast({
+          status: "error",
+          title: "Error Occured",
+          description: "Couldn't verify your PAN",
+        })
+        console.log(err)
+      })
+    }
+    else {
+      Toast({
+        description: "Marked Fields Can't Be Empty"
+      })
+    }
   }
 
   return (
@@ -268,7 +395,16 @@ const EditProfile = () => {
                   _placeholder={{ color: "gray.500" }}
                   value={formik.values.pan}
                   onChange={formik.handleChange}
+                  textTransform={'uppercase'}
                 />
+                <HStack p={2} justifyContent={'flex-end'}>
+                  <Button
+                    size={'xs'}
+                    colorScheme={'twitter'}
+                    isDisabled={formik.values.pan.length == 10 ? true : true}
+                    onClick={verifyPan}
+                  >Verify</Button>
+                </HStack>
               </FormControl>
             </Stack>
 
@@ -320,6 +456,33 @@ const EditProfile = () => {
               </Stack>
             </VStack>
 
+
+            <VStack alignItems={'flex-start'} py={8}>
+              <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Biometric Device Details</Text>
+
+              <Stack direction={['column', 'row']} spacing={8}>
+                <FormControl py={2} id="modelName" isRequired>
+                  <FormLabel>Model Name</FormLabel>
+                  <Input
+                    placeholder="Enter here..."
+                    _placeholder={{ color: "gray.500" }}
+                    value={formik.values.modelName}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+                <FormControl py={2} id="deviceNumber" isRequired>
+                  <FormLabel>Device Number</FormLabel>
+                  <Input
+                    placeholder="Enter here..."
+                    _placeholder={{ color: "gray.500" }}
+                    value={formik.values.deviceNumber}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+              </Stack>
+            </VStack>
+
+
             <Stack spacing={6} direction={["column", "row"]}>
               <Button
                 bg={"red.400"}
@@ -352,7 +515,7 @@ const EditProfile = () => {
                 <FormLabel>Profile Picture</FormLabel>
                 <Input
                   type="file"
-                  onChange={(e) => profileFormik.setFieldValue("profilePicture", e.currentTarget.files[0])}
+                  onChange={(e) => formik.setFieldValue("profilePicture", e.currentTarget.files[0])}
                   accept={"image/png, image/jpg, image/jpeg"}
                 />
               </FormControl>
@@ -360,7 +523,7 @@ const EditProfile = () => {
                 <FormLabel>Pan Card</FormLabel>
                 <Input
                   type="file"
-                  onChange={(e) => profileFormik.setFieldValue("panCard", e.currentTarget.files[0])}
+                  onChange={(e) => formik.setFieldValue("panCard", e.currentTarget.files[0])}
                   accept={"image/png, image/jpg, image/jpeg, application/pdf"}
                 />
               </FormControl>
@@ -370,7 +533,7 @@ const EditProfile = () => {
                 <FormLabel>eAadhar (Back)</FormLabel>
                 <Input
                   type="file"
-                  onChange={(e) => profileFormik.setFieldValue("eAadharBack", e.currentTarget.files[0])}
+                  onChange={(e) => formik.setFieldValue("aadhaarBack", e.currentTarget.files[0])}
                   accept={"image/png, image/jpg, image/jpeg, application/pdf"}
                 />
               </FormControl>
@@ -378,7 +541,7 @@ const EditProfile = () => {
                 <FormLabel>eAadhar (Front)</FormLabel>
                 <Input
                   type="file"
-                  onChange={(e) => profileFormik.setFieldValue("eAadharFront", e.currentTarget.files[0])}
+                  onChange={(e) => formik.setFieldValue("aadhaarFront", e.currentTarget.files[0])}
                   accept={"image/png, image/jpg, image/jpeg, application/pdf"}
                 />
               </FormControl>
@@ -444,9 +607,11 @@ const EditProfile = () => {
                   <PinInputField />
                   <PinInputField />
                   <PinInputField />
+                  <PinInputField />
+                  <PinInputField />
                 </PinInput>
               </HStack>
-              <Button colorScheme={'twitter'} onClick={verifyPhoneOtp}>Verify</Button>
+              <Button colorScheme={'twitter'} onClick={verifyAadhaarOtp}>Verify</Button>
             </VStack>
 
           </ModalBody>

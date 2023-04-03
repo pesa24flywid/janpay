@@ -46,11 +46,29 @@ import {
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
-import axios, { ClientAxios } from '../../../../lib/axios'
-import { FormAxios } from '../../../../lib/axios'
+import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
 
 
 const Bbps = () => {
+
+  // useEffect(() => {
+
+  //   ClientAxios.post('/api/user/fetch', {
+  //     user_id: localStorage.getItem('userId')
+  //   }, {
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }).then((res) => {
+  //     if(res.data[0].allowed_pages.includes('bbps') == false){
+  //       window.location.assign('/dashboard/not-allowed')
+  //     }
+  //   }).catch((err) => {
+  //     console.log(err)
+  //   })
+  // }, [])
+
+
   const [keyword, setKeyword] = useState("")
 
   const [categories, setCategories] = useState()
@@ -109,7 +127,7 @@ const Bbps = () => {
     setPlans()
     setSelectedPlanCategory(false)
     setKeyword(keyword)
-    axios.get(`api/paysprint/bbps/mobile-operators/${keyword}`).then((res) => {
+    BackendAxios.get(`api/paysprint/bbps/mobile-operators/${keyword}`).then((res) => {
       setOperators(Object.values(res.data))
       setOperatorMenuStatus(true)
     }).catch((err) => {
@@ -130,7 +148,7 @@ const Bbps = () => {
     let operatorValueArray = operator_value.split("|")
     setSelectedOperatorId(operatorValueArray[0])
     setSelectedOperatorName(operatorValueArray[1])
-    axios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
+    BackendAxios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
       setOperatorParams(Object.values(res.data))
       keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
       keyword == "PREPAID" ? setFetchInfoBtn(true) : setFetchInfoBtn(false)
@@ -144,7 +162,7 @@ const Bbps = () => {
   function browsePlan() {
     setSelectedPlanCategory(false)
     setPlans()
-    axios.post(`api/paysprint/bbps/mobile-recharge/browse`, {
+    BackendAxios.post(`api/paysprint/bbps/mobile-recharge/browse`, {
       selectedOperatorName,
       networkCircle,
     }).then((res) => {
@@ -162,7 +180,7 @@ const Bbps = () => {
   }
 
   function hlrRequest() {
-    axios.get(`api/paysprint/bbps/mobile-recharge/hlr`, {
+    BackendAxios.get(`api/paysprint/bbps/mobile-recharge/hlr`, {
       selectedOperatorName,
       networkCircle,
     }).then((res) => {

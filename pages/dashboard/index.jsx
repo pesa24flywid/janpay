@@ -33,13 +33,14 @@ import DataCard, { TransactionCard } from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
 import DashboardWrapper from '../../hocs/DashboardLayout'
 import Link from 'next/link'
+import BackendAxios from '../../lib/axios'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
   const [notifications, setNotifications] = useState([
     {
-      title: "Under Maintainence",
-      content: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque pariatur aut eos quae quisquam eveniet incidunt ad odio magni at."
+      title: "Under Development",
+      content: "This website is currently under development. Contact support for any issues."
     }
   ])
   let isProfileComplete
@@ -50,9 +51,6 @@ const Dashboard = () => {
     if (!isProfileComplete) {
       setProfileAlert(true)
     }
-
-    // Check for new notifications
-
 
   }, [])
 
@@ -73,14 +71,14 @@ const Dashboard = () => {
 
   // Sample Data for Chart
   const transactionData = [
-    1200,
-    2500,
-    1100,
-    800,
-    1500,
-    2600,
-    900,
-    1800
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ]
 
   const chartData = {
@@ -115,25 +113,25 @@ const Dashboard = () => {
         >
           <DataCard
             title={'AePS Transactions'}
-            data={5600}
+            data={0}
             icon={<GiReceiveMoney color='white' size={'32'} />}
             color={'#FF7B54'}
           />
           <DataCard
             title={'DMT Transactions'}
-            data={5200}
+            data={0}
             icon={<FaMoneyBillAlt color='white' size={'32'} />}
             color={'#6C00FF'}
           />
           <DataCard
             title={'Mobile Recharge'}
-            data={4800}
+            data={0}
             icon={<FaMobile color='white' size={'32'} />}
             color={'#FFB100'}
           />
           <DataCard
             title={'Your Earnings'}
-            data={1800}
+            data={0}
             icon={<GiTakeMyMoney color='white' size={'32'} />}
             color={'#88A47C'}
           />
@@ -155,22 +153,22 @@ const Dashboard = () => {
           <TransactionCard
             color={'#6C00FF'}
             title={"AePS"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
           <TransactionCard
             color={'#3C79F5'}
             title={"BBPS"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
           <TransactionCard
             color={'#2DCDDF'}
             title={"DMT"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
         </Stack>
 
@@ -181,22 +179,22 @@ const Dashboard = () => {
           <TransactionCard
             color={'#F2DEBA'}
             title={"PAN"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
           <TransactionCard
             color={'#FF8B13'}
             title={"LIC"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
           <TransactionCard
             color={'#13005A'}
             title={"CMS"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
         </Stack>
@@ -208,15 +206,15 @@ const Dashboard = () => {
           <TransactionCard
             color={'#ABC270'}
             title={"Recharges"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
           <TransactionCard
             color={'#678983'}
             title={"Fund Requests"}
-            quantity={"8"}
-            amount={"8600"}
+            quantity={0}
+            amount={0}
           />
 
         </Stack>

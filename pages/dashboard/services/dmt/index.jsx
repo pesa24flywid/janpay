@@ -32,14 +32,44 @@ import {
     DrawerCloseButton
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { states } from '../../../../lib/states'
 import { useToast } from '@chakra-ui/react'
 import { FiSend } from 'react-icons/fi'
 import { BsTrash } from 'react-icons/bs'
 import { AiOutlinePlus } from 'react-icons/ai'
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Dmt = () => {
+    const [dmtProvider, setDmtProvider] = useState("eko")
+    const serviceId = 24
+    useEffect(() => {
+
+        ClientAxios.post('/api/user/fetch', {
+            user_id: localStorage.getItem('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            if (res.data[0].allowed_pages.includes('dmt') == false) {
+                window.location.assign('/dashboard/not-allowed')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+
+
+        ClientAxios.get(`/api/global`).then(res => {
+            setDmtProvider(res.data[0].dmt_provider)
+        }).catch(err => {
+            Toast({
+                title: 'Try again later',
+                description: 'We are facing some issues.'
+            })
+        })
+    }, [])
+
     const [customerStatus, setCustomerStatus] = useState("hidden") // Available options - hidden, registered, unregistered
 
     const [customerName, setCustomerName] = useState("")
@@ -47,18 +77,30 @@ const Dmt = () => {
     const [customerUsedLimit, setCustomerUsedLimit] = useState(20000)
     const [customerRemainingLimit, setCustomerRemainingLimit] = useState(30000)
 
-    const [recipients, setRecipients] = useState([])
+    const [recipients, setRecipients] = useState([
+        {
+            accountNumber: "",
+            beneficiaryName: "",
+            bankCode: "",
+            bankName: "",
+            bankIfsc: "",
+            beneficiaryId: "",
+        }
+    ])
 
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const [isBtnHidden, setIsBtnHidden] = useState(true)
     const [customerId, setCustomerId] = useState("")
     const [isOtpSent, setIsOtpSent] = useState(false)
     const [otp, setOtp] = useState("")
+    const [otpRefId, setOtpRefId] = useState("")
 
     const [newRecipientModal, setNewRecipientModal] = useState(false)
 
     const { isOpen, onClose, onOpen } = useDisclosure()
-    const Toast = useToast()
+    const Toast = useToast({
+        position: 'top-right'
+    })
 
 
     const registrationFormik = useFormik({
@@ -73,33 +115,38 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             setIsBtnLoading(true)
-            axios.post("api/eko/dmt/create-customer", {
-                values
-            }).then((res) => {
-                if (res.status == 200) {
-                    setIsOtpSent(true)
-                }
-                setIsBtnLoading(false)
-            }).catch((err) => {
-                console.log(err)
-                if (err.response.status == 409) {
-                    Toast({
-                        status: "warning",
-                        title: "Already Registered",
-                        description: "This phone number is already registered.",
-                        position: "top-right",
-                    })
-                }
-                else {
-                    Toast({
-                        status: "error",
-                        title: "Error Occured",
-                        description: err.message,
-                        position: "top-right"
-                    })
-                }
-                setIsBtnLoading(false)
-            })
+            if (dmtProvider == "eko") {
+                BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
+                    values
+                }).then((res) => {
+                    if (res.status == 200) {
+                        setIsOtpSent(true)
+                    }
+                    setIsBtnLoading(false)
+                }).catch((err) => {
+                    console.log(err)
+                    if (err.response.status == 409) {
+                        Toast({
+                            status: "warning",
+                            title: "Already Registered",
+                            description: "This phone number is already registered.",
+                            position: "top-right",
+                        })
+                    }
+                    else {
+                        Toast({
+                            status: "error",
+                            title: "Error Occured",
+                            description: err.message,
+                            position: "top-right"
+                        })
+                    }
+                    setIsBtnLoading(false)
+                })
+            }
+            if (dmtProvider == "paysprint") {
+                setIsOtpSent(true)
+            }
         }
     })
 
@@ -107,22 +154,35 @@ const Dmt = () => {
         registrationFormik.setFieldValue("customerId", customerId)
     }, [customerId])
 
-    const Recipients = [
-        {
-            accountNumber: "39486516779846",
-            beneficiaryName: "Sangam Kumar",
-            bankName: "State Bank of India",
-            bankIfsc: "SBIN0032284"
-        }
-    ]
-
     const paymentFormik = useFormik({
         initialValues: {
-            customerId: registrationFormik.values.customerId,
+            customerId: "7838074742",
             amount: "",
             selectedBank: "",
+            selectedBankCode: "",
             beneficiaryAccount: "",
             beneficiaryName: "",
+            beneficiaryId: "",
+            transactionType: "imps",
+            mpin: ""
+        },
+        onSubmit: values => {
+            if (dmtProvider == "paysprint") {
+                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, values).then(res => {
+                    Toast({
+                        status: 'success',
+                        description: 'Transaction successful!'
+                    })
+                }).catch(err => {
+                    console.log(err)
+                    Toast({
+                        status: "error",
+                        title: "Error Occured",
+                        description: err.message,
+                        position: "top-right"
+                    })
+                })
+            }
         }
     })
 
@@ -134,14 +194,20 @@ const Dmt = () => {
             beneficiaryName: "",
             ifsc: "",
             phone: "",
+            address: "",
+            pincode: "",
         },
         onSubmit: (values) => {
             // Adding New Recipient
-            axios.post("api/eko/dmt/add-recipient", {
+            BackendAxios.post(`api/${dmtProvider}/dmt/add-recipient/${serviceId}`, {
                 values,
                 customerId,
             }).then((res) => {
-                console.log(res)
+                if (dmtProvider == "paysprint") {
+                    Toast({
+                        description: 'Beneficiary Added'
+                    })
+                }
             }).catch((err) => {
                 Toast({
                     status: "error",
@@ -167,22 +233,49 @@ const Dmt = () => {
             setIsBtnLoading(false)
         }
         else {
-            axios.post("api/eko/dmt/customer-info", {
+            BackendAxios.post(`api/${dmtProvider}/dmt/customer-info/${serviceId}`, {
                 customerId
             }).then((res) => {
-                if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
+                if (dmtProvider == "eko") {
+                    if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
+                        registrationFormik.setFieldValue("customerId", customerId)
+                        setCustomerStatus("unregistered")
+                    }
+                    if (res.data.response.status == 0 && res.data.response.response_status_id == 0) {
+                        setCustomerRemainingLimit(res.data.response.data.available_limit)
+                        setCustomerUsedLimit(res.data.response.data.used_limit)
+                        setCustomerTotalLimit(res.data.response.data.total_limit)
+                        setCustomerName(res.data.response.data.name)
+                        setCustomerStatus("registered")
+                    }
+                    if (res.data.response.status == 0 && res.data.response.response_status_id == -1) {
+                        sendOtp()
+                    }
+                }
+                if (dmtProvider == "paysprint") {
                     registrationFormik.setFieldValue("customerId", customerId)
-                    setCustomerStatus("unregistered")
-                }
-                if (res.data.response.status == 0 && res.data.response.response_status_id == 0) {
-                    setCustomerRemainingLimit(res.data.response.data.available_limit)
-                    setCustomerUsedLimit(res.data.response.data.used_limit)
-                    setCustomerTotalLimit(res.data.response.data.total_limit)
-                    setCustomerName(res.data.response.data.name)
-                    setCustomerStatus("registered")
-                }
-                if (res.data.status == 0 && res.data.response_status_id == -1) {
-                    sendOtp()
+                    if (res.data.response_code == 0) {
+                        setCustomerStatus("unregistered")
+                        setOtpRefId(res.data.stateresp)
+                        Toast({
+                            status: "info",
+                            title: "OTP Sent",
+                            description: `An OTP has been sent to ${customerId}`,
+                            position: "top-right"
+                        })
+                    }
+                    if (res.data.response_code == 1) {
+                        setCustomerName(res.data.data.fname + " " + res.data.data.lname)
+                        setCustomerRemainingLimit(
+                            75000 - (parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit))
+                        )
+                        setCustomerUsedLimit(
+                            parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit)
+                        )
+                        setCustomerTotalLimit("75000")
+                        setCustomerStatus("registered")
+                        fetchRecipients()
+                    }
                 }
                 setIsBtnLoading(false)
             }).catch((err) => {
@@ -200,80 +293,177 @@ const Dmt = () => {
 
 
     function handleRecipientSelection(acc_number) {
-        const Recipient = Recipients.find((beneficiary) => {
+        const Recipient = recipients.find((beneficiary) => {
             if (beneficiary.accountNumber == acc_number) {
                 return beneficiary
             }
         })
-        paymentFormik.setFieldValue("selectedBank", Recipient.accountNumber)
+        paymentFormik.setFieldValue("accountNumber", Recipient.accountNumber)
+        paymentFormik.setFieldValue("selectedBank", Recipient.bankName)
+        paymentFormik.setFieldValue("selectedBankCode", Recipient.bankCode)
         paymentFormik.setFieldValue("beneficiaryName", Recipient.beneficiaryName)
-        paymentFormik.setFieldValue("beneficiaryAccount", Recipient.beneficiaryAccount)
+        paymentFormik.setFieldValue("beneficiaryAccount", Recipient.accountNumber)
+        paymentFormik.setFieldValue("beneficiaryId", Recipient.beneficiaryId)
         setIsBtnHidden(false)
 
     }
 
     // Send OTP for account verification
     function sendOtp() {
-        axios.post("api/eko/dmt/resend-otp", {
-            customerId
-        }).then((res) => {
-            if (res.status == 200) {
-                setIsOtpSent(true)
+        if (dmtProvider == "eko") {
+            BackendAxios.post(`api/${dmtProvider}/dmt/resend-otp/${serviceId}`, {
+                customerId
+            }).then((res) => {
+                if (res.status == 200) {
+                    setOtpRefId(res.data)
+                    setIsOtpSent(true)
+                    Toast({
+                        status: "info",
+                        title: "OTP Sent",
+                        description: `An OTP has been sent to ${customerId}`,
+                        position: "top-right"
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
+                Toast({
+                    status: "error",
+                    title: "Error Occured",
+                    description: err.message,
+                    position: "top-right"
+                })
+            })
+        }
+        if (dmtProvider == "paysprint") {
+            BackendAxios.post(`api/${dmtProvider}/dmt/customer-info/${serviceId}`, {
+                customerId
+            }).then((res) => {
+                registrationFormik.setFieldValue("customerId", customerId)
+                setCustomerStatus("unregistered")
+                setOtpRefId(res.data.stateresp)
                 Toast({
                     status: "info",
                     title: "OTP Sent",
                     description: `An OTP has been sent to ${customerId}`,
                     position: "top-right"
                 })
-            }
-        }).catch((err) => {
-            console.log(err)
-            Toast({
-                status: "error",
-                title: "Error Occured",
-                description: err.message,
-                position: "top-right"
+                setIsBtnLoading(false)
+            }).catch((err) => {
+                console.log(err)
+                Toast({
+                    status: "error",
+                    title: "Error Occured",
+                    description: err.message,
+                    position: "top-right"
+                })
             })
-        })
+            setIsBtnLoading(false)
+        }
     }
 
     function verifyOtp() {
-        axios.post("api/eko/dmt/verify-customer", {
-            customerId: registrationFormik.values.customerId,
-            otp
-        }).then((res) => {
-            if (res.data.response_status_id == 0 && res.data.status == 0) {
+        if (dmtProvider == "eko") {
+            BackendAxios.post(`api/${dmtProvider}/dmt/verify-customer/${serviceId}`, {
+                customerId: registrationFormik.values.customerId,
+                otp,
+                otp_ref_id: otpRefId,
+            }).then((res) => {
+                if (res.data.response_status_id == 0 && res.data.status == 0) {
+                    Toast({
+                        status: 'success',
+                        title: "Customer Added!",
+                        description: "Please wait, the page will refresh automatically",
+                        position: "top-right"
+                    })
+                    setTimeout(() => {
+                        window.location.reload(false)
+                    }, 2000);
+                }
+                else {
+                    Toast({
+                        status: 'info',
+                        title: "Oops!",
+                        description: res.message,
+                        position: "top-right"
+                    })
+                }
+            }).catch((err) => {
+                console.log(err)
                 Toast({
-                    status: 'success',
-                    title: "Customer Added!",
-                    description: "Please wait, the page will refresh automatically",
+                    status: 'error',
+                    title: "Error Occured",
+                    description: err.message,
                     position: "top-right"
                 })
-                setTimeout(() => {
-                    window.location.reload(false)
-                }, 2000);
-            }
-            else {
-                Toast({
-                    status: 'info',
-                    title: "Oops!",
-                    description: res.message,
-                    position: "top-right"
-                })
-            }
-        }).catch((err) => {
-            console.log(err)
-            Toast({
-                status: 'error',
-                title: "Error Occured",
-                description: err.message,
-                position: "top-right"
             })
-        })
+        }
+        if (dmtProvider == "paysprint") {
+            BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
+                ...registrationFormik.values,
+                otp: otp,
+                stateresp: otpRefId
+            }).then(res => {
+                console.log(res.data)
+            }).catch((err) => {
+                console.log(err)
+                Toast({
+                    status: 'error',
+                    title: "Error Occured",
+                    description: err.message,
+                    position: "top-right"
+                })
+            })
+        }
     }
 
-    function activateDmt() {
+    function fetchRecipients() {
+        if (dmtProvider == "paysprint") {
+            BackendAxios.post(`/api/paysprint/dmt/recipient-list/${serviceId}`, {
+                customerId: customerId
+            }).then(res => {
+                console.log(res.data)
+                setRecipients(res.data.data.map((recipient) => {
+                    return {
+                        accountNumber: recipient.accno,
+                        beneficiaryName: recipient.name,
+                        bankCode: recipient.bankid,
+                        bankName: recipient.bankname,
+                        bankIfsc: recipient.ifsc,
+                        beneficiaryId: recipient.bene_id,
+                    }
+                }))
+            }).catch(err => {
+                Toast({
+                    status: 'error',
+                    title: "Error Occured",
+                    description: err.message,
+                    position: "top-right"
+                })
+            })
+        }
+    }
 
+    function deleteRecipient(beneficiaryId) {
+        if (dmtProvider == "paysprint") {
+            BackendAxios.post(`/api/paysprint/dmt/delete-recipient/${serviceId}`, {
+                mobile: customerId,
+                bene_id: beneficiaryId
+            }).then(res => {
+                console.log(res.data)
+                Toast({
+                    status: 'success',
+                    description: 'Recipient Deleted!'
+                })
+                fetchRecipients()
+            }).catch(err => {
+                Toast({
+                    status: 'error',
+                    title: "Error Occured",
+                    description: err.message,
+                    position: "top-right"
+                })
+            })
+        }
     }
 
 
@@ -394,13 +584,22 @@ const Dmt = () => {
                                                         readOnly bg={'aqua'}
                                                     />
                                                 </FormControl>
-                                                <FormControl w={'full'} my={4}>
-                                                    <FormLabel>Enter Amount</FormLabel>
-                                                    <InputGroup w={'full'}>
-                                                        <InputLeftAddon children={'₹'} />
-                                                        <Input type={'number'} name={'amount'} max={5000} value={paymentFormik.values.amount} onChange={paymentFormik.handleChange} />
-                                                    </InputGroup>
-                                                </FormControl>
+                                                <HStack w={'full'} spacing={6}>
+                                                    <FormControl my={4}>
+                                                        <FormLabel>Transaction Type</FormLabel>
+                                                        <Select name='transactionType' onChange={paymentFormik.handleChange}>
+                                                            <option value="imps">IMPS</option>
+                                                            <option value="neft">NEFT</option>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormControl my={4}>
+                                                        <FormLabel>Enter Amount</FormLabel>
+                                                        <InputGroup w={'full'}>
+                                                            <InputLeftAddon children={'₹'} />
+                                                            <Input type={'number'} name={'amount'} max={5000} value={paymentFormik.values.amount} onChange={paymentFormik.handleChange} />
+                                                        </InputGroup>
+                                                    </FormControl>
+                                                </HStack>
                                             </Box> : null
                                     }
                                 </VStack>
@@ -423,29 +622,29 @@ const Dmt = () => {
                                                     return (
                                                         <Box
                                                             w={'full'} rounded={'inherit'}
-                                                            h={'auto'} boxShadow={'md'}
-                                                            overflow={'hidden'} pos={'relative'}
+                                                            boxShadow={'md'} pos={'relative'}
                                                         >
                                                             <Text
                                                                 w={'full'} px={4} py={1}
                                                                 textTransform={'uppercase'}
                                                                 fontWeight={'semibold'}
                                                                 fontSize={'xs'} bg={'blanchedalmond'}
+                                                                roundedTop={12}
                                                             >
-                                                                state bank of india
+                                                                {item.bankName}
                                                             </Text>
                                                             <Box w={'full'} p={4} fontSize={'xs'}>
                                                                 <Text mb={2}>
                                                                     <span style={{ paddingRight: ".5rem" }}><b>Beneficiary: </b></span>
-                                                                    Sangam Kumar
+                                                                    {item.beneficiaryName}
                                                                 </Text>
                                                                 <Text mb={2} fontSize={'sm'}>
                                                                     <span style={{ paddingRight: ".5rem" }}><b>Account No: </b></span>
-                                                                    39486516779846
+                                                                    {item.accountNumber}
                                                                 </Text>
                                                                 <Text mb={2}>
                                                                     <span style={{ paddingRight: "1.20rem" }}><b>Bank IFSC: </b></span>
-                                                                    SBIN0032284
+                                                                    {item.bankIfsc}
                                                                 </Text>
                                                             </Box>
                                                             <Stack direction={['row-reverse', 'column']} spacing={[0, 4]} pos={['relative', 'absolute']} top={[0, '2.25rem']} right={[0, '1rem']}>
@@ -455,7 +654,7 @@ const Dmt = () => {
                                                                     fontSize={['unset', 'xs']}
                                                                     rounded={['0', 'full']}
                                                                     colorScheme={'twitter'}
-                                                                    value={"39486516779846"}
+                                                                    value={item.accountNumber}
                                                                     onClick={(e) => handleRecipientSelection(e.target.value)}
                                                                 >Transfer</Button>
                                                                 <Button
@@ -467,6 +666,7 @@ const Dmt = () => {
                                                                     placeContent={['unset', 'center']}
                                                                     rounded={['0', 'full']}
                                                                     colorScheme={'red'}
+                                                                    onClick={() => deleteRecipient(item.beneficiaryId)}
                                                                 >
                                                                     <Text>Delete</Text>
                                                                 </Button>
@@ -515,7 +715,7 @@ const Dmt = () => {
                         Enter your MPIN to confirm.
                         <br />
                         <HStack w={'full'} alignItems={'center'} justifyContent={'center'} pt={2} pb={6}>
-                            <PinInput otp>
+                            <PinInput otp onChange={(value) => paymentFormik.setFieldValue('mpin', value)}>
                                 <PinInputField bg={'aqua'} />
                                 <PinInputField bg={'aqua'} />
                                 <PinInputField bg={'aqua'} />
@@ -524,10 +724,10 @@ const Dmt = () => {
                         </HStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                        <Button colorScheme='blue' mr={3} onClick={paymentFormik.handleSubmit}>
                             Confirm and Pay
                         </Button>
-                        <Button variant='ghost'>Cancel</Button>
+                        <Button variant='ghost' onClick={onClose}>Cancel</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
@@ -569,13 +769,21 @@ const Dmt = () => {
                             <FormLabel>Beneficiary Name</FormLabel>
                             <Input value={addRecipientFormik.values.beneficiaryName} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
+                        <HStack justifyContent={'flex-end'} pt={2}>
+                            <Button size={'xs'}>Get Name</Button>
+                        </HStack>
                         <FormControl id='phone'>
                             <FormLabel>Beneficiary Phone</FormLabel>
                             <Input type={'tel'} maxLength={10} value={addRecipientFormik.values.phone} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
-                        <HStack justifyContent={'flex-end'} pt={2}>
-                            <Button size={'xs'}>Verify Details (optional)</Button>
-                        </HStack>
+                        <FormControl id='address'>
+                            <FormLabel>Address</FormLabel>
+                            <Input value={addRecipientFormik.values.address} onChange={addRecipientFormik.handleChange} />
+                        </FormControl>
+                        <FormControl id='pincode'>
+                            <FormLabel>PINCODE</FormLabel>
+                            <Input value={addRecipientFormik.values.pincode} onChange={addRecipientFormik.handleChange} />
+                        </FormControl>
                     </ModalBody>
                     <ModalFooter>
                         <Button variant='ghost' onClick={() => setNewRecipientModal(false)}>Cancel</Button>
@@ -599,14 +807,9 @@ const Dmt = () => {
                     <DrawerBody>
                         <VStack>
                             <HStack spacing={4}>
-                                <PinInput otp mask onChange={(value) => setOtp(value)}>
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                </PinInput>
+                                <Input
+                                    onChange={(e) => setOtp(e.target.value)}
+                                />
                             </HStack>
                         </VStack>
                     </DrawerBody>

@@ -18,13 +18,44 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import axios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Aeps = () => {
+  const [aepsProvider, setAepsProvider] = useState("eko")
+
+  useEffect(() => {
+
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if (res.data[0].allowed_pages.includes('aepsBasic') == false) {
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+
+    ClientAxios.get(`/api/global`).then(res => {
+      setAepsProvider(res.data[0].aeps_provider)
+    }).catch(err => {
+      Toast({
+        title: 'Try again later',
+        description: 'We are facing some issues.'
+      })
+    })
+
+  }, [])
+
   let MethodInfo
   const [isBtnLoading, setIsBtnLoading] = useState(false)
+  const [biometricDevice, setBiometricDevice] = useState("")
   const [biometricDevice, setBiometricDevice] = useState("")
   const Toast = useToast()
   const formik = useFormik({
@@ -34,19 +65,20 @@ const Aeps = () => {
       bankCode: "",
       bankAccountNo: "",
       ifsc: "",
-      serviceCode: "2",
+      serviceCode: "2",         // Services Code as per service provider
       pid: "",
-      amount: ""
+      amount: "",
+      serviceId: "20"           // Services ID as per Pesa24 Portal
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await axios.post("/api/eko/aeps/money-transfer", values).then((res)=>{
+      await BackendAxios.post(`/api/eko/${aepsProvider}/money-transfer/${values.serviceId}`, values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'
         })
         console.log(res.data)
-      }).catch((err)=>{
+      }).catch((err) => {
         Toast({
           title: 'Transaction Failed',
           description: err.message,
@@ -251,6 +283,7 @@ const Aeps = () => {
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
+    formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
   function handleSubmit() {

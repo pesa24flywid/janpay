@@ -1,38 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     Box,
     Stack,
     Text
 } from '@chakra-ui/react'
+import { ClientAxios } from '../lib/axios'
 
 const BankDetails = () => {
-    const bankDetails = [
-        {
-            name: "State Bank of India",
-            account: "1234567890",
-            ifsc: "SBIN0032284",
-            address: "Ground Floor, Gujranwala Town, Delhi 110023"
-        },
-        {
-            name: "ICICI Bank",
-            account: "1234567890",
-            ifsc: "ICIB0032284",
-            address: "Ground Floor, Gujranwala Town, Delhi 110023"
-        },
-        {
-            name: "Central Bank of India",
-            account: "1234567890",
-            ifsc: "CBIN0032284",
-            address: "Ground Floor, Gujranwala Town, Delhi 110023"
-        },
-        {
-            name: "Yes Bank",
-            account: "1234567890",
-            ifsc: "YBIN0032284",
-            address: "Ground Floor, Gujranwala Town, Delhi 110023"
-        },
-    ]
-
+    const [bankDetails, setBankDetails] = useState([])
+    useEffect(()=>{
+        ClientAxios.post('/api/cms/banks/fetch').then((res)=>{
+            setBankDetails(res.data)
+        })
+    }, [])
 
     return (
         <>
@@ -45,16 +25,15 @@ const BankDetails = () => {
                     direction={'column'}
                     gap={2}
                 >
-                    {bankDetails.map((detail) => (
+                    {bankDetails.map((detail, key) => (
                         <Box
-                            key={detail.ifsc}
+                            key={key}
                             border={'1px'} rounded={'inherit'}
                             borderColor={'gray.200'} p={2}
                         >
-                            <Text fontSize={'12'} mb={2}><b>Bank: </b> {detail.name}</Text>
+                            <Text fontSize={'12'} mb={2}><b>Bank: </b> {detail.bank_name}</Text>
                             <Text fontSize={'12'} mb={2}><b>Account: </b> {detail.account}</Text>
                             <Text fontSize={'12'} mb={2}><b>IFSC: </b> {detail.ifsc}</Text>
-                            <Text fontSize={'12'} mb={2}><b>Address: </b> {detail.address}</Text>
                         </Box>
                     ))}
                 </Stack>

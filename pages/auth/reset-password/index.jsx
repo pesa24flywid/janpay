@@ -13,14 +13,15 @@ import {
     FormLabel,
     InputGroup,
     useToast,
-    Radio,
-    RadioGroup
+    PinInput,
+    PinInputField,
 
 } from '@chakra-ui/react'
 import Navbar from '../../../hocs/Navbar'
 import { FiPhone, FiMail } from 'react-icons/fi'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import axios from '../../../lib/axios'
 
 const ResetPassword = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
@@ -28,25 +29,35 @@ const ResetPassword = () => {
     const [isSuperDistributorDisabled, seSupertIsDistributorDisabled] = useState(true)
     const toast = useToast()
 
-    useEffect(()=>{
-        // Check for avalability of registration types
-
-    }, [])
 
     const formik = useFormik({
         initialValues: {
-            email: ""
+            email: "",
+            mpin: "",
         },
         onSubmit: (values) => {
             // Handling registration API
-            toast({
-                status: "success",
-                title: "Reset Link Sent",
-                description: "Check your email to reset your password.",
-                duration: 3000,
-                isClosable: true,
-                position: 'top-right'
+            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/forgot-password`, JSON.stringify({
+                email: values.email,
+                mpin: values.mpin,
+            })).then((res) => {
+                toast({
+                    status: "success",
+                    title: "Reset Link Sent",
+                    description: "Check your email to reset your password.",
+                    duration: 3000,
+                    isClosable: true,
+                    position: 'top-right'
+                })
+            }).catch((err) => {
+                toast({
+                    status: "error",
+                    title: "Error Occured",
+                    description: "Try again or contact us to reset your password",
+                    position: 'top-right'
+                })
             })
+
         }
     })
 
@@ -96,7 +107,24 @@ const ResetPassword = () => {
                                         />
                                     </InputGroup>
                                 </Box>
-                                
+                                <Box>
+                                    <FormLabel pl={2}
+                                        textAlign={'left'} mb={0}
+                                        color={'darkslategray'}
+                                    >
+                                        Your MPIN
+                                    </FormLabel>
+                                    <HStack>
+                                        <PinInput otp
+                                            onComplete={(values) => formik.setFieldValue("mpin", values)}>
+                                            <PinInputField bg={'aqua'} />
+                                            <PinInputField bg={'aqua'} />
+                                            <PinInputField bg={'aqua'} />
+                                            <PinInputField bg={'aqua'} />
+                                        </PinInput>
+                                    </HStack>
+                                </Box>
+
                                 <Button
                                     w={['xs', 'sm']} type={'submit'}
                                     rounded={'full'}

@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
-import axios from '../../lib/axios'
+import axios from 'axios'
 import {
     Box,
     VStack,
@@ -15,22 +15,29 @@ import {
     useToast,
     Radio,
     RadioGroup
-
 } from '@chakra-ui/react'
 import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import Cookies from 'js-cookie'
 
 const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
-    const [isDistributorDisabled, setIsDistributorDisabled] = useState(false)
+    const [isDistributorDisabled, setIsDistributorDisabled] = useState(true)
     const [isSuperDistributorDisabled, seSupertIsDistributorDisabled] = useState(true)
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
 
     useEffect(() => {
-        axios.get("/sanctum/csrf-cookie")
-    
+        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
+        //     withCredentials: true,
+        //     headers: {
+        //         'Accept': 'application/json, text/plain, */*',
+        //         'Content-Type': 'application/json',
+        //         'X-Requested-With': 'XMLHttpRequest'
+        //     },
+        // })
+
     }, [])
 
     const formik = useFormik({
@@ -38,18 +45,28 @@ const Register = () => {
             first_name: "",
             last_name: "",
             email: "",
+            phone: "",
             user_type: "Retailer",
             referral_id: "",
+            organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase()
         },
         onSubmit: async (values) => {
             // Handling registration
             setIsBtnLoading(true)
             try {
-                await axios.post("/register", JSON.stringify(values)).then(() => {
+                await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register`, JSON.stringify(values), {
+                    withCredentials: true,
+                    headers: {
+                        "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                }).then(() => {
                     toast({
                         status: "success",
                         title: "Credentials Sent",
-                        description: "Check your mail for login steps.",
+                        description: "Check your phone for login steps.",
                         duration: 3000,
                         isClosable: true,
                         position: 'top-right'
@@ -73,7 +90,7 @@ const Register = () => {
     return (
         <>
             <Head>
-                <title>Pesa24 - Register</title>
+                <title>RPay - Register</title>
             </Head>
             <Navbar />
 
@@ -154,6 +171,25 @@ const Register = () => {
                                             placeholder={'Your Email'}
                                             bg={'blue.100'} type={'email'}
                                             required value={formik.values.email}
+                                            onChange={formik.handleChange}
+                                        />
+                                    </InputGroup>
+                                </Box>
+                                <Box>
+                                    <FormLabel pl={2}
+                                        htmlFor='user_id'
+                                        textAlign={'left'} mb={0}
+                                        color={'darkslategray'}
+                                    >
+                                        Phone Number
+                                    </FormLabel>
+                                    <InputGroup w={['xs', 'sm']}>
+                                        <Input
+                                            rounded={'full'}
+                                            name={'phone'}
+                                            placeholder={'Your Phone Number'}
+                                            bg={'blue.100'} type={'tel'}
+                                            required value={formik.values.phone}
                                             onChange={formik.handleChange}
                                         />
                                     </InputGroup>
