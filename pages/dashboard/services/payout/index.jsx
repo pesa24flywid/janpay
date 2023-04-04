@@ -32,7 +32,7 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import BackendAxios, {ClientAxios} from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { Document, Page, Text as PText, StyleSheet, View, Image, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
 
 const styles = StyleSheet.create({
@@ -117,6 +117,20 @@ const Payout = () => {
 
     const [rowdata, setRowdata] = useState([])
     useEffect(() => {
+        ClientAxios.post('/api/user/fetch', {
+            user_id: localStorage.getItem('userId')
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => {
+            if (res.data[0].allowed_pages.includes('payoutTransaction') == false) {
+                window.location.assign('/dashboard/not-allowed')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+
         BackendAxios.get(`/api/razorpay/fetch-payout/${serviceId}`).then((res) => {
             setRowdata(res.data)
         }).catch((err) => {

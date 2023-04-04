@@ -7,6 +7,7 @@ import {
     Stack,
     Button,
     Input,
+    Image,
     Tabs,
     TabList,
     Tab,
@@ -16,15 +17,10 @@ import {
     Table,
     Thead,
     Tbody,
-    Tfoot,
     Tr,
     Th,
     Td,
     TableContainer,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverBody,
     Drawer,
     DrawerBody,
     DrawerFooter,
@@ -32,22 +28,29 @@ import {
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
-    useDisclosure,
-    Checkbox,
-    CheckboxGroup,
     VisuallyHidden,
     useToast,
 } from '@chakra-ui/react'
-import DashboardWrapper from '../../../../hocs/DashboardLayout'
-import BackendAxios, { FormAxios } from '../../../../lib/axios'
 import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFileCsv, FaFilePdf, FaPrint } from 'react-icons/fa'
-import { BsChevronDown } from 'react-icons/bs'
+import {
+    BsFileBarGraphFill,
+    BsPenFill,
+    BsChevronDoubleLeft,
+    BsChevronDoubleRight,
+    BsChevronLeft,
+    BsChevronRight
+} from 'react-icons/bs'
 import jsPDF from 'jspdf';
 import "jspdf-autotable"
+import BackendAxios, { ClientAxios } from '../../../../lib/utils/axios'
 import CheckboxTree from 'react-checkbox-tree'
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import Script from 'next/script'
+import Link from 'next/link'
+import { BiPen, BiRupee } from 'react-icons/bi'
+import fileDownload from 'js-file-download'
+import DashboardWrapper from '../../../../hocs/DashboardLayout'
 
 const ExportPDF = (currentRowData) => {
     const doc = new jsPDF('landscape')
@@ -62,8 +65,6 @@ const ExportPDF = (currentRowData) => {
     ]
 
     doc.autoTable({ html: '#exportableTable' })
-    doc.setCharSpace(4)
-    //This is a key for printing
     doc.output('dataurlnewwindow');
 }
 
@@ -120,23 +121,37 @@ const Index = () => {
         ]
     }]
 
-    const availableTabs = ['super distributors', 'distributors', 'retailers']
-    const [selectedTab, setSelectedTab] = useState("super_distributor")
+    const availableTabs = ['retailers', 'distributor']
+    const [selectedTab, setSelectedTab] = useState("retailer")
     const [fetchedUsers, setFetchedUsers] = useState([])
-
     const [selectedUser, setSelectedUser] = useState("")
+    const [pagination, setPagination] = useState({
+        current_page: "1",
+        total_pages: "1",
+        first_page_url: "",
+        last_page_url: "",
+        next_page_url: "",
+        prev_page_url: "",
+    })
 
     // Fetching users
-    function fetchUsersList() {
+    function fetchUsersList(pageLink) {
         setFetchedUsers([])
-        BackendAxios.get(`/api/admin/users-list/${selectedTab}`).then((res) => {
-            console.log(res.data)
-            setFetchedUsers(res.data)
+        BackendAxios.get(pageLink || `/api/admin/users-list/${selectedTab}?page=1`).then((res) => {
+            setPagination({
+                current_page: res.data.current_page,
+                total_pages: parseInt(res.data.last_page),
+                first_page_url: res.data.first_page_url,
+                last_page_url: res.data.last_page_url,
+                next_page_url: res.data.next_page_url,
+                prev_page_url: res.data.prev_page_url,
+            })
+            setFetchedUsers(res.data.data)
         }).catch((err) => {
             console.log(err)
             Toast({
                 status: 'error',
-                description: err.message
+                description: err.response.data.message || err.message
             })
         })
     }
@@ -148,12 +163,12 @@ const Index = () => {
 
     function changeUserStatus(userId, updateTo) {
         BackendAxios.get(`/api/admin/user/status/${userId}/${updateTo}`).then(() => {
-            fetchUsersList
+            fetchUsersList()
         }).catch((err) => {
             console.log(err)
             Toast({
                 status: 'error',
-                description: err.message
+                description: err.response.data.message || err.message
             })
         })
     }
@@ -210,11 +225,11 @@ const Index = () => {
                 description: 'User permissions were updated!'
             })
             fetchUserPermissions()
-        }).catch((err)=>{
+        }).catch((err) => {
             Toast({
                 status: 'error',
                 title: 'Error Occured',
-                description: err.message
+                description: err.response.data.message || err.message
             })
         })
     }
@@ -225,7 +240,7 @@ const Index = () => {
                 src='https://kit.fontawesome.com/2aa643340e.js'
                 crossOrigin='anonymous'
             />
-            <DashboardWrapper titleText={'Users List'}>
+            <DashboardWrapper pageTitle={'Users List'}>
                 <Tabs
                     variant='soft-rounded'
                     colorScheme='green'
@@ -235,23 +250,18 @@ const Index = () => {
                         <Tab
                             fontSize={['xs', 'lg']}
                             _selected={{ bg: 'twitter.500', color: 'white' }}
-                            onClick={() => setSelectedTab("super_distributor")}
+                            onClick={() => setSelectedTab("retailer")}
+                            width={'xs'} flex={'unset'}
                         >
-                            Super Distributor
+                            Retailer
                         </Tab>
                         <Tab
                             fontSize={['xs', 'lg']}
                             _selected={{ bg: 'twitter.500', color: 'white' }}
                             onClick={() => setSelectedTab("distributor")}
+                            width={'xs'} flex={'unset'}
                         >
                             Distributor
-                        </Tab>
-                        <Tab
-                            fontSize={['xs', 'lg']}
-                            _selected={{ bg: 'twitter.500', color: 'white' }}
-                            onClick={() => setSelectedTab("retailer")}
-                        >
-                            Retailer
                         </Tab>
                     </TabList>
                     <TabPanels pt={8}>
@@ -304,6 +314,41 @@ const Index = () => {
                                             />
                                         </Stack>
 
+                                        <HStack spacing={2} mt={12} py={4} bg={'white'} justifyContent={'center'}>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.first_page_url)}
+                                            ><BsChevronDoubleLeft />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.prev_page_url)}
+                                            ><BsChevronLeft />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'solid'}
+                                            >{pagination.current_page}</Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.next_page_url)}
+                                            ><BsChevronRight />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.last_page_url)}
+                                            ><BsChevronDoubleRight />
+                                            </Button>
+                                        </HStack>
                                         {/* Table */}
                                         <TableContainer my={6}>
                                             <Table variant='striped' colorScheme='teal'>
@@ -313,26 +358,80 @@ const Index = () => {
                                                         <Th>KYC Details</Th>
                                                         <Th>Balance Details</Th>
                                                         <Th>Complete Address</Th>
-                                                        <Th>Parent Details</Th>
-                                                        <Th>Actions</Th>
+                                                        <Th>KYC Documents</Th>
+                                                        {/* <Th>Actions</Th> */}
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody fontSize={'xs'}>
                                                     {
                                                         fetchedUsers && fetchedUsers.map((user, key) => {
                                                             return (
-                                                                <Tr>
+                                                                <Tr key={key}>
                                                                     <Td>
-                                                                        <Box>
-                                                                            <Text textTransform={'capitalize'}>{user.packages[0].name} Plan</Text><br />
-                                                                            <Text>{user.first_name} {user.last_name} </Text>
+                                                                        <Box mt={4}>
+                                                                            <HStack spacing={4} pb={4}>
+                                                                                <a href={
+                                                                                    user.profile_pic ?
+                                                                                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${user.profile_pic}`
+                                                                                        : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                                                                                } target={'_blank'}>
+                                                                                    <Image
+                                                                                        src={
+                                                                                            user.profile_pic ?
+                                                                                                `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${user.profile_pic}`
+                                                                                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                                                                                        }
+                                                                                        boxSize={'10'} objectFit={'contain'}
+                                                                                    />
+                                                                                </a>
+                                                                                <Box>
+                                                                                    <Text><b>ID: </b>{user.id}</Text>
+                                                                                    <Text>{user.first_name} {user.last_name} </Text>
+                                                                                    <Text>
+                                                                                        <a href={`tel:${user.phone_number}`}><b>MOB: </b>{user.phone_number}</a>
+                                                                                    </Text>
+                                                                                </Box>
+                                                                            </HStack>
                                                                             <Text>{user.email}</Text>
+                                                                        <HStack spacing={0} my={2}>
+                                                                            <Link href={`/dashboard/users/manage-user?pageId=users&user_id=${user.id}`}>
+                                                                                <Button
+                                                                                    size={'sm'} rounded={0}
+                                                                                    colorScheme={'twitter'}
+                                                                                    title={'Edit'}
+                                                                                >
+                                                                                    <BsPenFill />
+                                                                                </Button>
+                                                                            </Link>
+                                                                            <Link href={`/dashboard/account/fund-transfer?pageId=transfer&user_id=${user.id}`}>
+                                                                                <Button
+                                                                                    size={'sm'} rounded={0}
+                                                                                    colorScheme={'whatsapp'}
+                                                                                    title={'Transfer/Reversal'}
+                                                                                >
+                                                                                    <BiRupee fontSize={18} />
+                                                                                </Button>
+                                                                            </Link>
+                                                                            <Link href={`/dashboard/reports/transactions/user-ledger?pageId=reports&user_id=${user.id}`}>
+                                                                                <Button
+                                                                                    size={'sm'} rounded={0}
+                                                                                    colorScheme={'red'}
+                                                                                    title={'Reports'}
+                                                                                >
+                                                                                    <BsFileBarGraphFill />
+                                                                                </Button>
+                                                                            </Link>
+                                                                            <HStack p={2} bg={'white'}>
+                                                                                <Switch
+                                                                                    size={'sm'}
+                                                                                    onChange={() => changeUserStatus(user.id, user.is_active == 1 ? 0 : 1)}
+                                                                                    defaultChecked={user.is_active === 1}
+                                                                                ></Switch>
+                                                                            </HStack>
+                                                                        </HStack>
                                                                             <Text>
-                                                                                <a href={`tel:${user.phone_number}`}>{user.phone_number}</a>,
                                                                                 <a href={`tel:${user.alternate_phone}`}>{user.alternate_phone}</a>
                                                                             </Text>
-                                                                            <Text>{user.gender} &nbsp;&nbsp;{user.dob}</Text><br />
-                                                                            <Text>{user.company_name} {user.firm_type}</Text>
                                                                         </Box>
                                                                     </Td>
                                                                     <Td>
@@ -340,16 +439,18 @@ const Index = () => {
                                                                             <Text><b>Status: </b>&nbsp;&nbsp; Verified </Text>
                                                                             <Text><b>Aadhaar No.: </b>&nbsp;&nbsp; {user.aadhaar} </Text>
                                                                             <Text><b>PAN: </b>&nbsp;&nbsp; {user.pan_number} </Text>
-                                                                            <Text><b>GST No.: </b>&nbsp;&nbsp; {user.gst_number} </Text><br />
-                                                                            <Text><b>Organisation Code.: </b>&nbsp;&nbsp; {user.organisation_code} </Text>
+                                                                            <Text><b>GST No.: </b>&nbsp;&nbsp; {user.gst_number} </Text>
+                                                                            <Text><b>Gender & DOB: </b>{user.gender} &nbsp;&nbsp;{user.dob}</Text>
+                                                                            <Text><b>Organisation Code.: </b>&nbsp;&nbsp; RPAY </Text><br /><br />
+
                                                                         </Box>
                                                                     </Td>
-                                                                    <Td>
+                                                                    <Td pos={'relative'}>
                                                                         <Box>
                                                                             <Text><b>Current Balance: </b>&nbsp;&nbsp; ₹ {user.wallet} </Text>
-                                                                            <Text><b>Capping Balance: </b>&nbsp;&nbsp; ₹ {user.minimum_balance} </Text><br />
-                                                                            <Text><b>Distributors' Balance: </b>&nbsp;&nbsp;₹ 495500</Text>
-                                                                            <Text><b>Retailers' Balance: </b>&nbsp;&nbsp;₹ 495500</Text>
+                                                                            <Text><b>Capping Balance: </b>&nbsp;&nbsp; ₹ {user.minimum_balance} </Text>
+                                                                            <Text textTransform={'capitalize'}>{user.packages[0].name} Plan</Text>
+                                                                            <Text>{user.company_name} {user.firm_type}</Text>
                                                                         </Box>
                                                                     </Td>
                                                                     <Td>
@@ -359,80 +460,51 @@ const Index = () => {
                                                                             <Text>Pincode - {user.pincode}</Text>
                                                                         </Box>
                                                                     </Td>
-                                                                    <Td>
-                                                                        <Box>
-                                                                            <Text>(567) - Admin One</Text>
-                                                                            <Text>+91 7838074742</Text>
-                                                                        </Box>
-                                                                    </Td>
-                                                                    <Td>
-                                                                        <VStack gap={4}>
-                                                                            <Switch
-                                                                                size={'sm'}
-                                                                                onChange={() => changeUserStatus(user.id, user.is_active == 1 ? 0 : 1)}
-                                                                                defaultChecked={user.is_active == 1 ? true : false}
-                                                                            >Active</Switch>
-                                                                            <Popover>
-                                                                                <PopoverTrigger>
-                                                                                    <Button
-                                                                                        rightIcon={<BsChevronDown />}
-                                                                                        size={'sm'} colorScheme={'twitter'}
-                                                                                    >
-                                                                                        Actions
-                                                                                    </Button>
-                                                                                </PopoverTrigger>
-                                                                                <PopoverContent>
-                                                                                    <PopoverBody>
-                                                                                        <Box>
-                                                                                            <VStack alignItems={'flex-start'} spacing={0}>
-                                                                                                <Text w={'full'} pb={1} borderBottom={'1px solid #999'}>Actions</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>Fund Transfer/Reversal</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>Scheme</Text>
-                                                                                            </VStack>
-                                                                                            <Box h={8} w={'full'}></Box>
-                                                                                            <VStack alignItems={'flex-start'} spacing={0}>
-                                                                                                <Text w={'full'} pb={1} borderBottom={'1px solid #999'}>Settings</Text>
-                                                                                                <Text
-                                                                                                    p={2} w={'full'} fontSize={'sm'}
-                                                                                                    cursor={'pointer'} _hover={{ bg: 'blue.50' }}
-                                                                                                    onClick={() => {
-                                                                                                        openPermissionsDrawer(user.id)
-                                                                                                    }}
-                                                                                                >
-                                                                                                    Permissions
-                                                                                                </Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>View Profile</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>KYC Management</Text>
-                                                                                            </VStack>
-                                                                                        </Box>
-                                                                                    </PopoverBody>
-                                                                                </PopoverContent>
-                                                                            </Popover>
+                                                                    <Td>{/* PAN Card */}
+                                                                        
+                                                                        {
+                                                                            user.pan_photo &&
+                                                                            <Button size={'xs'}
+                                                                                onClick={() => BackendAxios.post(`/api/admin/file`, {
+                                                                                    address: user.pan_photo
+                                                                                },{
+                                                                                    responseType: 'blob'
+                                                                                }).then(res=>{
+                                                                                    fileDownload(res.data, `PAN.jpeg`)
+                                                                                })}
+                                                                            >View PAN Card</Button>
+                                                                        }
+                                                                        <br /><br />
+                                                                        {/* Aadhaar Front */}
+                                                                        {
+                                                                            user.aadhaar_front &&
+                                                                            <Button size={'xs'}
+                                                                                onClick={() => BackendAxios.post(`/api/admin/file`, {
+                                                                                    address: user.aadhaar_front
+                                                                                },{
+                                                                                    responseType: 'blob'
+                                                                                }).then(res=>{
+                                                                                    fileDownload(res.data, `AadhaarFront.jpeg`)
+                                                                                })
+                                                                            }
+                                                                            >View Aadhaar Front</Button>
+                                                                        }
+                                                                        <br /><br />
+                                                                        {/* Aadhaar Back */}
+                                                                        {
+                                                                            user.aadhaar_back &&
+                                                                            <Button size={'xs'}
+                                                                                onClick={() => BackendAxios.post(`/api/admin/file`, {
+                                                                                    address: user.aadhaar_back
+                                                                                },{
+                                                                                    responseType: 'blob'
+                                                                                }).then(res=>{
+                                                                                    fileDownload(res.data, `AadhaarBack.jpeg`)
+                                                                                })
+                                                                            }
+                                                                            >View Aadhaar Back</Button>
+                                                                        }
 
-                                                                            <Popover>
-                                                                                <PopoverTrigger>
-                                                                                    <Button
-                                                                                        rightIcon={<BsChevronDown />}
-                                                                                        size={'sm'} colorScheme={'whatsapp'}
-                                                                                    >
-                                                                                        Reports
-                                                                                    </Button>
-                                                                                </PopoverTrigger>
-                                                                                <PopoverContent>
-                                                                                    <PopoverBody>
-                                                                                        <Box>
-                                                                                            <VStack alignItems={'flex-start'} spacing={0}>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>AePS Report</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>BbPS Report</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>DMT Report</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>Recharge Report</Text>
-                                                                                                <Text p={2} w={'full'} fontSize={'sm'} cursor={'pointer'} _hover={{ bg: 'blue.50' }}>User Ledger</Text>
-                                                                                            </VStack>
-                                                                                        </Box>
-                                                                                    </PopoverBody>
-                                                                                </PopoverContent>
-                                                                            </Popover>
-                                                                        </VStack>
                                                                     </Td>
                                                                 </Tr>
                                                             )
@@ -441,6 +513,41 @@ const Index = () => {
                                                 </Tbody>
                                             </Table>
                                         </TableContainer>
+                                        <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.first_page_url)}
+                                            ><BsChevronDoubleLeft />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.prev_page_url)}
+                                            ><BsChevronLeft />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'solid'}
+                                            >{pagination.current_page}</Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.next_page_url)}
+                                            ><BsChevronRight />
+                                            </Button>
+                                            <Button
+                                                colorScheme={'twitter'}
+                                                fontSize={12} size={'xs'}
+                                                variant={'outline'}
+                                                onClick={() => fetchUsersList(pagination.last_page_url)}
+                                            ><BsChevronDoubleRight />
+                                            </Button>
+                                        </HStack>
 
                                         {/* Printable Table */}
                                         <VisuallyHidden>
@@ -451,7 +558,6 @@ const Index = () => {
                                                         <Th>KYC Details</Th>
                                                         <Th>Balance Details</Th>
                                                         <Th>Complete Address</Th>
-                                                        <Th>Parent Details</Th>
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody fontSize={'xs'}>
@@ -461,7 +567,8 @@ const Index = () => {
                                                                 <Tr>
                                                                     <Td>
                                                                         <Box>
-                                                                            <Text textTransform={'capitalize'}>{user.packages[0].name} Plan</Text><br /><br />
+                                                                            {/* <Text textTransform={'capitalize'}>{user.packages[0].name} Plan</Text><br /><br /> */}
+                                                                            <Text><b>ID: </b>{user.id}</Text>
                                                                             <Text>{user.first_name} {user.last_name} </Text><br />
                                                                             <Text>{user.email}</Text><br />
                                                                             <Text><br />
@@ -478,15 +585,13 @@ const Index = () => {
                                                                             <Text><b>Aadhaar No.: </b>&nbsp;&nbsp; {user.aadhaar} </Text><br />
                                                                             <Text><b>PAN: </b>&nbsp;&nbsp; {user.pan_number} </Text><br />
                                                                             <Text><b>GST No.: </b>&nbsp;&nbsp; {user.gst_number} </Text><br /><br />
-                                                                            <Text><b>Organisation Code.: </b>&nbsp;&nbsp; {user.organisation_code} </Text><br />
+                                                                            <Text><b>Organisation Code.: </b>&nbsp;&nbsp; RPAY </Text><br />
                                                                         </Box>
                                                                     </Td>
                                                                     <Td>
                                                                         <Box>
                                                                             <Text><b>Current Balance: </b>&nbsp;&nbsp; Rs. {user.wallet} </Text><br />
                                                                             <Text><b>Capping Balance: </b>&nbsp;&nbsp; Rs. {user.minimum_balance} </Text><br /><br />
-                                                                            <Text><b>Distributors' Balance: </b>&nbsp;&nbsp;Rs. 495500</Text><br />
-                                                                            <Text><b>Retailers' Balance: </b>&nbsp;&nbsp;Rs. 495500</Text><br />
                                                                         </Box>
                                                                     </Td>
                                                                     <Td>
@@ -494,12 +599,6 @@ const Index = () => {
                                                                             <Text>{user.line},</Text><br />
                                                                             <Text>{user.city}, {user.state},</Text><br />
                                                                             <Text>Pincode - {user.pincode}</Text><br />
-                                                                        </Box>
-                                                                    </Td>
-                                                                    <Td>
-                                                                        <Box>
-                                                                            <Text>(567) - Admin One</Text><br />
-                                                                            <Text>+91 7838074742</Text><br />
                                                                         </Box>
                                                                     </Td>
                                                                 </Tr>

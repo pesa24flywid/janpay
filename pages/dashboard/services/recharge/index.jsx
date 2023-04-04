@@ -115,6 +115,18 @@ const Bbps = () => {
       })
       console.log(err)
     })
+
+    
+    ClientAxios.get(`/api/global`).then(res => {
+      if(!res.data[0].recharge_status){
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      Toast({
+        title: 'Try again later',
+        description: 'We are facing some issues.'
+      })
+    })
   }, [])
 
 

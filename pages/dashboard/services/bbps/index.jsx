@@ -38,10 +38,10 @@ import { BiRupee } from 'react-icons/bi'
 import { useFormik } from 'formik'
 import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
-import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 
 const Bbps = () => {
+  const [bbpsProvider, setBbpsProvider] = useState("eko")
 
   useEffect(() => {
 
@@ -52,11 +52,23 @@ const Bbps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('bbps') == false) {
+      if (res.data[0].allowed_pages.includes('bbpsTransaction') == false) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
       console.log(err)
+    })
+    
+    ClientAxios.get(`/api/global`).then(res => {
+      setBbpsProvider(res.data[0].bbps_provider)
+      if(!res.data[0].bbps_status){
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      Toast({
+        title: 'Try again later',
+        description: 'We are facing some issues.'
+      })
     })
   }, [])
 

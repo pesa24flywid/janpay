@@ -35,7 +35,7 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('aepsBasic') == false) {
+      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
@@ -44,6 +44,9 @@ const Aeps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setAepsProvider(res.data[0].aeps_provider)
+      if(!res.data[0].aeps_status){
+        window.location.href('/dashboard/not-available')
+      }
     }).catch(err => {
       Toast({
         title: 'Try again later',

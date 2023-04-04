@@ -1,5 +1,5 @@
-import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
+import Head from 'next/head'
 import axios from 'axios'
 import {
     Box,
@@ -20,25 +20,16 @@ import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
 import Link from 'next/link'
 import Cookies from 'js-cookie'
+import { ClientAxios } from '../../lib/axios'
 
 const Register = () => {
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
     const [isDistributorDisabled, setIsDistributorDisabled] = useState(true)
-    const [isSuperDistributorDisabled, seSupertIsDistributorDisabled] = useState(true)
+    const [isSuperDistributorDisabled, setIsSuperDistributorDisabled] = useState(true)
+    const [defaultRole, setDefaultRole] = useState("")
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
 
-    useEffect(() => {
-        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
-        //     withCredentials: true,
-        //     headers: {
-        //         'Accept': 'application/json, text/plain, */*',
-        //         'Content-Type': 'application/json',
-        //         'X-Requested-With': 'XMLHttpRequest'
-        //     },
-        // })
-
-    }, [])
 
     const formik = useFormik({
         initialValues: {
@@ -46,7 +37,7 @@ const Register = () => {
             last_name: "",
             email: "",
             phone: "",
-            user_type: "Retailer",
+            user_type: "",
             referral_id: "",
             organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase()
         },
@@ -86,6 +77,19 @@ const Register = () => {
             }
         }
     })
+
+    useEffect(() => {
+        
+        ClientAxios.get('/api/global').then((res) => {
+            setIsRetailerDisabled(!res.data[0].retailer)
+            setIsDistributorDisabled(!res.data[0].distributor)
+            setIsSuperDistributorDisabled(!res.data[0].super_distributor)
+            formik.setFieldValue("user_type", res.data[0].default_role)
+        }).catch((err) => {
+            console.log(err)
+        })
+
+    }, [])
 
     return (
         <>
@@ -215,11 +219,13 @@ const Register = () => {
                                         textAlign={'left'}
                                         color={'darkslategray'}>Register as:
                                     </FormLabel>
-                                    <RadioGroup name={'user_type'} onChange={formik.handleChange} defaultValue={formik.values.user_type}>
+                                    <RadioGroup name={'user_type'} 
+                                    onChange={(value)=>formik.setFieldValue("user_type", value)} 
+                                    value={formik.values.user_type} >
                                         <Stack direction={['column', 'row']} spacing={[3, 6]}>
-                                            <Radio isDisabled={isRetailerDisabled} value={'Retailer'}>Retailer</Radio>
-                                            <Radio isDisabled={isDistributorDisabled} value={'Distributor'}>Distributor</Radio>
-                                            <Radio isDisabled={isSuperDistributorDisabled} value={'Super Distributor'}>Super Distributor</Radio>
+                                            <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>
+                                            <Radio isDisabled={isDistributorDisabled} value={'distributor'}>Distributor</Radio>
+                                            <Radio isDisabled={isSuperDistributorDisabled} value={'super_distributor'}>Super Distributor</Radio>
                                         </Stack>
                                     </RadioGroup>
                                 </Box>

@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
 import { GiReceiveMoney } from 'react-icons/gi'
-import { HiUsers } from 'react-icons/hi'
+import { FaShare } from 'react-icons/fa'
 import BankDetails from "./BankDetails";
 
 
@@ -79,7 +79,7 @@ export const SidebarOptions =
           title: 'AePS services',
           link: '/dashboard/services/aeps?pageId=services',
           id: "aeps",
-          soon: false,
+          soon: true,
         },
         {
           title: 'DMT services',
@@ -91,7 +91,7 @@ export const SidebarOptions =
           title: 'BBPS services',
           link: '/dashboard/services/bbps?pageId=services',
           id: "bbps",
-          soon: false,
+          soon: true,
         },
         {
           title: 'recharge',
@@ -140,6 +140,13 @@ export const SidebarOptions =
     },
     {
       type: 'link',
+      title: 'fund transfer',
+      id: 'transfer',
+      icon: <FaShare />,
+      link: '/dashboard/fund-transfer?pageId=transfer',
+    },
+    {
+      type: 'link',
       title: 'fund settlement',
       id: 'settlement',
       icon: <BsBank />,
@@ -155,13 +162,13 @@ export const SidebarOptions =
           title: 'AePS reports',
           link: '/dashboard/reports/aeps?pageId=reports',
           id: "aepsReports",
-          soon: false,
+          soon: true,
         },
         {
           title: 'BBPS reports',
           link: '/dashboard/reports/bbps?pageId=reports',
           id: "bbpsReports",
-          soon: false,
+          soon: true,
         },
         {
           title: 'recharge reports',
@@ -335,13 +342,29 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                             {option.children.map((item, key) => {
                               if (availablePages.includes(item.id) != null) {
                                 return (
-                                  <Link key={key} href={item.link} style={{ width: '100%' }}>
-                                    <Text
-                                      w={'full'} textAlign={'left'}
-                                      px={3} py={2} _hover={{ bg: 'aqua' }}
-                                      textTransform={'capitalize'}
-                                    >{item.title}</Text>
-                                  </Link>
+                                  <Box
+                                  px={3} py={2} w={'full'}
+                                  _hover={{ bg: 'aqua' }}
+                                  >
+                                    <Link key={key} href={item.soon ? "#" : item.link}
+                                      style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start',
+                                        gap: '4px'
+                                      }}>
+                                      <Text
+                                        textAlign={'left'}
+                                        textTransform={'capitalize'}
+                                      >{item.title}</Text>
+                                      {
+                                        item.soon &&
+                                        <Text fontSize={8} p={1} bg={'yellow.100'} color={'yellow.900'}>Coming Soon</Text>
+                                      }
+                                    </Link>
+                                  </Box>
                                 )
                               }
                               else {

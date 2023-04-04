@@ -52,7 +52,7 @@ const Dmt = () => {
                 'Content-Type': 'application/json'
             }
         }).then((res) => {
-            if (res.data[0].allowed_pages.includes('dmt') == false) {
+            if (res.data[0].allowed_pages.includes('dmtTransaction') == false) {
                 window.location.assign('/dashboard/not-allowed')
             }
         }).catch((err) => {
@@ -62,16 +62,20 @@ const Dmt = () => {
 
         ClientAxios.get(`/api/global`).then(res => {
             setDmtProvider(res.data[0].dmt_provider)
+            if (res.data[0].dmt_status == false) {
+                window.location.href('/dashboard/not-available')
+            }
         }).catch(err => {
-            Toast({
-                title: 'Try again later',
-                description: 'We are facing some issues.'
-            })
+            if (err.status > 400) {
+                Toast({
+                    title: 'Try again later',
+                    description: 'We are facing some issues.'
+                })
+            }
         })
     }, [])
 
     const [customerStatus, setCustomerStatus] = useState("hidden") // Available options - hidden, registered, unregistered
-
     const [customerName, setCustomerName] = useState("")
     const [customerTotalLimit, setCustomerTotalLimit] = useState(50000)
     const [customerUsedLimit, setCustomerUsedLimit] = useState(20000)
@@ -96,6 +100,7 @@ const Dmt = () => {
     const [otpRefId, setOtpRefId] = useState("")
 
     const [newRecipientModal, setNewRecipientModal] = useState(false)
+    const [paymentConfirmationModal, setPaymentConfirmationModal] = useState(false)
 
     const { isOpen, onClose, onOpen } = useDisclosure()
     const Toast = useToast({
@@ -166,11 +171,12 @@ const Dmt = () => {
         },
         onSubmit: values => {
             if (dmtProvider == "paysprint") {
-                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, {...values, customerId: customerId}).then(res => {
+                BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, { ...values, customerId: customerId }).then(res => {
                     Toast({
                         status: 'success',
                         description: 'Transaction successful!'
                     })
+                    setPaymentConfirmationModal(false)
                 }).catch(err => {
                     console.log(err)
                     Toast({
@@ -191,7 +197,6 @@ const Dmt = () => {
             accountNumber: "",
             beneficiaryName: "",
             ifsc: "",
-            phone: "",
             address: "",
             pincode: "",
         },
@@ -205,6 +210,7 @@ const Dmt = () => {
                     Toast({
                         description: 'Beneficiary Added'
                     })
+                    setNewRecipientModal(false)
                 }
             }).catch((err) => {
                 Toast({
@@ -217,6 +223,25 @@ const Dmt = () => {
             })
         }
     })
+
+    // Get Account Holder Name
+    function getAccountHolderName() {
+        BackendAxios.post(`/api/paysprint/bank/bank-verify`, {
+            accountNumber: addRecipientFormik.values.accountNumber,
+            ifsc: addRecipientFormik.values.ifsc,
+        }).then(res => {
+            console.log(res.data)
+            if (res.data.data.account_exists) {
+                addRecipientFormik.setFieldValue("beneficiaryName", res.data.data.full_name)
+            }
+        }).catch(err => {
+            console.log(err)
+            Toast({
+                status: 'warning',
+                description: "Could not verify bank account."
+            })
+        })
+    }
 
     // Check if customer is registered or not
     function checkSender(event) {
@@ -681,7 +706,7 @@ const Dmt = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isLoading={isBtnLoading}
-                                        onClick={onOpen}>Submit
+                                        onClick={()=>setPaymentConfirmationModal(true)}>Submit
                                     </Button>
                             }
                         </> : null
@@ -694,7 +719,7 @@ const Dmt = () => {
 
 
             {/* Confirm Payment Popup */}
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={paymentConfirmationModal} onClose={()=>setPaymentConfirmationModal(false)}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Please Confirm</ModalHeader>
@@ -766,20 +791,19 @@ const Dmt = () => {
                             <Input value={addRecipientFormik.values.beneficiaryName} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
                         <HStack justifyContent={'flex-end'} pt={2}>
-                            <Button size={'xs'}>Get Name</Button>
+                            <Button size={'xs'} onClick={getAccountHolderName}>Get Name</Button>
                         </HStack>
-                        <FormControl id='phone'>
-                            <FormLabel>Beneficiary Phone</FormLabel>
-                            <Input type={'tel'} maxLength={10} value={addRecipientFormik.values.phone} onChange={addRecipientFormik.handleChange} />
-                        </FormControl>
-                        <FormControl id='address'>
-                            <FormLabel>Address</FormLabel>
-                            <Input value={addRecipientFormik.values.address} onChange={addRecipientFormik.handleChange} />
-                        </FormControl>
-                        <FormControl id='pincode'>
-                            <FormLabel>PINCODE</FormLabel>
-                            <Input value={addRecipientFormik.values.pincode} onChange={addRecipientFormik.handleChange} />
-                        </FormControl>
+
+                        <HStack gap={2} mt={8}>
+                            <FormControl id='address'>
+                                <FormLabel>Address</FormLabel>
+                                <Input value={addRecipientFormik.values.address} onChange={addRecipientFormik.handleChange} />
+                            </FormControl>
+                            <FormControl id='pincode'>
+                                <FormLabel>PINCODE</FormLabel>
+                                <Input value={addRecipientFormik.values.pincode} onChange={addRecipientFormik.handleChange} />
+                            </FormControl>
+                        </HStack>
                     </ModalBody>
                     <ModalFooter>
                         <Button variant='ghost' onClick={() => setNewRecipientModal(false)}>Cancel</Button>
