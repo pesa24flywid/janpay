@@ -32,6 +32,8 @@ import BackendAxios, { FormAxios } from '../../../lib/axios'
 
 const Index = () => {
     const [userName, setUserName] = useState("")
+    const [isActive, setIsActive] = useState(false)
+    const [adminRemarks, setAdminRemarks] = useState("")
     const [isModalVisible, setIsModalVisible] = useState(true)
     const [userBanks, setUserBanks] = useState([])
     const [isPinModalVisible, setIsPinModalVisible] = useState(false)
@@ -93,9 +95,11 @@ const Index = () => {
     useEffect(() => {
         setUserName(localStorage.getItem('userName'))
         BackendAxios.get('api/user/bank').then(res => {
-            if (res.data) {
+            if (res.data[0].account_number) {
                 setIsModalVisible(false)
                 setUserBanks(res.data)
+                setAdminRemarks(res.data[0].bank_account_remarks)
+                setIsActive(res.data[0].is_verified === 1)
             }
             else {
                 setIsModalVisible(true)
@@ -109,6 +113,15 @@ const Index = () => {
     return (
         <>
             <DashboardWrapper titleText={'Settle Funds'}>
+                {
+                    adminRemarks &&
+                    <Box py={8}>
+                    <Box p={2} bg={'white'}>
+                        <Text fontWeight={'semibold'}>Admin Remarks</Text>
+                        <Text>{adminRemarks}</Text>
+                    </Box>
+                </Box>
+                }
                 <Stack
                     direction={['column', 'row']}
                     gap={16} w={'full'}
@@ -136,7 +149,7 @@ const Index = () => {
                                 {
                                     userBanks.map((bank, key) => {
                                         return (
-                                            <option value={bank.paysprint_bank_code} key={key}>State Bank of India - {bank.account_number}</option>
+                                            <option value={bank.paysprint_bank_code} key={key}>{bank.account_number}</option>
                                         )
                                     })
                                 }
@@ -149,7 +162,11 @@ const Index = () => {
                                 <option value="neft">NEFT (instant)</option>
                             </Select>
                         </FormControl>
-                        <Button colorScheme={'twitter'} mt={8} w={'full'} onClick={() => setIsPinModalVisible(true)}>
+                        <Button
+                            colorScheme={'twitter'} mt={8} w={'full'}
+                            onClick={() => setIsPinModalVisible(true)}
+                            isDisabled={!isActive}
+                        >
                             Done
                         </Button>
                     </Box>
@@ -249,7 +266,7 @@ const Index = () => {
                                 onChange={BankFormik.handleChange}
                                 placeholder='Select Bank'
                             >
-                                <option value={'3498'}>State Bank of India</option>
+                                <option value={'462'}>State Bank of India</option>
                             </Select>
                         </FormControl>
                         <FormControl mb={8}>
@@ -257,7 +274,7 @@ const Index = () => {
                             <Input name={'ifsc'} onChange={BankFormik.handleChange} />
                         </FormControl>
                         <FormControl mb={8}>
-                            <FormLabel>Bank IFSC</FormLabel>
+                            <FormLabel>Passbook First Page</FormLabel>
                             <Input type='file' name={'passbook'} onChange={e => BankFormik.setFieldValue("passbook", e.currentTarget.files[0])} accept='.jpg, .jpeg, .png, .pdf' />
                         </FormControl>
                     </ModalBody>
