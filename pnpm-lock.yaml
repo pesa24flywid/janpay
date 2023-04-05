@@ -26,6 +26,7 @@ specifiers:
   gridjs-react: ^6.0.1
   jquery: ^3.6.3
   js-cookie: ^3.0.1
+  js-file-download: ^0.4.12
   jspdf: ^2.5.1
   jspdf-autotable: ^3.5.28
   lodash-es: ^4.17.21
@@ -63,6 +64,7 @@ dependencies:
   gridjs-react: 6.0.1_gridjs@6.0.5+react@18.2.0
   jquery: 3.6.3
   js-cookie: 3.0.1
+  js-file-download: 0.4.12
   jspdf: 2.5.1
   jspdf-autotable: 3.5.28_jspdf@2.5.1
   lodash-es: 4.17.21
@@ -3530,6 +3532,10 @@ packages:
   /js-cookie/3.0.1:
     resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
     engines: {node: '>=12'}
+    dev: false
+
+  /js-file-download/0.4.12:
+    resolution: {integrity: sha512-rML+NkoD08p5Dllpjo0ffy4jRHeY6Zsapvr/W86N7E0yuzAO6qa5X9+xog6zQNlH102J7IXljNY2FtS6Lj3ucg==}
     dev: false
 
   /js-tokens/4.0.0:

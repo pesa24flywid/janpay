@@ -19,7 +19,7 @@ import {
     Switch,
     useToast,
 } from '@chakra-ui/react'
-import BackendAxios, { FormAxios } from '../../../../lib/utils/axios'
+import BackendAxios, { FormAxios } from '../../../../lib/axios'
 import { states } from '../../../../lib/states'
 import { useRouter } from 'next/router'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
