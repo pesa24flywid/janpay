@@ -43,7 +43,7 @@ import {
 } from 'react-icons/bs'
 import jsPDF from 'jspdf';
 import "jspdf-autotable"
-import BackendAxios, { ClientAxios } from '../../../../lib/utils/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import CheckboxTree from 'react-checkbox-tree'
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import Script from 'next/script'
