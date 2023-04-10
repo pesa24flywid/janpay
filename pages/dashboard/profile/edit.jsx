@@ -3,13 +3,10 @@ import {
   Text,
   HStack,
   Button,
-  Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Stack,
-  useColorModeValue,
   VStack,
   Modal,
   ModalOverlay,
@@ -67,7 +64,7 @@ const EditProfile = () => {
       phone: null,
       email: "",
       dob: "",
-      aadhaar: null,
+      aadhaar: "",
       pan: "",
       companyName: "",
       line: "",
@@ -107,21 +104,51 @@ const EditProfile = () => {
   function fetchProfile() {
     BackendAxios.post("api/user/info").then((res) => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
+
       localStorage.setItem("firstName", res.data.data.first_name || "")
+      formik.setFieldValue("firstName", res.data.data.first_name || "")
+
       localStorage.setItem("lastName", res.data.data.last_name || "")
+      formik.setFieldValue("lastName", res.data.data.last_name || "")
+
       localStorage.setItem("phone", res.data.data.phone_number || "")
+      formik.setFieldValue("phone", res.data.data.phone_number || "")
+
       localStorage.setItem("userEmail", res.data.data.email || "")
+      formik.setFieldValue("email", res.data.data.email || "")
+
       localStorage.setItem("dob", res.data.data.dob || "")
+      formik.setFieldValue("dob", res.data.data.dob || "")
+
       localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
+      formik.setFieldValue("aadhaar", res.data.data.aadhaar || "")
+
       localStorage.setItem("pan", res.data.data.pan_number || "")
+      formik.setFieldValue("pan", res.data.data.pan_number || "")
+
       localStorage.setItem("merchantId", res.data.data.user_code || "")
+
       localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+      formik.setFieldValue("companyName", res.data.data.company_name || "")
+
+
       localStorage.setItem("line", res.data.data.line || "")
+      formik.setFieldValue("line", res.data.data.line || "")
+
       localStorage.setItem("city", res.data.data.city || "")
+      formik.setFieldValue("city", res.data.data.city || "")
+
       localStorage.setItem("state", res.data.data.state || "")
+      formik.setFieldValue("state", res.data.data.state || "")
+
       localStorage.setItem("pincode", res.data.data.pincode || "")
+      formik.setFieldValue("pincode", res.data.data.pincode || "")
+
       localStorage.setItem("modelName", res.data.data.model_name || "")
+      formik.setFieldValue("modelName", res.data.data.model_name || "")
+
       localStorage.setItem("deviceNumber", res.data.data.device_number || "")
+      formik.setFieldValue("deviceNumber", res.data.data.device_number || "")
     }).catch((err) => {
       Toast({
         status: "error",
@@ -146,18 +173,6 @@ const EditProfile = () => {
 
   useEffect(() => {
     fetchProfile()
-    formik.setFieldValue("firstName", localStorage.getItem("firstName"))
-    formik.setFieldValue("lastName", localStorage.getItem("lastName"))
-    formik.setFieldValue("phone", localStorage.getItem("phone"))
-    formik.setFieldValue("email", localStorage.getItem("userEmail"))
-    formik.setFieldValue("aadhaar", localStorage.getItem("aadhaar"))
-    formik.setFieldValue("pan", localStorage.getItem("pan"))
-    formik.setFieldValue("dob", localStorage.getItem("dob"))
-    formik.setFieldValue("companyName", localStorage.getItem("companyName"))
-    formik.setFieldValue("line", localStorage.getItem("line"))
-    formik.setFieldValue("city", localStorage.getItem("city"))
-    formik.setFieldValue("state", localStorage.getItem("state"))
-    formik.setFieldValue("pincode", localStorage.getItem("pincode"))
   }, [])
 
   useEffect(() => {

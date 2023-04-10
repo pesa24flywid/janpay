@@ -120,6 +120,7 @@ const FundTransfer = () => {
             })
         })
     }, [])
+    
     useEffect(() => {
         if (Router.isReady && user_id) {
             verifyBeneficiary(user_id)
