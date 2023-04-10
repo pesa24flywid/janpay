@@ -55,7 +55,7 @@ const FundTransfer = () => {
             mpin: "",
         },
         onSubmit: values => {
-                BackendAxios.post(`/api/admin/new-fund`, values).then(res => {
+                BackendAxios.post(`/api/money-transfer`, values).then(res => {
                     Toast({
                         status: 'success',
                         description: 'Transaction successful!'
@@ -71,7 +71,7 @@ const FundTransfer = () => {
 
     const verifyBeneficiary = (queriedUserId) => {
         // Logic to verifiy beneficiary details
-        BackendAxios.post(`/api/admin/user/info/${queriedUserId || TransferFormik.values.beneficiaryId}`).then((res) => {
+        BackendAxios.get(`/api/users/${queriedUserId || TransferFormik.values.beneficiaryId}`).then((res) => {
             setFetchedUser({
                 ...fetchedUser,
                 user_name: res.data.data.first_name + " " + res.data.data.last_name,
@@ -120,7 +120,7 @@ const FundTransfer = () => {
             })
         })
     }, [])
-    
+
     useEffect(() => {
         if (Router.isReady && user_id) {
             verifyBeneficiary(user_id)
@@ -131,7 +131,6 @@ const FundTransfer = () => {
     return (
         <>
             <DashboardWrapper pageTitle={'Fund Transfer'}>
-                <Text fontWeight={'semibold'} fontSize={'lg'}>Fund Transfer</Text>
 
                 {/* Fund Transfer Form */}
                 <Box py={6}>
