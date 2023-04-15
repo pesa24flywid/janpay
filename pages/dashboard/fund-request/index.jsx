@@ -43,10 +43,10 @@ const ExportPDF = (currentRowData) => {
         'Admin Remarks',
     ]
 
-    doc.autoTable(columnDefs, currentRowData.map((item, key)=> {
+    doc.autoTable(columnDefs, currentRowData.map((item, key) => {
         return (
             [
-                `${key+1}`,
+                `${key + 1}`,
                 `${item.amount} - ${item.transaction_type}`,
                 `${item.bank_name}`,
                 `${item.transaction_id}`,
@@ -71,7 +71,7 @@ const FundRequest = () => {
     const [clientLoaded, setClientLoaded] = useState(false)
     const [userName, setUserName] = useState("No Name")
     const [bankDetails, setBankDetails] = useState([])
-
+    const date = new Date()
 
     // let parent
     // let grandParent
@@ -374,6 +374,11 @@ const FundRequest = () => {
                                     name={'transactionDate'}
                                     onChange={Formik.handleChange}
                                     type={'date'} value={Formik.values.transactionDate}
+                                    max={`${date.getFullYear()}-${(date.getMonth() + 1).toLocaleString('en-US', {
+                                        minimumIntegerDigits: 2
+                                    })}-${date.getDate().toLocaleString('en-US', {
+                                        minimumIntegerDigits: 2
+                                    })}`}
                                 />
                             </FormControl>
                             <FormControl w={['full', 'xs']}>
@@ -433,7 +438,7 @@ const FundRequest = () => {
                     <HStack justifyContent={'space-between'}>
                         <Text fontSize={'lg'} pb={6}>Your Past Fund Requests</Text>
 
-                        <Button colorScheme={'red'} onClick={()=>ExportPDF(grid.config.data)}>Export PDF</Button>
+                        <Button colorScheme={'red'} onClick={() => ExportPDF(grid.config.data)}>Export PDF</Button>
                     </HStack>
                     <div ref={wrapperRef}>
 

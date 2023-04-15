@@ -203,6 +203,7 @@ const Login = () => {
             Router.push("/dashboard?pageId=dashboard")
 
         } catch (error) {
+            console.log(error)
             toast({
                 status: "error",
                 title: "Error Occured",
@@ -261,9 +262,10 @@ const Login = () => {
             })
             Router.push("/dashboard?pageId=dashboard")
         } catch (err) {
+            console.log(err)
             toast({
                 status: 'error',
-                description: err.message,
+                description: err.response.data || err.message,
                 title: 'Error Occured',
                 position: 'top-right'
             })

@@ -27,6 +27,7 @@ import DashboardWrapper from "../../../hocs/DashboardLayout";
 import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
 import { states } from '../../../lib/states'
 const EditProfile = () => {
+  const date = new Date()
   const [profile, setProfile] = useState({
     kycStatus: false,
     fullName: "",
@@ -41,6 +42,7 @@ const EditProfile = () => {
   const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
   const [isAadhaarOtpDisabled, setIsAadhaarOtpDisabled] = useState(true)
   const [isPanOtpDisabled, setIsPanOtpDisabled] = useState(true)
+  const [isPanVerified, setIsPanVerified] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [newPhone, setNewPhone] = useState("")
 
@@ -66,7 +68,9 @@ const EditProfile = () => {
       dob: "",
       aadhaar: "",
       pan: "",
-      companyName: "",
+      firmName: "",
+      companyType: "",
+      gst: "",
       line: "",
       city: "",
       state: "",
@@ -84,8 +88,17 @@ const EditProfile = () => {
         values
       }).then((res) => {
         console.log(res)
+        Toast({
+          status: 'success',
+          title: 'Profile Updated Successfully'
+        })
       }).catch((err) => {
         console.log(err)
+        Toast({
+          status: 'error',
+          title: 'Error while updating',
+          description: err.response.data.message || err.message,
+        })
       })
     },
   });
@@ -181,6 +194,9 @@ const EditProfile = () => {
     setIsPanOtpDisabled(true)
     if (parseInt(newPhone) > 4000000000) setIsPhoneOtpDisabled(false)
     if (parseInt(newAadhaar) > 100000000000) setIsAadhaarOtpDisabled(false)
+    if(!formik.values.pan){
+      setIsPanVerified(false)
+    }
 
   }, [newPhone, newAadhaar])
 
@@ -196,10 +212,11 @@ const EditProfile = () => {
         description: `OTP sent to ${newPhone}`
       })
     }).catch((error) => {
+      console.log(error)
       Toast({
         status: "error",
         title: `Error Occured`,
-        description: error.message,
+        description: error.response.data.message || error.message,
       })
       setOtpSent(false)
     })
@@ -220,14 +237,14 @@ const EditProfile = () => {
           description: 'Phone number updated!'
         })
       }
+      setOtpSent(false)
     }).catch((err) => {
       Toast({
         status: "error",
         title: "Error Occured",
-        description: err.message
+        description: "Wrong or Expired OTP"
       })
     })
-    setOtpSent(false)
   }
 
   // Send OTP for Aadhaar Verification
@@ -245,7 +262,7 @@ const EditProfile = () => {
       Toast({
         status: "error",
         title: "Error Occured",
-        description: "Couldn't send OTP",
+        description: err.response.data.message || err.message,
       })
       console.log(err)
     })
@@ -265,16 +282,16 @@ const EditProfile = () => {
         title: "Success",
         description: res.data.message
       })
-    }).catch((err) => {
       setOtpSent(false)
+      setOtp("")
+    }).catch((err) => {
       Toast({
         status: "error",
         title: "Error Occured",
-        description: "Couldn't send OTP",
+        description: "Expired or wrong OTP",
       })
       console.log(err)
     })
-    setOtp("")
   }
 
 
@@ -289,6 +306,7 @@ const EditProfile = () => {
           title: "PAN Verified",
           description: res.data.response
         })
+        setIsPanVerified(true)
         localStorage.setItem("pan", formik.values.pan)
       }).catch((err) => {
         setOtpSent(false)
@@ -331,7 +349,7 @@ const EditProfile = () => {
                 <Input
                   placeholder="First Name"
                   _placeholder={{ color: "gray.500" }}
-                  type="text"
+                  type="text" disabled
                   value={formik.values.firstName}
                   onChange={formik.handleChange}
                 />
@@ -341,7 +359,7 @@ const EditProfile = () => {
                 <Input
                   placeholder="Last Name"
                   _placeholder={{ color: "gray.500" }}
-                  type="text"
+                  type="text" disabled
                   value={formik.values.lastName}
                   onChange={formik.handleChange}
                 />
@@ -371,23 +389,18 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="dob" isRequired>
+              <FormControl py={2} id="dob" w={['xs']} isRequired>
                 <FormLabel>Date of Birth</FormLabel>
                 <Input
                   placeholder="dd/mm/yyyy"
                   _placeholder={{ color: "gray.500" }}
                   type="date"
+                  max={`${date.getFullYear() - 18}-${(date.getMonth() + 1).toLocaleString('en-US', {
+                    minimumIntegerDigits: 2
+                  })}-${date.getDate().toLocaleString('en-US', {
+                    minimumIntegerDigits: 2
+                  })}`}
                   value={formik.values.dob}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
-              <FormControl py={2} id="companyName" isRequired>
-                <FormLabel>Company name</FormLabel>
-                <Input
-                  placeholder="Company name"
-                  _placeholder={{ color: "gray.500" }}
-                  type="text"
-                  value={formik.values.companyName}
                   onChange={formik.handleChange}
                 />
               </FormControl>
@@ -406,6 +419,7 @@ const EditProfile = () => {
               <FormControl py={2} id="pan" isRequired>
                 <FormLabel>Your PAN</FormLabel>
                 <Input
+                  name={'pan'} isDisabled={isPanVerified}
                   placeholder="Peresonal Account Number"
                   _placeholder={{ color: "gray.500" }}
                   value={formik.values.pan}
@@ -416,12 +430,50 @@ const EditProfile = () => {
                   <Button
                     size={'xs'}
                     colorScheme={'twitter'}
-                    isDisabled={formik.values.pan.length == 10 ? true : true}
+                    isDisabled={formik.values.pan.length !== 10}
                     onClick={verifyPan}
                   >Verify</Button>
                 </HStack>
               </FormControl>
             </Stack>
+
+            <VStack alignItems={'flex-start'} py={8}>
+              <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Business Details</Text>
+
+              <Stack direction={['column', 'row']} spacing={8}>
+                <FormControl py={2} id="firmName">
+                  <FormLabel>Company name</FormLabel>
+                  <Input
+                    placeholder="Company name"
+                    _placeholder={{ color: "gray.500" }}
+                    type="text" name="firmName"
+                    value={formik.values.firmName}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+                <FormControl py={2} id="companyType" isRequired>
+                  <FormLabel>Company Type</FormLabel>
+                  <Select
+                    name="companyType" placeholder="Select here"
+                    value={formik.values.companyType} onChange={formik.handleChange}
+                  >
+                    <option value="propriortship">Sole Propriortship</option>
+                    <option value="private limited">Private Limited</option>
+                    <option value="partnership">Partnership</option>
+                  </Select>
+                </FormControl>
+              </Stack>
+              <FormControl py={2} id="gst" w={['xs']}>
+                  <FormLabel>GST Number</FormLabel>
+                  <Input
+                    placeholder="GST Number"
+                    _placeholder={{ color: "gray.500" }}
+                    type="text" name="gst"
+                    value={formik.values.gst}
+                    onChange={formik.handleChange}
+                  />
+                </FormControl>
+            </VStack>
 
             <VStack alignItems={'flex-start'} py={8}>
               <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Address Details</Text>
@@ -561,7 +613,7 @@ const EditProfile = () => {
                 />
               </FormControl>
             </Stack>
-            <Button colorScheme={'orange'} onClick={profileFormik.handleSubmit}>Upload</Button>
+            {/* <Button colorScheme={'orange'} onClick={profileFormik.handleSubmit}>Upload</Button> */}
           </Stack>
         </Stack>
       </DashboardWrapper>

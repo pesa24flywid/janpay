@@ -27,6 +27,7 @@ const Activate = () => {
             if (res.data[0].onboard_fee == 1) {
                 setIsOnboarded(true)
             }
+            setOnboardFee(res.data[1].fee)
         })
     }, [])
 
@@ -58,21 +59,23 @@ const Activate = () => {
     }, [])
 
     function onboardMe() {
-        BackendAxios.get('/api/user/pay/onboard-fee').then((res) => {
+        BackendAxios.post('/api/user/pay/onboard-fee', {
+            amount: onboardFee
+        }).then((res) => {
             Toast({
                 status: 'success',
                 title: 'Welcome on board!',
-                description: 'The page will refresh automatically'
+                description: 'You can now activate services'
             })
-            setTimeout(() => {
-                window.location.reload()
-            }, 1000)
+            // setTimeout(() => {
+            //     window.location.reload()
+            // }, 1000)
         }).catch((err) => {
             console.log(err)
             Toast({
                 status: 'error',
                 title: 'Error Occured',
-                description: err.message
+                description: err.response.data || err.message
             })
         })
     }
