@@ -265,7 +265,7 @@ const Login = () => {
             console.log(err)
             toast({
                 status: 'error',
-                description: err.response.data || err.message,
+                description: err.response.data.message || err.response.data || err.message,
                 title: 'Error Occured',
                 position: 'top-right'
             })

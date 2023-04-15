@@ -133,6 +133,9 @@ const DashboardWrapper = (props) => {
         if (authentic != true) {
             BackendAxios.post("/logout").then(() => {
                 Cookies.remove("verified")
+                Cookies.remove("access_token")
+                Cookies.remove("XSRF-TOKEN")
+                Cookies.remove("laravel_session")
                 localStorage.clear()
             })
             setTimeout(() => Router.push("/auth/login"), 2000)
@@ -141,6 +144,9 @@ const DashboardWrapper = (props) => {
     async function signout() {
         await BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
+            Cookies.remove("access_token")
+            Cookies.remove("XSRF-TOKEN")
+            Cookies.remove("laravel_session")
             localStorage.clear()
         })
         setTimeout(() => Router.push("/auth/login"), 2000)
