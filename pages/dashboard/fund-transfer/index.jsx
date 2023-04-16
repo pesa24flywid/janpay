@@ -32,6 +32,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import BackendAxios from '../../../lib/axios'
 import { useRouter } from 'next/router';
+import { BsChevronDoubleLeft, BsChevronDoubleRight, BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 
 const FundTransfer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -55,18 +56,27 @@ const FundTransfer = () => {
             mpin: "",
         },
         onSubmit: values => {
-                BackendAxios.post(`/api/money-transfer`, values).then(res => {
-                    Toast({
-                        status: 'success',
-                        description: 'Transaction successful!'
-                    })
-                }).catch(err => {
-                    Toast({
-                        status: 'error',
-                        description: err.message
-                    })
+            BackendAxios.post(`/api/money-transfer`, values).then(res => {
+                Toast({
+                    status: 'success',
+                    description: 'Transaction successful!'
                 })
+            }).catch(err => {
+                Toast({
+                    status: 'error',
+                    description: err.message
+                })
+            })
         }
+    })
+
+    const [pagination, setPagination] = useState({
+        current_page: "1",
+        total_pages: "1",
+        first_page_url: "",
+        last_page_url: "",
+        next_page_url: "",
+        prev_page_url: "",
     })
 
     const verifyBeneficiary = (queriedUserId) => {
@@ -111,15 +121,24 @@ const FundTransfer = () => {
         { headerName: "Remarks", field: 'remarks' },
     ])
 
-    useEffect(() => {
-        BackendAxios.get('/api/admin/fetch-admin-funds').then(res => {
-            setRowData(res.data.data.slice(0, 10))
-        }).catch(err => {
-            Toast({
-                status: 'error',
-                description: 'Could not fetch transactions'
+    function fetchTransfers(pageLink) {
+        BackendAxios.get(pageLink || '/api/money-transfer?page=1').then((res) => {
+            setPagination({
+                current_page: res.data.current_page,
+                total_pages: parseInt(res.data.last_page),
+                first_page_url: res.data.first_page_url,
+                last_page_url: res.data.last_page_url,
+                next_page_url: res.data.next_page_url,
+                prev_page_url: res.data.prev_page_url,
             })
+            setRowData(res.data.data)
+        }).catch((err) => {
+            console.log(err)
         })
+    }
+
+    useEffect(() => {
+        fetchTransfers()
     }, [])
 
     useEffect(() => {
@@ -243,7 +262,41 @@ const FundTransfer = () => {
                     </Box>
                 </Box>
 
-
+                <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.first_page_url)}
+                    ><BsChevronDoubleLeft />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.prev_page_url)}
+                    ><BsChevronLeft />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'solid'}
+                    >{pagination.current_page}</Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.next_page_url)}
+                    ><BsChevronRight />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.last_page_url)}
+                    ><BsChevronDoubleRight />
+                    </Button>
+                </HStack>
                 <Box py={6}>
                     <Text fontWeight={'medium'} pb={4}>Recent Transfers</Text>
                     <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
@@ -255,6 +308,41 @@ const FundTransfer = () => {
                         </AgGridReact>
                     </Box>
                 </Box>
+                <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.first_page_url)}
+                    ><BsChevronDoubleLeft />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.prev_page_url)}
+                    ><BsChevronLeft />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'solid'}
+                    >{pagination.current_page}</Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.next_page_url)}
+                    ><BsChevronRight />
+                    </Button>
+                    <Button
+                        colorScheme={'twitter'}
+                        fontSize={12} size={'xs'}
+                        variant={'outline'}
+                        onClick={() => fetchTransfers(pagination.last_page_url)}
+                    ><BsChevronDoubleRight />
+                    </Button>
+                </HStack>
 
 
                 <Modal isOpen={isOpen} onClose={onClose}>
