@@ -67,7 +67,7 @@ const Activate = () => {
                 title: 'Welcome on board!',
                 description: 'You can now activate services'
             })
-            if(res.data.redirecturl){
+            if (res.data.redirecturl) {
                 window.open(res.data.redirecturl, "_blank")
             }
             // setTimeout(() => {
@@ -84,15 +84,18 @@ const Activate = () => {
     }
 
     function activateService(serviceId) {
-            BackendAxios.post(`/api/activate-service/${serviceId}`).then((res) => {
-                console.log(res.data)
-            }).catch((err) => {
-                Toast({
-                    status: 'error',
-                    title: 'Error Occured',
-                    description: err.message
-                })
+        BackendAxios.post(`/api/activate-service/${serviceId}`).then((res) => {
+            Toast({
+                description: res.data
             })
+            console.log(res.data)
+        }).catch((err) => {
+            Toast({
+                status: 'error',
+                title: 'Error Occured',
+                description: err.response.data.message || err.response.data || err.message
+            })
+        })
     }
 
     return (
@@ -151,7 +154,7 @@ const Activate = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
-                                        onClick={()=>activateService(service.id)}
+                                        onClick={() => activateService(service.id)}
                                     >Activate</Button>
                                 </Box>
                             )

@@ -385,7 +385,7 @@ const Dmt = () => {
     function verifyOtp() {
         if (dmtProvider == "eko") {
             BackendAxios.post(`api/${dmtProvider}/dmt/verify-customer/${serviceId}`, {
-                customerId: registrationFormik.values.customerId,
+                customerId: customerId,
                 otp,
                 otp_ref_id: otpRefId,
             }).then((res) => {
@@ -422,7 +422,8 @@ const Dmt = () => {
             BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
                 ...registrationFormik.values,
                 otp: otp,
-                stateresp: otpRefId
+                stateresp: otpRefId,
+                customerId: customerId
             }).then(res => {
                 console.log(res.data)
             }).catch((err) => {
@@ -430,7 +431,7 @@ const Dmt = () => {
                 Toast({
                     status: 'error',
                     title: "Error Occured",
-                    description: err.message,
+                    description: err.response.data.message || err.response.data || err.message,
                     position: "top-right"
                 })
             })
