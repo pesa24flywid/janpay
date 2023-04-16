@@ -212,6 +212,18 @@ export const SidebarOptions =
           id: "axisReports",
           soon: true,
         },
+        {
+          title: 'Transaction Ledger',
+          link: '/dashboard/reports/transactions/ledger?pageId=reports',
+          id: "axisReports",
+          soon: false,
+        },
+        {
+          title: 'Daily Sales',
+          link: '/dashboard/reports/axis?pageId=reports',
+          id: "axisReports",
+          soon: false,
+        },
       ]
     },
     {
