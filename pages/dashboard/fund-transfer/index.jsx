@@ -113,8 +113,8 @@ const FundTransfer = () => {
     const [columnDefs, setColumnDefs] = useState([
         { headerName: "Trnxn ID", field: 'transaction_id' },
         { headerName: "Beneficiary Name", field: 'name' },
-        { headerName: "Beneficiary ID", field: 'user_id' },
-        { headerName: "Phone", field: 'phone_number' },
+        { headerName: "Beneficiary ID", field: 'receiver_id' },
+        { headerName: "Receiver Phone", field: 'phone_number' },
         { headerName: "Amount", field: 'amount' },
         { headerName: "Transaction Type", field: 'transaction_type' },
         { headerName: "Datetime", field: 'created_at' },
