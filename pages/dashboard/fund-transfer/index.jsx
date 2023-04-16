@@ -80,6 +80,7 @@ const FundTransfer = () => {
                 wallet: res.data.data.wallet,
 
             })
+            TransferFormik.setFieldValue("beneficiaryId", res.data.data.id)
         }).catch((err) => {
             Toast({
                 status: 'error',
