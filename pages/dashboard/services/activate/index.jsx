@@ -67,6 +67,9 @@ const Activate = () => {
                 title: 'Welcome on board!',
                 description: 'You can now activate services'
             })
+            if(res.data.redirecturl){
+                window.open(res.data.redirecturl, "_blank")
+            }
             // setTimeout(() => {
             //     window.location.reload()
             // }, 1000)
