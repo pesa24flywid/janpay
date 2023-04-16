@@ -182,7 +182,7 @@ const Dmt = () => {
                     Toast({
                         status: "error",
                         title: "Error Occured",
-                        description: err.message,
+                        description: err.response.data.message || err.response.data || err.message,
                         position: "top-right"
                     })
                 })
