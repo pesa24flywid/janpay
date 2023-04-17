@@ -24,8 +24,8 @@ import "gridjs/dist/theme/mermaid.css";
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
 
 const Aeps = () => {
-  const [aepsProvider, setAepsProvider] = useState("eko")
-
+  const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const serviceCode = "20"
   useEffect(() => {
 
     ClientAxios.post('/api/user/fetch', {
@@ -44,7 +44,7 @@ const Aeps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setAepsProvider(res.data[0].aeps_provider)
-      if(!res.data[0].aeps_status){
+      if (!res.data[0].aeps_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
@@ -57,44 +57,6 @@ const Aeps = () => {
   }, [])
 
   let MethodInfo
-  const [isBtnLoading, setIsBtnLoading] = useState(false)
-  const [biometricDevice, setBiometricDevice] = useState("")
-  const Toast = useToast()
-  const formik = useFormik({
-    initialValues: {
-      aadhaarNo: "",
-      customerId: "",
-      bankCode: "",
-      bankAccountNo: "",
-      ifsc: "",
-      serviceCode: "2",         // Services Code as per service provider
-      pid: "",
-      amount: "",
-      serviceId: "20"           // Services ID as per Pesa24 Portal
-    },
-    onSubmit: async (values) => {
-      setIsBtnLoading(true)
-      await BackendAxios.post(`/api/eko/${aepsProvider}/money-transfer/${values.serviceId}`, values).then((res) => {
-        Toast({
-          description: res.data.message,
-          position: 'top-right'
-        })
-        console.log(res.data)
-      }).catch((err) => {
-        Toast({
-          title: 'Transaction Failed',
-          description: err.message,
-          position: 'top-right',
-        })
-      })
-      setIsBtnLoading(false)
-    }
-  })
-
-  const transactions = [
-    ["25-01-2023 18:54", "Member29", "BFAJFDHA", "Cash Witdrawal", "successful", "20000", "2000", "18000", "No remarks"],
-  ]
-
   function getMantra() {
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
@@ -279,9 +241,48 @@ const Aeps = () => {
     }
   }
 
-  useEffect(() => {
-    searchMantra()
-  }, [])
+  // useEffect(() => {
+  //   searchMantra()
+  // }, [])
+  const [isBtnLoading, setIsBtnLoading] = useState(false)
+  const [biometricDevice, setBiometricDevice] = useState("")
+  const [banksList, setBanksList] = useState([])
+  const Toast = useToast()
+  const formik = useFormik({
+    initialValues: {
+      aadhaarNo: "",
+      customerId: "",
+      bankCode: "",
+      bankAccountNo: "",
+      ifsc: "",
+      serviceCode: "mini-statement",         // Services Code as per service provider
+      pid: "",
+      amount: "",
+      serviceId: "20"           // Services ID as per Pesa24 Portal
+    },
+    onSubmit: async (values) => {
+      setIsBtnLoading(true)
+      await BackendAxios.post(`/api/${aepsProvider}/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+        Toast({
+          description: res.data.message,
+          position: 'top-right'
+        })
+        console.log(res.data)
+      }).catch((err) => {
+        Toast({
+          title: 'Transaction Failed',
+          description: err.message,
+          position: 'top-right',
+        })
+      })
+      setIsBtnLoading(false)
+    }
+  })
+
+  const transactions = [
+    ["25-01-2023 18:54", "Member29", "BFAJFDHA", "Cash Witdrawal", "successful", "20000", "2000", "18000", "No remarks"],
+  ]
+
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
@@ -297,6 +298,20 @@ const Aeps = () => {
     }
   }
 
+  useEffect(() => {
+    if (aepsProvider == "paysprint") {
+      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+        setBanksList(res.data.banklist.data)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.message
+        })
+      })
+    }
+  }, [])
+
+
   return (
     <>
       <DashboardWrapper titleText={'AePS Transaction'}>
@@ -304,9 +319,9 @@ const Aeps = () => {
           <FormControl w={'xs'} pb={8}>
             <FormLabel>Select Service</FormLabel>
             <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
-              <option value={2}>Cash Withdrawal</option>
-              <option value={3}>Balance Inquiry</option>
-              <option value={4}>Mini Statement</option>
+              <option value={'money-transfer'}>Cash Withdrawal</option>
+              <option value={'balance-enquiry'}>Balance Inquiry</option>
+              <option value={'mini-statement'}>Mini Statement</option>
             </Select>
           </FormControl>
 
@@ -324,14 +339,19 @@ const Aeps = () => {
 
           {/* Cash Withdrawal Form */}
           {
-            formik.values.serviceCode == "2" ? <>
+            formik.values.serviceCode == "money-transfer" ? <>
               <FormControl w={'full'} pb={6}>
                 <FormLabel>Select Bank</FormLabel>
-                <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange} w={'xs'}>
-                  <option value="SBIN">State Bank of India</option>
-                  <option value="pnb">Punjab National Bank</option>
-                  <option value="cb">City Bank</option>
-                  <option value="yb">Yes Bank</option>
+                <Select name='bankCode'
+                  value={formik.values.bankCode}
+                  onChange={formik.handleChange} w={'xs'}
+                >
+                  {
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.id}>{bank.bankName}</option>
+                    ))
+                  }
                 </Select>
                 <HStack spacing={2} py={2}>
 
@@ -404,7 +424,7 @@ const Aeps = () => {
 
           {/* Balance Enquiry Form */}
           {
-            formik.values.serviceCode == "3" ? <>
+            formik.values.serviceCode == "balance-enquiry" ? <>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
                 <FormControl w={'full'}>
                   <FormLabel>Aadhaar Number</FormLabel>
@@ -420,9 +440,13 @@ const Aeps = () => {
                 <FormControl w={'full'}>
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="SBIN">State Bank of India</option>
-                    <option value="bob">Bank of Baroda</option>
-                    <option value="hdfc">HDFC Bank</option>
+
+                    {
+                      banksList.map((bank, key) => (
+                        aepsProvider == "paysprint" &&
+                        <option key={key} value={bank.id}>{bank.bankName}</option>
+                      ))
+                    }
                   </Select>
                 </FormControl>
               </Stack>
@@ -431,7 +455,7 @@ const Aeps = () => {
 
           {/* Mini Statement Form */}
           {
-            formik.values.serviceCode == "4" ? <>
+            formik.values.serviceCode == "mini-statement" ? <>
               <Stack direction={['column', 'row']} spacing={6} pb={6}>
                 <FormControl w={'full'}>
                   <FormLabel>Aadhaar Number</FormLabel>
@@ -447,9 +471,13 @@ const Aeps = () => {
                 <FormControl w={'full'}>
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-                    <option value="SBIN">State Bank of India</option>
-                    <option value="bob">Bank of Baroda</option>
-                    <option value="hdfc">HDFC Bank</option>
+
+                    {
+                      banksList.map((bank, key) => (
+                        aepsProvider == "paysprint" &&
+                        <option key={key} value={bank.id}>{bank.bankName}</option>
+                      ))
+                    }
                   </Select>
                 </FormControl>
               </Stack>

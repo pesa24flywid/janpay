@@ -79,7 +79,7 @@ export const SidebarOptions =
           title: 'AePS services',
           link: '/dashboard/services/aeps?pageId=services',
           id: "aeps",
-          soon: true,
+          soon: false
         },
         {
           title: 'DMT services',
