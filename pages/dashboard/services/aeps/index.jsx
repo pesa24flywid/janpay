@@ -22,6 +22,7 @@ import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { Grid } from 'gridjs-react'
 import "gridjs/dist/theme/mermaid.css";
 import PermissionMiddleware from '../../../../lib/utils/checkPermission'
+import Cookies from 'js-cookie'
 
 const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("paysprint")
@@ -247,6 +248,7 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
+  
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -258,11 +260,12 @@ const Aeps = () => {
       serviceCode: "mini-statement",         // Services Code as per service provider
       pid: "",
       amount: "",
-      serviceId: "20"           // Services ID as per Pesa24 Portal
+      serviceId: "20", // Services ID as per Pesa24 Portal
+      latlong: Cookies.get("latlong")      
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post(`/api/${aepsProvider}/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+      await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
         Toast({
           description: res.data.message,
           position: 'top-right'
