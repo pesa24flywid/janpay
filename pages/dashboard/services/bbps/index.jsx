@@ -206,7 +206,10 @@ const Bbps = () => {
           longitude: latlong.split(",")[1]
         }
       ).then(res => {
-        console.log(res.data)
+        Toast({
+          status: 'success',
+          description: res.data.message
+        })
       }).catch(err => {
         Toast({
           status: 'error',
