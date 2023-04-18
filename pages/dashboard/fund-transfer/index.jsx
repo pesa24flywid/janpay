@@ -64,7 +64,7 @@ const FundTransfer = () => {
             }).catch(err => {
                 Toast({
                     status: 'error',
-                    description: err.message
+                    description: err.response.data.message || err.response.data || err.message0
                 })
             })
         }

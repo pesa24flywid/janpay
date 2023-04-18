@@ -30,41 +30,41 @@ const Ledger = () => {
 
     ])
     const [columnDefs, setColumnDefs] = useState([
-        { 
-            headerName: "Trnxn ID", 
-            field: 'transaction_id' 
+        {
+            headerName: "Trnxn ID",
+            field: 'transaction_id'
         },
-        { 
-            headerName: "Debit Amount", 
-            field: 'debit_amount' 
+        {
+            headerName: "Debit Amount",
+            field: 'debit_amount'
         },
-        { 
-            headerName: "Credit Amount", 
-            field: 'credit_amount' 
+        {
+            headerName: "Credit Amount",
+            field: 'credit_amount'
         },
-        { 
-            headerName: "Opening Balance", 
-            field: 'opening_balance' 
+        {
+            headerName: "Opening Balance",
+            field: 'opening_balance'
         },
-        { 
-            headerName: "Closing Balance", 
-            field: 'closing_balance' 
+        {
+            headerName: "Closing Balance",
+            field: 'closing_balance'
         },
-        { 
-            headerName: "Transaction Type", 
-            field: 'service_type' 
+        {
+            headerName: "Transaction Type",
+            field: 'service_type'
         },
-        { 
-            headerName: "Created Timestamp", 
-            field: 'created_at' 
+        {
+            headerName: "Created Timestamp",
+            field: 'created_at'
         },
-        { 
-            headerName: "Updated Timestamp", 
-            field: 'updated_at' 
+        {
+            headerName: "Updated Timestamp",
+            field: 'updated_at'
         },
-        { 
-            headerName: "Additional Info", 
-            field: 'meta_data' ,
+        {
+            headerName: "Additional Info",
+            field: 'meta_data',
             defaultMinWidth: 300
         },
     ])
@@ -90,9 +90,9 @@ const Ledger = () => {
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchTransactions()
-    },[])
+    }, [])
 
     return (
         <DashboardWrapper pageTitle={'Transaction Ledger'}>
@@ -132,22 +132,22 @@ const Ledger = () => {
                 ><BsChevronDoubleRight />
                 </Button>
             </HStack>
-                <Box py={6}>
-                    <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
-                        <AgGridReact
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultColDef={{
-                                filter: true,
-                                floatingFilter: true,
-                                resizable: true,
-                                sortable: true,
-                            }}
-                        >
+            <Box py={6}>
+                <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        defaultColDef={{
+                            filter: true,
+                            floatingFilter: true,
+                            resizable: true,
+                            sortable: true,
+                        }}
+                    >
 
-                        </AgGridReact>
-                    </Box>
+                    </AgGridReact>
                 </Box>
+            </Box>
 
 
         </DashboardWrapper>

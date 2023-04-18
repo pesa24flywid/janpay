@@ -4,6 +4,7 @@ import {
     Stack,
     Text,
     Button,
+    useToast
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -12,10 +13,13 @@ import DashboardWrapper from '../../../hocs/DashboardLayout';
 import BackendAxios from '../../../lib/axios';
 
 const SupportTickets = () => {
+    const Toast = useToast({
+        position: 'top-right'
+    })
     const [rowData, setRowData] = useState([])
     const [columnDefs, setColumnDefs] = useState([
         {
-            field: "ticketId",
+            field: "id",
             headerName: "Ticket ID"
         },
         {
@@ -23,15 +27,15 @@ const SupportTickets = () => {
             headerName: "Title",
         },
         {
-            field: "message",
+            field: "body",
             headerName: "Message",
         },
         {
-            field: "attachments",
+            field: "document",
             headerName: "Attachments",
         },
         {
-            field: "linkedTransaction",
+            field: "transaction_id",
             headerName: "Linked Transaction ID",
         },
         {
@@ -39,11 +43,11 @@ const SupportTickets = () => {
             headerName: "Status",
         },
         {
-            field: "createdAt",
+            field: "created_at",
             headerName: "Created At",
         },
         {
-            field: "updatedAt",
+            field: "updated_at",
             headerName: "Updated At",
         },
     ])
@@ -55,6 +59,17 @@ const SupportTickets = () => {
             floatingFilter: true,
         };
     }, []);
+
+    useEffect(()=>{
+        BackendAxios.get('/api/user/tickets').then(res=>{
+            setRowData(res.data)
+        }).catch(err=>{
+            Toast({
+                status: 'warning',
+                description: err.response.data.message || err.response.data || err.message
+            })
+        })
+    },[])
 
     return (
         <>

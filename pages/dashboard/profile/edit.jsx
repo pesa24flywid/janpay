@@ -103,16 +103,8 @@ const EditProfile = () => {
     },
   });
 
-  const profileFormik = useFormik({
-    initialValues: {
-      profilePicture: null,
-      eAadharFront: null,
-      eAadharBack: null,
-      panCard: null,
-    }
-  })
-
-
+  const [isPanDisabled, setIsPanDisabled] = useState(false)
+  const [isAadhaarDisabled, setIsAadhaarDisabled] = useState(false)
 
   function fetchProfile() {
     BackendAxios.post("api/user/info").then((res) => {
@@ -135,9 +127,11 @@ const EditProfile = () => {
 
       localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
       formik.setFieldValue("aadhaar", res.data.data.aadhaar || "")
+      setIsAadhaarDisabled(res.data.data.aadhaar ? true : false)
 
       localStorage.setItem("pan", res.data.data.pan_number || "")
       formik.setFieldValue("pan", res.data.data.pan_number || "")
+      setIsPanDisabled(res.data.data.pan_number ? true : false)
 
       localStorage.setItem("merchantId", res.data.data.user_code || "")
 
@@ -262,7 +256,7 @@ const EditProfile = () => {
       Toast({
         status: "error",
         title: "Error Occured",
-        description: err.response.data.message || err.message,
+        description: err.response.data.message || err.response.data || err.message,
       })
       console.log(err)
     })
@@ -313,7 +307,7 @@ const EditProfile = () => {
         Toast({
           status: "error",
           title: "Error Occured",
-          description: "Couldn't verify your PAN",
+          description: err.response.data.message || err.response.data || err.message,
         })
         console.log(err)
       })
@@ -413,7 +407,8 @@ const EditProfile = () => {
                   _placeholder={{ color: "gray.500" }}
                   type="number" readOnly cursor={'pointer'}
                   value={formik.values.aadhaar}
-                  onClick={() => setAadhaarModal(true)}
+                  onClick={() => isAadhaarDisabled || setAadhaarModal(true)}
+                  disabled={isAadhaarDisabled}
                 />
               </FormControl>
               <FormControl py={2} id="pan" isRequired>
@@ -425,12 +420,13 @@ const EditProfile = () => {
                   value={formik.values.pan}
                   onChange={formik.handleChange}
                   textTransform={'uppercase'}
+                  disabled={isPanDisabled}
                 />
                 <HStack p={2} justifyContent={'flex-end'}>
                   <Button
                     size={'xs'}
                     colorScheme={'twitter'}
-                    isDisabled={formik.values.pan.length !== 10}
+                    isDisabled={isPanDisabled ? true : formik.values.pan.length !== 10}
                     onClick={verifyPan}
                   >Verify</Button>
                 </HStack>
@@ -451,7 +447,7 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-                <FormControl py={2} id="companyType" isRequired>
+                <FormControl py={2} id="companyType">
                   <FormLabel>Company Type</FormLabel>
                   <Select
                     name="companyType" placeholder="Select here"
