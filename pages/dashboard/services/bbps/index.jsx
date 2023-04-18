@@ -88,6 +88,7 @@ const Bbps = () => {
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
   const [fetchBillResponse, setFetchBillResponse] = useState({})
 
+  const [amount, setAmount] = useState("")
   const formRef = useRef(null)
 
   const [latlong, setLatlong] = useState("")
@@ -156,6 +157,7 @@ const Bbps = () => {
     }
   }
 
+  // Fetch Bill
   function fetchBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
@@ -170,6 +172,8 @@ const Bbps = () => {
       ).then(res => {
         console.log(res.data)
         setFetchBillResponse(res.data)
+        setFetchBillBtn(false)
+        setAmount(res.data.amount)
       }).catch(err => {
         Toast({
           status: 'error',
@@ -179,9 +183,37 @@ const Bbps = () => {
     }
   }
 
+  // Pay Bill
   function payBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
+    if (bbpsProvider == "eko") {
+      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
+        formData
+      )
+    }
+    if (bbpsProvider == "paysprint") {
+      var object = {};
+      formData.forEach(function (value, key) {
+        object[key] = value;
+      });
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
+        {
+          ...object,
+          bill: fetchBillResponse,
+          amount: amount,
+          latitude: latlong.split(",")[0],
+          longitude: latlong.split(",")[1]
+        }
+      ).then(res => {
+        console.log(res.data)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.response.data.message || err.response.data || err.message
+        })
+      })
+    }
   }
 
   return (
@@ -332,7 +364,7 @@ const Bbps = () => {
                           if (parameter.param_type == "AlphaNumeric") {
                             return (
                               <FormControl id={parameter.param_name} w={['full', 'xs']}>
-                                <FormLabel>{parameter.param_label}</FormLabel>
+                                <FormLabel>{parameter.param_label || "CA Number"}</FormLabel>
                                 <Input type={'text'} pattern={parameter.regex} name={parameter.param_name} />
                               </FormControl>
                             )
@@ -362,19 +394,25 @@ const Bbps = () => {
                           <FormLabel>Sender Name</FormLabel>
                           <Input name='sender_name' />
                         </FormControl>
-                        <FormControl id={'senderName'} w={['full', 'xs']} pb={6}>
+                        <FormControl id={'confirmation_mobile_no'} w={['full', 'xs']} pb={6}>
                           <FormLabel>Confirmation Mobile Number</FormLabel>
                           <Input type={'tel'} maxLength={10} name='confirmation_mobile_no' />
                         </FormControl>
                         <input type="hidden" name='latlong' value={latlong} />
                       </>
                     }
-
+                    {
+                      fetchBillBtn ||
+                      <FormControl id={'amount'} w={['full', 'xs']} pb={6}>
+                        <FormLabel>Bill Amount</FormLabel>
+                        <Input type={'tel'} disabled name='amount' value={amount} />
+                      </FormControl>
+                    }
                   </Stack>
                   {
                     fetchBillBtn ?
                       <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} onClick={(e) => payBill(e)}>Submit</Button>
+                      <Button colorScheme={'twitter'} onClick={(e) => payBill(e)}>Pay (₹{amount})</Button>
                   }
                 </form> : null
             }
