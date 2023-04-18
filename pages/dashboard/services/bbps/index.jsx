@@ -11,6 +11,7 @@ import {
   Stack,
   HStack,
   VStack,
+  useToast
 } from '@chakra-ui/react'
 import { HiServerStack } from 'react-icons/hi2'
 import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
@@ -22,6 +23,7 @@ import {
   BsHouseDoorFill,
   BsEmojiSmileFill,
   BsPlayBtnFill,
+  BsCurrencyRupee
 } from 'react-icons/bs'
 import { AiFillFire } from 'react-icons/ai'
 import { FiMonitor } from 'react-icons/fi'
@@ -41,8 +43,8 @@ import Cookies from 'js-cookie'
 
 
 const Bbps = () => {
-  const [bbpsProvider, setBbpsProvider] = useState("eko")
-
+  const [bbpsProvider, setBbpsProvider] = useState("paysprint")
+  const Toast = useToast({ position: 'top-right' })
   useEffect(() => {
 
     ClientAxios.post('/api/user/fetch', {
@@ -58,10 +60,10 @@ const Bbps = () => {
     }).catch((err) => {
       console.log(err)
     })
-    
+
     ClientAxios.get(`/api/global`).then(res => {
       setBbpsProvider(res.data[0].bbps_provider)
-      if(!res.data[0].bbps_status){
+      if (!res.data[0].bbps_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
@@ -72,30 +74,53 @@ const Bbps = () => {
     })
   }, [])
 
+  const [allData, setAllData] = useState([])
+
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState()
 
-  const [operators, setOperators] = useState()
+  const [operators, setOperators] = useState([])
   const [operatorListDisabled, setOperatorListDisabled] = useState(false)
   const [selectedOperator, setSelectedOperator] = useState()
 
   const [operatorParams, setOperatorParams] = useState()
 
   const [fetchBillBtn, setFetchBillBtn] = useState(false)
+  const [fetchBillResponse, setFetchBillResponse] = useState({})
 
   const formRef = useRef(null)
-
 
   const [latlong, setLatlong] = useState("")
 
 
   // Fetch all available categories
   useEffect(() => {
-    BackendAxios.get("api/eko/bbps/operators/categories").then((res) => {
-      setCategories(res.data.data)
-    }).catch((err) => {
-      console.log(err)
-    })
+    if (bbpsProvider == "eko") {
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then((res) => {
+        setCategories(res.data.data)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+    if (bbpsProvider == "paysprint") {
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then(res => {
+        setAllData(Object.keys(res.data).map((item, key) => ({
+          operator_category_name: item,
+          operators: res.data[item],
+          status: 1
+        })))
+        setCategories(Object.keys(res.data).map((item, key) => ({
+          operator_category_name: item,
+          status: 1
+        })))
+      }).catch(err => {
+        console.log(err)
+        Toast({
+          status: 'warning',
+          description: "Error while fetching operators"
+        })
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -107,35 +132,56 @@ const Bbps = () => {
   function fetchOperators(category_id) {
     setSelectedOperator(null)
     setOperatorParams()
-    BackendAxios.get(`api/eko/bbps/operators/${category_id}`).then((res) => {
-      setOperators(res.data.data)
-    }).catch((err) => {
-      console.log(err)
-    })
+    if (bbpsProvider == "eko") {
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/${category_id}`).then((res) => {
+        setOperators(res.data.data)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+    if (bbpsProvider == "paysprint") {
+      setOperators(allData.filter(data => (category_id == data.operator_category_name))[0].operators)
+    }
   }
 
   function fetchParams(operator_id) {
-    BackendAxios.get(`api/eko/bbps/operators/fields/${operator_id}`).then((res) => {
-      setSelectedOperator(operator_id)
-      setOperatorParams(res.data.data)
-      res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)
-    }).catch((err) => {
-      console.log(err)
-    })
+    if (bbpsProvider == "eko") {
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/fields/${operator_id}`).then((res) => {
+        setSelectedOperator(operator_id)
+        setOperatorParams(res.data.data)
+        res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
   }
 
   function fetchBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
-    FormAxios.post("api/eko/bbps/fetch-bill",
-      formData
-    )
+    if (bbpsProvider == "eko") {
+      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
+        formData
+      )
+    }
+    if (bbpsProvider == "paysprint") {
+      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
+        formData
+      ).then(res => {
+        console.log(res.data)
+        setFetchBillResponse(res.data)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.response.data.message || err.response.data || err.message
+        })
+      })
+    }
   }
 
   function payBill(e) {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
-
   }
 
   return (
@@ -167,7 +213,13 @@ const Bbps = () => {
                       _hover={{ bg: "aqua" }}
                       direction={['row']}
                       spacing={2} key={key} alignItems={'center'}
-                      cursor={'pointer'} onClick={() => fetchOperators(item.operator_category_id)}
+                      cursor={'pointer'} onClick={() => {
+                        bbpsProvider == "eko" &&
+                          fetchOperators(item.operator_category_id)
+                        bbpsProvider == 'paysprint' &&
+                          fetchOperators(item.operator_category_name)
+
+                      }}
                     >
                       {
                         item.operator_category_name.includes("Mobile")
@@ -207,7 +259,7 @@ const Bbps = () => {
                                                           item.operator_category_name.includes("Municipal Services")
                                                             ? <FaCity /> :
                                                             item.operator_category_name.includes("Subscription")
-                                                              ? <FaMoneyBillAlt /> : null
+                                                              ? <FaMoneyBillAlt /> : <BiRupee />
                       }
                       <Text textTransform={'capitalize'}>{item.operator_category_name}</Text>
                     </Stack> : null
@@ -218,23 +270,39 @@ const Bbps = () => {
           <Box p={4}>
 
             {
-              operators ?
-                <FormControl id={'operator'}>
-                  <FormLabel>Select Operator</FormLabel>
-                  <Select
-                    name={'operator'} w={['full', 'xs']}
-                    value={selectedOperator}
-                    onChange={(e) => fetchParams(e.target.value)}
-                  >
-                    {
-                      operators.map((operator) => {
-                        return (
-                          <option value={operator.operator_id}>{operator.name}</option>
-                        )
-                      })
+              operators.length != 0 &&
+              <FormControl id={'operator'}>
+                <FormLabel>Select Operator</FormLabel>
+                <Select
+                  name={'operator'} w={['full', 'xs']}
+                  value={selectedOperator}
+                  placeholder='Select Here'
+                  onChange={(e) => {
+                    if (bbpsProvider == "eko") {
+                      fetchParams(e.target.value)
                     }
-                  </Select>
-                </FormControl> : null
+                    if (bbpsProvider == "paysprint") {
+                      let selectedOperator = operators.find((item) => (item.id == e.target.value))
+                      setOperatorParams([{
+                        param_type: "AlphaNumeric",
+                        param_label: selectedOperator.displayname,
+                        regex: "",
+                        param_name: "canumber"
+                      }])
+                      setFetchBillBtn(true)
+                      setSelectedOperator(e.target.value)
+                    }
+                  }}
+                >
+                  {
+                    operators.map((operator) => {
+                      return (
+                        <option value={operator.operator_id || operator.id}>{operator.name}</option>
+                      )
+                    })
+                  }
+                </Select>
+              </FormControl>
             }
 
 
@@ -288,7 +356,7 @@ const Bbps = () => {
                     }
 
                     {
-                      fetchBillBtn &&
+                      fetchBillBtn && bbpsProvider == "eko" &&
                       <>
                         <FormControl id={'senderName'} w={['full', 'xs']} pb={6}>
                           <FormLabel>Sender Name</FormLabel>

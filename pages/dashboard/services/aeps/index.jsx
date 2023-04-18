@@ -28,7 +28,6 @@ const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("paysprint")
   const serviceCode = "20"
   useEffect(() => {
-
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -242,9 +241,9 @@ const Aeps = () => {
     }
   }
 
-  // useEffect(() => {
-  //   searchMantra()
-  // }, [])
+  useEffect(() => {
+    searchMantra()
+  }, [])
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
@@ -292,14 +291,6 @@ const Aeps = () => {
     formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
-  function handleSubmit() {
-    if (formik.values.serviceCode == "2") {
-      getMantra()
-    }
-    else {
-      formik.handleSubmit
-    }
-  }
 
   useEffect(() => {
     if (aepsProvider == "paysprint") {

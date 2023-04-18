@@ -82,6 +82,12 @@ export const SidebarOptions =
           soon: false
         },
         {
+          title: 'Aadhaar Pay',
+          link: '/dashboard/services/aeps/pay?pageId=services',
+          id: "aeps",
+          soon: false
+        },
+        {
           title: 'DMT services',
           link: '/dashboard/services/dmt?pageId=services',
           id: "dmt",
@@ -91,7 +97,7 @@ export const SidebarOptions =
           title: 'BBPS services',
           link: '/dashboard/services/bbps?pageId=services',
           id: "bbps",
-          soon: true,
+          soon: false,
         },
         {
           title: 'recharge',
@@ -162,13 +168,13 @@ export const SidebarOptions =
           title: 'AePS reports',
           link: '/dashboard/reports/aeps?pageId=reports',
           id: "aepsReports",
-          soon: true,
+          soon: false,
         },
         {
           title: 'BBPS reports',
           link: '/dashboard/reports/bbps?pageId=reports',
           id: "bbpsReports",
-          soon: true,
+          soon: false,
         },
         {
           title: 'recharge reports',

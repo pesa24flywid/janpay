@@ -18,12 +18,16 @@ import {
   Checkbox
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import BackendAxios, {ClientAxios} from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
+import { Grid } from 'gridjs-react'
+import "gridjs/dist/theme/mermaid.css";
+import PermissionMiddleware from '../../../../lib/utils/checkPermission'
+import Cookies from 'js-cookie'
 
-const AadhaarPay = () => {
-
+const Aeps = () => {
+  const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const serviceCode = "20"
   useEffect(() => {
-
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -31,35 +35,29 @@ const AadhaarPay = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if(res.data[0].allowed_pages.includes('aadhaarPay') == false){
-        window.location.assign('/dashboard/not-allowed')
+      if (!res.data[0].allowed_pages.includes('aadhaarPayTransaction')) {
+        window.location.href('/dashboard/not-allowed')
       }
     }).catch((err) => {
       console.log(err)
     })
+
+    ClientAxios.get(`/api/global`).then(res => {
+      setAepsProvider(res.data[0].aeps_provider)
+      if (!res.data[0].aeps_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      Toast({
+        title: 'Try again later',
+        description: 'We are facing some issues.'
+      })
+    })
+
   }, [])
 
-  const [isBtnLoading, setIsBtnLoading] = useState(false)
-  const Toast = useToast()
-  const formik = useFormik({
-    initialValues: {
-      aadhaarNo: "",
-      customerId: "",
-      bankCode: "",
-      bankAccountNo: "",
-      ifsc: "",
-      serviceCode: "2",
-      pid: "",
-      amount: "",
-      transctionId: ""
-    },
-    onSubmit: (values) => {
-      BackendAxios.post("/api/aadhaar-pay", values)
-    }
-  })
-
+  let MethodInfo
   function getMantra() {
-    setIsBtnLoading(true)
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -168,15 +166,13 @@ const AadhaarPay = () => {
               title: "Fingerprint Captured",
               position: "top-right"
             })
-            await formik.setFieldValue("pid", data)
-            formik.handleSubmit
-            // console.log("PidData: " + PidData)
+            formik.setFieldValue("pid", data).then(() => {
+              formik.handleSubmit()
+            })
           }
           else {
             alert("Error : " + Message);
           }
-
-          setIsBtnLoading(true)
 
         }
       });
@@ -192,7 +188,8 @@ const AadhaarPay = () => {
     }
   }
 
-  useEffect(() => {
+  function searchMantra() {
+
     var GetCustomDomName = "127.0.0.1";
     var primaryUrl = "http://" + GetCustomDomName + ":";
     var url = "";
@@ -226,20 +223,7 @@ const AadhaarPay = () => {
         var CmbData2 = $($doc).find('RDService').attr('info');
         if (CmbData1 == "READY") {
           MantraFound = 1;
-          if (RegExp('\\b' + 'Mantra' + '\\b').test(CmbData2) == true) {
-            if ($($doc).find('Interface').eq(0).attr('path') == "/rd/capture") {
-              MethodCapture = $($doc).find('Interface').eq(0).attr('path');
-            }
-            if ($($doc).find('Interface').eq(1).attr('path') == "/rd/capture") {
-              MethodCapture = $($doc).find('Interface').eq(1).attr('path');
-            }
-            if ($($doc).find('Interface').eq(0).attr('path') == "/rd/info") {
-              MethodInfo = $($doc).find('Interface').eq(0).attr('path');
-            }
-            if ($($doc).find('Interface').eq(1).attr('path') == "/rd/info") {
-              MethodInfo = $($doc).find('Interface').eq(1).attr('path');
-            }
-          }
+          setBiometricDevice("mantra")
         }
         else {
           MantraFound = 0;
@@ -255,61 +239,117 @@ const AadhaarPay = () => {
         position: "top-right"
       })
     }
+  }
 
+  useEffect(() => {
+    searchMantra()
   }, [])
+  const [isBtnLoading, setIsBtnLoading] = useState(false)
+  const [biometricDevice, setBiometricDevice] = useState("")
+  const [banksList, setBanksList] = useState([])
+  
+  const Toast = useToast()
+  const formik = useFormik({
+    initialValues: {
+      aadhaarNo: "",
+      customerId: "",
+      bankCode: "",
+      bankAccountNo: "",
+      ifsc: "",
+      serviceCode: "aadhaar-pay",         // Services Code as per service provider
+      pid: "",
+      amount: "",
+      serviceId: "20", // Services ID as per Pesa24 Portal
+      latlong: Cookies.get("latlong")      
+    },
+    onSubmit: async (values) => {
+      setIsBtnLoading(true)
+      await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+        Toast({
+          description: res.data.message,
+          position: 'top-right'
+        })
+        console.log(res.data)
+      }).catch((err) => {
+        Toast({
+          title: 'Transaction Failed',
+          description: err.message,
+          position: 'top-right',
+        })
+      })
+      setIsBtnLoading(false)
+    }
+  })
+
+  const transactions = [
+    ["25-01-2023 18:54", "Member29", "BFAJFDHA", "Cash Witdrawal", "successful", "20000", "2000", "18000", "No remarks"],
+  ]
+
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
+    formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
-  function handleSubmit() {
-    if (formik.values.serviceCode == "2") {
-      getMantra()
+
+  useEffect(() => {
+    if (aepsProvider == "paysprint") {
+      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+        setBanksList(res.data.banklist.data)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.message
+        })
+      })
     }
-    else {
-      formik.handleSubmit
-    }
-  }
+  }, [])
+
 
   return (
     <>
-      <DashboardWrapper titleText={'Aadhaar Pay'}>
+      <DashboardWrapper titleText={'AePS Transaction'}>
         <Box my={4} w={['full', 'md', 'full']} p={6} boxShadow={'md'} bg={'white'}>
           <FormControl w={'xs'} pb={8}>
             <FormLabel>Select Service</FormLabel>
             <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
-              <option value={2}>Cash Withdrawal</option>
+              <option value={'aadhaar-pay'}>Aadhaar Pay</option>
             </Select>
           </FormControl>
 
           <FormControl pb={6}>
             <FormLabel>Choose Device</FormLabel>
-            <RadioGroup name={'rdDevice'}>
+            <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
               <Stack direction={['column', 'row']} spacing={4}>
-              <Radio value='mantra'>Mantra</Radio>
-              <Radio value='morpho'>Morpho</Radio>
-              <Radio value='secugen'>Secugen</Radio>
-              <Radio value='startek'>Startek</Radio>
+                <Radio value='mantra'>Mantra</Radio>
+                <Radio value='morpho'>Morpho</Radio>
+                <Radio value='secugen'>Secugen</Radio>
+                <Radio value='startek'>Startek</Radio>
               </Stack>
             </RadioGroup>
           </FormControl>
 
           {/* Cash Withdrawal Form */}
           {
-            formik.values.serviceCode == "2" ? <>
+            formik.values.serviceCode == "aadhaar-pay" ? <>
               <FormControl w={'full'} pb={6}>
                 <FormLabel>Select Bank</FormLabel>
-                <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange} w={'xs'}>
-                  <option value="sbi">State Bank of India</option>
-                  <option value="pnb">Punjab National Bank</option>
-                  <option value="cb">City Bank</option>
-                  <option value="yb">Yes Bank</option>
+                <Select name='bankCode'
+                  value={formik.values.bankCode}
+                  onChange={formik.handleChange} w={'xs'}
+                >
+                  {
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.id}>{bank.bankName}</option>
+                    ))
+                  }
                 </Select>
                 <HStack spacing={2} py={2}>
 
                   <Button
                     fontSize={'xs'}
-                    value={"sbi"}
+                    value={"SBIN"}
                     onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
                   >State Bank of India</Button>
 
@@ -376,9 +416,15 @@ const AadhaarPay = () => {
 
           <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
         </Box>
+
+        <Grid
+          data={transactions}
+          columns={['Date', 'Member ID', 'Transaction ID', "Transaction Type", "Status", "Opening Balance", "Amount", "Closing Balance", "Remarks"]}
+
+        />
       </DashboardWrapper>
     </>
   )
 }
 
-export default AadhaarPay
+export default Aeps
