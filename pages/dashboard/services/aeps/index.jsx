@@ -15,14 +15,24 @@ import {
   useToast,
   Radio,
   RadioGroup,
-  Checkbox
+  Checkbox,
+  VStack,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Text,
+  ModalOverlay
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
-import { Grid } from 'gridjs-react'
-import "gridjs/dist/theme/mermaid.css";
-import PermissionMiddleware from '../../../../lib/utils/checkPermission'
+import { AgGridReact } from 'ag-grid-react'
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Cookies from 'js-cookie'
+import { BsCheck2Circle, BsClock, BsDownload, BsXCircle } from 'react-icons/bs'
+import Pdf from 'react-to-pdf'
 
 const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("paysprint")
@@ -247,7 +257,14 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
-  
+  const [pagination, setPagination] = useState({
+    current_page: "1",
+    total_pages: "1",
+    first_page_url: "",
+    last_page_url: "",
+    next_page_url: "",
+    prev_page_url: "",
+  })
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -260,7 +277,7 @@ const Aeps = () => {
       pid: "",
       amount: "",
       serviceId: "20", // Services ID as per Pesa24 Portal
-      latlong: Cookies.get("latlong")      
+      latlong: Cookies.get("latlong")
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
@@ -305,6 +322,55 @@ const Aeps = () => {
     }
   }, [])
 
+
+  const [rowData, setRowData] = useState([])
+
+  const [columnDefs, setColumnDefs] = useState([
+    { headerName: "Trnxn ID", field: 'transaction_id' },
+    { headerName: "Beneficiary Name", field: 'name' },
+    { headerName: "Beneficiary ID", field: 'reciever_id' },
+    { headerName: "Receiver Phone", field: 'phone_number' },
+    { headerName: "Amount", field: 'amount' },
+    { headerName: "Datetime", field: 'created_at' },
+    { headerName: "Remarks", field: 'remarks' },
+    { headerName: "Metadata", field: 'metadata' },
+    { headerName: "Receipt", field: 'actions', pinned: 'right', cellRenderer: 'receiptCellRenderer' },
+  ])
+
+  const pdfRef = React.createRef()
+  const [receipt, setReceipt] = useState({
+    show: false,
+    status: "success",
+    data: {}
+  })
+  const receiptCellRenderer = (params) => {
+    function showReceipt(willShow) {
+      setReceipt({
+        status: params.data.metadata.status ? "success" : "failed",
+        show: willShow,
+        data: params.data.metadata
+      })
+    }
+    return (
+      <HStack height={'full'} w={'full'} gap={4}>
+        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+        <Pdf targetRef={pdfRef} filename="Receipt.pdf" scale={.8}>
+          {
+            ({ toPdf }) => <Button
+              rounded={'full'}
+              size={'sm'}
+              colorScheme={'yellow'}
+              onClick={() => {
+                showReceipt(false)
+                toPdf()
+              }}
+            ><BsDownload />
+            </Button>
+          }
+        </Pdf>
+      </HStack>
+    )
+  }
 
   return (
     <>
@@ -481,12 +547,83 @@ const Aeps = () => {
           <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
         </Box>
 
-        <Grid
-          data={transactions}
-          columns={['Date', 'Member ID', 'Transaction ID', "Transaction Type", "Status", "Opening Balance", "Amount", "Closing Balance", "Remarks"]}
+        <Text my={8}>Your Recent Transactions</Text>
+        <Box py={6}>
+          <Text fontWeight={'medium'} pb={4}>Recent Transfers</Text>
+          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              components={{
+                'receiptCellRenderer': receiptCellRenderer
+              }}
+            >
 
-        />
+            </AgGridReact>
+          </Box>
+        </Box>
       </DashboardWrapper>
+
+
+      <Modal
+        isOpen={receipt.show}
+        onClose={() => setReceipt({ ...receipt, show: false })}
+      >
+        <ModalOverlay />
+        <ModalContent width={'xs'}>
+          <Box ref={pdfRef} style={{ borderBottom: '1px solid #999' }}>
+            <ModalHeader p={0}>
+              <VStack w={'full'} p={8} bg={receipt.status == "success" ? "green.500" : receipt.status == "failed" ? "red.500" : "yellow.700"}>
+                {
+                  receipt.status == "success" ?
+                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                    receipt.status == "failed" ?
+                      <BsXCircle color='#FFF' fontSize={72} /> :
+                      <BsClock color='#FFF' fontSize={72} />
+
+                }
+                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status}</Text>
+              </VStack>
+            </ModalHeader>
+            <ModalBody p={0} bg={'azure'}>
+              <VStack w={'full'} p={8} bg={'#FFF'}>
+                {
+                  receipt.data ?
+                    Object.entries(receipt.data).map((item, key) => (
+                      <HStack
+                        justifyContent={'space-between'}
+                        gap={8} pb={4} w={'full'} key={key}
+                      >
+                        <Text fontSize={14}
+                          fontWeight={'medium'}
+                          textTransform={'capitalize'}
+                        >{item[0]}</Text>
+                        <Text fontSize={14} >{`${item[1]}`}</Text>
+                      </HStack>
+                    )) : null
+                }
+              </VStack>
+            </ModalBody>
+          </Box>
+          <ModalFooter>
+            <HStack justifyContent={'center'} gap={8}>
+
+              <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                {
+                  ({ toPdf }) => <Button
+                    rounded={'full'}
+                    size={'sm'}
+                    colorScheme={'twitter'}
+                    leftIcon={<BsDownload />}
+                    onClick={toPdf}
+                  >Download
+                  </Button>
+                }
+              </Pdf>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }

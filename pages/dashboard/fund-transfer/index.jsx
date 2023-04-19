@@ -32,7 +32,8 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import BackendAxios from '../../../lib/axios'
 import { useRouter } from 'next/router';
-import { BsChevronDoubleLeft, BsChevronDoubleRight, BsChevronLeft, BsChevronRight } from 'react-icons/bs'
+import { BsCheck2Circle, BsChevronDoubleLeft, BsChevronDoubleRight, BsChevronLeft, BsChevronRight, BsClock, BsDownload, BsEye, BsFileEarmarkCheck, BsXCircle } from 'react-icons/bs'
+import Pdf from 'react-to-pdf'
 
 const FundTransfer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -50,7 +51,7 @@ const FundTransfer = () => {
     const TransferFormik = useFormik({
         initialValues: {
             beneficiaryId: user_id || "",
-            amount: "",
+            amount: 0,
             transactionType: "transfer",
             remarks: "",
             mpin: "",
@@ -61,10 +62,17 @@ const FundTransfer = () => {
                     status: 'success',
                     description: 'Transaction successful!'
                 })
+                onClose()
+                setReceipt({
+                    status: 'success',
+                    show: true,
+                    data: res.data.metadata
+                })
+                fetchTransfers()
             }).catch(err => {
                 Toast({
                     status: 'error',
-                    description: err.message
+                    description: err.response.data.message || err.response.data || err.message
                 })
             })
         }
@@ -105,20 +113,45 @@ const FundTransfer = () => {
         })
     }
 
+    const pdfRef = React.createRef()
+    const [receipt, setReceipt] = useState({
+        show: false,
+        status: "success",
+        data: {}
+    })
+    const receiptCellRenderer = (params) => {
+        function showReceipt(willShow) {
+            if(!params.data.metadata){
+                Toast({
+                    description: 'No Receipt Available'
+                })
+                return
+            }
+            setReceipt({
+                status: JSON.parse(params.data.metadata).status ? "success" : "failed",
+                show: willShow,
+                data: JSON.parse(params.data.metadata)
+            })
+        }
+        return (
+            <HStack height={'full'} w={'full'} gap={4}>
+                <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+            </HStack>
+        )
+    }
 
-    const [rowData, setRowData] = useState([
-        {}
-    ])
+    const [rowData, setRowData] = useState([])
 
     const [columnDefs, setColumnDefs] = useState([
         { headerName: "Trnxn ID", field: 'transaction_id' },
         { headerName: "Beneficiary Name", field: 'name' },
-        { headerName: "Beneficiary ID", field: 'receiver_id' },
+        { headerName: "Beneficiary ID", field: 'reciever_id' },
         { headerName: "Receiver Phone", field: 'phone_number' },
         { headerName: "Amount", field: 'amount' },
-        { headerName: "Transaction Type", field: 'transaction_type' },
         { headerName: "Datetime", field: 'created_at' },
         { headerName: "Remarks", field: 'remarks' },
+        { headerName: "Metadata", field: 'metadata' },
+        { headerName: "Receipt", field: 'actions', pinned: 'right', cellRenderer: 'receiptCellRenderer' },
     ])
 
     function fetchTransfers(pageLink) {
@@ -227,7 +260,7 @@ const FundTransfer = () => {
                                             children={'₹'}
                                         />
                                         <Input
-                                            name={'amount'} bg={'white'}
+                                            name={'amount'} bg={'white'} type={'number'}
                                             onChange={TransferFormik.handleChange}
                                             placeholder={'Enter Amount To Transfer'}
                                         />
@@ -262,87 +295,20 @@ const FundTransfer = () => {
                     </Box>
                 </Box>
 
-                <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.first_page_url)}
-                    ><BsChevronDoubleLeft />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.prev_page_url)}
-                    ><BsChevronLeft />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'solid'}
-                    >{pagination.current_page}</Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.next_page_url)}
-                    ><BsChevronRight />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.last_page_url)}
-                    ><BsChevronDoubleRight />
-                    </Button>
-                </HStack>
                 <Box py={6}>
                     <Text fontWeight={'medium'} pb={4}>Recent Transfers</Text>
                     <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
                         <AgGridReact
                             columnDefs={columnDefs}
                             rowData={rowData}
+                            components={{
+                                'receiptCellRenderer': receiptCellRenderer
+                            }}
                         >
 
                         </AgGridReact>
                     </Box>
                 </Box>
-                <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.first_page_url)}
-                    ><BsChevronDoubleLeft />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.prev_page_url)}
-                    ><BsChevronLeft />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'solid'}
-                    >{pagination.current_page}</Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.next_page_url)}
-                    ><BsChevronRight />
-                    </Button>
-                    <Button
-                        colorScheme={'twitter'}
-                        fontSize={12} size={'xs'}
-                        variant={'outline'}
-                        onClick={() => fetchTransfers(pagination.last_page_url)}
-                    ><BsChevronDoubleRight />
-                    </Button>
-                </HStack>
 
 
                 <Modal isOpen={isOpen} onClose={onClose}>
@@ -373,6 +339,66 @@ const FundTransfer = () => {
                         <ModalFooter>
                             <Button variant='ghost' onClick={onClose}>Cancel</Button>
                             <Button colorScheme='blue' mr={3} onClick={TransferFormik.handleSubmit}>Done</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+
+                <Modal
+                    isOpen={receipt.show}
+                    onClose={() => setReceipt({ ...receipt, show: false })}
+                >
+                    <ModalOverlay />
+                    <ModalContent width={'xs'}>
+                        <Box ref={pdfRef} style={{ borderBottom: '1px solid #999' }}>
+                            <ModalHeader p={0}>
+                                <VStack w={'full'} p={8} bg={receipt.status == "success" ? "green.500" : receipt.status == "failed" ? "red.500" : "yellow.700"}>
+                                    {
+                                        receipt.status == "success" ?
+                                            <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                                            receipt.status == "failed" ?
+                                                <BsXCircle color='#FFF' fontSize={72} /> :
+                                                <BsClock color='#FFF' fontSize={72} />
+
+                                    }
+                                    <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status}</Text>
+                                </VStack>
+                            </ModalHeader>
+                            <ModalBody p={0} bg={'azure'}>
+                                <VStack w={'full'} p={8} bg={'#FFF'}>
+                                    {
+                                        receipt.data ?
+                                            Object.entries(receipt.data).map((item, key) => (
+                                                <HStack
+                                                    justifyContent={'space-between'}
+                                                    gap={8} pb={4} w={'full'} key={key}
+                                                >
+                                                    <Text fontSize={11}
+                                                        fontWeight={'medium'}
+                                                        textTransform={'capitalize'}
+                                                    >{item[0]}</Text>
+                                                    <Text fontSize={11} >{`${item[1]}`}</Text>
+                                                </HStack>
+                                            )) : null
+                                    }
+                                </VStack>
+                            </ModalBody>
+                        </Box>
+                        <ModalFooter>
+                            <HStack justifyContent={'center'} gap={8}>
+
+                                <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                                    {
+                                        ({ toPdf }) => <Button
+                                            rounded={'full'}
+                                            size={'sm'}
+                                            colorScheme={'twitter'}
+                                            leftIcon={<BsDownload />}
+                                            onClick={toPdf}
+                                        >Download
+                                        </Button>
+                                    }
+                                </Pdf>
+                            </HStack>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
