@@ -33,14 +33,14 @@ const Topbar = () => {
     })
     const Formik = useFormik({
         initialValues: {
-            transactionId: "",
+            linkedTransactionId: "",
             title: "",
             message: "",
             attachments: null,
         },
         onSubmit: (values) => {
             FormAxios.post('/api/tickets', {
-                transactionId: values.transactionId,
+                linkedTransactionId: values.linkedTransactionId,
                 title: values.title,
                 body: values.message,
                 attachments: values.attachments,
@@ -50,6 +50,7 @@ const Topbar = () => {
                     title: 'Ticket Raised',
                     description: 'We will reply you soon.'
                 })
+                onClose()
             }).catch((err) => {
                 console.log(err)
                 Toast({
@@ -103,6 +104,10 @@ const Topbar = () => {
                         <FormControl>
                             <FormLabel>Title</FormLabel>
                             <Input name='title' onChange={Formik.handleChange} />
+                        </FormControl>
+                        <FormControl pt={6}>
+                            <FormLabel>Transaction ID (optional)</FormLabel>
+                            <Input name='linkedTransactionId' onChange={Formik.handleChange} />
                         </FormControl>
                         <FormControl py={6}>
                             <FormLabel>Message</FormLabel>

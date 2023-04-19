@@ -1,5 +1,4 @@
 // PaySprint Recharge Handling
-
 import React, { useState, useEffect, useRef } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
@@ -19,9 +18,15 @@ import {
   Radio,
   InputGroup,
   InputLeftAddon,
-  Tabs, TabList,
-  TabPanels,
-  Tab, TabPanel
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  PinInput,
+  PinInputField
 } from '@chakra-ui/react'
 import { HiServerStack } from 'react-icons/hi2'
 import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
@@ -60,7 +65,7 @@ const Bbps = () => {
   //       'Content-Type': 'application/json'
   //     }
   //   }).then((res) => {
-  //     if(res.data[0].allowed_pages.includes('bbps') == false){
+  //     if(res.data[0].allowed_pages.includes('rechargeTransaction') == false){
   //       window.location.assign('/dashboard/not-allowed')
   //     }
   //   }).catch((err) => {
@@ -68,7 +73,7 @@ const Bbps = () => {
   //   })
   // }, [])
 
-
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [keyword, setKeyword] = useState("")
 
   const [categories, setCategories] = useState()
@@ -101,8 +106,11 @@ const Bbps = () => {
   const [fetchInfoBtn, setFetchInfoBtn] = useState(false)
   const [isPaymentProgress, setIsPaymentProgress] = useState(false)
 
+  const [mpin, setMpin] = useState("")
+
   const formRef = useRef()
   const Toast = useToast()
+
 
   useEffect(() => {
     ClientAxios.post("/api/paysprint/category/all").then((res) => {
@@ -116,9 +124,9 @@ const Bbps = () => {
       console.log(err)
     })
 
-    
+
     ClientAxios.get(`/api/global`).then(res => {
-      if(!res.data[0].recharge_status){
+      if (!res.data[0].recharge_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
@@ -160,13 +168,14 @@ const Bbps = () => {
     let operatorValueArray = operator_value.split("|")
     setSelectedOperatorId(operatorValueArray[0])
     setSelectedOperatorName(operatorValueArray[1])
-    BackendAxios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
-      setOperatorParams(Object.values(res.data))
-      keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
-      keyword == "PREPAID" ? setFetchInfoBtn(true) : setFetchInfoBtn(false)
-    }).catch((err) => {
-      console.log(err)
-    })
+    // BackendAxios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
+    //   setOperatorParams(Object.values(res.data))
+    //   keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
+    //   keyword == "PREPAID" ? setFetchInfoBtn(true) : setFetchInfoBtn(false)
+    // }).catch((err) => {
+    //   console.log(err)
+    // })
+    setOperatorParams(true)
   }
 
 
@@ -232,7 +241,14 @@ const Bbps = () => {
     event.preventDefault()
     setIsPaymentProgress(true)
     let formData = new FormData(document.getElementById('psRechargeForm'))
-    await FormAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', formData).then((res) => {
+    var object = {};
+    formData.forEach(function (value, key) {
+      object[key] = value;
+    });
+    await BackendAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', {
+      ...object,
+      mpin: mpin
+    }).then((res) => {
       Toast({
         status: 'success',
         title: 'Transaction Successful',
@@ -244,12 +260,14 @@ const Bbps = () => {
       Toast({
         status: 'error',
         title: 'Transaction Failed!',
-        description: err.message,
+        description: err.response.data.message || err.response.data || err.message,
         position: 'top-right'
       })
     })
     setIsPaymentProgress(false)
+    onClose()
   }
+
 
 
   return (
@@ -363,54 +381,54 @@ const Bbps = () => {
                   <input type="hidden" name="operator" value={selectedOperatorId} />
                   {
                     operatorParams ?
-                    <>
-                      <Stack
-                        my={6}
-                        direction={['column']}
-                        spacing={6}
-                      >
-                        <FormControl id={"canumber"} w={['full', 'xs']}>
-                          <FormLabel>Enter Number</FormLabel>
-                          <Input type={'text'} maxLength={10} name={"canumber"} />
-                        </FormControl>
-                      </Stack>
-                      <Stack
-                        my={6}
-                        direction={['column']}
-                        spacing={6}
-                        w={['full', 'xs']}
-                      >
-                        <FormControl id='location'>
-                          <FormLabel>Select Network Circle</FormLabel>
-                          <Select name='location' placeholder='Select Circle' onChange={(e) => setNetworkCircle(e.target.value)}>
-                            <option value="Andhra Pradesh Mobileangana">Andhra Pradesh Mobileangana</option>
-                            <option value="Assam">Assam</option>
-                            <option value="Bihar Jharkhand">Bihar Jharkhand</option>
-                            <option value="Chennai">Chennai</option>
-                            <option value="Delhi NCR">Delhi NCR</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Haryana">Haryana</option>
-                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                            <option value="Jammu Kashmir">Jammu Kashmir</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Kerala">Kerala</option>
-                            <option value="Kolkata">Kolkata</option>
-                            <option value="Madhya Pradesh Chhattisgarh">Madhya Pradesh Chhattisgarh</option>
-                            <option value="Maharashtra Goa">Maharashtra Goa</option>
-                            <option value="Mumbai">Mumbai</option>
-                            <option value="North East">North East</option>
-                            <option value="Orissa">Orissa</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="UP East">UP East</option>
-                            <option value="UP West">UP West</option>
-                            <option value="West Bengal">West Bengal</option>
-                          </Select>
-                        </FormControl>
-                        <Button onClick={() => browsePlan()}>Browse Plans</Button>
-                      </Stack>
-                    </> : null
+                      <>
+                        <Stack
+                          my={6}
+                          direction={['column']}
+                          spacing={6}
+                        >
+                          <FormControl id={"canumber"} w={['full', 'xs']}>
+                            <FormLabel>Enter Number</FormLabel>
+                            <Input type={'text'} maxLength={10} name={"canumber"} />
+                          </FormControl>
+                        </Stack>
+                        <Stack
+                          my={6}
+                          direction={['column']}
+                          spacing={6}
+                          w={['full', 'xs']}
+                        >
+                          <FormControl id='location'>
+                            <FormLabel>Select Network Circle</FormLabel>
+                            <Select name='location' placeholder='Select Circle' onChange={(e) => setNetworkCircle(e.target.value)}>
+                              <option value="Andhra Pradesh Mobileangana">Andhra Pradesh Mobileangana</option>
+                              <option value="Assam">Assam</option>
+                              <option value="Bihar Jharkhand">Bihar Jharkhand</option>
+                              <option value="Chennai">Chennai</option>
+                              <option value="Delhi NCR">Delhi NCR</option>
+                              <option value="Gujarat">Gujarat</option>
+                              <option value="Haryana">Haryana</option>
+                              <option value="Himachal Pradesh">Himachal Pradesh</option>
+                              <option value="Jammu Kashmir">Jammu Kashmir</option>
+                              <option value="Karnataka">Karnataka</option>
+                              <option value="Kerala">Kerala</option>
+                              <option value="Kolkata">Kolkata</option>
+                              <option value="Madhya Pradesh Chhattisgarh">Madhya Pradesh Chhattisgarh</option>
+                              <option value="Maharashtra Goa">Maharashtra Goa</option>
+                              <option value="Mumbai">Mumbai</option>
+                              <option value="North East">North East</option>
+                              <option value="Orissa">Orissa</option>
+                              <option value="Punjab">Punjab</option>
+                              <option value="Rajasthan">Rajasthan</option>
+                              <option value="Tamil Nadu">Tamil Nadu</option>
+                              <option value="UP East">UP East</option>
+                              <option value="UP West">UP West</option>
+                              <option value="West Bengal">West Bengal</option>
+                            </Select>
+                          </FormControl>
+                          <Button onClick={() => browsePlan()}>Browse Plans</Button>
+                        </Stack>
+                      </> : null
 
                   }
 
@@ -483,7 +501,7 @@ const Bbps = () => {
                             <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
                           </InputGroup>
                         </FormControl>
-                        <Button colorScheme={'whatsapp'} onClick={(e) => doRecharge(e)} isLoading={isPaymentProgress}>Pay Now</Button>
+                        <Button colorScheme={'whatsapp'} onClick={onOpen} isLoading={isPaymentProgress}>Pay Now</Button>
                       </> : null
                   }
 
@@ -501,6 +519,31 @@ const Bbps = () => {
           </Box>
         </Stack>
       </DashboardWrapper>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Transaction</ModalHeader>
+          <ModalBody>
+            <VStack>
+              <Text>Enter MPIN to confirm this transaction</Text>
+              <HStack>
+                <PinInput onComplete={value => setMpin(value)}>
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                </PinInput>
+              </HStack>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <HStack justifyContent={'flex-end'}>
+              <Button colorScheme={'twitter'} onClick={()=>doRecharge()}>Confirm</Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }

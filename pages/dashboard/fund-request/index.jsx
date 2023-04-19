@@ -27,9 +27,9 @@ import "gridjs/dist/theme/mermaid.css";
 import BackendAxios, { ClientAxios, FormAxios } from '../../../lib/axios';
 import jsPDF from 'jspdf';
 import "jspdf-autotable"
-import { useMemo } from 'react';
-
-
+import { AgGridReact } from 'ag-grid-react'
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 const ExportPDF = (currentRowData) => {
     const doc = new jsPDF('landscape')
@@ -164,71 +164,72 @@ const FundRequest = () => {
         })
     }, [])
 
-    const [columns, setColumns] = useState([
-        {
-            id: 'amount',
-            name: 'Amount',
-        },
-        {
-            id: 'status',
-            name: 'Status',
-        },
-        {
-            id: 'bank_name',
-            name: 'Bank Name',
-        },
-        {
-            id: 'transaction_id',
-            name: 'Transaction ID',
-        },
-        {
-            id: 'transaction_type',
-            name: 'Transaction Type',
-        },
-        {
-            id: 'transaction_date',
-            name: 'Transaction Date',
-        },
-        {
-            id: 'transaction_receipt',
-            name: 'Transaction Receipt',
-        },
-        {
-            id: 'remarks',
-            name: 'Remarks',
-        },
-        {
-            id: 'admin_remarks',
-            name: 'Admin Remarks',
-        },
-    ],)
-
+    const [pagination, setPagination] = useState({
+        current_page: "1",
+        total_pages: "1",
+        first_page_url: "",
+        last_page_url: "",
+        next_page_url: "",
+        prev_page_url: "",
+    })
     const [rowData, setRowData] = useState([
+
+    ])
+    const [columnDefs, setColumnDefs] = useState([
         {
-            s_no: '',
-            amount: '',
-            status: '',
-            bank_name: '',
-            transaction_id: '',
-            transaction_type: '',
-            transaction_date: '',
-            transaction_receipt: '',
-            remarks: '',
-            admin_remarks: '',
-        }
+            headerName: "Trnxn ID",
+            field: 'transaction_id'
+        },
+        {
+            headerName: "Amount",
+            field: 'amount'
+        },
+        {
+            headerName: "Status",
+            field: 'status'
+        },
+        {
+            headerName: "Transaction Type",
+            field: 'transaction_type'
+        },
+        {
+            headerName: "Transaction Date",
+            field: 'transaction_date'
+        },
+        {
+            headerName: "Request Timestamp",
+            field: 'created_at'
+        },
+        {
+            headerName: "Remarks",
+            field: 'remarks',
+            defaultMinWidth: 300
+        },
     ])
 
+    function fetchTransactions(pageLink) {
+        BackendAxios.get(pageLink || `/api/fund/fetch-fund?page=1`).then((res) => {
+            setPagination({
+                current_page: res.data.current_page,
+                total_pages: parseInt(res.data.last_page),
+                first_page_url: res.data.first_page_url,
+                last_page_url: res.data.last_page_url,
+                next_page_url: res.data.next_page_url,
+                prev_page_url: res.data.prev_page_url,
+            })
+            setRowData(res.data.data)
+        }).catch((err) => {
+            console.log(err)
+            Toast({
+                status: 'error',
+                description: err.response.data.message || err.response.data || err.message
+            })
+        })
+    }
 
     useEffect(() => {
+        fetchTransactions()
         setUserName(localStorage.getItem("userName"))
-        BackendAxios.get(('api/fund/fetch-fund')).then((res) => {
-            setRowData(res.data)
-            grid.updateConfig({
-                data: res.data
-            }).forceRender()
-        }).catch(err => {
-            console.log(err)
-        })
     }, [])
 
 
@@ -255,31 +256,12 @@ const FundRequest = () => {
                 Toast({
                     status: 'error',
                     title: 'Error Occured',
-                    description: err.message
+                    description: err.response.data.message || err.response.data || err.message,
                 })
             })
         }
     })
 
-
-    const grid = new Grid({
-        columns: columns,
-        data: rowData,
-        search: true,
-        style: {
-            th: {
-                'min-width': '240px'
-            },
-            td: {
-                'min-width': '240px'
-            }
-        },
-        resizable: true,
-        fixedHeader: true,
-    });
-    useEffect(() => {
-        grid.render(wrapperRef.current)
-    }, [])
 
     return (
         <>
@@ -303,7 +285,7 @@ const FundRequest = () => {
                                     <InputLeftAddon children={'₹'} />
                                     <Input
                                         type={'number'}
-                                        name={'amount'}
+                                        name={'amount'} maxLength={6}
                                         onChange={Formik.handleChange}
                                         value={Formik.values.amount}
                                     />
@@ -438,11 +420,25 @@ const FundRequest = () => {
                     <HStack justifyContent={'space-between'}>
                         <Text fontSize={'lg'} pb={6}>Your Past Fund Requests</Text>
 
-                        <Button colorScheme={'red'} onClick={() => ExportPDF(grid.config.data)}>Export PDF</Button>
+                        <Button colorScheme={'red'} onClick={() => ExportPDF(rowData)}>Export PDF</Button>
                     </HStack>
-                    <div ref={wrapperRef}>
+                    <Box h={'12'} w={'full'}></Box>
+                    <Box py={6}>
+                        <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
+                            <AgGridReact
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultColDef={{
+                                    filter: true,
+                                    floatingFilter: true,
+                                    resizable: true,
+                                    sortable: true,
+                                }}
+                            >
 
-                    </div>
+                            </AgGridReact>
+                        </Box>
+                    </Box>
                 </Box>
             </DashboardWrapper>
         </>

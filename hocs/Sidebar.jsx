@@ -195,6 +195,12 @@ export const SidebarOptions =
           soon: false,
         },
         {
+          title: 'fund requests',
+          link: '/dashboard/reports/fund-requests?pageId=reports',
+          id: "fundRequests",
+          soon: false,
+        },
+        {
           title: 'LIC reports',
           link: '/dashboard/reports/lic?pageId=reports',
           id: "licReports",
