@@ -31,6 +31,8 @@ import DashboardWrapper from '../../../hocs/DashboardLayout'
 import BackendAxios, { FormAxios } from '../../../lib/axios'
 
 const Index = () => {
+    const [settlementProvider, setSettlementProvider] = useState("paysprint")
+    const [banksList, setBanksList] = useState([])
     const [userName, setUserName] = useState("")
     const [isActive, setIsActive] = useState(false)
     const [adminRemarks, setAdminRemarks] = useState("")
@@ -85,7 +87,7 @@ const Index = () => {
                 Toast({
                     status: 'error',
                     title: 'Error Occured',
-                    description: 'Error while adding your bank account'
+                    description: err.response.data.message || err.response.data || err.message
                 })
             })
             setIsModalVisible(false)
@@ -110,17 +112,30 @@ const Index = () => {
         })
     }, [])
 
+    useEffect(() => {
+        if (settlementProvider == "paysprint") {
+            BackendAxios.get(`/api/${settlementProvider}/aeps/fetch-bank/20`).then(res => {
+                setBanksList(res.data.banklist.data)
+            }).catch(err => {
+                Toast({
+                    status: 'error',
+                    description: err.response.data.message || err.response.data || err.message
+                })
+            })
+        }
+    }, [])
+
     return (
         <>
             <DashboardWrapper titleText={'Settle Funds'}>
                 {
                     adminRemarks &&
                     <Box py={8}>
-                    <Box p={2} bg={'white'}>
-                        <Text fontWeight={'semibold'}>Admin Remarks</Text>
-                        <Text>{adminRemarks}</Text>
+                        <Box p={2} bg={'white'}>
+                            <Text fontWeight={'semibold'}>Admin Remarks</Text>
+                            <Text>{adminRemarks}</Text>
+                        </Box>
                     </Box>
-                </Box>
                 }
                 <Stack
                     direction={['column', 'row']}
@@ -266,7 +281,12 @@ const Index = () => {
                                 onChange={BankFormik.handleChange}
                                 placeholder='Select Bank'
                             >
-                                <option value={'462'}>State Bank of India</option>
+                                {
+                                    banksList.map((bank, key) => (
+                                        settlementProvider == "paysprint" &&
+                                        <option key={key} value={bank.id}>{bank.bankName}</option>
+                                    ))
+                                }
                             </Select>
                         </FormControl>
                         <FormControl mb={8}>

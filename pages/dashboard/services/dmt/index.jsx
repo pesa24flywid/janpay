@@ -182,8 +182,7 @@ const Dmt = () => {
                     Toast({
                         status: "error",
                         title: "Error Occured",
-                        description: err.response.data.message || err.response.data || err.message,
-                        position: "top-right"
+                        description: err.response.data.message || err.response.data || err.message
                     })
                 })
             }
@@ -251,7 +250,6 @@ const Dmt = () => {
         if (!customerId || parseInt(customerId) <= 6000000000) {
             Toast({
                 description: "Enter Correct Customer ID",
-                position: "top-right"
             })
             setIsBtnLoading(false)
         }
@@ -288,10 +286,10 @@ const Dmt = () => {
                     if (res.data.response_code == 1) {
                         setCustomerName(res.data.data.fname + " " + res.data.data.lname)
                         setCustomerRemainingLimit(
-                            75000 - (parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit))
+                            (parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit))
                         )
                         setCustomerUsedLimit(
-                            parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit)
+                            75000 - parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit)
                         )
                         setCustomerTotalLimit("75000")
                         setCustomerStatus("registered")
@@ -304,8 +302,7 @@ const Dmt = () => {
                 Toast({
                     status: "error",
                     title: "Error Occured",
-                    description: err.message,
-                    position: "top-right"
+                    description: err.response.data.message || err.response.data || err.message,
                 })
             })
             setIsBtnLoading(false)
@@ -432,7 +429,6 @@ const Dmt = () => {
                     status: 'error',
                     title: "Error Occured",
                     description: err.response.data.message || err.response.data || err.message,
-                    position: "top-right"
                 })
             })
         }
@@ -458,8 +454,7 @@ const Dmt = () => {
                 Toast({
                     status: 'error',
                     title: "Error Occured",
-                    description: err.message,
-                    position: "top-right"
+                    description: err.response.data.message || err.response.data || err.message,
                 })
             })
         }
@@ -481,8 +476,7 @@ const Dmt = () => {
                 Toast({
                     status: 'error',
                     title: "Error Occured",
-                    description: err.message,
-                    position: "top-right"
+                    description: err.response.data.message || err.response.data || err.message,
                 })
             })
         }

@@ -15,17 +15,28 @@ import {
   useToast,
   Radio,
   RadioGroup,
-  Checkbox
+  Checkbox,
+  VStack,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Text,
+  ModalOverlay
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
-import { Grid } from 'gridjs-react'
-import "gridjs/dist/theme/mermaid.css";
-import PermissionMiddleware from '../../../../lib/utils/checkPermission'
+import { AgGridReact } from 'ag-grid-react'
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Cookies from 'js-cookie'
+import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-icons/bs'
+import Pdf from 'react-to-pdf'
 
 const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const transactionKeyword = "aeps"
   const serviceCode = "20"
   useEffect(() => {
     ClientAxios.post('/api/user/fetch', {
@@ -35,8 +46,8 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (!res.data[0].allowed_pages.includes('aadhaarPayTransaction')) {
-        window.location.href('/dashboard/not-allowed')
+      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
+        window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
       console.log(err)
@@ -247,7 +258,6 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
-  
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -260,30 +270,34 @@ const Aeps = () => {
       pid: "",
       amount: "",
       serviceId: "20", // Services ID as per Pesa24 Portal
-      latlong: Cookies.get("latlong")      
+      latlong: Cookies.get("latlong")
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-        Toast({
-          description: res.data.message,
-          position: 'top-right'
+      if (aepsProvider == "paysprint") {
+        await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+          Toast({
+            description: res.data[0].message,
+            position: 'top-right'
+          })
+          setReceipt({
+            show: true,
+            status: res.data.metadata.status,
+            data: res.data.metadata
+          })
+          console.log(res.data)
+        }).catch((err) => {
+          Toast({
+            title: 'Transaction Failed',
+            description: err.response.data.message || err.response.data || err.message,
+            position: 'top-right',
+          })
         })
-        console.log(res.data)
-      }).catch((err) => {
-        Toast({
-          title: 'Transaction Failed',
-          description: err.message,
-          position: 'top-right',
-        })
-      })
+      }
       setIsBtnLoading(false)
+      fetchTransactions()
     }
   })
-
-  const transactions = [
-    ["25-01-2023 18:54", "Member29", "BFAJFDHA", "Cash Witdrawal", "successful", "20000", "2000", "18000", "No remarks"],
-  ]
 
 
   useEffect(() => {
@@ -304,7 +318,114 @@ const Aeps = () => {
       })
     }
   }, [])
+  const [pagination, setPagination] = useState({
+    current_page: "1",
+    total_pages: "1",
+    first_page_url: "",
+    last_page_url: "",
+    next_page_url: "",
+    prev_page_url: "",
+  })
+  const [rowData, setRowData] = useState([
 
+  ])
+  const [columnDefs, setColumnDefs] = useState([
+    {
+      headerName: "Trnxn ID",
+      field: 'transaction_id'
+    },
+    {
+      headerName: "Debit Amount",
+      field: 'debit_amount'
+    },
+    {
+      headerName: "Credit Amount",
+      field: 'credit_amount'
+    },
+    {
+      headerName: "Opening Balance",
+      field: 'opening_balance'
+    },
+    {
+      headerName: "Closing Balance",
+      field: 'closing_balance'
+    },
+    {
+      headerName: "Transaction Type",
+      field: 'service_type'
+    },
+    {
+      headerName: "Created Timestamp",
+      field: 'created_at'
+    },
+    {
+      headerName: "Updated Timestamp",
+      field: 'updated_at'
+    },
+    {
+      headerName: "Additional Info",
+      field: 'metadata',
+      defaultMinWidth: 300
+    },
+    {
+      headerName: "Receipt",
+      field: "receipt",
+      pinned: 'right',
+      cellRenderer: 'receiptCellRenderer'
+    }
+  ])
+
+  function fetchTransactions(pageLink) {
+    BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
+      setPagination({
+        current_page: res.data.current_page,
+        total_pages: parseInt(res.data.last_page),
+        first_page_url: res.data.first_page_url,
+        last_page_url: res.data.last_page_url,
+        next_page_url: res.data.next_page_url,
+        prev_page_url: res.data.prev_page_url,
+      })
+      setRowData(res.data.data)
+    }).catch((err) => {
+      console.log(err)
+      Toast({
+        status: 'error',
+        description: err.response.data.message || err.response.data || err.message
+      })
+    })
+  }
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [])
+
+
+  const pdfRef = React.createRef()
+  const [receipt, setReceipt] = useState({
+    show: false,
+    status: "success",
+    data: {}
+  })
+  const receiptCellRenderer = (params) => {
+    function showReceipt(willShow) {
+      if (!params.data.metadata) {
+        Toast({
+          description: 'No Receipt Available'
+        })
+        return
+      }
+      setReceipt({
+        status: JSON.parse(params.data.metadata).status,
+        show: willShow,
+        data: JSON.parse(params.data.metadata)
+      })
+    }
+    return (
+      <HStack height={'full'} w={'full'} gap={4}>
+        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+      </HStack>
+    )
+  }
 
   return (
     <>
@@ -329,100 +450,165 @@ const Aeps = () => {
             </RadioGroup>
           </FormControl>
 
-          {/* Cash Withdrawal Form */}
-          {
-            formik.values.serviceCode == "aadhaar-pay" ? <>
-              <FormControl w={'full'} pb={6}>
-                <FormLabel>Select Bank</FormLabel>
-                <Select name='bankCode'
-                  value={formik.values.bankCode}
-                  onChange={formik.handleChange} w={'xs'}
-                >
-                  {
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.id}>{bank.bankName}</option>
-                    ))
-                  }
-                </Select>
-                <HStack spacing={2} py={2}>
+          {/* Aadhaar Pay Form */}
+          <FormControl w={'full'} pb={6}>
+            <FormLabel>Select Bank</FormLabel>
+            <Select name='bankCode'
+              value={formik.values.bankCode}
+              onChange={formik.handleChange} w={'xs'}
+            >
+              {
+                banksList.map((bank, key) => (
+                  aepsProvider == "paysprint" &&
+                  <option key={key} value={bank.id}>{bank.bankName}</option>
+                ))
+              }
+            </Select>
+            <HStack spacing={2} py={2}>
 
-                  <Button
-                    fontSize={'xs'}
-                    value={"SBIN"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >State Bank of India</Button>
+              <Button
+                fontSize={'xs'}
+                value={"SBIN"}
+                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+              >State Bank of India</Button>
 
-                  <Button
-                    fontSize={'xs'}
-                    value={"pnb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Punjab National Bank</Button>
+              <Button
+                fontSize={'xs'}
+                value={"pnb"}
+                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+              >Punjab National Bank</Button>
 
-                  <Button
-                    fontSize={'xs'}
-                    value={"yb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Yes Bank</Button>
+              <Button
+                fontSize={'xs'}
+                value={"yb"}
+                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
+              >Yes Bank</Button>
 
-                </HStack>
-              </FormControl>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number / VID</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                  <HStack py={2}>
-                    <Checkbox name={'isVID'}>It is a VID</Checkbox>
-                  </HStack>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Amount</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={"₹"} />
-                    <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-                  </InputGroup>
-                  <HStack spacing={2} py={2}>
+            </HStack>
+          </FormControl>
+          <Stack direction={['column', 'row']} spacing={6} pb={6}>
+            <FormControl w={'full'}>
+              <FormLabel>Aadhaar Number / VID</FormLabel>
+              <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+              <HStack py={2}>
+                <Checkbox name={'isVID'}>It is a VID</Checkbox>
+              </HStack>
+            </FormControl>
+            <FormControl w={'full'}>
+              <FormLabel>Phone Number</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children={'+91'} />
+                <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
+              </InputGroup>
+            </FormControl>
+            <FormControl w={'full'}>
+              <FormLabel>Amount</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children={"₹"} />
+                <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
+              </InputGroup>
+              <HStack spacing={2} py={2}>
 
-                    <Button
-                      fontSize={'xs'}
-                      value={1000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >1000</Button>
+                <Button
+                  fontSize={'xs'}
+                  value={1000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >1000</Button>
 
-                    <Button
-                      fontSize={'xs'}
-                      value={2000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >2000</Button>
+                <Button
+                  fontSize={'xs'}
+                  value={2000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >2000</Button>
 
-                    <Button
-                      fontSize={'xs'}
-                      value={5000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >5000</Button>
+                <Button
+                  fontSize={'xs'}
+                  value={5000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >5000</Button>
 
-                  </HStack>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
+              </HStack>
+            </FormControl>
+          </Stack>
 
           <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
         </Box>
 
-        <Grid
-          data={transactions}
-          columns={['Date', 'Member ID', 'Transaction ID', "Transaction Type", "Status", "Opening Balance", "Amount", "Closing Balance", "Remarks"]}
+        <Text my={8}>Your Recent Transactions</Text>
+        <Box py={6}>
+          <Text fontWeight={'medium'} pb={4}>Recent Transfers</Text>
+          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              components={{
+                'receiptCellRenderer': receiptCellRenderer
+              }}
+            >
 
-        />
+            </AgGridReact>
+          </Box>
+        </Box>
       </DashboardWrapper>
+
+
+      <Modal
+        isOpen={receipt.show}
+        onClose={() => setReceipt({ ...receipt, show: false })}
+      >
+        <ModalOverlay />
+        <ModalContent width={'xs'}>
+          <Box ref={pdfRef} style={{ borderBottom: '1px solid #999' }}>
+            <ModalHeader p={0}>
+              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
+                {
+                  receipt.status ?
+                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                      <BsXCircle color='#FFF' fontSize={72} /> 
+
+                }
+                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+              </VStack>
+            </ModalHeader>
+            <ModalBody p={0} bg={'azure'}>
+              <VStack w={'full'} p={8} bg={'#FFF'}>
+                {
+                  receipt.data ?
+                    Object.entries(receipt.data).map((item, key) => (
+                      <HStack
+                        justifyContent={'space-between'}
+                        gap={8} pb={4} w={'full'} key={key}
+                      >
+                        <Text fontSize={14}
+                          fontWeight={'medium'}
+                          textTransform={'capitalize'}
+                        >{item[0]}</Text>
+                        <Text fontSize={14} >{`${item[1]}`}</Text>
+                      </HStack>
+                    )) : null
+                }
+              </VStack>
+            </ModalBody>
+          </Box>
+          <ModalFooter>
+            <HStack justifyContent={'center'} gap={8}>
+
+              <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                {
+                  ({ toPdf }) => <Button
+                    rounded={'full'}
+                    size={'sm'}
+                    colorScheme={'twitter'}
+                    leftIcon={<BsDownload />}
+                    onClick={toPdf}
+                  >Download
+                  </Button>
+                }
+              </Pdf>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }

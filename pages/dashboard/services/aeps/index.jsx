@@ -31,11 +31,12 @@ import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Cookies from 'js-cookie'
-import { BsCheck2Circle, BsClock, BsDownload, BsXCircle } from 'react-icons/bs'
+import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-icons/bs'
 import Pdf from 'react-to-pdf'
 
 const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const transactionKeyword = "aeps"
   const serviceCode = "20"
   useEffect(() => {
     ClientAxios.post('/api/user/fetch', {
@@ -257,14 +258,6 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
-  const [pagination, setPagination] = useState({
-    current_page: "1",
-    total_pages: "1",
-    first_page_url: "",
-    last_page_url: "",
-    next_page_url: "",
-    prev_page_url: "",
-  })
   const Toast = useToast()
   const formik = useFormik({
     initialValues: {
@@ -298,10 +291,6 @@ const Aeps = () => {
     }
   })
 
-  const transactions = [
-    ["25-01-2023 18:54", "Member29", "BFAJFDHA", "Cash Witdrawal", "successful", "20000", "2000", "18000", "No remarks"],
-  ]
-
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null
@@ -321,21 +310,87 @@ const Aeps = () => {
       })
     }
   }, [])
+  const [pagination, setPagination] = useState({
+    current_page: "1",
+    total_pages: "1",
+    first_page_url: "",
+    last_page_url: "",
+    next_page_url: "",
+    prev_page_url: "",
+  })
+  const [rowData, setRowData] = useState([
 
-
-  const [rowData, setRowData] = useState([])
-
-  const [columnDefs, setColumnDefs] = useState([
-    { headerName: "Trnxn ID", field: 'transaction_id' },
-    { headerName: "Beneficiary Name", field: 'name' },
-    { headerName: "Beneficiary ID", field: 'reciever_id' },
-    { headerName: "Receiver Phone", field: 'phone_number' },
-    { headerName: "Amount", field: 'amount' },
-    { headerName: "Datetime", field: 'created_at' },
-    { headerName: "Remarks", field: 'remarks' },
-    { headerName: "Metadata", field: 'metadata' },
-    { headerName: "Receipt", field: 'actions', pinned: 'right', cellRenderer: 'receiptCellRenderer' },
   ])
+  const [columnDefs, setColumnDefs] = useState([
+    {
+      headerName: "Trnxn ID",
+      field: 'transaction_id'
+    },
+    {
+      headerName: "Debit Amount",
+      field: 'debit_amount'
+    },
+    {
+      headerName: "Credit Amount",
+      field: 'credit_amount'
+    },
+    {
+      headerName: "Opening Balance",
+      field: 'opening_balance'
+    },
+    {
+      headerName: "Closing Balance",
+      field: 'closing_balance'
+    },
+    {
+      headerName: "Transaction Type",
+      field: 'service_type'
+    },
+    {
+      headerName: "Created Timestamp",
+      field: 'created_at'
+    },
+    {
+      headerName: "Updated Timestamp",
+      field: 'updated_at'
+    },
+    {
+      headerName: "Additional Info",
+      field: 'meta_data',
+      defaultMinWidth: 300
+    },
+    {
+      headerName: "Receipt",
+      field: "receipt",
+      pinned: 'right',
+      cellRenderer: 'receiptCellRenderer'
+    }
+  ])
+
+  function fetchTransactions(pageLink) {
+    BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
+      setPagination({
+        current_page: res.data.current_page,
+        total_pages: parseInt(res.data.last_page),
+        first_page_url: res.data.first_page_url,
+        last_page_url: res.data.last_page_url,
+        next_page_url: res.data.next_page_url,
+        prev_page_url: res.data.prev_page_url,
+      })
+      setRowData(res.data.data)
+    }).catch((err) => {
+      console.log(err)
+      Toast({
+        status: 'error',
+        description: err.response.data.message || err.response.data || err.message
+      })
+    })
+  }
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [])
+
 
   const pdfRef = React.createRef()
   const [receipt, setReceipt] = useState({
@@ -345,29 +400,21 @@ const Aeps = () => {
   })
   const receiptCellRenderer = (params) => {
     function showReceipt(willShow) {
+      if (!params.data.meta_data) {
+        Toast({
+          description: 'No Receipt Available'
+        })
+        return
+      }
       setReceipt({
-        status: params.data.metadata.status ? "success" : "failed",
+        status: JSON.parse(params.data.meta_data).status ? "success" : "failed",
         show: willShow,
-        data: params.data.metadata
+        data: JSON.parse(params.data.meta_data)
       })
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
         <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
-        <Pdf targetRef={pdfRef} filename="Receipt.pdf" scale={.8}>
-          {
-            ({ toPdf }) => <Button
-              rounded={'full'}
-              size={'sm'}
-              colorScheme={'yellow'}
-              onClick={() => {
-                showReceipt(false)
-                toPdf()
-              }}
-            ><BsDownload />
-            </Button>
-          }
-        </Pdf>
       </HStack>
     )
   }
