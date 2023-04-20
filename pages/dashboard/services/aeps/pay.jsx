@@ -258,7 +258,7 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
-  const Toast = useToast()
+  const Toast = useToast({ position: 'top-right' })
   const formik = useFormik({
     initialValues: {
       aadhaarNo: "",
@@ -558,20 +558,19 @@ const Aeps = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ borderBottom: '1px solid #999' }}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
                   receipt.status ?
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
-                      <BsXCircle color='#FFF' fontSize={72} /> 
-
+                    <BsXCircle color='#FFF' fontSize={72} />
                 }
                 <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={8} bg={'#FFF'}>
+              <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => (

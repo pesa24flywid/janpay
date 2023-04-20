@@ -6,12 +6,21 @@ import {
   FormControl,
   FormLabel,
   Input,
+  PinInput,
+  PinInputField,
   Select,
   Button,
   Stack,
   HStack,
   VStack,
-  useToast
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalContent,
+  useDisclosure
 } from '@chakra-ui/react'
 import { HiServerStack } from 'react-icons/hi2'
 import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
@@ -22,8 +31,9 @@ import {
   BsDropletFill,
   BsHouseDoorFill,
   BsEmojiSmileFill,
-  BsPlayBtnFill,
-  BsCurrencyRupee
+  BsCheck2Circle,
+  BsXCircle,
+  BsDownload,
 } from 'react-icons/bs'
 import { AiFillFire } from 'react-icons/ai'
 import { FiMonitor } from 'react-icons/fi'
@@ -37,14 +47,15 @@ import {
   FaCity,
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
-import { useFormik } from 'formik'
 import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
+import Pdf from 'react-to-pdf'
 
 
 const Bbps = () => {
   const [bbpsProvider, setBbpsProvider] = useState("paysprint")
   const Toast = useToast({ position: 'top-right' })
+  const { isOpen, onOpen, onClose } = useDisclosure()
   useEffect(() => {
 
     ClientAxios.post('/api/user/fetch', {
@@ -89,6 +100,7 @@ const Bbps = () => {
   const [fetchBillResponse, setFetchBillResponse] = useState({})
 
   const [amount, setAmount] = useState("")
+  const [mpin, setMpin] = useState("")
   const formRef = useRef(null)
 
   const [latlong, setLatlong] = useState("")
@@ -200,16 +212,19 @@ const Bbps = () => {
       BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
         {
           ...object,
+          mpin: mpin,
           bill: fetchBillResponse,
           amount: amount,
           latitude: latlong.split(",")[0],
           longitude: latlong.split(",")[1]
         }
       ).then(res => {
-        Toast({
-          status: 'success',
-          description: res.data.message
+        setReceipt({
+          status: res.data.metadata.status,
+          show: true,
+          data: res.data.metadata
         })
+        onClose()
       }).catch(err => {
         Toast({
           status: 'error',
@@ -218,6 +233,13 @@ const Bbps = () => {
       })
     }
   }
+
+  const pdfRef = React.createRef()
+  const [receipt, setReceipt] = useState({
+    show: false,
+    status: "success",
+    data: {}
+  })
 
   return (
     <>
@@ -415,13 +437,104 @@ const Bbps = () => {
                   {
                     fetchBillBtn ?
                       <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} onClick={(e) => payBill(e)}>Pay (₹{amount})</Button>
+                      <Button colorScheme={'twitter'} onClick={onOpen}>Pay (₹{amount})</Button>
                   }
                 </form> : null
             }
           </Box>
         </Stack>
       </DashboardWrapper>
+
+
+      {/* MPIN Modal */}
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Transaction</ModalHeader>
+          <ModalBody>
+            <VStack>
+              <Text>Enter MPIN to confirm transaction</Text>
+              <HStack gap={4}>
+                <PinInput onComplete={value => setMpin(value)}>
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                  <PinInputField bg={'aqua'} />
+                </PinInput>
+              </HStack>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <HStack justifyContent={'flex-end'} gap={6}>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button colorScheme='twitter' onClick={(e) => payBill(e)}>Submit</Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+
+      {/* Receipt */}
+      <Modal
+        isOpen={receipt.show}
+        onClose={() => setReceipt({ ...receipt, show: false })}
+      >
+        <ModalOverlay />
+        <ModalContent width={'xs'}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+            <ModalHeader p={0}>
+              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
+                {
+                  receipt.status ?
+                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                    <BsXCircle color='#FFF' fontSize={72} />
+                }
+                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+              </VStack>
+            </ModalHeader>
+            <ModalBody p={0} bg={'azure'}>
+              <VStack w={'full'} p={4} bg={'#FFF'}>
+                {
+                  receipt.data ?
+                    Object.entries(receipt.data).map((item, key) => (
+                      <HStack
+                        justifyContent={'space-between'}
+                        gap={8} pb={4} w={'full'} key={key}
+                      >
+                        <Text
+                          fontSize={14}
+                          fontWeight={'medium'}
+                          textTransform={'capitalize'}
+                        >{item[0]}</Text>
+                        <Text fontSize={14} maxW={'full'} >{`${item[1]}`}</Text>
+                      </HStack>
+                    )) : null
+                }
+              </VStack>
+            </ModalBody>
+          </Box>
+          <ModalFooter>
+            <HStack justifyContent={'center'} gap={8}>
+
+              <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                {
+                  ({ toPdf }) => <Button
+                    rounded={'full'}
+                    size={'sm'}
+                    colorScheme={'twitter'}
+                    leftIcon={<BsDownload />}
+                    onClick={toPdf}
+                  >Download
+                  </Button>
+                }
+              </Pdf>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }

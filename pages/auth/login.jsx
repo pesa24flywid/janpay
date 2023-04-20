@@ -42,7 +42,7 @@ const Login = () => {
     const [authMethod, setAuthMethod] = useState("phone")
     const [otp, setOtp] = useState("")
     const [isBtnLoading, setIsBtnLoading] = useState(false)
-    const toast = useToast()
+    const Toast = useToast({ position: 'top-right' })
     const Router = useRouter()
 
     const [loginPreference, setLoginPreference] = useState('otp')
@@ -69,7 +69,7 @@ const Login = () => {
                 Cookies.set("latlong", position.coords.latitude + "," + position.coords.longitude)
             })
         } else {
-            toast({
+            Toast({
                 status: "error",
                 title: "Location Error",
                 description: "No GPS detected. Try logging in with another device."
@@ -123,11 +123,10 @@ const Login = () => {
             if (loginPreference == 'otp') {
                 const otpSuccess = await sendOtp(values)
                 setOtpBtnDisabled(true)
-                toast({
+                Toast({
                     title: otpSuccess.title,
                     description: otpSuccess.message,
                     status: otpSuccess.status,
-                    position: 'top-right',
                     duration: 3000
                 })
                 otpSuccess.status == "success" ? setOtpSent(true) : setOtpBtnDisabled(false)
@@ -158,9 +157,8 @@ const Login = () => {
     // Handling login after OTP submission
     async function handleLogin() {
         setIsBtnLoading(true)
-        if(!Cookies.get("latlong")){
-            toast({
-                position: 'top-right',
+        if (!Cookies.get("latlong")) {
+            Toast({
                 status: 'warning',
                 title: 'Location Not Found!',
                 description: 'Please allow location access to login'
@@ -204,7 +202,7 @@ const Login = () => {
 
         } catch (error) {
             console.log(error)
-            toast({
+            Toast({
                 status: "error",
                 title: "Error Occured",
                 description: error.message,
@@ -219,9 +217,8 @@ const Login = () => {
 
     // Handling MPIN Login
     async function handleMpin() {
-        if(!Cookies.get("latlong")){
-            toast({
-                position: 'top-right',
+        if (!Cookies.get("latlong")) {
+            Toast({
                 status: 'warning',
                 title: 'Location Not Found!',
                 description: 'Please allow location access to login'
@@ -259,15 +256,16 @@ const Login = () => {
 
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            }).then(() => {
+                Router.push("/dashboard?pageId=dashboard")
             })
-            Router.push("/dashboard?pageId=dashboard")
+
         } catch (err) {
             console.log(err)
-            toast({
+            Toast({
                 status: 'error',
                 description: err.response.data.message || err.response.data || err.message,
                 title: 'Error Occured',
-                position: 'top-right'
             })
         }
     }

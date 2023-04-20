@@ -33,42 +33,9 @@ import {
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
-import { Document, Page, Text as PText, StyleSheet, View, Image, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
+import Pdf from 'react-to-pdf'
+import { BsCheck2Circle, BsDownload, BsXCircle } from 'react-icons/bs'
 
-const styles = StyleSheet.create({
-    page: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start'
-    },
-    img: {
-        width: '120px',
-        margin: '0 auto',
-    },
-    text: {
-        margin: '8px 0'
-    }
-})
-
-const PaymentReceipt = ({ amount, payout_id, name, account }) => {
-    return (
-        <Document>
-            <Page size={'A6'} style={styles.page}>
-                <View>
-                    <Image style={styles.img}
-                        src={'https://thumbs.dreamstime.com/b/success-grunge-vintage-stamp-isolated-white-background-success-sign-success-stamp-122353526.jpg'} />
-
-                    <PText style={styles.text}>&nbsp;&nbsp;&nbsp;&nbsp;</PText>
-                    <PText style={styles.text}>Amount: &nbsp;&nbsp;&nbsp;&nbsp; Rs. {amount}</PText>
-                    <PText style={styles.text}>Payout ID: &nbsp;&nbsp; {payout_id}</PText>
-                    <PText style={styles.text}>Beneficiary:  {name}</PText>
-                    <PText style={styles.text}>Account: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {account}</PText>
-                </View>
-            </Page>
-        </Document>
-    )
-}
 
 const Payout = () => {
 
@@ -76,10 +43,6 @@ const Payout = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const Toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
-
-    const [paymentModal, setPaymentModal] = useState(false)
-    const [payout_id, setPayout_id] = useState("")
-
 
     const Formik = useFormik({
         initialValues: {
@@ -91,6 +54,12 @@ const Payout = () => {
         }
     })
 
+    const pdfRef = React.createRef()
+    const [receipt, setReceipt] = useState({
+        show: false,
+        status: "success",
+        data: {}
+    })
     function makePayout() {
         setIsLoading(true)
         BackendAxios.post(`/api/razorpay/payout/new-payout/${serviceId}`, JSON.stringify({
@@ -101,9 +70,12 @@ const Payout = () => {
             amount: Formik.values.amount,
         })
         ).then((res) => {
-            setPayout_id(res.data.payout_id)
-            setPaymentModal(true)
             setIsLoading(false)
+            setReceipt({
+                status: res.data.metadata.status,
+                show: true,
+                data: res.data.metadata
+            })
         }).catch(err => {
             Toast({
                 status: 'error',
@@ -137,6 +109,20 @@ const Payout = () => {
             console.log(err)
         })
     }, [])
+
+    function showReceipt(data) {
+        if (!data) {
+            Toast({
+                description: "No receipt for this transaction"
+            })
+            return
+        }
+        setReceipt({
+            status: data.status,
+            show: true,
+            data: data
+        })
+    }
 
     return (
         <>
@@ -206,6 +192,7 @@ const Payout = () => {
                                 <Thead>
                                     <Tr>
                                         <Th>#</Th>
+                                        <Th>Receipt</Th>
                                         <Th>Beneficiary Name</Th>
                                         <Th>Account Number</Th>
                                         <Th>Amount</Th>
@@ -219,15 +206,25 @@ const Payout = () => {
                                             return (
                                                 <Tr key={key}>
                                                     <Td>{key + 1}</Td>
+                                                    <Td>
+                                                        <Button
+                                                            size={'xs'}
+                                                            colorScheme='twitter'
+                                                            rounded={'full'}
+                                                            onClick={() => showReceipt(item.metadata)}
+                                                        >Receipt</Button>
+                                                    </Td>
                                                     <Td>{item.beneficiary_name || "No name"}</Td>
                                                     <Td>{item.account_number || "0"}</Td>
                                                     <Td>{item.amount || "0"}</Td>
                                                     <Td>{item.created_at || "Non-Format"}</Td>
-                                                    <Td>{
-                                                        item.status == 'processing' ?
-                                                            <Text color={'green'}>Success</Text> :
-                                                            <Text textTransform={'capitalize'}>{item.status}</Text>
-                                                    }</Td>
+                                                    <Td>
+                                                        {
+                                                            item.status == 'processing' ?
+                                                                <Text color={'green'}>Success</Text> :
+                                                                <Text textTransform={'capitalize'}>{item.status}</Text>
+                                                        }
+                                                    </Td>
                                                 </Tr>
                                             )
                                         })
@@ -281,21 +278,60 @@ const Payout = () => {
             </Modal>
 
             <Modal
-                isOpen={paymentModal}
-                onClose={() => setPaymentModal(false)}
+                isOpen={receipt.show}
+                onClose={() => setReceipt({ ...receipt, show: false })}
             >
                 <ModalOverlay />
-                <ModalContent h={'xl'} w={'auto'}>
-                    <ModalBody>
-                        <PDFViewer height={'100%'}>
-                            <PaymentReceipt
-                                amount={Formik.values.amount}
-                                payout_id={payout_id}
-                                name={Formik.values.beneficiaryName}
-                                account={Formik.values.account}
-                            />
-                        </PDFViewer>
-                    </ModalBody>
+                <ModalContent width={'xs'}>
+                    <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+                        <ModalHeader p={0}>
+                            <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
+                                {
+                                    receipt.status ?
+                                        <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                                        <BsXCircle color='#FFF' fontSize={72} />
+                                }
+                                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                            </VStack>
+                        </ModalHeader>
+                        <ModalBody p={0} bg={'azure'}>
+                            <VStack w={'full'} p={4} bg={'#FFF'}>
+                                {
+                                    receipt.data ?
+                                        Object.entries(receipt.data).map((item, key) => (
+                                            <HStack
+                                                justifyContent={'space-between'}
+                                                gap={8} pb={4} w={'full'} key={key}
+                                            >
+                                                <Text
+                                                    fontSize={14}
+                                                    fontWeight={'medium'}
+                                                    textTransform={'capitalize'}
+                                                >{item[0]}</Text>
+                                                <Text fontSize={14} maxW={'full'} >{`${item[1]}`}</Text>
+                                            </HStack>
+                                        )) : null
+                                }
+                            </VStack>
+                        </ModalBody>
+                    </Box>
+                    <ModalFooter>
+                        <HStack justifyContent={'center'} gap={8}>
+
+                            <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                                {
+                                    ({ toPdf }) => <Button
+                                        rounded={'full'}
+                                        size={'sm'}
+                                        colorScheme={'twitter'}
+                                        leftIcon={<BsDownload />}
+                                        onClick={toPdf}
+                                    >Download
+                                    </Button>
+                                }
+                            </Pdf>
+                        </HStack>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </>

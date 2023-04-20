@@ -364,7 +364,7 @@ const FundTransfer = () => {
                                 </VStack>
                             </ModalHeader>
                             <ModalBody p={0} bg={'azure'}>
-                                <VStack w={'full'} p={8} bg={'#FFF'}>
+                                <VStack w={'full'} p={4} bg={'#FFF'}>
                                     {
                                         receipt.data ?
                                             Object.entries(receipt.data).map((item, key) => (

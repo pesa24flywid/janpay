@@ -86,7 +86,6 @@ const Index = () => {
 
   return (
     <DashboardWrapper pageTitle={'Fund Requests Reports'}>
-      <Box h={'28'} w={'full'}></Box>
       <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
         <Button
           colorScheme={'twitter'}

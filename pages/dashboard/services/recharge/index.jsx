@@ -37,6 +37,9 @@ import {
   BsDropletFill,
   BsHouseDoorFill,
   BsEmojiSmileFill,
+  BsCheck2Circle,
+  BsXCircle,
+  BsDownload,
 } from 'react-icons/bs'
 import { AiFillFire } from 'react-icons/ai'
 import { FiMonitor } from 'react-icons/fi'
@@ -50,8 +53,8 @@ import {
   FaCity,
 } from 'react-icons/fa'
 import { BiRupee } from 'react-icons/bi'
-import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
+import Pdf from 'react-to-pdf'
 
 
 const Bbps = () => {
@@ -249,13 +252,11 @@ const Bbps = () => {
       ...object,
       mpin: mpin
     }).then((res) => {
-      Toast({
-        status: 'success',
-        title: 'Transaction Successful',
-        description: res.data.message,
-        position: 'top-right'
+      setReceipt({
+        status: res.data.metadata.status,
+        show: true,
+        data: res.data.metadata
       })
-      console.log(res.data)
     }).catch(err => {
       Toast({
         status: 'error',
@@ -268,7 +269,12 @@ const Bbps = () => {
     onClose()
   }
 
-
+  const pdfRef = React.createRef()
+  const [receipt, setReceipt] = useState({
+    show: false,
+    status: "success",
+    data: {}
+  })
 
   return (
     <>
@@ -540,6 +546,65 @@ const Bbps = () => {
           <ModalFooter>
             <HStack justifyContent={'flex-end'}>
               <Button colorScheme={'twitter'} onClick={()=>doRecharge()}>Confirm</Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      
+      <Modal
+        isOpen={receipt.show}
+        onClose={() => setReceipt({ ...receipt, show: false })}
+      >
+        <ModalOverlay />
+        <ModalContent width={'xs'}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+            <ModalHeader p={0}>
+              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
+                {
+                  receipt.status ?
+                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                    <BsXCircle color='#FFF' fontSize={72} />
+                }
+                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+              </VStack>
+            </ModalHeader>
+            <ModalBody p={0} bg={'azure'}>
+              <VStack w={'full'} p={4} bg={'#FFF'}>
+                {
+                  receipt.data ?
+                    Object.entries(receipt.data).map((item, key) => (
+                      <HStack
+                        justifyContent={'space-between'}
+                        gap={8} pb={4} w={'full'} key={key}
+                      >
+                        <Text
+                          fontSize={14}
+                          fontWeight={'medium'}
+                          textTransform={'capitalize'}
+                        >{item[0]}</Text>
+                        <Text fontSize={14} maxW={'full'} >{`${item[1]}`}</Text>
+                      </HStack>
+                    )) : null
+                }
+              </VStack>
+            </ModalBody>
+          </Box>
+          <ModalFooter>
+            <HStack justifyContent={'center'} gap={8}>
+
+              <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                {
+                  ({ toPdf }) => <Button
+                    rounded={'full'}
+                    size={'sm'}
+                    colorScheme={'twitter'}
+                    leftIcon={<BsDownload />}
+                    onClick={toPdf}
+                  >Download
+                  </Button>
+                }
+              </Pdf>
             </HStack>
           </ModalFooter>
         </ModalContent>

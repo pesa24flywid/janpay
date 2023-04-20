@@ -36,12 +36,12 @@ import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { states } from '../../../../lib/states'
 import { useToast } from '@chakra-ui/react'
 import { FiSend } from 'react-icons/fi'
-import { BsTrash } from 'react-icons/bs'
+import { BsCheck2Circle, BsDownload, BsTrash, BsXCircle } from 'react-icons/bs'
 import { AiOutlinePlus } from 'react-icons/ai'
-import PermissionMiddleware from '../../../../lib/utils/checkPermission'
+import Pdf from 'react-to-pdf'
 
 const Dmt = () => {
-    const [dmtProvider, setDmtProvider] = useState("eko")
+    const [dmtProvider, setDmtProvider] = useState("paysprint")
     const serviceId = 24
     useEffect(() => {
 
@@ -154,10 +154,13 @@ const Dmt = () => {
         }
     })
 
-    // useEffect(() => {
-    //     registrationFormik.setFieldValue("customerId", customerId)
-    // }, [customerId])
 
+    const pdfRef = React.createRef()
+    const [receipt, setReceipt] = useState({
+      show: false,
+      status: "success",
+      data: {}
+    })
     const paymentFormik = useFormik({
         initialValues: {
             amount: "",
@@ -177,6 +180,11 @@ const Dmt = () => {
                         description: 'Transaction successful!'
                     })
                     setPaymentConfirmationModal(false)
+                    setReceipt({
+                        status: res.data.metadata.status,
+                        show: true,
+                        data: res.data.metadata
+                    })
                 }).catch(err => {
                     console.log(err)
                     Toast({
@@ -701,7 +709,7 @@ const Dmt = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isLoading={isBtnLoading}
-                                        onClick={()=>setPaymentConfirmationModal(true)}>Submit
+                                        onClick={() => setPaymentConfirmationModal(true)}>Submit
                                     </Button>
                             }
                         </> : null
@@ -714,7 +722,7 @@ const Dmt = () => {
 
 
             {/* Confirm Payment Popup */}
-            <Modal isOpen={paymentConfirmationModal} onClose={()=>setPaymentConfirmationModal(false)}>
+            <Modal isOpen={paymentConfirmationModal} onClose={() => setPaymentConfirmationModal(false)}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Please Confirm</ModalHeader>
@@ -837,6 +845,64 @@ const Dmt = () => {
                     </DrawerFooter>
                 </DrawerContent>
             </Drawer>
+
+
+            <Modal
+                isOpen={receipt.show}
+                onClose={() => setReceipt({ ...receipt, show: false })}
+            >
+                <ModalOverlay />
+                <ModalContent width={'xs'}>
+                    <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+                        <ModalHeader p={0}>
+                            <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
+                                {
+                                    receipt.status ?
+                                        <BsCheck2Circle color='#FFF' fontSize={72} /> :
+                                        <BsXCircle color='#FFF' fontSize={72} />
+                                }
+                                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                            </VStack>
+                        </ModalHeader>
+                        <ModalBody p={0} bg={'azure'}>
+                            <VStack w={'full'} p={4} bg={'#FFF'}>
+                                {
+                                    receipt.data ?
+                                        Object.entries(receipt.data).map((item, key) => (
+                                            <HStack
+                                                justifyContent={'space-between'}
+                                                gap={8} pb={4} w={'full'} key={key}
+                                            >
+                                                <Text fontSize={14}
+                                                    fontWeight={'medium'}
+                                                    textTransform={'capitalize'}
+                                                >{item[0]}</Text>
+                                                <Text fontSize={14} >{`${item[1]}`}</Text>
+                                            </HStack>
+                                        )) : null
+                                }
+                            </VStack>
+                        </ModalBody>
+                    </Box>
+                    <ModalFooter>
+                        <HStack justifyContent={'center'} gap={8}>
+
+                            <Pdf targetRef={pdfRef} filename="Receipt.pdf">
+                                {
+                                    ({ toPdf }) => <Button
+                                        rounded={'full'}
+                                        size={'sm'}
+                                        colorScheme={'twitter'}
+                                        leftIcon={<BsDownload />}
+                                        onClick={toPdf}
+                                    >Download
+                                    </Button>
+                                }
+                            </Pdf>
+                        </HStack>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     )
 }

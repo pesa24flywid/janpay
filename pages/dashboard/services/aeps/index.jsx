@@ -258,7 +258,7 @@ const Aeps = () => {
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
-  const Toast = useToast()
+  const Toast = useToast({ position: 'top-right' })
   const formik = useFormik({
     initialValues: {
       aadhaarNo: "",
@@ -275,11 +275,11 @@ const Aeps = () => {
     onSubmit: async (values) => {
       setIsBtnLoading(true)
       await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-        Toast({
-          description: res.data.message,
-          position: 'top-right'
+        setReceipt({
+          show: true,
+          status: res.data.metadata.status,
+          data: res.data.metadata
         })
-        console.log(res.data)
       }).catch((err) => {
         Toast({
           title: 'Transaction Failed',
@@ -356,7 +356,7 @@ const Aeps = () => {
     },
     {
       headerName: "Additional Info",
-      field: 'meta_data',
+      field: 'metadata',
       defaultMinWidth: 300
     },
     {
@@ -399,22 +399,22 @@ const Aeps = () => {
     data: {}
   })
   const receiptCellRenderer = (params) => {
-    function showReceipt(willShow) {
-      if (!params.data.meta_data) {
+    function showReceipt() {
+      if (!params.data.metadata) {
         Toast({
           description: 'No Receipt Available'
         })
         return
       }
       setReceipt({
-        status: JSON.parse(params.data.meta_data).status ? "success" : "failed",
-        show: willShow,
-        data: JSON.parse(params.data.meta_data)
+        status: JSON.parse(params.data.metadata).status,
+        show: true,
+        data: JSON.parse(params.data.metadata)
       })
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
     )
   }
@@ -611,29 +611,26 @@ const Aeps = () => {
         </Box>
       </DashboardWrapper>
 
-
+      {/* Receipt */}
       <Modal
         isOpen={receipt.show}
         onClose={() => setReceipt({ ...receipt, show: false })}
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ borderBottom: '1px solid #999' }}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
-              <VStack w={'full'} p={8} bg={receipt.status == "success" ? "green.500" : receipt.status == "failed" ? "red.500" : "yellow.700"}>
+              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
-                  receipt.status == "success" ?
+                  receipt.status ?
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
-                    receipt.status == "failed" ?
-                      <BsXCircle color='#FFF' fontSize={72} /> :
-                      <BsClock color='#FFF' fontSize={72} />
-
+                    <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status}</Text>
+                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={8} bg={'#FFF'}>
+              <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => (
