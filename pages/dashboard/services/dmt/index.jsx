@@ -294,10 +294,10 @@ const Dmt = () => {
                     if (res.data.response_code == 1) {
                         setCustomerName(res.data.data.fname + " " + res.data.data.lname)
                         setCustomerRemainingLimit(
-                            (parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit))
+                            parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit)
                         )
                         setCustomerUsedLimit(
-                            75000 - parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit)
+                            75000 - (parseInt(res.data.data.bank1_limit) + parseInt(res.data.data.bank2_limit) + parseInt(res.data.data.bank3_limit))
                         )
                         setCustomerTotalLimit("75000")
                         setCustomerStatus("registered")
