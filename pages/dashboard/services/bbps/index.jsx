@@ -184,6 +184,12 @@ const Bbps = () => {
       ).then(res => {
         console.log(res.data)
         setFetchBillResponse(res.data)
+        if(res.data.status == false && parseInt(res.data.response_code) == 0){
+          Toast({
+            description: res.data.message
+          })
+          return
+        }
         setFetchBillBtn(false)
         setAmount(res.data.amount)
       }).catch(err => {
