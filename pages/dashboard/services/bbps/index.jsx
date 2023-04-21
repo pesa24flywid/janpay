@@ -279,43 +279,43 @@ const Bbps = () => {
                       }}
                     >
                       {
-                        item.operator_category_name.includes("Mobile")
+                        item.operator_category_name.toLowerCase().includes("mobile")
                           ? <FaMobile /> :
-                          item.operator_category_name.includes("Broadband")
+                          item.operator_category_name.toLowerCase().includes("broadband")
                             ? <HiServerStack /> :
-                            item.operator_category_name.includes("Gas") || item.operator_category_name.includes("LPG")
+                            item.operator_category_name.toLowerCase().includes("gas") || item.operator_category_name.toLowerCase().includes("lpg")
                               ? <AiFillFire /> :
-                              item.operator_category_name.includes("DTH")
+                              item.operator_category_name.toLowerCase().includes("dth")
                                 ? <FaSatelliteDish /> :
-                                item.operator_category_name.includes("Card")
+                                item.operator_category_name.toLowerCase().includes("card")
                                   ? <BsCreditCardFill /> :
-                                  item.operator_category_name.includes("Electricity")
+                                  item.operator_category_name.toLowerCase().includes("electricity")
                                     ? <BsLightningChargeFill /> :
-                                    item.operator_category_name.includes("Landline")
+                                    item.operator_category_name.toLowerCase().includes("landline")
                                       ? <GiRotaryPhone /> :
-                                      item.operator_category_name.includes("Water")
+                                      item.operator_category_name.toLowerCase().includes("water")
                                         ? <BsDropletFill /> :
-                                        item.operator_category_name.includes("Housing") || item.operator_category_name.includes("Rental")
+                                        item.operator_category_name.toLowerCase().includes("housing") || item.operator_category_name.toLowerCase().includes("rental")
                                           ? <BsHouseDoorFill /> :
-                                          item.operator_category_name.includes("Education")
+                                          item.operator_category_name.toLowerCase().includes("education")
                                             ? <GoMortarBoard /> :
-                                            item.operator_category_name.includes("Tax")
+                                            item.operator_category_name.toLowerCase().includes("tax")
                                               ? <BiRupee /> :
-                                              item.operator_category_name.includes("Associations")
+                                              item.operator_category_name.toLowerCase().includes("associations")
                                                 ? <FaUsers /> :
-                                                item.operator_category_name.includes("TV")
+                                                item.operator_category_name.toLowerCase().includes("tv")
                                                   ? <FiMonitor /> :
-                                                  item.operator_category_name.includes("Hospital") || item.operator_category_name.includes("Donation")
+                                                  item.operator_category_name.toLowerCase().includes("hospital") || item.operator_category_name.toLowerCase().includes("donation")
                                                     ? <FaHeart /> :
-                                                    item.operator_category_name.includes("Insurance")
+                                                    item.operator_category_name.toLowerCase().includes("insurance")
                                                       ? <BsEmojiSmileFill /> :
-                                                      item.operator_category_name.includes("Loan")
+                                                      item.operator_category_name.toLowerCase().includes("loan")
                                                         ? <GiMoneyStack /> :
-                                                        item.operator_category_name.includes("FASTag")
+                                                        item.operator_category_name.toLowerCase().includes("fastag")
                                                           ? <FaCar /> :
-                                                          item.operator_category_name.includes("Municipal Services")
+                                                          item.operator_category_name.toLowerCase().includes("municipal services")
                                                             ? <FaCity /> :
-                                                            item.operator_category_name.includes("Subscription")
+                                                            item.operator_category_name.toLowerCase().includes("subscription")
                                                               ? <FaMoneyBillAlt /> : <BiRupee />
                       }
                       <Text textTransform={'capitalize'}>{item.operator_category_name}</Text>
