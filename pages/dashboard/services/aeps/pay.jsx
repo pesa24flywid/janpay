@@ -457,12 +457,20 @@ const Aeps = () => {
               value={formik.values.bankCode}
               onChange={formik.handleChange} w={'xs'}
             >
-              {
-                banksList.map((bank, key) => (
-                  aepsProvider == "paysprint" &&
-                  <option key={key} value={bank.id}>{bank.bankName}</option>
-                ))
-              }
+            {
+              aepsProvider == "eko" &&
+              banksList.map((bank, key) => (
+                aepsProvider == "paysprint" &&
+                <option key={key} value={bank.id}>{bank.bankName}</option>
+              ))
+            }
+            {
+              aepsProvider == "paysprint" &&
+              banksList.map((bank, key) => (
+                aepsProvider == "paysprint" &&
+                <option key={key} value={bank.iino}>{bank.bankName}</option>
+              ))
+            }
             </Select>
             <HStack spacing={2} py={2}>
 

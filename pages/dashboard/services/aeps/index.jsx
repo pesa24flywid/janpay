@@ -454,9 +454,17 @@ const Aeps = () => {
                   onChange={formik.handleChange} w={'xs'}
                 >
                   {
+                    aepsProvider == "eko" &&
                     banksList.map((bank, key) => (
                       aepsProvider == "paysprint" &&
                       <option key={key} value={bank.id}>{bank.bankName}</option>
+                    ))
+                  }
+                  {
+                    aepsProvider == "paysprint" &&
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.iino}>{bank.bankName}</option>
                     ))
                   }
                 </Select>
@@ -548,12 +556,20 @@ const Aeps = () => {
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
 
-                    {
-                      banksList.map((bank, key) => (
-                        aepsProvider == "paysprint" &&
-                        <option key={key} value={bank.id}>{bank.bankName}</option>
-                      ))
-                    }
+                  {
+                    aepsProvider == "eko" &&
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.id}>{bank.bankName}</option>
+                    ))
+                  }
+                  {
+                    aepsProvider == "paysprint" &&
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.iino}>{bank.bankName}</option>
+                    ))
+                  }
                   </Select>
                 </FormControl>
               </Stack>
@@ -579,12 +595,20 @@ const Aeps = () => {
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
 
-                    {
-                      banksList.map((bank, key) => (
-                        aepsProvider == "paysprint" &&
-                        <option key={key} value={bank.id}>{bank.bankName}</option>
-                      ))
-                    }
+                  {
+                    aepsProvider == "eko" &&
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.id}>{bank.bankName}</option>
+                    ))
+                  }
+                  {
+                    aepsProvider == "paysprint" &&
+                    banksList.map((bank, key) => (
+                      aepsProvider == "paysprint" &&
+                      <option key={key} value={bank.iino}>{bank.bankName}</option>
+                    ))
+                  }
                   </Select>
                 </FormControl>
               </Stack>
