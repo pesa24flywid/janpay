@@ -346,7 +346,12 @@ const Bbps = () => {
                         regex: "",
                         param_name: "canumber"
                       }])
-                      setFetchBillBtn(true)
+                      if (selectedOperator.viewbill == "1") {
+                        setFetchBillBtn(true)
+                      }
+                      if (selectedOperator.viewbill == "0") {
+                        setFetchBillBtn(false)
+                      }
                       setSelectedOperator(e.target.value)
                     }
                   }}
@@ -430,7 +435,7 @@ const Bbps = () => {
                       fetchBillBtn ||
                       <FormControl id={'amount'} w={['full', 'xs']} pb={6}>
                         <FormLabel>Bill Amount</FormLabel>
-                        <Input type={'tel'} disabled name='amount' value={amount} />
+                        <Input type={'tel'} isDisabled={fetchBillBtn} name='amount' value={amount} onChange={e => setAmount(e.target.value)} />
                       </FormControl>
                     }
                   </Stack>
