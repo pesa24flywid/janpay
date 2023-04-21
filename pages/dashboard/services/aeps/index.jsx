@@ -464,7 +464,7 @@ const Aeps = () => {
                     aepsProvider == "paysprint" &&
                     banksList.map((bank, key) => (
                       aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iino}>{bank.bankName}</option>
+                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
                     ))
                   }
                 </Select>
@@ -567,7 +567,7 @@ const Aeps = () => {
                     aepsProvider == "paysprint" &&
                     banksList.map((bank, key) => (
                       aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iino}>{bank.bankName}</option>
+                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
                     ))
                   }
                   </Select>
@@ -606,7 +606,7 @@ const Aeps = () => {
                     aepsProvider == "paysprint" &&
                     banksList.map((bank, key) => (
                       aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iino}>{bank.bankName}</option>
+                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
                     ))
                   }
                   </Select>
