@@ -75,7 +75,7 @@ const EditProfile = () => {
       city: "",
       state: "",
       pincode: "",
-      profilePicture: null,
+      profilePic: null,
       aadhaarFront: null,
       aadhaarBack: null,
       panCard: null,
@@ -574,11 +574,11 @@ const EditProfile = () => {
           <Stack w={['full', 'sm']} rounded={12} bg={'white'} p={4} boxShadow={'lg'}>
             <Text fontSize={'lg'} fontWeight={'medium'} color={'#333'}>Upload Documents</Text>
             <Stack direction={["column"]} spacing="6" pb={6}>
-              <FormControl py={2} id="profilePicture" isRequired>
+              <FormControl py={2} id="profilePic" isRequired>
                 <FormLabel>Profile Picture</FormLabel>
                 <Input
                   type="file"
-                  onChange={(e) => formik.setFieldValue("profilePicture", e.currentTarget.files[0])}
+                  onChange={(e) => formik.setFieldValue("profilePic", e.currentTarget.files[0])}
                   accept={"image/png, image/jpg, image/jpeg"}
                 />
               </FormControl>
