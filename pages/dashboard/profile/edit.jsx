@@ -507,8 +507,8 @@ const EditProfile = () => {
                     _placeholder={{ color: "gray.500" }}
                     type="text"
                     value={formik.values.pincode}
-                    // onChange={formik.handleChange}
-                    disabled
+                    onChange={formik.handleChange}
+                    // disabled
                   />
                 </FormControl>
                 <FormControl py={2} id="state" isRequired>
