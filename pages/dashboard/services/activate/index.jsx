@@ -122,7 +122,7 @@ const Activate = () => {
                         <Text py={2}
                             textAlign={'center'}
                             textTransform={'capitalize'}
-                        >Onboarding Fees</Text>
+                        >AePS e-KYC</Text>
                         <Button
                             colorScheme={'twitter'}
                             isDisabled={isOnboarded}
