@@ -376,8 +376,9 @@ const EditProfile = () => {
                   _placeholder={{ color: "gray.500" }}
                   type="number"
                   value={formik.values.phone}
-                  onClick={() => setPhoneModal(true)}
+                  // onClick={() => setPhoneModal(true)}
                   readOnly
+                  disabled
                   cursor={'pointer'}
                 />
               </FormControl>
@@ -389,13 +390,14 @@ const EditProfile = () => {
                   placeholder="dd/mm/yyyy"
                   _placeholder={{ color: "gray.500" }}
                   type="date"
-                  max={`${date.getFullYear() - 18}-${(date.getMonth() + 1).toLocaleString('en-US', {
-                    minimumIntegerDigits: 2
-                  })}-${date.getDate().toLocaleString('en-US', {
-                    minimumIntegerDigits: 2
-                  })}`}
-                  value={formik.values.dob}
-                  onChange={formik.handleChange}
+                  // max={`${date.getFullYear() - 18}-${(date.getMonth() + 1).toLocaleString('en-US', {
+                  //   minimumIntegerDigits: 2
+                  // })}-${date.getDate().toLocaleString('en-US', {
+                  //   minimumIntegerDigits: 2
+                  // })}`}
+                  // value={formik.values.dob}
+                  // onChange={formik.handleChange},
+                  disabled
                 />
               </FormControl>
             </Stack>
@@ -481,7 +483,8 @@ const EditProfile = () => {
                     _placeholder={{ color: "gray.500" }}
                     type="text"
                     value={formik.values.line}
-                    onChange={formik.handleChange}
+                    // onChange={formik.handleChange}
+                    disabled
                   />
                 </FormControl>
               </Stack>
@@ -493,7 +496,8 @@ const EditProfile = () => {
                     _placeholder={{ color: "gray.500" }}
                     type="text"
                     value={formik.values.city}
-                    onChange={formik.handleChange}
+                    // onChange={formik.handleChange}
+                    disabled
                   />
                 </FormControl>
                 <FormControl py={2} id="pincode" isRequired>
@@ -503,12 +507,16 @@ const EditProfile = () => {
                     _placeholder={{ color: "gray.500" }}
                     type="text"
                     value={formik.values.pincode}
-                    onChange={formik.handleChange}
+                    // onChange={formik.handleChange}
+                    disabled
                   />
                 </FormControl>
                 <FormControl py={2} id="state" isRequired>
                   <FormLabel>State</FormLabel>
-                  <Select name="state" placeholder="Select State" value={formik.values.state} onChange={formik.handleChange}>
+                  <Select name="state" placeholder="Select State" value={formik.values.state} 
+                  // onChange={formik.handleChange}
+                  disabled
+                  >
                     {states.map((state, key) => {
                       return (
                         <option value={state} key={key}>{state}</option>
