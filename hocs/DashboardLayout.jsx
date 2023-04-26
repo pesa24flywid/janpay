@@ -64,17 +64,17 @@ const DashboardWrapper = (props) => {
     }, [])
 
     // Check if user has paid onboarding fee or not
-    useEffect(() => {
-        BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
-            if (res.data[0].onboard_fee == 0) {
-                if (!window.location.href.includes(`/services/activate`)) {
-                    if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
-                        window.location.assign('/dashboard/services/activate?pageId=services')
-                    }
-                }
-            }
-        })
-    }, [])
+    // useEffect(() => {
+    //     BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
+    //         if (res.data[0].onboard_fee == 0) {
+    //             if (!window.location.href.includes(`/services/activate`)) {
+    //                 if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
+    //                     window.location.assign('/dashboard/services/activate?pageId=services')
+    //                 }
+    //             }
+    //         }
+    //     })
+    // }, [])
 
 
     const [openNotification, setOpenNotification] = useState(false)
@@ -155,7 +155,7 @@ const DashboardWrapper = (props) => {
 
     return (
         <>
-            <Head><title>{`Flywid - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}
@@ -263,7 +263,7 @@ const DashboardWrapper = (props) => {
                     <DrawerContent>
                         <DrawerCloseButton />
                         <DrawerHeader>
-                            <Text fontWeight={'semibold'}>Flywid</Text>
+                            <Text fontWeight={'semibold'}>Pesa24</Text>
                         </DrawerHeader>
 
                         <DrawerBody mt={8}>

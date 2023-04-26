@@ -119,9 +119,9 @@ export const SidebarOptions =
         },
         {
           title: 'LIC services',
-          link: '/dashboard/services/payout?pageId=services',
+          link: '/dashboard/services/lic?pageId=services',
           id: "lic",
-          soon: true,
+          soon: false,
         },
         {
           title: 'PAN services',
@@ -204,7 +204,7 @@ export const SidebarOptions =
           title: 'LIC reports',
           link: '/dashboard/reports/lic?pageId=reports',
           id: "licReports",
-          soon: true,
+          soon: false,
         },
         {
           title: 'PAN reports',

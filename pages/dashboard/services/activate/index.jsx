@@ -104,7 +104,7 @@ const Activate = () => {
 
                 <Flex direction={'row'} gap={4} flexWrap={'wrap'}>
 
-                    <Box
+                    {/* <Box
                         w={['28', '56']}
                         p={4} rounded={12}
                         boxShadow={'lg'}
@@ -128,7 +128,7 @@ const Activate = () => {
                             isDisabled={isOnboarded}
                             onClick={() => onboardMe()}
                         >Onboard Now</Button>
-                    </Box>
+                    </Box> */}
                     {
                         services.map((service, key) => {
                             return (
