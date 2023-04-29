@@ -1,0 +1,21 @@
+{
+    "background_color": "#ffffff",
+    "description": "Payment App",
+    "dir": "ltr",
+    "display": "standalone",
+    "name": "com.pesa24.pesa24",
+    "orientation": "any",
+    "scope": "/",
+    "short_name": "Pesa24",
+    "start_url": "/",
+    "theme_color": "#ff0000",
+    "categories": [],
+    "screenshots": [],
+    "icons": [
+      {
+        "src": "/favicon.ico",
+        "type": "image/x-icon"
+      }
+    ],
+    "shortcuts": []
+  }
