@@ -100,7 +100,7 @@ const ProfileInfoCard = ({
               </Box>
               <Box>
                 <Heading size="xs" textTransform="uppercase">
-                  Merchant ID (EKO)
+                  Merchant ID
                 </Heading>
                 <Text pt="2" fontSize="sm">
                   {merchantId}
