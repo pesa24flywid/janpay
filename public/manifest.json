@@ -2,7 +2,7 @@
   "background_color": "#ffffff",
   "description": "Payment App",
   "dir": "ltr",
-  "display": "standalone",
+  "display": "fullscreen",
   "name": "Pesa24",
   "orientation": "any",
   "scope": "/",
