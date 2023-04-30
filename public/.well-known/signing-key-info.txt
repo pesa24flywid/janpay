@@ -1,10 +1,10 @@
 Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Google Play Store.
 
 Key store file: signing.keystore
-Key store password: RrqGyf9c6pCC
+Key store password: 2Ir5n0AegxXq
 Key alias: my-key-alias
-Key password: jWw_1i9Vw5g4
-Signer's full name: Pesa24
+Key password: Fqwag5SB1Ucg
+Signer's full name: Pesa24 Admin
 Signer's organization: Pesa24
-Signer's organizational unit: IT
-Signer's country code: IN
+Signer's organizational unit: Engineering
+Signer's country code: US
