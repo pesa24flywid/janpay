@@ -68,11 +68,11 @@ const Topbar = () => {
                 rounded={12} bg={'white'}
                 boxShadow={'base'}
             >
-                {/* <Image
+                <Image
                     w={'20'}
                     src={'/logo_long.png'}
-                /> */}
-                <Text fontWeight={'semibold'}>Flywid</Text>
+                />
+                {/* <Text fontWeight={'semibold'}>Pesa24</Text> */}
                 <Spacer />
                 <Show above={'md'}>
                     <Link href={'tel:+9178380742'} style={{ paddingRight: '2rem' }}>

@@ -20,12 +20,14 @@ import {
   InputLeftAddon,
   useToast,
   Select,
+  Box
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { useFormik } from "formik";
+import { Formik, useFormik } from "formik";
 import DashboardWrapper from "../../../hocs/DashboardLayout";
 import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
 import { states } from '../../../lib/states'
+import { IoMdFingerPrint } from "react-icons/io";
 const EditProfile = () => {
   const date = new Date()
   const [profile, setProfile] = useState({
@@ -39,6 +41,7 @@ const EditProfile = () => {
     companyName: "NA",
     address: "NA",
   })
+  const [isProfileComplete, setIsProfileComplete] = useState(false)
   const [isPhoneOtpDisabled, setIsPhoneOtpDisabled] = useState(true)
   const [isAadhaarOtpDisabled, setIsAadhaarOtpDisabled] = useState(true)
   const [isPanOtpDisabled, setIsPanOtpDisabled] = useState(true)
@@ -156,6 +159,8 @@ const EditProfile = () => {
 
       localStorage.setItem("deviceNumber", res.data.data.device_number || "")
       formik.setFieldValue("deviceNumber", res.data.data.device_number || "")
+
+      setIsProfileComplete(res.data.data.profile === 1)
     }).catch((err) => {
       Toast({
         status: "error",
@@ -188,7 +193,7 @@ const EditProfile = () => {
     setIsPanOtpDisabled(true)
     if (parseInt(newPhone) > 4000000000) setIsPhoneOtpDisabled(false)
     if (parseInt(newAadhaar) > 100000000000) setIsAadhaarOtpDisabled(false)
-    if(!formik.values.pan){
+    if (!formik.values.pan) {
       setIsPanVerified(false)
     }
 
@@ -319,6 +324,29 @@ const EditProfile = () => {
     }
   }
 
+  function onboardMe() {
+    BackendAxios.post('/api/user/pay/onboard-fee').then((res) => {
+      Toast({
+        status: 'success',
+        title: 'Welcome on board!',
+        description: 'You can now activate services'
+      })
+      if (res.data.redirecturl) {
+        window.open(res.data.redirecturl, "_blank")
+      }
+      // setTimeout(() => {
+      //     window.location.reload()
+      // }, 1000)
+    }).catch((err) => {
+      console.log(err)
+      Toast({
+        status: 'error',
+        title: 'Error Occured',
+        description: err.response.data.message || err.response.data || err.message
+      })
+    })
+  }
+
   return (
     <>
       <Head>
@@ -328,7 +356,7 @@ const EditProfile = () => {
         <Stack direction={['column', 'row']} my={4} spacing={4} alignItems={'flex-start'}>
           <Stack
             spacing={4}
-            maxW={"2xl"}
+            maxW={"4xl"}
             bg={"white"}
             boxShadow={"lg"}
             rounded={"xl"}
@@ -389,12 +417,12 @@ const EditProfile = () => {
                 <Input
                   placeholder="dd/mm/yyyy"
                   _placeholder={{ color: "gray.500" }}
-                  type="date"
-                  // max={`${date.getFullYear() - 18}-${(date.getMonth() + 1).toLocaleString('en-US', {
-                  //   minimumIntegerDigits: 2
-                  // })}-${date.getDate().toLocaleString('en-US', {
-                  //   minimumIntegerDigits: 2
-                  // })}`}
+                  type="date" value={formik.values.dob}
+                  max={`${date.getFullYear() - 18}-${(date.getMonth() + 1).toLocaleString('en-US', {
+                    minimumIntegerDigits: 2
+                  })}-${date.getDate().toLocaleString('en-US', {
+                    minimumIntegerDigits: 2
+                  })}`}
                   // value={formik.values.dob}
                   // onChange={formik.handleChange},
                   disabled
@@ -462,15 +490,15 @@ const EditProfile = () => {
                 </FormControl>
               </Stack>
               <FormControl py={2} id="gst" w={['xs']}>
-                  <FormLabel>GST Number</FormLabel>
-                  <Input
-                    placeholder="GST Number"
-                    _placeholder={{ color: "gray.500" }}
-                    type="text" name="gst"
-                    value={formik.values.gst}
-                    onChange={formik.handleChange}
-                  />
-                </FormControl>
+                <FormLabel>GST Number</FormLabel>
+                <Input
+                  placeholder="GST Number"
+                  _placeholder={{ color: "gray.500" }}
+                  type="text" name="gst"
+                  value={formik.values.gst}
+                  onChange={formik.handleChange}
+                />
+              </FormControl>
             </VStack>
 
             <VStack alignItems={'flex-start'} py={8}>
@@ -508,14 +536,14 @@ const EditProfile = () => {
                     type="text"
                     value={formik.values.pincode}
                     onChange={formik.handleChange}
-                    // disabled
+                  // disabled
                   />
                 </FormControl>
                 <FormControl py={2} id="state" isRequired>
                   <FormLabel>State</FormLabel>
-                  <Select name="state" placeholder="Select State" value={formik.values.state} 
-                  // onChange={formik.handleChange}
-                  disabled
+                  <Select name="state" placeholder="Select State" value={formik.values.state}
+                    // onChange={formik.handleChange}
+                    disabled
                   >
                     {states.map((state, key) => {
                       return (
@@ -528,11 +556,18 @@ const EditProfile = () => {
             </VStack>
 
 
-            <VStack alignItems={'flex-start'} py={8}>
+            <VStack
+              alignItems={'flex-start'}
+              py={8} w={'full'}
+            >
               <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Biometric Device Details</Text>
 
-              <Stack direction={['column', 'row']} spacing={8}>
-                <FormControl py={2} id="modelName" isRequired>
+              <Stack
+                direction={['column', 'row']}
+                alignItems={'flex-end'}
+                spacing={4} py={2} w={'full'}
+              >
+                <FormControl id="modelName" w={'sm'} isRequired>
                   <FormLabel>Model Name</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -541,7 +576,7 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-                <FormControl py={2} id="deviceNumber" isRequired>
+                <FormControl id="deviceNumber" w={'sm'} isRequired>
                   <FormLabel>Device Number</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -550,6 +585,17 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
+                <Box>
+                  <Button
+                    colorScheme="whatsapp"
+                    leftIcon={<IoMdFingerPrint />}
+                    onClick={onboardMe}
+                    isDisabled={!isProfileComplete}
+                  >Register Device</Button>
+                  {isProfileComplete ||
+                    <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
+                  }
+                </Box>
               </Stack>
             </VStack>
 
