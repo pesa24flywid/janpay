@@ -125,15 +125,15 @@ export const SidebarOptions =
         },
         {
           title: 'PAN services',
-          link: '/dashboard/services/payout?pageId=services',
+          link: '/dashboard/services/pan?pageId=services',
           id: "pan",
-          soon: true,
+          soon: false,
         },
         {
           title: 'CMS services',
-          link: '/dashboard/services/payout?pageId=services',
+          link: '/dashboard/services/cms?pageId=services',
           id: "cms",
-          soon: true,
+          soon: false,
         },
       ]
     },
@@ -210,13 +210,13 @@ export const SidebarOptions =
           title: 'PAN reports',
           link: '/dashboard/reports/pan?pageId=reports',
           id: "panReports",
-          soon: true,
+          soon: false,
         },
         {
           title: 'CMS reports',
-          link: '/dashboard/reports/pan?pageId=reports',
+          link: '/dashboard/reports/cms?pageId=reports',
           id: "cmsReports",
-          soon: true,
+          soon: false,
         },
         {
           title: 'axis accounts',
