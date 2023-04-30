@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "in.pesa24.pesa24",
+                     "sha256_cert_fingerprints": ["86:BE:9C:DF:4A:37:FA:2D:EB:37:E4:72:3E:C8:60:71:C3:E4:F7:51:0B:45:25:28:1F:37:1E:E3:E3:8D:BF:3E"] }
+      }
+]
