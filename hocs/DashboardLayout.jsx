@@ -141,17 +141,14 @@ const DashboardWrapper = (props) => {
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
     })
-    async function signout() {
-        await BackendAxios.post("/logout").then(() => {
-            Cookies.remove("verified")
-            Cookies.remove("access_token")
-            Cookies.remove("XSRF-TOKEN")
-            Cookies.remove("laravel_session")
-            Cookies.remove("latlong")
-            localStorage.clear()
-        })
-        setTimeout(() => Router.push("/auth/login"), 2000)
-    }
+    
+    
+  async function signout() {
+    await BackendAxios.post("/logout").then(() => {
+      Cookies.remove("verified")
+    })
+    Router.push("/auth/login")
+  }
 
     return (
         <>
