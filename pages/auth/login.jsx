@@ -200,12 +200,12 @@ const Login = () => {
             })
             Router.push("/dashboard?pageId=dashboard")
 
-        } catch (error) {
-            console.log(error)
+        } catch (err) {
+            console.log(err)
             Toast({
                 status: "error",
                 title: "Error Occured",
-                description: error.message,
+                description: err.response.data.message || err.response.data || err.message,
                 isClosable: true,
                 duration: 3000,
                 position: "top-right"
