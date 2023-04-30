@@ -313,7 +313,7 @@ const Aeps = () => {
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.message
+          description: err.response.data.message || err.response.data || err.message
         })
       })
     }
@@ -472,7 +472,7 @@ const Aeps = () => {
               ))
             }
             </Select>
-            <HStack spacing={2} py={2}>
+            {/* <HStack spacing={2} py={2}>
 
               <Button
                 fontSize={'xs'}
@@ -492,7 +492,7 @@ const Aeps = () => {
                 onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
               >Yes Bank</Button>
 
-            </HStack>
+            </HStack> */}
           </FormControl>
           <Stack direction={['column', 'row']} spacing={6} pb={6}>
             <FormControl w={'full'}>
@@ -542,9 +542,8 @@ const Aeps = () => {
           <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
         </Box>
 
-        <Text my={8}>Your Recent Transactions</Text>
         <Box py={6}>
-          <Text fontWeight={'medium'} pb={4}>Recent Transfers</Text>
+          <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
           <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
             <AgGridReact
               columnDefs={columnDefs}

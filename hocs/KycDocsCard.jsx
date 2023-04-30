@@ -7,7 +7,7 @@ const KycDocsCard = ({ docType, docUrl }) => {
       <Card
         variant={"outline"}
         w={["full", "md", "56"]}
-        p={4}
+        p={4} h={56}
         rounded={12}
         bg={"white"}
         boxShadow={"md"}
