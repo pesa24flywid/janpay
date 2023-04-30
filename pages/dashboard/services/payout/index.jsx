@@ -80,7 +80,7 @@ const Payout = () => {
             Toast({
                 status: 'error',
                 title: 'Transaction Failed',
-                description: err.message,
+                description: err.response.data.message || err.response.data || err.message,
                 position: 'top-right'
             })
             setIsLoading(false)
