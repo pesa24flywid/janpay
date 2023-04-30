@@ -107,7 +107,7 @@ const Login = () => {
             return {
                 status: "error",
                 title: "Error Occured",
-                message: error.response.data.message || error.message,
+                message: error.response.data.message || error.response.data || error.message,
             }
         }
     }
