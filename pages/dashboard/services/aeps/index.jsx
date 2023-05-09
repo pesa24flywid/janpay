@@ -282,8 +282,9 @@ const Aeps = () => {
         })
       }).catch((err) => {
         Toast({
+          status: 'warning',
           title: 'Transaction Failed',
-          description: err.message,
+          description: err.response.data.message || err.response.data || err.message,
           position: 'top-right',
         })
       })
