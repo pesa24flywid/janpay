@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { BsWallet, BsBell, BsPeopleFill } from 'react-icons/bs'
+import { BsWallet, BsBell, BsPeopleFill, BsFillFileEarmarkBarGraphFill, BsFileEarmarkBarGraphFill, BsHouseDoorFill } from 'react-icons/bs'
 import { FiMenu } from 'react-icons/fi'
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
@@ -34,6 +34,9 @@ import { useRouter } from 'next/router';
 import BackendAxios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
 import SimpleAccordion from './SimpleAccordion';
+import { IoMdHome } from 'react-icons/io';
+import { FaUserAlt } from 'react-icons/fa';
+import { MdContactSupport } from 'react-icons/md'
 
 
 const DashboardWrapper = (props) => {
@@ -141,14 +144,14 @@ const DashboardWrapper = (props) => {
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
     })
-    
-    
-  async function signout() {
-    await BackendAxios.post("/logout").then(() => {
-      Cookies.remove("verified")
-    })
-    Router.push("/auth/login")
-  }
+
+
+    async function signout() {
+        await BackendAxios.post("/logout").then(() => {
+            Cookies.remove("verified")
+        })
+        Router.push("/auth/login")
+    }
 
     return (
         <>
@@ -177,7 +180,9 @@ const DashboardWrapper = (props) => {
                         w={'full'} h={'100vh'}
                         overflowY={'scroll'}
                     >
-                        <Topbar />
+                        <Show above='md'>
+                            <Topbar />
+                        </Show>
 
                         {/* Topbar Starts */}
                         <HStack
@@ -247,6 +252,49 @@ const DashboardWrapper = (props) => {
 
                 </HStack>
             </Box>
+
+            {/* Mobile bottom nav */}
+            <Show below='md'>
+                <HStack
+                    pos={'fixed'}
+                    bottom={0}
+                    width={'100%'}
+                    zIndex={999}
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                >
+                    <HStack
+                        width={'100%'}
+                        padding={3}
+                        boxShadow={'lg'}
+                        bg={'#FFF'}
+                        justifyContent={'space-between'}
+                        paddingX={8}
+                        border={'1px'}
+                        borderColor={'#FAFAFA'}
+                    >
+                        <VStack h={'100%'} justifyContent={'space-between'}>
+                            <BsHouseDoorFill fontSize={'20'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>Home</Text>
+                        </VStack>
+                    
+                        <VStack h={'100%'} justifyContent={'space-between'}>
+                            <BsFileEarmarkBarGraphFill fontSize={'20'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>Reports</Text>
+                        </VStack>
+                    
+                        <VStack h={'100%'} justifyContent={'space-between'}>
+                            <MdContactSupport fontSize={'22'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>Support</Text>
+                        </VStack>
+                    
+                        <VStack h={'100%'} justifyContent={'space-between'}>
+                            <FaUserAlt fontSize={'18'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>Profile</Text>
+                        </VStack>
+                    </HStack>
+                </HStack>
+            </Show>
 
             {/* Mobile Sidebar */}
             <Show below={'md'}>
@@ -404,12 +452,8 @@ const DashboardWrapper = (props) => {
                             <VStack w={'full'} spacing={8}>
                                 <HStack w={'full'} spacing={4} justifyContent={'space-between'}>
                                     <Box>
-                                        <Text fontSize={'xs'} color={'#888'}>DMT Wallet</Text>
-                                        <Text fontSize={'xl'}>₹ {props.dmt || 0}</Text>
-                                    </Box>
-                                    <Box>
-                                        <Text fontSize={'xs'} color={'#888'}>Prepaid Wallet</Text>
-                                        <Text fontSize={'xl'}>₹ {props.prepaid || 0}</Text>
+                                        <Text fontSize={'xs'} color={'#888'}>Wallet</Text>
+                                        <Text fontSize={'xl'}>₹ {wallet || 0}</Text>
                                     </Box>
                                 </HStack>
                                 <HStack spacing={2} color={'red'} onClick={() => signout()}>

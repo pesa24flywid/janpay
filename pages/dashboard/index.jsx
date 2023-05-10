@@ -12,6 +12,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
+  Show,
+  VStack,
+  Hide,
   useToast,
 } from '@chakra-ui/react'
 import {
@@ -28,12 +31,13 @@ import {
   Pie
 } from 'react-chartjs-2'
 import { GiReceiveMoney, GiTakeMyMoney } from 'react-icons/gi'
-import { FaMobile, FaMoneyBillAlt } from 'react-icons/fa'
+import { FaFingerprint, FaMobile, FaMoneyBillAlt } from 'react-icons/fa'
 import DataCard, { TransactionCard } from '../../hocs/DataCard'
 import SimpleAccordion from '../../hocs/SimpleAccordion'
 import DashboardWrapper from '../../hocs/DashboardLayout'
 import Link from 'next/link'
 import BackendAxios from '../../lib/axios'
+import { BiMobileAlt, BiRupee } from 'react-icons/bi'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
@@ -106,6 +110,71 @@ const Dashboard = () => {
   return (
     <>
       <DashboardWrapper titleText='Dashboard'>
+        <Show
+          below='md'
+        >
+          <Box
+            width={'100%'}
+            rounded={16}
+            boxShadow={'lg'}
+            py={2} px={4} marginTop={8}
+            bgImage={'/mobileBg.svg'}
+            bgAttachment={'fixed'}
+          >
+            <Text color={'#FFF'} fontSize={'xs'}>Browse Services</Text>
+            <br />
+            <HStack justifyContent={'space-between'}>
+
+              <VStack>
+                <FaFingerprint fontSize={20} color='#FFF' />
+                <Text
+                  textAlign={'center'}
+                  color={'#FFF'}
+                  fontSize={'xs'}
+                >AePS</Text>
+              </VStack>
+
+              <VStack>
+                <Text
+                  fontWeight={'extrabold'}
+                  color={'#FFF'}
+                  w={5} h={5}
+                  p={2} border={'1px'}
+                  borderColor={'#FFF'}
+                  rounded={'full'}
+                  display={'grid'}
+                  placeContent={'center'}
+                  fontSize={12}
+                >B</Text>
+                <Text
+                  textAlign={'center'}
+                  color={'#FFF'}
+                  fontSize={'xs'}
+                >Bill Pay</Text>
+              </VStack>
+
+              <VStack>
+                <BiRupee fontSize={20} color='#FFF' />
+                <Text
+                  textAlign={'center'}
+                  color={'#FFF'}
+                  fontSize={'xs'}
+                >DMT</Text>
+              </VStack>
+
+              <VStack>
+                <BiMobileAlt fontSize={20} color='#FFF' />
+                <Text
+                  textAlign={'center'}
+                  color={'#FFF'}
+                  fontSize={'xs'}
+                >Recharge</Text>
+              </VStack>
+
+            </HStack>
+          </Box>
+        </Show>
+
         <Stack direction={['row']}
           w={'full'} py={8} spacing={[0, 4]}
           justifyContent={'space-between'}
@@ -244,23 +313,26 @@ const Dashboard = () => {
               options={options}
             />
           </Box>
-          <Box
-            w={['full', 'md', 'xl']}
-            p={4} rounded={12}
-            bg={'white'}
-            boxShadow={'md'}
-          >
-            <Text mb={4}>New Notifications</Text>
-            {newNotification ? (
-              notifications.map((notification, key) =>
-                <SimpleAccordion
-                  key={key}
-                  title={notification.title}
-                  content={notification.content}
-                />
-              )
-            ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
-          </Box>
+          <Hide below='md'>
+            <Box
+              w={['full', 'md', 'xl']}
+              p={4} rounded={12}
+              bg={'white'}
+              boxShadow={'md'}
+            >
+              <Text mb={4}>New Notifications</Text>
+              {newNotification ? (
+                notifications.map((notification, key) =>
+                  <SimpleAccordion
+                    key={key}
+                    title={notification.title}
+                    content={notification.content}
+                  />
+                )
+              ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
+            </Box>
+          </Hide>
+
         </Stack>
 
         {/* Profile Incompletion Alert */}
