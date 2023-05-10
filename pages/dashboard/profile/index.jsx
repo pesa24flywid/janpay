@@ -33,51 +33,65 @@ const Profile = () => {
     aadhaarBack: false,
   })
 
+  
   function fetchProfile() {
-    try {
-      BackendAxios.post("api/user/info").then((res) => {
-        localStorage.setItem("firstName", res.data.data.first_name || "")
-        localStorage.setItem("lastName", res.data.data.last_name || "")
-        localStorage.setItem("phone", res.data.data.phone_number || "")
-        localStorage.setItem("userEmail", res.data.data.email || "")
-        localStorage.setItem("dob", res.data.data.dob || "")
-        localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
-        localStorage.setItem("pan", res.data.data.pan_number || "")
-        localStorage.setItem("merchantId", res.data.data.user_code || "")
-        localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
-        localStorage.setItem("line", res.data.data.line || "")
-        localStorage.setItem("city", res.data.data.city || "")
-        localStorage.setItem("state", res.data.data.state || "")
-        localStorage.setItem("pincode", res.data.data.pincode || "")
-      })
+    BackendAxios.post("api/user/info").then((res) => {
+      localStorage.setItem("kycStatus", res.data.data.kyc)
 
-      BackendAxios.get("/api/user/kyc-status").then(res => {
-        localStorage.setItem("kycStatus", res.data)
-      })
-      setProfile({
-        ...profile,
-        fullName: localStorage.getItem("userName"),
-        kycStatus: localStorage.getItem("kycStatus"),
-        phone: localStorage.getItem("phone"),
-        dob: localStorage.getItem("dob"),
-        aadhaarNumber: localStorage.getItem("aadhaar"),
-        pan: localStorage.getItem("pan"),
-        merchantId: localStorage.getItem("merchantId"),
-        companyName: localStorage.getItem("companyName"),
-        address: localStorage.getItem("line") + " " + localStorage.getItem("city") + " " + localStorage.getItem("state") + " " + localStorage.getItem("pincode"),
-      })
-    } catch (err) {
+      localStorage.setItem("firstName", res.data.data.first_name || "")
+
+      localStorage.setItem("lastName", res.data.data.last_name || "")
+
+      localStorage.setItem("phone", res.data.data.phone_number || "")
+
+      localStorage.setItem("userEmail", res.data.data.email || "")
+
+      localStorage.setItem("dob", res.data.data.dob || "")
+
+      localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
+
+      localStorage.setItem("pan", res.data.data.pan_number || "")
+
+      localStorage.setItem("merchantId", res.data.data.user_code || "")
+
+      localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+
+
+      localStorage.setItem("line", res.data.data.line || "")
+
+      localStorage.setItem("city", res.data.data.city || "")
+
+      localStorage.setItem("state", res.data.data.state || "")
+
+      localStorage.setItem("pincode", res.data.data.pincode || "")
+
+      localStorage.setItem("modelName", res.data.data.model_name || "")
+
+      localStorage.setItem("deviceNumber", res.data.data.device_number || "")
+
+      localStorage.setItem("kycStatus", res.data.data.profile === 1)
+    }).catch((err) => {
       Toast({
         status: "error",
         title: "Error Occured",
-        description: err.response.data.message || err.response.data || err.message
+        description: err.message
       })
       console.log(err)
-    }
+    })
+    setProfile({
+      ...profile,
+      fullName: localStorage.getItem("userName"),
+      kycStatus: localStorage.getItem("kycStatus"),
+      phone: localStorage.getItem("phone"),
+      dob: localStorage.getItem("dob"),
+      aadhaarNumber: localStorage.getItem("aadhaar"),
+      pan: localStorage.getItem("pan"),
+      merchantId: localStorage.getItem("merchantId"),
+      companyName: localStorage.getItem("companyName"),
+      address: localStorage.getItem("line") + " " + localStorage.getItem("city") + " " + localStorage.getItem("state") + " " + localStorage.getItem("pincode"),
+    })
   }
 
-
-  // Fetching profile details
   useEffect(() => {
     fetchProfile()
   }, [])

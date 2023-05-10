@@ -115,11 +115,11 @@ const Index = () => {
     useEffect(() => {
         if (settlementProvider == "paysprint") {
             BackendAxios.get(`/api/${settlementProvider}/aeps/fetch-bank/20`).then(res => {
-                setBanksList(res.data.banklist.data)
+                setBanksList(res.data?.banklist.data)
             }).catch(err => {
                 Toast({
                     status: 'error',
-                    description: err.response.data.message || err.response.data || err.message
+                    description: err.response?.data.message || err.response?.data || err.message
                 })
             })
         }

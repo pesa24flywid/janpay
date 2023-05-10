@@ -24,7 +24,7 @@ const ProfileInfoCard = ({
   merchantId,
   address,
   companyName,
-  kycStatus = true,
+  kycStatus,
 }) => {
   return (
     <>
@@ -58,11 +58,11 @@ const ProfileInfoCard = ({
                 </Heading>
                 <HStack pt={2}>
                   <Icon
-                    as={ kycStatus == 1 ? MdVerifiedUser : MdError}
-                    color={kycStatus == 1 ? "green.500" : "red.500"}
+                    as={ kycStatus ? MdVerifiedUser : MdError}
+                    color={kycStatus ? "green.500" : "red.500"}
                   />
                   <Text ml="1" textColor={kycStatus ? "green.500" : "red.500"}>
-                    {kycStatus == 0 ? "Not Verified" : "Verified"}
+                    {kycStatus ? "Verified" : "Not Verified"}
                   </Text>
                 </HStack>
               </Box>
