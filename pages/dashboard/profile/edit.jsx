@@ -71,8 +71,8 @@ const EditProfile = () => {
       dob: "",
       aadhaar: "",
       pan: "",
-      firmName: "",
-      companyType: "",
+      firmType: "",
+      companyName: "",
       gst: "",
       line: "",
       city: "",
@@ -128,6 +128,9 @@ const EditProfile = () => {
       localStorage.setItem("dob", res.data.data.dob || "")
       formik.setFieldValue("dob", res.data.data.dob || "")
 
+      localStorage.setItem("gst", res.data.data.gst_number || "")
+      formik.setFieldValue("gst", res.data.data.gst_number || "")
+
       localStorage.setItem("aadhaar", res.data.data.aadhaar || "")
       formik.setFieldValue("aadhaar", res.data.data.aadhaar || "")
       setIsAadhaarDisabled(res.data.data.aadhaar ? true : false)
@@ -138,8 +141,11 @@ const EditProfile = () => {
 
       localStorage.setItem("merchantId", res.data.data.user_code || "")
 
-      localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
+      localStorage.setItem("companyName", res.data.data.company_name || "")
       formik.setFieldValue("companyName", res.data.data.company_name || "")
+
+      localStorage.setItem("firmType", res.data.data.firm_type || "")
+      formik.setFieldValue("firmType", res.data.data.firm_type || "")
 
 
       localStorage.setItem("line", res.data.data.line || "")
@@ -467,23 +473,23 @@ const EditProfile = () => {
               <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Business Details</Text>
 
               <Stack direction={['column', 'row']} spacing={8}>
-                <FormControl py={2} id="firmName">
+                <FormControl py={2} id="firmType">
                   <FormLabel>Company name</FormLabel>
                   <Input
                     placeholder="Company name"
                     _placeholder={{ color: "gray.500" }}
-                    type="text" name="firmName"
-                    value={formik.values.firmName}
+                    type="text" name="firmType"
+                    value={formik.values.firmType}
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-                <FormControl py={2} id="companyType">
+                <FormControl py={2} id="companyName">
                   <FormLabel>Company Type</FormLabel>
                   <Select
-                    name="companyType" placeholder="Select here"
-                    value={formik.values.companyType} onChange={formik.handleChange}
+                    name="companyName" placeholder="Select here"
+                    value={formik.values.firmType} onChange={formik.handleChange}
                   >
-                    <option value="propriortship">Sole Propriortship</option>
+                    <option value="proprietorship">Sole Propriortship</option>
                     <option value="private limited">Private Limited</option>
                     <option value="partnership">Partnership</option>
                   </Select>

@@ -91,7 +91,7 @@ const Dmt = () => {
             beneficiaryId: "",
         }
     ])
-
+    const [bankList, setBankList] = useState([])
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const [isBtnHidden, setIsBtnHidden] = useState(true)
     const [customerId, setCustomerId] = useState("")
@@ -107,6 +107,15 @@ const Dmt = () => {
         position: 'top-right'
     })
 
+    useEffect(()=>{
+        BackendAxios.get(`/api/${dmtProvider}/dmt/banks/${serviceId}`).then(res=>{
+            setBankList(res.data)
+        }).catch(err=>{
+            Toast({
+                description: err.response.data.message || err.response.data|| err.message
+            })
+        })
+    },[])
 
     const registrationFormik = useFormik({
         initialValues: {
@@ -777,8 +786,11 @@ const Dmt = () => {
                                 value={addRecipientFormik.values.bankCode}
                                 onChange={addRecipientFormik.handleChange}
                             >
-                                <option value="62">Bank of Baroda</option>
-                                <option value="426">State Bank of India</option>
+                                {
+                                    bankList.map((bank, key)=>(
+                                        <option value={bank.bank_id}>{bank.name}</option>
+                                    ))
+                                }
                             </Select>
                         </FormControl>
                         <FormControl id='ifsc' pb={4}>
