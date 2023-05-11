@@ -25,7 +25,8 @@ import DashboardWrapper from '../../../../hocs/DashboardLayout'
 
 const Index = () => {
     const [availablePlans, setAvailablePlans] = useState([])
-    
+    const [myRole, setMyRole] = useState("")
+    const [availableParents, setAvailableParents] = useState([])
     const Toast = useToast({
         position: 'top-right'
     })
@@ -37,7 +38,9 @@ const Index = () => {
             userPhone: "",
             userRole: "",
             userPlan: "",
-            alternativePhone: "",
+            hasParent: "1",
+            parent: "",
+            alternatePhone: "",
             dob: null,
             gender: "",
             firmName: "",
@@ -72,7 +75,7 @@ const Index = () => {
                 }).catch((err) => {
                     Toast({
                         status: 'error',
-                        title: err.message,
+                        title: err.response.data.message || err.response.data || err.message,
                     })
                     console.log(err)
                 })
@@ -109,11 +112,39 @@ const Index = () => {
                 description: 'Error while fetching packages'
             })
         })
+
+        // Getting current user role
+        setMyRole(localStorage.getItem('userType'))
     }, [])
+
+    useEffect(() => {
+        // Fetching all users
+        let parentRole
+        if (Formik.values.userRole == "3" && myRole == "distributor") {
+            Formik.setFieldValue("parent", localStorage.getItem("userId"))
+        }
+        if (Formik.values.userRole == "3" && myRole == "super_distributor") {
+            parentRole = "distributor"
+            BackendAxios.get(`/api/admin/all-users-list/${parentRole}`).then(res => {
+                console.log(res.data)
+                setAvailableParents(res.data)
+            }).catch(err => {
+                console.log(err)
+                Toast({
+                    status: 'error',
+                    description: err.response.data.message || err.response.data || err.message
+                })
+            })
+        }
+        if (Formik.values.userRole == "2") {
+            Formik.setFieldValue("parent", localStorage.getItem("userId"))
+        }
+    }, [Formik.values.userRole])
 
     return (
         <>
             <form onSubmit={Formik.handleSubmit} id={'createUserForm'}>
+                <input type="hidden" name='hasParent' value={1} />
                 <DashboardWrapper pageTitle={'Create User'}>
                     <Stack direction={['column', 'row']} spacing={4}>
                         <FormControl w={['full', 'xs']} >
@@ -123,12 +154,17 @@ const Index = () => {
                                 name={'userRole'} bg={'white'}
                                 onChange={Formik.handleChange}
                             >
-                                <option value="3">Retailer</option>
-                                <option value="2">Distributor</option>
-                                <option value="1">Admin</option>
+                                {
+                                    myRole == "distributor" ? <>
+                                        <option value="3">Retailer</option>
+                                    </> : myRole == "super_distributor" ? <>
+                                        <option value="3">Retailer</option>
+                                        <option value="2">Distributor</option>
+                                    </> : null
+                                }
                             </Select>
                         </FormControl>
-                        
+
                         <FormControl w={['full', 'xs']} >
                             <FormLabel>User Plan</FormLabel>
                             <Select
@@ -143,6 +179,24 @@ const Index = () => {
                                 }
                             </Select>
                         </FormControl>
+
+                        {
+                            Formik.values.userRole == "3" ?
+                                <FormControl w={['full', 'xs']}>
+                                    <FormLabel>Parent Distributor</FormLabel>
+                                    <Select
+                                        placeholder='Select Parent'
+                                        name={'parent'} bg={'white'}
+                                        onChange={Formik.handleChange}
+                                    >
+                                        {
+                                            availableParents.map((item, key) => {
+                                                return <option value={item.id} key={key}>{item.name}</option>
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl> : null
+                        }
                     </Stack>
 
                     <Stack
