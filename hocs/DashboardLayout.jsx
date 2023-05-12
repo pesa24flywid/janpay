@@ -247,6 +247,11 @@ const DashboardWrapper = (props) => {
 
                         {props.children}
 
+                        <Show below='md'>
+                            <Box w={'full'} py={64}>
+
+                            </Box>
+                        </Show>
                     </Box>
 
 
@@ -273,25 +278,34 @@ const DashboardWrapper = (props) => {
                         border={'1px'}
                         borderColor={'#FAFAFA'}
                     >
-                        <VStack h={'100%'} justifyContent={'space-between'}>
-                            <BsHouseDoorFill fontSize={'20'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Home</Text>
-                        </VStack>
-                    
-                        <VStack h={'100%'} justifyContent={'space-between'}>
-                            <BsFileEarmarkBarGraphFill fontSize={'20'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Reports</Text>
-                        </VStack>
-                    
-                        <VStack h={'100%'} justifyContent={'space-between'}>
-                            <MdContactSupport fontSize={'22'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Support</Text>
-                        </VStack>
-                    
-                        <VStack h={'100%'} justifyContent={'space-between'}>
-                            <FaUserAlt fontSize={'18'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Profile</Text>
-                        </VStack>
+                        <Link href={'/'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <BsHouseDoorFill fontSize={'20'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Home</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/mobile/reports'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <BsFileEarmarkBarGraphFill fontSize={'20'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Reports</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/support-tickets'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <MdContactSupport fontSize={'22'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Support</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/profile'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <FaUserAlt fontSize={'18'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Profile</Text>
+                            </VStack>
+                        </Link>
+
                     </HStack>
                 </HStack>
             </Show>

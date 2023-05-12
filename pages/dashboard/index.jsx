@@ -121,55 +121,63 @@ const Dashboard = () => {
             bgImage={'/mobileBg.svg'}
             bgAttachment={'fixed'}
           >
-            <Text color={'#FFF'} fontSize={'xs'}>Browse Services</Text>
+            <Text color={'#FFF'} fontSize={'xs'}>Explore Our Services</Text>
             <br />
             <HStack justifyContent={'space-between'}>
 
-              <VStack>
-                <FaFingerprint fontSize={20} color='#FFF' />
-                <Text
-                  textAlign={'center'}
-                  color={'#FFF'}
-                  fontSize={'xs'}
-                >AePS</Text>
-              </VStack>
+              <Link href={'/dashboard/services/aeps?pageId=services'}>
+                <VStack>
+                  <FaFingerprint fontSize={20} color='#FFF' />
+                  <Text
+                    textAlign={'center'}
+                    color={'#FFF'}
+                    fontSize={'xs'}
+                  >AePS</Text>
+                </VStack>
+              </Link>
 
-              <VStack>
-                <Text
-                  fontWeight={'extrabold'}
-                  color={'#FFF'}
-                  w={5} h={5}
-                  p={2} border={'1px'}
-                  borderColor={'#FFF'}
-                  rounded={'full'}
-                  display={'grid'}
-                  placeContent={'center'}
-                  fontSize={12}
-                >B</Text>
-                <Text
-                  textAlign={'center'}
-                  color={'#FFF'}
-                  fontSize={'xs'}
-                >Bill Pay</Text>
-              </VStack>
+              <Link href={'/dashboard/services/bbps?pageId=services'}>
+                <VStack>
+                  <Text
+                    fontWeight={'extrabold'}
+                    color={'#FFF'}
+                    w={5} h={5}
+                    p={2} border={'1px'}
+                    borderColor={'#FFF'}
+                    rounded={'full'}
+                    display={'grid'}
+                    placeContent={'center'}
+                    fontSize={12}
+                  >B</Text>
+                  <Text
+                    textAlign={'center'}
+                    color={'#FFF'}
+                    fontSize={'xs'}
+                  >Bill Pay</Text>
+                </VStack>
+              </Link>
 
-              <VStack>
-                <BiRupee fontSize={20} color='#FFF' />
-                <Text
-                  textAlign={'center'}
-                  color={'#FFF'}
-                  fontSize={'xs'}
-                >DMT</Text>
-              </VStack>
+              <Link href={'/dashboard/services/dmt?pageId=services'}>
+                <VStack>
+                  <BiRupee fontSize={20} color='#FFF' />
+                  <Text
+                    textAlign={'center'}
+                    color={'#FFF'}
+                    fontSize={'xs'}
+                  >DMT</Text>
+                </VStack>
+              </Link>
 
-              <VStack>
-                <BiMobileAlt fontSize={20} color='#FFF' />
-                <Text
-                  textAlign={'center'}
-                  color={'#FFF'}
-                  fontSize={'xs'}
-                >Recharge</Text>
-              </VStack>
+              <Link href={'/dashboard/services/recharge?pageId=services'}>
+                <VStack>
+                  <BiMobileAlt fontSize={20} color='#FFF' />
+                  <Text
+                    textAlign={'center'}
+                    color={'#FFF'}
+                    fontSize={'xs'}
+                  >Recharge</Text>
+                </VStack>
+              </Link>
 
             </HStack>
           </Box>
