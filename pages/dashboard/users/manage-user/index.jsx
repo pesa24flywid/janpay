@@ -19,10 +19,10 @@ import {
     Switch,
     useToast,
 } from '@chakra-ui/react'
-import BackendAxios, { FormAxios } from '../../../../lib/axios'
-import { states } from '../../../../lib/states'
 import { useRouter } from 'next/router'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import { states } from '../../../../lib/states'
+import BackendAxios from '../../../../lib/axios'
 
 const Index = () => {
     const Router = useRouter()
@@ -37,7 +37,7 @@ const Index = () => {
             lastName: "",
             userEmail: "",
             userPhone: "",
-            alternativePhone: "",
+            alternatePhone: "",
             dob: null,
             gender: "",
             firmName: "",
@@ -72,7 +72,7 @@ const Index = () => {
             }).catch((err) => {
                 Toast({
                     status: 'error',
-                    title: err.message,
+                    description: err.response.data.message || err.response.data || err.message
                 })
                 console.log(err)
             })
@@ -81,6 +81,7 @@ const Index = () => {
 
     function searchUser(queryUserId) {
         BackendAxios.post(`/api/admin/user/info/${queryUserId || Formik.values.userId}`).then((res) => {
+            Formik.setFieldValue("userId", res.data.data.id)
             Formik.setFieldValue("firstName", res.data.data.first_name)
             Formik.setFieldValue("lastName", res.data.data.last_name)
             Formik.setFieldValue("userEmail", res.data.data.email)
@@ -88,7 +89,7 @@ const Index = () => {
             Formik.setFieldValue("alternativePhone", res.data.data.alternate_number)
             Formik.setFieldValue("dob", res.data.data.dob)
             Formik.setFieldValue("gender", res.data.data.gender)
-            Formik.setFieldValue("firmName", res.data.data.firm_name)
+            Formik.setFieldValue("firmName", res.data.data.company_name)
             Formik.setFieldValue("companyType", res.data.data.firm_type)
             Formik.setFieldValue("kycStatus", res.data.data.kyc)
             Formik.setFieldValue("aadhaarNum", res.data.data.aadhaar)
@@ -103,7 +104,7 @@ const Index = () => {
         }).catch((err) => {
             Toast({
                 status: 'error',
-                description: "User not found!"
+                description: err.response.data.message || err.response.data || err.message
             })
             console.log(err)
         })
@@ -127,6 +128,7 @@ const Index = () => {
                             <Input
                                 name='userId' onChange={Formik.handleChange}
                                 value={Formik.values.userId} w={['full', 'xs']}
+                                bg={'white'}
                             />
                             <Button onClick={() => searchUser(Formik.values.userId)} colorScheme={'teal'}>Search Details</Button>
                         </HStack>

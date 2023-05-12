@@ -422,7 +422,10 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
               <Accordion allowToggle w={'full'}>
 
                 <AccordionItem>
-                  <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+                  <AccordionButton px={[0, 3]} 
+                  _expanded={{ bg: 'aqua' }}
+                  id={'users'}
+                  >
                     <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
                       <BsPeopleFill />
                       <Text textTransform={'capitalize'}>Manage Users</Text>
@@ -439,7 +442,6 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                       justifyContent={'flex-start'}
                       spacing={2}
                       overflow={'hidden'}
-                      id={'users'}
                     >
                       <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
                         <Text
@@ -449,20 +451,28 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                         >Create User</Text>
                       </Link>
 
-                      <Link href={"/dashboard/users/users-list?pageId=users"} style={{ width: '100%' }}>
+                      <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
                         <Text
                           w={'full'} textAlign={'left'}
                           px={3} py={2} _hover={{ bg: 'aqua' }}
                           textTransform={'capitalize'}
-                        >View User</Text>
+                        >View Users</Text>
                       </Link>
 
-                      <Link href={"/dashboard/users/users-report?pageId=users"} style={{ width: '100%' }}>
+                      {/* <Link href={"/dashboard/users/manage-user?pageId=users"} style={{ width: '100%' }}>
                         <Text
                           w={'full'} textAlign={'left'}
                           px={3} py={2} _hover={{ bg: 'aqua' }}
                           textTransform={'capitalize'}
-                        >Users Report</Text>
+                        >Edit User</Text>
+                      </Link> */}
+
+                      <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
+                        <Text
+                          w={'full'} textAlign={'left'}
+                          px={3} py={2} _hover={{ bg: 'aqua' }}
+                          textTransform={'capitalize'}
+                        >User Ledger</Text>
                       </Link>
 
                     </VStack>
