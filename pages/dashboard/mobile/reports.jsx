@@ -10,7 +10,7 @@ const reports = () => {
             <DashboardWrapper pageTitle={'Reports'}>
                 <Box w={'full'} py={32}></Box>
                 {
-                    SidebarOptions.find(item => (item.title == 'reports')).children.map((item) => (
+                    SidebarOptions.find(item => (item.title == 'reports')).children.map((item, key) => (
                         <Box
                             px={3} py={2} w={'full'}
                             _hover={{ bg: 'aqua' }}
