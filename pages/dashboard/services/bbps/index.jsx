@@ -234,7 +234,7 @@ const Bbps = () => {
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.response.data.message || err.response.data || err.message0
+          description: err.response?.data?.message || err.response?.data || err.message
         })
       })
     }
