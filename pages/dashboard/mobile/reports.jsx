@@ -8,11 +8,11 @@ const reports = () => {
     return (
         <>
             <DashboardWrapper pageTitle={'Reports'}>
-                <Box w={'full'} py={32}></Box>
+                <Box w={'full'} py={8} bg={'white'} ></Box>
                 {
                     SidebarOptions.find(item => (item.title == 'reports')).children.map((item, key) => (
                         <Box
-                            px={3} py={2} w={'full'}
+                            px={3} py={4} w={'full'}
                             _hover={{ bg: 'aqua' }}
                         >
                             <Link key={key} href={item.soon ? "#" : item.link}
