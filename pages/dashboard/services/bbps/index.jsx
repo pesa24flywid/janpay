@@ -226,16 +226,22 @@ const Bbps = () => {
         }
       ).then(res => {
         setReceipt({
-          status: res.data.metadata.status,
+          status: res.data.metadata?.status,
           show: true,
           data: res.data.metadata
         })
         onClose()
       }).catch(err => {
-        Toast({
-          status: 'error',
-          description: err.response?.data?.message || err.response?.data || err.message
+        setReceipt({
+          status: err.response.data?.metadata?.status,
+          show: true,
+          data: err.response.data?.metadata
         })
+        onClose()
+        // Toast({
+        //   status: 'error',
+        //   description: err.response?.data?.message || err.response?.data || err.message
+        // })
       })
     }
   }
