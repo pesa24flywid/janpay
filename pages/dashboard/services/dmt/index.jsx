@@ -184,10 +184,6 @@ const Dmt = () => {
         onSubmit: values => {
             if (dmtProvider == "paysprint") {
                 BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, { ...values, customerId: customerId }).then(res => {
-                    Toast({
-                        status: 'success',
-                        description: 'Transaction successful!'
-                    })
                     setPaymentConfirmationModal(false)
                     setReceipt({
                         status: res.data.metadata.status,
