@@ -43,7 +43,7 @@ const Lic = () => {
       if(res.data.response_code == 0 && res.data.status == false){
         Toast({
           status: 'warning',
-          description: 'No policy information found!'
+          description: res.data.message || 'No policy information found!'
         })
         return
       }
