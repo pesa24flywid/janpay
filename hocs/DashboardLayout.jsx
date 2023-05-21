@@ -89,7 +89,7 @@ const DashboardWrapper = (props) => {
     const [isProfileComplete, setIsProfileComplete] = useState(false)
     const [userName, setUserName] = useState("No Name")
     const [userType, setUserType] = useState("Undefined")
-    const [userImage, setUserImage] = useState("/avatar.png")
+    const [profilePic, setProfilePic] = useState("/avatar.png")
     const [wallet, setWallet] = useState("0")
     const { isOpen, onOpen, onClose } = useDisclosure()
     var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
@@ -99,6 +99,7 @@ const DashboardWrapper = (props) => {
         setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
         setUserName(localStorage.getItem("userName"))
         setUserType(localStorage.getItem("userType"))
+        setProfilePic(localStorage.getItem("profilePic"))
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
         // Check wallet balance
@@ -167,7 +168,7 @@ const DashboardWrapper = (props) => {
                         isProfileComplete={isProfileComplete}
                         userName={userName}
                         userType={userType.toUpperCase()}
-                        userImage={userImage}
+                        userImage={profilePic}
                         availablePages={availablePages}
                     />
 

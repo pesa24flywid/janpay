@@ -299,7 +299,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
           <Link href={"/dashboard/profile?pageId=profile"}>
             <VStack spacing={2}>
               <Image
-                src={userImage}
+                src={userImage || "/avatar.png"}
                 w={"24"}
                 rounded={"full"}
                 mx={"auto"}

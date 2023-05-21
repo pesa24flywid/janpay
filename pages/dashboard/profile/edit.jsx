@@ -573,7 +573,7 @@ const EditProfile = () => {
                 alignItems={'flex-end'}
                 spacing={4} py={2} w={'full'}
               >
-                <FormControl id="modelName" w={'sm'} isRequired>
+                <FormControl id="modelName" w={'xs'} isRequired>
                   <FormLabel>Model Name</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -582,7 +582,7 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-                <FormControl id="deviceNumber" w={'sm'} isRequired>
+                <FormControl id="deviceNumber" w={'xs'} isRequired>
                   <FormLabel>Device Number</FormLabel>
                   <Input
                     placeholder="Enter here..."
