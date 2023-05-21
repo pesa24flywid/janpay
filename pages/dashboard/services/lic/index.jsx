@@ -36,7 +36,10 @@ const Lic = () => {
   })
 
   function fetchInfo() {
-    BackendAxios.post("/api/paysprint/lic/fetch-bill").then(res => {
+    BackendAxios.post("/api/paysprint/lic/fetch-bill", {
+      canumber: Formik.values.canumber,
+      ad1: Formik.values.ad1
+    }).then(res => {
       setBillFetched(true)
       Formik.setFieldValue("amount", res.data.amount)
       setBeneDetails(res.data.bill_fetch)
