@@ -26,6 +26,8 @@ import DashboardWrapper from '../../../../hocs/DashboardLayout'
 const Index = () => {
     const [availablePlans, setAvailablePlans] = useState([])
     const [myRole, setMyRole] = useState("")
+    const [myUserId, setMyUserId] = useState("")
+    const [myName, setMyName] = useState("")
     const [availableParents, setAvailableParents] = useState([])
     const Toast = useToast({
         position: 'top-right'
@@ -115,6 +117,8 @@ const Index = () => {
 
         // Getting current user role
         setMyRole(localStorage.getItem('userType'))
+        setMyUserId(localStorage.getItem('userId'))
+        setMyName(localStorage.getItem('userName'))
     }, [])
 
     useEffect(() => {
@@ -190,9 +194,11 @@ const Index = () => {
                                         onChange={Formik.handleChange}
                                     >
                                         {
-                                            availableParents.map((item, key) => {
-                                                return <option value={item.id} key={key}>{item.name}</option>
-                                            })
+                                            myRole == "super_distributor" ?
+                                                availableParents.map((item, key) => {
+                                                    return <option value={item.id} key={key}>{item.name}</option>
+                                                }) :
+                                                <option value={myUserId}>{myName}</option>
                                         }
                                     </Select>
                                 </FormControl> : null
