@@ -40,6 +40,13 @@ const Lic = () => {
       canumber: Formik.values.canumber,
       ad1: Formik.values.ad1
     }).then(res => {
+      if(res.data.response_code == 0 && res.data.status == false){
+        Toast({
+          status: 'warning',
+          description: 'No policy information found!'
+        })
+        return
+      }
       setBillFetched(true)
       Formik.setFieldValue("amount", res.data.amount)
       setBeneDetails(res.data.bill_fetch)
