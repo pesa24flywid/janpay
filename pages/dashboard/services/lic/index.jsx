@@ -36,7 +36,7 @@ const Lic = () => {
   })
 
   function fetchInfo() {
-    BackendAxios.post("/lic").then(res => {
+    BackendAxios.post("/api/paysprint/lic/fetch-bill").then(res => {
       setBillFetched(true)
       Formik.setFieldValue("amount", res.data.amount)
       setBeneDetails(res.data.bill_fetch)
@@ -49,7 +49,7 @@ const Lic = () => {
     })
   }
   function payBill(){
-    BackendAxios.post("/lic", {...beneDetails}).then(res => {
+    BackendAxios.post("/api/paysprint/lic/pay-bill", {...beneDetails}).then(res => {
       Toast({
         status: 'success',
         description: "Bill Paid!"
