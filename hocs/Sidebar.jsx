@@ -35,25 +35,25 @@ export const SidebarOptions =
         {
           title: 'view profile',
           link: '/dashboard/profile?pageId=profile',
-          id: "view-profile",
+          id: "viewProfile",
           soon: false,
         },
         {
           title: 'edit profile',
           link: '/dashboard/profile/edit?pageId=profile',
-          id: "edit-profile",
+          id: "editProfile",
           soon: false,
         },
         {
           title: 'reset MPIN',
           link: '/dashboard/profile/reset-mpin?pageId=profile',
-          id: "reset-mpin",
+          id: "resetMpin",
           soon: false,
         },
         {
           title: 'reset password',
           link: '/dashboard/profile/reset-password?pageId=profile',
-          id: "reset-password",
+          id: "resetPassword",
           soon: false,
         },
       ]
@@ -133,6 +133,12 @@ export const SidebarOptions =
           title: 'CMS services',
           link: '/dashboard/services/cms?pageId=services',
           id: "cmsTransaction",
+          soon: false,
+        },
+        {
+          title: 'Fastag',
+          link: '/dashboard/services/fastag?pageId=services',
+          id: "fastagTransaction",
           soon: false,
         },
       ]
@@ -225,15 +231,21 @@ export const SidebarOptions =
           soon: true,
         },
         {
+          title: 'fastag reports',
+          link: '/dashboard/reports/fastag?pageId=reports',
+          id: "fastagReport",
+          soon: true,
+        },
+        {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',
-          id: "axisReport",
+          id: "transactionLedger",
           soon: false,
         },
         {
           title: 'Daily Sales',
           link: '/dashboard/reports/axis?pageId=reports',
-          id: "axisReport",
+          id: "dailySales",
           soon: false,
         },
       ]
@@ -248,7 +260,7 @@ export const SidebarOptions =
   ]
 
 const Sidebar = ({ isProfileComplete, userName, userImage }) => {
-  let activeServices = ['activate']
+  const alwaysAvailable = ['viewProfile', 'editProfile', 'resetMpin', 'resetPassword']
   const [availablePages, setAvailablePages] = useState(['activate'])
   const Router = useRouter()
   const { pageId } = Router.query
@@ -378,7 +390,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                           >
 
                             {option.children.map((item, key) => {
-                              if (availablePages.includes(item.id)) {
+                              if (availablePages.includes(item.id) || alwaysAvailable.includes(item.id)) {
                                 return (
                                   <Box
                                     px={3} py={2} w={'full'}
