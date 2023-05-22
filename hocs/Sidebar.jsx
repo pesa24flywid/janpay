@@ -16,7 +16,7 @@ import {
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
 import { IoMdHelpBuoy } from "react-icons/io";
-import BackendAxios from "../lib/axios";
+import BackendAxios, { ClientAxios } from "../lib/axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
@@ -78,61 +78,61 @@ export const SidebarOptions =
         {
           title: 'AePS services',
           link: '/dashboard/services/aeps?pageId=services',
-          id: "aeps",
+          id: "aepsTransaction",
           soon: false
         },
         {
           title: 'Aadhaar Pay',
           link: '/dashboard/services/aeps/pay?pageId=services',
-          id: "aeps",
+          id: "aadhaarPay",
           soon: false
         },
         {
           title: 'DMT services',
           link: '/dashboard/services/dmt?pageId=services',
-          id: "dmt",
+          id: "dmtTransaction",
           soon: false,
         },
         {
           title: 'BBPS services',
           link: '/dashboard/services/bbps?pageId=services',
-          id: "bbps",
+          id: "bbpsTransaction",
           soon: false,
         },
         {
           title: 'recharge',
           link: '/dashboard/services/recharge?pageId=services',
-          id: "recharge",
+          id: "rechargeTransaction",
           soon: false,
         },
         {
           title: 'payout',
           link: '/dashboard/services/payout?pageId=services',
-          id: "payout",
+          id: "payoutTransaction",
           soon: false,
         },
         {
           title: 'axis account opening',
           link: '/dashboard/services/payout?pageId=services',
-          id: "axis",
+          id: "axisTransaction",
           soon: true,
         },
         {
           title: 'LIC services',
           link: '/dashboard/services/lic?pageId=services',
-          id: "lic",
+          id: "licTransaction",
           soon: false,
         },
         {
           title: 'PAN services',
           link: '/dashboard/services/pan?pageId=services',
-          id: "pan",
+          id: "panTransaction",
           soon: false,
         },
         {
           title: 'CMS services',
           link: '/dashboard/services/cms?pageId=services',
-          id: "cms",
+          id: "cmsTransaction",
           soon: false,
         },
       ]
@@ -167,31 +167,31 @@ export const SidebarOptions =
         {
           title: 'AePS reports',
           link: '/dashboard/reports/aeps?pageId=reports',
-          id: "aepsReports",
+          id: "aepsReport",
           soon: false,
         },
         {
           title: 'BBPS reports',
           link: '/dashboard/reports/bbps?pageId=reports',
-          id: "bbpsReports",
+          id: "bbpsReport",
           soon: false,
         },
         {
           title: 'recharge reports',
           link: '/dashboard/reports/recharge?pageId=reports',
-          id: "rechargeReports",
+          id: "rechargeReport",
           soon: false,
         },
         {
           title: 'DMT reports',
           link: '/dashboard/reports/dmt?pageId=reports',
-          id: "dmtReports",
+          id: "dmtReport",
           soon: false,
         },
         {
           title: 'payout reports',
           link: '/dashboard/reports/payout?pageId=reports',
-          id: "payoutReports",
+          id: "payoutReport",
           soon: false,
         },
         {
@@ -203,37 +203,37 @@ export const SidebarOptions =
         {
           title: 'LIC reports',
           link: '/dashboard/reports/lic?pageId=reports',
-          id: "licReports",
+          id: "licReport",
           soon: false,
         },
         {
           title: 'PAN reports',
           link: '/dashboard/reports/pan?pageId=reports',
-          id: "panReports",
+          id: "panReport",
           soon: false,
         },
         {
           title: 'CMS reports',
           link: '/dashboard/reports/cms?pageId=reports',
-          id: "cmsReports",
+          id: "cmsReport",
           soon: false,
         },
         {
           title: 'axis accounts',
           link: '/dashboard/reports/axis?pageId=reports',
-          id: "axisReports",
+          id: "axisReport",
           soon: true,
         },
         {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',
-          id: "axisReports",
+          id: "axisReport",
           soon: false,
         },
         {
           title: 'Daily Sales',
           link: '/dashboard/reports/axis?pageId=reports',
-          id: "axisReports",
+          id: "axisReport",
           soon: false,
         },
       ]
@@ -247,8 +247,9 @@ export const SidebarOptions =
     },
   ]
 
-const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => {
-  const [activeServices, setActiveServices] = useState([])
+const Sidebar = ({ isProfileComplete, userName, userImage }) => {
+  let activeServices = ['activate']
+  const [availablePages, setAvailablePages] = useState(['activate'])
   const Router = useRouter()
   const { pageId } = Router.query
   const [userType, setUserType] = useState("")
@@ -272,8 +273,21 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
 
 
   useMemo(() => {
-    BackendAxios.get('/api/user/services').then((res) => {
-      setActiveServices(res.data.map((item) => item.type))
+    // BackendAxios.get('/api/user/services').then((res) => {
+    //   setActiveServices(res.data.map((item) => item.type))
+    // }).catch((err) => {
+    //   console.log(err)
+    // })
+  }, [])
+  useEffect(() => {
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      setAvailablePages(res.data[0].allowed_pages)
     }).catch((err) => {
       console.log(err)
     })
@@ -364,11 +378,11 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                           >
 
                             {option.children.map((item, key) => {
-                              if (availablePages.includes(item.id) != null) {
+                              if (availablePages.includes(item.id)) {
                                 return (
                                   <Box
-                                  px={3} py={2} w={'full'}
-                                  _hover={{ bg: 'aqua' }}
+                                    px={3} py={2} w={'full'}
+                                    _hover={{ bg: 'aqua' }}
                                   >
                                     <Link key={key} href={item.soon ? "#" : item.link}
                                       style={{
@@ -391,17 +405,17 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                                   </Box>
                                 )
                               }
-                              else {
-                                return (
-                                  <Link key={key} href={item.link} style={{ width: '100%' }}>
-                                    <Text
-                                      w={'full'} textAlign={'left'}
-                                      px={3} py={2} _hover={{ bg: 'aqua' }}
-                                      textTransform={'capitalize'}
-                                    >{item.title}</Text>
-                                  </Link>
-                                )
-                              }
+                              // else {
+                              //   return (
+                              //     <Link key={key} href={item.link} style={{ width: '100%' }}>
+                              //       <Text
+                              //         w={'full'} textAlign={'left'}
+                              //         px={3} py={2} _hover={{ bg: 'aqua' }}
+                              //         textTransform={'capitalize'}
+                              //       >{item.title}</Text>
+                              //     </Link>
+                              //   )
+                              // }
                             })}
                           </VStack>
 
@@ -422,9 +436,9 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
               <Accordion allowToggle w={'full'}>
 
                 <AccordionItem>
-                  <AccordionButton px={[0, 3]} 
-                  _expanded={{ bg: 'aqua' }}
-                  id={'users'}
+                  <AccordionButton px={[0, 3]}
+                    _expanded={{ bg: 'aqua' }}
+                    id={'users'}
                   >
                     <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
                       <BsPeopleFill />
@@ -435,7 +449,6 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
 
                   <AccordionPanel px={0}>
 
-
                     <VStack
                       w={'full'}
                       alignItems={'flex-start'}
@@ -443,21 +456,27 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                       spacing={2}
                       overflow={'hidden'}
                     >
-                      <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >Create User</Text>
-                      </Link>
+                      {
+                        availablePages.includes('createUser') ?
+                          <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >Create User</Text>
+                          </Link> : null
+                      }
 
-                      <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >View Users</Text>
-                      </Link>
+                      {
+                        availablePages.includes('usersList') ?
+                          <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >View Users</Text>
+                          </Link> : null
+                      }
 
                       {/* <Link href={"/dashboard/users/manage-user?pageId=users"} style={{ width: '100%' }}>
                         <Text
@@ -467,13 +486,16 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                         >Edit User</Text>
                       </Link> */}
 
-                      <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >User Ledger</Text>
-                      </Link>
+                      {
+                        availablePages.includes('userLedger') ?
+                          <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >User Ledger</Text>
+                          </Link> : null
+                      }
 
                     </VStack>
 

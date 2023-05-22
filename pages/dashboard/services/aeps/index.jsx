@@ -46,7 +46,7 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
+      if (!res.data[0].allowed_pages.includes('aepsTransaction')) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
@@ -306,7 +306,7 @@ const Aeps = () => {
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.response.data.message || err.response.data || err.message
+          description: err.response?.data?.message || err.response?.data || err.message
         })
       })
     }

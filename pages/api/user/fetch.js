@@ -15,7 +15,7 @@ const UserInfo = async (req, res) => {
         const result = await User.find({
             "organisation_code": `${process.env.NEXT_PUBLIC_ORGANISATION}`,
             "user_id": user_id
-        }).exec()
+        })
         res.status(200).json(result)
     }
     else {

@@ -17,7 +17,7 @@ import { useFormik } from 'formik'
 import { IoIosMan, IoIosTransgender, IoIosWoman } from 'react-icons/io'
 
 
-const Cms = () => {
+const Pan = () => {
     const Toast = useToast({ position: 'top-right' })
     const Formik = useFormik({
         initialValues: {
@@ -43,7 +43,7 @@ const Cms = () => {
     })
     return (
         <>
-            <DashboardWrapper pageTitle={'CMS'}>
+            <DashboardWrapper pageTitle={'PAN'}>
                 <Box
                     w={['full']}
                     p={4} rounded={8}
@@ -148,4 +148,4 @@ const Cms = () => {
     )
 }
 
-export default Cms
+export default Pan
