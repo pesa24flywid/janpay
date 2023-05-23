@@ -223,7 +223,6 @@ const Index = () => {
       </DashboardWrapper>
 
       {/* Receipt */}
-
       <Modal
         isOpen={receipt.show}
         onClose={() => setReceipt({ ...receipt, show: false })}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
     Box,
@@ -10,7 +10,15 @@ import {
     FormLabel,
     useToast,
     Select,
-    HStack
+    HStack,
+    VStack,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
 } from '@chakra-ui/react'
 import BackendAxios from '../../../../lib/axios'
 import { useFormik } from 'formik'
@@ -19,6 +27,9 @@ import { IoIosMan, IoIosTransgender, IoIosWoman } from 'react-icons/io'
 
 const Pan = () => {
     const Toast = useToast({ position: 'top-right' })
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [encData, setEncData] = useState("")
+    const [encUrl, setEncUrl] = useState("")
     const Formik = useFormik({
         initialValues: {
             title: "",
@@ -30,8 +41,10 @@ const Pan = () => {
             email: "",
         },
         onSubmit: values => {
-            BackendAxios.post(`/api/`, {...values}).then(res => {
-                window.open(`${res.data.callback_url}`, "_blank")
+            BackendAxios.post(`/api/paysprint/pan/start`, { ...values }).then(res => {
+                setEncData(res.data.data.encdata)
+                setEncUrl(res.data.data.url)
+                onOpen()
             }).catch(err => {
                 Toast({
                     status: 'error',
@@ -44,6 +57,9 @@ const Pan = () => {
     return (
         <>
             <DashboardWrapper pageTitle={'PAN'}>
+                <form action={encUrl} method='POST' id='encForm'>
+                    <input type="hidden" name='encdata' value={encData} />
+                </form>
                 <Box
                     w={['full']}
                     p={4} rounded={8}
@@ -133,17 +149,54 @@ const Pan = () => {
                             <Input name='lastName' onChange={Formik.handleChange} />
                         </FormControl>
                     </Stack>
-                    {Formik.values.mode == "E" ?
-                        <FormControl w={['full', 'sm']} pb={8} isRequired>
-                            <FormLabel>Email</FormLabel>
-                            <Input name='email' onChange={Formik.handleChange} />
-                        </FormControl> : null
-                    }
+
+                    <FormControl w={['full', 'sm']} pb={8} isRequired>
+                        <FormLabel>Email</FormLabel>
+                        <Input name='email' onChange={Formik.handleChange} />
+                    </FormControl>
                     <HStack justifyContent={'flex-end'}>
                         <Button colorScheme='twitter' onClick={Formik.handleSubmit}>Submit</Button>
                     </HStack>
                 </Box>
             </DashboardWrapper>
+
+            <VStack
+                bg={'blackAlpha.600'} w={'full'}
+                position={'fixed'} top={0} bottom={0}
+                zIndex={999} left={0} right={0}
+                display={isOpen ? "flex" : "none"}
+                justifyContent={'center'}
+                onClick={onClose}
+            >
+                <form action={encUrl} method='POST' target='_blank'>
+                    <input type="text" style={{ display: 'none' }} name='encdata' value={encData} />
+                    <Box
+                        p={4} w={['full', 'sm']}
+                        rounded={8} bg={'#FFF'}
+                    >
+                        <Text pb={8} fontSize={'lg'} fontWeight={'semibold'}>
+                            Please confirm these details
+                        </Text>
+                        {
+                            Object.entries(Formik.values).map((item, key) => (
+                                <HStack pb={2} justifyContent={'space-between'}>
+                                    <Text
+                                        fontWeight={'semibold'}
+                                        textTransform={'capitalize'}
+                                    >{item[0]}</Text>
+                                    <Text
+                                        textTransform={'uppercase'}
+                                    >{item[1] == "1" ? "Shri" : item[1] == "2" ? "Smt." : item[1] == "3" ? "Kumari" : item[1]}
+                                    </Text>
+                                </HStack>
+                            ))
+                        }
+                        <HStack justifyContent={'flex-end'} p={4}>
+                            <Button colorScheme='whatsapp' type='submit'>Confirm</Button>
+                        </HStack>
+                    </Box>
+                </form>
+            </VStack>
         </>
     )
 }

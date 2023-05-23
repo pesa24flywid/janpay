@@ -8,6 +8,8 @@ import {
     FormControl,
     FormLabel,
     Input,
+    PinInput,
+    PinInputField,
     Select,
     useToast,
     Modal,
@@ -16,7 +18,8 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    VStack
+    VStack,
+    useDisclosure
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import BackendAxios from '../../../../lib/axios'
@@ -27,6 +30,10 @@ import Pdf from 'react-to-pdf'
 const Fastag = () => {
     const Toast = useToast({ position: 'top-right' })
     const pdfRef = useRef(null)
+
+    const { isOpen, onClose, onOpen } = useDisclosure()
+    const [mpin, setMpin] = useState("")
+
     const [operators, setOperators] = useState([])
     const [billFetched, setBillFetched] = useState(false)
 
@@ -79,9 +86,11 @@ const Fastag = () => {
             ...Formik.values,
             bill: billInfo,
             amount: billAmount,
-            latlong: Cookies.get("latlong")
+            latlong: Cookies.get("latlong"),
+            mpin: mpin
         }).then(res => {
             setBillFetched(false)
+            onClose()
             setReceipt({
                 status: res.data.metadata?.status || false,
                 show: true,
@@ -103,7 +112,6 @@ const Fastag = () => {
     return (
         <>
             <DashboardWrapper pageTitle={'Fastag Services'}>
-
                 <Box
                     w={['full', 'md']} p={6}
                     bg={'#FFF'} rounded={12}
@@ -147,13 +155,39 @@ const Fastag = () => {
                     <HStack justifyContent={'flex-end'}>
                         {
                             billFetched ?
-                                <Button colorScheme='whatsapp' onClick={payBill}>Pay Bill</Button> :
+                                <Button colorScheme='whatsapp' onClick={onOpen}>Pay Bill</Button> :
                                 <Button colorScheme='twitter' onClick={Formik.handleSubmit}>Fetch Bill</Button>
                         }
                     </HStack>
                 </Box>
 
             </DashboardWrapper>
+
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                isCentered
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalBody p={4}>
+                        <Text textAlign={'center'}>Enter MPIN To Confirm Transaction</Text>
+                        <HStack p={4} spacing={4} justifyContent={'center'}>
+                            <PinInput otp onComplete={value => setMpin(value)}>
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                                <PinInputField bg={'aqua'} />
+                            </PinInput>
+                        </HStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <HStack justifyContent={'flex-end'}>
+                            <Button colorScheme='twitter' onClick={payBill}>Confirm</Button>
+                        </HStack>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
 
 
             <Modal

@@ -6,6 +6,7 @@ import {
   Text,
   Button,
   HStack,
+  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -222,8 +223,11 @@ const Index = () => {
         </Box>
       </DashboardWrapper>
 
-      {/* Receipt */}
 
+      
+
+
+      {/* Receipt */}
       <Modal
         isOpen={receipt.show}
         onClose={() => setReceipt({ ...receipt, show: false })}

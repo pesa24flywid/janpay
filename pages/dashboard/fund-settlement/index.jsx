@@ -224,7 +224,8 @@ const Index = () => {
             {/* MPIN Modal */}
             <Modal
                 isOpen={isPinModalVisible}
-                isCentered closeOnOverlayClick={false}
+                isCentered
+                onClose={()=>setIsPinModalVisible(false)}
             >
                 <ModalOverlay />
                 <ModalContent>
@@ -259,6 +260,7 @@ const Index = () => {
             <Modal
                 isOpen={isModalVisible}
                 isCentered
+                onClose={()=>setIsModalVisible(false)}
             >
                 <ModalOverlay />
                 <ModalContent>
