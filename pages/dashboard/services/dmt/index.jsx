@@ -200,7 +200,7 @@ const Dmt = () => {
                     })
                 }).catch(err => {
                     console.log(err)
-                    if (err.status == 501) {
+                    if (err.response.status == 501) {
                         Toast({
                             status: "error",
                             title: "Error Occured",
