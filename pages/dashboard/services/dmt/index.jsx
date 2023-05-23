@@ -185,6 +185,14 @@ const Dmt = () => {
             if (dmtProvider == "paysprint") {
                 BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, { ...values, customerId: customerId }).then(res => {
                     setPaymentConfirmationModal(false)
+                    if(res.status == 501){
+                        Toast({
+                            status: "error",
+                            title: "Error Occured",
+                            description: "Server Busy"
+                        })
+                        return
+                    }
                     setReceipt({
                         status: res.data.metadata.status,
                         show: true,
