@@ -192,10 +192,18 @@ const Dmt = () => {
                     })
                 }).catch(err => {
                     console.log(err)
+                    if(err.status == 501){
+                        Toast({
+                            status: "error",
+                            title: "Error Occured",
+                            description: "Server Busy"
+                        })
+                        return
+                    }
                     Toast({
                         status: "error",
                         title: "Error Occured",
-                        description: err.response?.data?.message || err.response?.data || err.message || "Server Busy"
+                        description: err.response?.data?.message || err.response?.data || err.message
                     })
                 })
             }
