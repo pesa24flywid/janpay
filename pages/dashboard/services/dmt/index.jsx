@@ -107,15 +107,15 @@ const Dmt = () => {
         position: 'top-right'
     })
 
-    useEffect(()=>{
-        BackendAxios.get(`/api/${dmtProvider}/dmt/banks/${serviceId}`).then(res=>{
+    useEffect(() => {
+        BackendAxios.get(`/api/${dmtProvider}/dmt/banks/${serviceId}`).then(res => {
             setBankList(res.data)
-        }).catch(err=>{
+        }).catch(err => {
             Toast({
-                description: err.response.data.message || err.response.data|| err.message
+                description: err.response.data.message || err.response.data || err.message
             })
         })
-    },[])
+    }, [])
 
     const registrationFormik = useFormik({
         initialValues: {
@@ -166,9 +166,9 @@ const Dmt = () => {
 
     const pdfRef = React.createRef()
     const [receipt, setReceipt] = useState({
-      show: false,
-      status: "success",
-      data: {}
+        show: false,
+        status: "success",
+        data: {}
     })
     const paymentFormik = useFormik({
         initialValues: {
@@ -185,7 +185,7 @@ const Dmt = () => {
             if (dmtProvider == "paysprint") {
                 BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, { ...values, customerId: customerId }).then(res => {
                     setPaymentConfirmationModal(false)
-                    if(res.status == 501){
+                    if (res.status == 501) {
                         Toast({
                             status: "error",
                             title: "Error Occured",
@@ -194,13 +194,13 @@ const Dmt = () => {
                         return
                     }
                     setReceipt({
-                        status: res.data.metadata.status,
+                        status: res.data.metadata.status || false,
                         show: true,
                         data: res.data.metadata
                     })
                 }).catch(err => {
                     console.log(err)
-                    if(err.status == 501){
+                    if (err.status == 501) {
                         Toast({
                             status: "error",
                             title: "Error Occured",
@@ -799,7 +799,7 @@ const Dmt = () => {
                                 onChange={addRecipientFormik.handleChange}
                             >
                                 {
-                                    bankList.map((bank, key)=>(
+                                    bankList.map((bank, key) => (
                                         <option value={bank.bank_id}>{bank.name}</option>
                                     ))
                                 }
@@ -891,19 +891,18 @@ const Dmt = () => {
                         <ModalBody p={0} bg={'azure'}>
                             <VStack w={'full'} p={4} bg={'#FFF'}>
                                 {
-                                    receipt.data ?
-                                        Object.entries(receipt.data).map((item, key) => (
-                                            <HStack
-                                                justifyContent={'space-between'}
-                                                gap={8} pb={4} w={'full'} key={key}
-                                            >
-                                                <Text fontSize={14}
-                                                    fontWeight={'medium'}
-                                                    textTransform={'capitalize'}
-                                                >{item[0]}</Text>
-                                                <Text fontSize={14} >{`${item[1]}`}</Text>
-                                            </HStack>
-                                        )) : null
+                                    Object.entries(receipt.data).map((item, key) => (
+                                        <HStack
+                                            justifyContent={'space-between'}
+                                            gap={8} pb={4} w={'full'} key={key}
+                                        >
+                                            <Text fontSize={14}
+                                                fontWeight={'medium'}
+                                                textTransform={'capitalize'}
+                                            >{item[0]}</Text>
+                                            <Text fontSize={14} >{`${item[1]}`}</Text>
+                                        </HStack>
+                                    ))
                                 }
                             </VStack>
                         </ModalBody>
