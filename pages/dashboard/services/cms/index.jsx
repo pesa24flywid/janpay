@@ -38,12 +38,20 @@ const Cms = () => {
         },
         onSubmit: values => {
             BackendAxios.post(`/api/paysprint/cms/${values.provider}`, values).then(res => {
-                window.open(`${res.data.redirecturl}`, "_blank")
+                if(res.data.redirecturl){
+                    window.open(`${res.data.redirecturl}`, "_blank")
+                }
+                else{
+                    Toast({
+                        status: 'warning',
+                        description: res.data.message || "Unable to process transaction"
+                    })
+                }
             }).catch(err => {
                 Toast({
                     status: 'error',
                     title: 'Error while sending request',
-                    description: err.response.data.message || err.response.data || err.message
+                    description: err.response.data?.message || err.response?.data || err.message
                 })
             })
         }

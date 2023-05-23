@@ -112,10 +112,10 @@ export const SidebarOptions =
           soon: false,
         },
         {
-          title: 'axis account opening',
-          link: '/dashboard/services/payout?pageId=services',
+          title: 'axis bank account',
+          link: '/dashboard/services/axis?pageId=services',
           id: "axisTransaction",
-          soon: true,
+          soon: false,
         },
         {
           title: 'LIC services',
@@ -234,7 +234,7 @@ export const SidebarOptions =
           title: 'fastag reports',
           link: '/dashboard/reports/fastag?pageId=reports',
           id: "fastagReport",
-          soon: true,
+          soon: false,
         },
         {
           title: 'Transaction Ledger',
