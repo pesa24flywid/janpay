@@ -76,6 +76,7 @@ const Fastag = () => {
         }).catch(err => {
             Toast({
                 status: 'error',
+                title: "Error while fetching operators",
                 description: err.response?.data?.message || err.response?.data || err.message
             })
         })
@@ -91,6 +92,14 @@ const Fastag = () => {
         }).then(res => {
             setBillFetched(false)
             onClose()
+            if(!res.data.status){
+                Toast({
+                    status: 'warning',
+                    title: 'warning',
+                    description: res.data.message
+                })
+                return
+            }
             setReceipt({
                 status: res.data.metadata?.status || false,
                 show: true,
