@@ -72,6 +72,14 @@ const Fastag = () => {
     // Fetching operators
     useEffect(() => {
         BackendAxios.get(`/api/paysprint/fastag/operators`).then(res => {
+            if(!res.data.status){
+                Toast({
+                    status: 'warning',
+                    title: 'warning',
+                    description: res.data.message
+                })
+                return
+            }
             setOperators(res.data.data)
         }).catch(err => {
             Toast({
@@ -92,14 +100,6 @@ const Fastag = () => {
         }).then(res => {
             setBillFetched(false)
             onClose()
-            if(!res.data.status){
-                Toast({
-                    status: 'warning',
-                    title: 'warning',
-                    description: res.data.message
-                })
-                return
-            }
             setReceipt({
                 status: res.data.metadata?.status || false,
                 show: true,
