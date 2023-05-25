@@ -1,5 +1,6 @@
-import Organisation from "@/lib/models/OrganisationModel";
-import Connect from "@/lib/utils/mongoose";
+import Organisation from "../../../lib/models/OrganisationModel"
+import Connect from "../../../lib/utils/mongoose"
+
 
 export default async function GlobalDetails(req, res) {
     await Connect()
