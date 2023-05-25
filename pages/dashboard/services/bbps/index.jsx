@@ -109,10 +109,15 @@ const Bbps = () => {
   // Fetch all available categories
   useEffect(() => {
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then((res) => {
+      BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
         setCategories(res.data.data)
       }).catch((err) => {
         console.log(err)
+        Toast({
+          status: 'warning',
+          title: "Error while fetching operators",
+          description: err.response?.data?.message || err.response.data || err.message
+        })
       })
     }
     if (bbpsProvider == "paysprint") {
@@ -134,7 +139,7 @@ const Bbps = () => {
         })
       })
     }
-  }, [])
+  }, [bbpsProvider])
 
   useEffect(() => {
     setLatlong(Cookies.get("latlong"))
@@ -176,15 +181,30 @@ const Bbps = () => {
     if (bbpsProvider == "eko") {
       FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
         formData
-      )
+      ).then(res => {
+        if (res.data.response_type_id == -1) {
+          Toast({
+            description: res.data.message || "Unable to fetch bill"
+          })
+          return
+        }
+        setFetchBillResponse(res.data.data)
+        setAmount(res.data.data.amount)
+        setFetchBillBtn(false)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          title: 'Error while fetching bill',
+          description: err.response?.data?.message || err.response?.data || err.message
+        })
+      })
     }
     if (bbpsProvider == "paysprint") {
       FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
         formData
       ).then(res => {
-        console.log(res.data)
         setFetchBillResponse(res.data)
-        if(res.data.status == false && parseInt(res.data.response_code) == 0){
+        if (res.data.status == false && parseInt(res.data.response_code) == 0) {
           Toast({
             description: res.data.message
           })
@@ -206,9 +226,37 @@ const Bbps = () => {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
     if (bbpsProvider == "eko") {
-      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
-        formData
-      )
+      var object = {};
+      formData.forEach(function (value, key) {
+        object[key] = value;
+      });
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
+        {
+          ...object,
+          mpin: mpin,
+          bill: fetchBillResponse,
+          utility_acc_no: object.utility_acc_no,
+          confirmation_mobile_no: object.confirmation_mobile_no,
+          amount: amount,
+          latitude: latlong.split(",")[0],
+          longitude: latlong.split(",")[1],
+          latlong: latlong
+        }
+      ).then(res => {
+        setReceipt({
+          status: res.data.metadata?.status,
+          show: true,
+          data: res.data.metadata
+        })
+        onClose()
+      }).catch(err => {
+        setReceipt({
+          status: err.response.data?.metadata?.status,
+          show: true,
+          data: err.response.data?.metadata
+        })
+        onClose()
+      })
     }
     if (bbpsProvider == "paysprint") {
       var object = {};
@@ -238,10 +286,6 @@ const Bbps = () => {
           data: err.response.data?.metadata
         })
         onClose()
-        // Toast({
-        //   status: 'error',
-        //   description: err.response?.data?.message || err.response?.data || err.message
-        // })
       })
     }
   }
