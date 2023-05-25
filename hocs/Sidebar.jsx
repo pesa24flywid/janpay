@@ -333,7 +333,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                 border={"2px"}
                 borderColor={"gray.200"}
               />
-              <Text fontSize={"xl"}>{userName}</Text>
+              <Text fontSize={"xl"} textAlign={'center'}>{userName}</Text>
               <Text
                 fontSize={"sm"}
                 color={"darkslategray"}
