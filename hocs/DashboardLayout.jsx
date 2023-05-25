@@ -102,13 +102,6 @@ const DashboardWrapper = (props) => {
         setProfilePic(localStorage.getItem("profilePic"))
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
 
-        // Check wallet balance
-        BackendAxios.post('/api/user/wallet').then((res) => {
-            setWallet(res.data[0].wallet)
-        }).catch((err) => {
-            setWallet('Error')
-        })
-
         // Fetch all notifications
         ClientAxios.post('/api/user/fetch', {
             user_id: localStorage.getItem('userId')
@@ -122,6 +115,15 @@ const DashboardWrapper = (props) => {
             console.log(err)
         })
 
+    }, [])
+
+    useEffect(() => {
+        // Check wallet balance
+        BackendAxios.post('/api/user/wallet').then((res) => {
+            setWallet(res.data[0].wallet)
+        }).catch((err) => {
+            setWallet('0')
+        })
     }, [])
 
 
