@@ -39,6 +39,7 @@ import { FiSend } from 'react-icons/fi'
 import { BsCheck2Circle, BsDownload, BsTrash, BsXCircle } from 'react-icons/bs'
 import { AiOutlinePlus } from 'react-icons/ai'
 import Pdf from 'react-to-pdf'
+import Cookies from 'js-cookie'
 
 const Dmt = () => {
     const [dmtProvider, setDmtProvider] = useState("paysprint")
@@ -172,6 +173,7 @@ const Dmt = () => {
     })
     const paymentFormik = useFormik({
         initialValues: {
+            latlong: Cookies.get("latlong"),
             amount: "",
             selectedBank: "",
             selectedBankCode: "",
@@ -195,6 +197,41 @@ const Dmt = () => {
                     }
                     setReceipt({
                         status: res.data.metadata.status || false,
+                        show: true,
+                        data: res.data.metadata
+                    })
+                }).catch(err => {
+                    console.log(err)
+                    if (err.response.status == 501) {
+                        Toast({
+                            status: "error",
+                            title: "Error Occured",
+                            description: "Server Busy"
+                        })
+                        return
+                    }
+                    Toast({
+                        status: "error",
+                        title: "Error Occured",
+                        description: err.response?.data?.message || err.response?.data || err.message
+                    })
+                })
+            }
+            if (dmtProvider == "eko") {
+                BackendAxios.post(`/api/eko/dmt/initiate-payment/${serviceId}`, { 
+                    ...values, customerId: customerId,
+                 }).then(res => {
+                    setPaymentConfirmationModal(false)
+                    if (res.status == 501) {
+                        Toast({
+                            status: "error",
+                            title: "Error Occured",
+                            description: "Server Busy"
+                        })
+                        return
+                    }
+                    setReceipt({
+                        status: res.data.metadata?.status || false,
                         show: true,
                         data: res.data.metadata
                     })
@@ -287,17 +324,18 @@ const Dmt = () => {
                 customerId
             }).then((res) => {
                 if (dmtProvider == "eko") {
-                    if (res.data.response.status == 463 && res.data.response.response_status_id == 1) {
+                    if (res.data.status == 463 && res.data.response_status_id == 1) {
                         setCustomerStatus("unregistered")
                     }
-                    if (res.data.response.status == 0 && res.data.response.response_status_id == 0) {
-                        setCustomerRemainingLimit(res.data.response.data.available_limit)
-                        setCustomerUsedLimit(res.data.response.data.used_limit)
-                        setCustomerTotalLimit(res.data.response.data.total_limit)
-                        setCustomerName(res.data.response.data.name)
+                    if (res.data.status == 0 && res.data.response_status_id == 0) {
+                        setCustomerRemainingLimit(res.data.data.available_limit)
+                        setCustomerUsedLimit(res.data.data.used_limit)
+                        setCustomerTotalLimit(res.data.data.total_limit)
+                        setCustomerName(res.data.data.name)
                         setCustomerStatus("registered")
+                        fetchRecipients()
                     }
-                    if (res.data.response.status == 0 && res.data.response.response_status_id == -1) {
+                    if (res.data.status == 0 && res.data.response_status_id == -1) {
                         sendOtp()
                     }
                 }
@@ -331,7 +369,7 @@ const Dmt = () => {
                 Toast({
                     status: "error",
                     title: "Error Occured",
-                    description: err.response.data.message || err.response.data || err.message,
+                    description: err.response?.data?.message || err.response?.data || err.message,
                 })
             })
             setIsBtnLoading(false)
@@ -429,8 +467,8 @@ const Dmt = () => {
                 else {
                     Toast({
                         status: 'info',
-                        title: "Oops!",
-                        description: res.message,
+                        title: "Error Occured!",
+                        description: res.data.message,
                         position: "top-right"
                     })
                 }
@@ -477,6 +515,29 @@ const Dmt = () => {
                         bankName: recipient.bankname,
                         bankIfsc: recipient.ifsc,
                         beneficiaryId: recipient.bene_id,
+                    }
+                }))
+            }).catch(err => {
+                Toast({
+                    status: 'error',
+                    title: "Error Occured",
+                    description: err.response.data.message || err.response.data || err.message,
+                })
+            })
+        }
+        if (dmtProvider == "eko") {
+            BackendAxios.get(`/api/eko/dmt/recipient-list/${serviceId}`, {
+                customerId: customerId
+            }).then(res => {
+                console.log(res.data)
+                setRecipients(res.data.data.recipient_list.map((recipient) => {
+                    return {
+                        accountNumber: recipient.account,
+                        beneficiaryName: recipient.recipient_name,
+                        bankCode: null,
+                        bankName: recipient.bank,
+                        bankIfsc: recipient.ifsc,
+                        beneficiaryId: recipient.recipient_id,
                     }
                 }))
             }).catch(err => {
