@@ -71,7 +71,7 @@ const Aeps = () => {
   const [rdservicePort, setRdservicePort] = useState(11101)
 
   let MethodInfo
-  function getMantra() {
+  function getMantra(port) {
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -129,7 +129,7 @@ const Aeps = () => {
     if (SuccessFlag == 1) {
       //alert("RDSERVICE Discover Successfully");
       var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
-      var finalUrl = "http://" + GetCustomDomName + ":" + 11101;
+      var finalUrl = "http://" + GetCustomDomName + ":" + port;
       var verb = "CAPTURE";
       var err = "";
       var res;
@@ -239,7 +239,6 @@ const Aeps = () => {
           MantraFound = 1;
           setBiometricDevice("mantra")
           setRdserviceFound(true)
-          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -253,10 +252,13 @@ const Aeps = () => {
   }
 
   useEffect(() => {
-    if (!rdserviceFound) {
-      for (let i = 11100; i <= 11110; i++) {
-        searchMantra(i)
-      }
+    if (rdserviceFound) {
+      setRdservicePort(rdservicePort)
+      return
+    }
+    else {
+      setRdservicePort(Number(rdservicePort) + 1)
+      searchMantra(Number(rdservicePort))
     }
   }, [rdserviceFound])
 
@@ -625,7 +627,7 @@ const Aeps = () => {
               </> : null
             }
 
-            <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
+            <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
 
           <Box w={['full', 'full', 'sm']} >

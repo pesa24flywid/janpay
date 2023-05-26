@@ -239,7 +239,6 @@ const Aeps = () => {
           MantraFound = 1;
           setBiometricDevice("mantra")
           setRdserviceFound(true)
-          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -253,10 +252,13 @@ const Aeps = () => {
   }
 
   useEffect(() => {
-    if(!rdserviceFound){
-      for (let i = 11100; i <= 11110; i++) {
-        searchMantra(i)
-      }
+    if (rdserviceFound) {
+      setRdservicePort(rdservicePort)
+      return
+    }
+    else {
+      setRdservicePort(Number(rdservicePort) + 1)
+      searchMantra(Number(rdservicePort))
     }
   }, [rdserviceFound])
   const [isBtnLoading, setIsBtnLoading] = useState(false)
