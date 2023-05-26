@@ -197,8 +197,11 @@ const Login = () => {
                 Cookies.set('access-token', res.data.token.original.access_token)
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            }).then(() => {
+                setTimeout(() => {
+                    Router.push("/dashboard?pageId=dashboard")
+                }, 1000);
             })
-            Router.push("/dashboard?pageId=dashboard")
 
         } catch (err) {
             console.log(err)
@@ -258,7 +261,9 @@ const Login = () => {
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             }).then(() => {
-                Router.push("/dashboard?pageId=dashboard")
+                setTimeout(() => {
+                    Router.push("/dashboard?pageId=dashboard")
+                }, 1000);
             })
 
         } catch (err) {
