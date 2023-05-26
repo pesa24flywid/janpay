@@ -92,7 +92,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + 11101,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
@@ -126,7 +126,7 @@ const Aeps = () => {
     if (SuccessFlag == 1) {
       //alert("RDSERVICE Discover Successfully");
       var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
-      var finalUrl = "http://" + GetCustomDomName + ":" + 11100;
+      var finalUrl = "http://" + GetCustomDomName + ":" + 11101;
       var verb = "CAPTURE";
       var err = "";
       var res;
@@ -223,7 +223,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + 11101,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
