@@ -230,7 +230,7 @@ const Bbps = () => {
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
         {
           ...object,
           mpin: mpin,
@@ -250,6 +250,13 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
+        if(err.response.status == 406){
+          Toast({
+            status: 'error',
+            description: 'MPIN is incorrect'
+          })
+          return
+        }
         setReceipt({
           status: err.response.data?.metadata?.status,
           show: true,
@@ -263,7 +270,7 @@ const Bbps = () => {
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
         {
           ...object,
           mpin: mpin,
@@ -280,6 +287,13 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
+        if(err.response.status == 406){
+          Toast({
+            status: 'error',
+            description: 'MPIN is incorrect'
+          })
+          return
+        }
         setReceipt({
           status: err.response.data?.metadata?.status,
           show: true,
