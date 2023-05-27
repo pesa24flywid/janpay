@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Text,
+    Image,
     HStack,
     FormControl,
     FormLabel,
@@ -72,7 +73,7 @@ const Fastag = () => {
     // Fetching operators
     useEffect(() => {
         BackendAxios.get(`/api/paysprint/fastag/operators`).then(res => {
-            if(!res.data.status){
+            if (!res.data.status) {
                 Toast({
                     status: 'warning',
                     title: 'warning',
@@ -213,26 +214,57 @@ const Fastag = () => {
                                         <BsCheck2Circle color='#FFF' fontSize={72} /> :
                                         <BsXCircle color='#FFF' fontSize={72} />
                                 }
-                                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || "0"}</Text>
+                                <Text color={'#FFF'} fontSize={'xs'} textTransform={'uppercase'}>Transaction {receipt.status ? "success" : "failed"}</Text>
                             </VStack>
                         </ModalHeader>
                         <ModalBody p={0} bg={'azure'}>
                             <VStack w={'full'} p={4} bg={'#FFF'}>
                                 {
                                     receipt.data ?
-                                        Object.entries(receipt.data).map((item, key) => (
-                                            <HStack
-                                                justifyContent={'space-between'}
-                                                gap={8} pb={4} w={'full'} key={key}
-                                            >
-                                                <Text fontSize={14}
-                                                    fontWeight={'medium'}
-                                                    textTransform={'capitalize'}
-                                                >{item[0]}</Text>
-                                                <Text fontSize={14} >{`${item[1]}`}</Text>
-                                            </HStack>
-                                        )) : null
+                                        Object.entries(receipt.data).map((item, key) => {
+
+                                            if (
+                                                item[0].toLowerCase() != "status" &&
+                                                item[0].toLowerCase() != "user" &&
+                                                item[0].toLowerCase() != "user_name" &&
+                                                item[0].toLowerCase() != "user_id" &&
+                                                item[0].toLowerCase() != "user_phone" &&
+                                                item[0].toLowerCase() != "amount"
+                                            )
+                                                return (
+                                                    <HStack
+                                                        justifyContent={'space-between'}
+                                                        gap={8} pb={1} w={'full'} key={key}
+                                                    >
+                                                        <Text
+                                                            fontSize={'xs'}
+                                                            fontWeight={'medium'}
+                                                            textTransform={'capitalize'}
+                                                        >{item[0].replace(/_/g, " ")}</Text>
+                                                        <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                                                    </HStack>
+                                                )
+
+                                        }
+                                        ) : null
                                 }
+                                <VStack pt={8} w={'full'}>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                                    </HStack>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                                    </HStack>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                                    </HStack>
+                                    <Image src='/logo_long.png' w={'20'} />
+                                    <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                                </VStack>
                             </VStack>
                         </ModalBody>
                     </Box>

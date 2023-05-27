@@ -6,6 +6,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Image,
   PinInput,
   PinInputField,
   Select,
@@ -53,7 +54,7 @@ import Pdf from 'react-to-pdf'
 
 
 const Bbps = () => {
-  const [bbpsProvider, setBbpsProvider] = useState("paysprint")
+  const [bbpsProvider, setBbpsProvider] = useState("")
   const Toast = useToast({ position: 'top-right' })
   const { isOpen, onOpen, onClose } = useDisclosure()
   useEffect(() => {
@@ -250,7 +251,7 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
-        if(err.response.status == 406){
+        if (err.response.status == 406) {
           Toast({
             status: 'error',
             description: 'MPIN is incorrect'
@@ -287,7 +288,7 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
-        if(err.response.status == 406){
+        if (err.response.status == 406) {
           Toast({
             status: 'error',
             description: 'MPIN is incorrect'
@@ -567,27 +568,56 @@ const Bbps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {bbpsProvider == "paysprint" ? receipt.data.amount : receipt.data.amount}</Text>
+                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text
-                          fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} maxW={'full'} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "user" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "amount"
+                      )
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                          >
+                            <Text
+                              fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+
+                    }
+                    ) : null
                 }
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

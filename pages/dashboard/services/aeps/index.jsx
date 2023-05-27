@@ -3,6 +3,7 @@ import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import $ from 'jquery'
 import {
   Box,
+  Image,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -35,7 +36,7 @@ import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-ico
 import Pdf from 'react-to-pdf'
 
 const Aeps = () => {
-  const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const [aepsProvider, setAepsProvider] = useState("")
   const transactionKeyword = "aeps"
   const serviceCode = "20"
   useEffect(() => {
@@ -239,6 +240,7 @@ const Aeps = () => {
           MantraFound = 1;
           setBiometricDevice("mantra")
           setRdserviceFound(true)
+          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -252,11 +254,7 @@ const Aeps = () => {
   }
 
   useEffect(() => {
-    if (rdserviceFound) {
-      setRdservicePort(rdservicePort)
-      return
-    }
-    else {
+    if (!rdserviceFound) {
       setRdservicePort(Number(rdservicePort) + 1)
       searchMantra(Number(rdservicePort))
     }
@@ -281,20 +279,42 @@ const Aeps = () => {
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-        setReceipt({
-          show: true,
-          status: res.data.metadata.status,
-          data: res.data.metadata
+      if (aepsProvider == "paysprint") {
+        await BackendAxios.post(`/api/paysprint/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+          setIsBtnLoading(false)
+          setReceipt({
+            show: true,
+            status: res.data.metadata.status,
+            data: res.data.metadata
+          })
+        }).catch((err) => {
+          setIsBtnLoading(false)
+          Toast({
+            status: 'warning',
+            title: 'Transaction Failed',
+            description: err.response.data.message || err.response.data || err.message,
+            position: 'top-right',
+          })
         })
-      }).catch((err) => {
-        Toast({
-          status: 'warning',
-          title: 'Transaction Failed',
-          description: err.response.data.message || err.response.data || err.message,
-          position: 'top-right',
+      }
+      if (aepsProvider == "eko") {
+        await BackendAxios.post(`/api/eko/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+          setIsBtnLoading(false)
+          setReceipt({
+            show: true,
+            status: res.data.metadata.status,
+            data: res.data.metadata
+          })
+        }).catch((err) => {
+          setIsBtnLoading(false)
+          Toast({
+            status: 'warning',
+            title: 'Transaction Failed',
+            description: err.response.data.message || err.response.data || err.message,
+            position: 'top-right',
+          })
         })
-      })
+      }
       setIsBtnLoading(false)
     }
   })
@@ -308,7 +328,7 @@ const Aeps = () => {
 
   useEffect(() => {
     if (aepsProvider == "paysprint") {
-      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+      BackendAxios.get(`/api/paysprint/aeps/fetch-bank/${serviceCode}`).then(res => {
         setBanksList(res.data.banklist.data)
       }).catch(err => {
         Toast({
@@ -317,7 +337,18 @@ const Aeps = () => {
         })
       })
     }
-  }, [])
+    if (aepsProvider == "eko") {
+      BackendAxios.get(`/api/eko/aeps/fetch-bank/${serviceCode}`).then(res => {
+        setBanksList(res.data?.param_attributes?.list_elements)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.response?.data?.message || err.response?.data || err.message
+        })
+      })
+    }
+  }, [aepsProvider])
+
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -468,39 +499,17 @@ const Aeps = () => {
                     {
                       aepsProvider == "eko" &&
                       banksList.map((bank, key) => (
-                        aepsProvider == "paysprint" &&
-                        <option key={key} value={bank.id}>{bank.bankName}</option>
+                        <option key={key} value={bank.value}>{bank.label}</option>
                       ))
                     }
                     {
                       aepsProvider == "paysprint" &&
                       banksList.map((bank, key) => (
-                        aepsProvider == "paysprint" &&
                         <option key={key} value={bank.iinno}>{bank.bankName}</option>
                       ))
                     }
                   </Select>
-                  {/* <HStack spacing={2} py={2}>
 
-                  <Button
-                    fontSize={'xs'}
-                    value={"SBIN"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >State Bank of India</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={"pnb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Punjab National Bank</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={"yb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Yes Bank</Button>
-
-                </HStack> */}
                 </FormControl>
                 <Stack direction={['column', 'row']} spacing={6} pb={6}>
                   <FormControl w={'full'}>
@@ -571,14 +580,12 @@ const Aeps = () => {
                       {
                         aepsProvider == "eko" &&
                         banksList.map((bank, key) => (
-                          aepsProvider == "paysprint" &&
-                          <option key={key} value={bank.id}>{bank.bankName}</option>
+                          <option key={key} value={bank.value}>{bank.label}</option>
                         ))
                       }
                       {
                         aepsProvider == "paysprint" &&
                         banksList.map((bank, key) => (
-                          aepsProvider == "paysprint" &&
                           <option key={key} value={bank.iinno}>{bank.bankName}</option>
                         ))
                       }
@@ -610,14 +617,12 @@ const Aeps = () => {
                       {
                         aepsProvider == "eko" &&
                         banksList.map((bank, key) => (
-                          aepsProvider == "paysprint" &&
-                          <option key={key} value={bank.id}>{bank.bankName}</option>
+                          <option key={key} value={bank.value}>{bank.label}</option>
                         ))
                       }
                       {
                         aepsProvider == "paysprint" &&
                         banksList.map((bank, key) => (
-                          aepsProvider == "paysprint" &&
                           <option key={key} value={bank.iinno}>{bank.bankName}</option>
                         ))
                       }
@@ -662,26 +667,66 @@ const Aeps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                {
+                  aepsProvider == 'eko' && formik.values.serviceCode == "balance-enquiry" ?
+                    <Text color={'#FFF'}>₹ {receipt.data.customer_balance}</Text> :
+                    formik.values.serviceCode == "money-transfer" ?
+                      <Text color={'#FFF'}>₹ {receipt.data.amount || 0}</Text> : null
+                }
+                <Text color={'#FFF'} fontSize={'xs'} textTransform={'uppercase'}>
+                  {
+                    formik.values.serviceCode == "money-transfer" ? "Cash Withdrawal" : formik.values.serviceCode.replace("-", " ")
+                  }
+                  &nbsp;
+                  {receipt.status ? "success" : "failed"}
+                </Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+                      if (aepsProvider == 'eko')
+                        if (
+                          item[0].toLowerCase() != "status" &&
+                          item[0].toLowerCase() != "customer_balance" &&
+                          item[0].toLowerCase() != "user_name" &&
+                          item[0].toLowerCase() != "user_id" &&
+                          item[0].toLowerCase() != "amount" &&
+                          item[0].toLowerCase() != "user_phone"
+                        )
+                          return (
+                            <HStack
+                              justifyContent={'space-between'}
+                              gap={8} pb={1} w={'full'} key={key}
+                            >
+                              <Text fontSize={'xs'}
+                                fontWeight={'medium'}
+                                textTransform={'capitalize'}
+                              >{item[0].replace(/_/g, " ")}</Text>
+                              <Text fontSize={'xs'} >{`${item[1]}`}</Text>
+                            </HStack>
+                          )
+                    }) : null
                 }
+
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_name}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

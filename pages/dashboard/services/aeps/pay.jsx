@@ -54,7 +54,6 @@ const Aeps = () => {
     })
 
     ClientAxios.get(`/api/global`).then(res => {
-      setAepsProvider(res.data[0].aeps_provider)
       if (!res.data[0].aeps_status) {
         window.location.href('/dashboard/not-available')
       }
@@ -239,6 +238,7 @@ const Aeps = () => {
           MantraFound = 1;
           setBiometricDevice("mantra")
           setRdserviceFound(true)
+          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -252,11 +252,7 @@ const Aeps = () => {
   }
 
   useEffect(() => {
-    if (rdserviceFound) {
-      setRdservicePort(rdservicePort)
-      return
-    }
-    else {
+    if(!rdserviceFound) {
       setRdservicePort(Number(rdservicePort) + 1)
       searchMantra(Number(rdservicePort))
     }
@@ -282,10 +278,11 @@ const Aeps = () => {
       setIsBtnLoading(true)
       if (aepsProvider == "paysprint") {
         await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-          Toast({
-            description: res.data[0].message,
-            position: 'top-right'
-          })
+          setIsBtnLoading(false)
+          // Toast({
+          //   description: res.data[0].message,
+          //   position: 'top-right'
+          // })
           setReceipt({
             show: true,
             status: res.data.metadata.status,
@@ -293,6 +290,7 @@ const Aeps = () => {
           })
           console.log(res.data)
         }).catch((err) => {
+          setIsBtnLoading(false)
           Toast({
             status: 'warning',
             title: 'Transaction Failed',
@@ -312,19 +310,19 @@ const Aeps = () => {
     formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
-
   useEffect(() => {
     if (aepsProvider == "paysprint") {
-      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+      BackendAxios.get(`/api/paysprint/aeps/fetch-bank/${serviceCode}`).then(res => {
         setBanksList(res.data.banklist.data)
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.response.data.message || err.response.data || err.message
+          description: err.response?.data?.message || err.response?.data || err.message
         })
       })
     }
-  }, [])
+  }, [aepsProvider])
+
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -471,14 +469,12 @@ const Aeps = () => {
                 {
                   aepsProvider == "eko" &&
                   banksList.map((bank, key) => (
-                    aepsProvider == "paysprint" &&
-                    <option key={key} value={bank.id}>{bank.bankName}</option>
+                    <option key={key} value={bank.short_code}>{bank.name}</option>
                   ))
                 }
                 {
                   aepsProvider == "paysprint" &&
                   banksList.map((bank, key) => (
-                    aepsProvider == "paysprint" &&
                     <option key={key} value={bank.iino}>{bank.bankName}</option>
                   ))
                 }
@@ -507,7 +503,7 @@ const Aeps = () => {
             </FormControl>
             <Stack direction={['column', 'row']} spacing={6} pb={6}>
               <FormControl w={'full'}>
-                <FormLabel>Aadhaar Number / VID</FormLabel>
+                <FormLabel>Aadhaar Number</FormLabel>
                 <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
                 <HStack py={2}>
                   <Checkbox name={'isVID'}>It is a VID</Checkbox>
@@ -585,7 +581,7 @@ const Aeps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'uppercase'}>Transaction {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
@@ -600,11 +596,12 @@ const Aeps = () => {
                         <Text fontSize={14}
                           fontWeight={'medium'}
                           textTransform={'capitalize'}
-                        >{item[0]}</Text>
+                        >{item[0].replace(/_/g, " ")}</Text>
                         <Text fontSize={14} >{`${item[1]}`}</Text>
                       </HStack>
                     )) : null
                 }
+
               </VStack>
             </ModalBody>
           </Box>

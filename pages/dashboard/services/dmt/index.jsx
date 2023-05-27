@@ -3,6 +3,7 @@ import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
     Box,
     Text,
+    Image,
     Stack,
     HStack,
     VStack,
@@ -42,7 +43,7 @@ import Pdf from 'react-to-pdf'
 import Cookies from 'js-cookie'
 
 const Dmt = () => {
-    const [dmtProvider, setDmtProvider] = useState("paysprint")
+    const [dmtProvider, setDmtProvider] = useState("")
     const serviceId = 24
     useEffect(() => {
 
@@ -109,14 +110,25 @@ const Dmt = () => {
     })
 
     useEffect(() => {
-        BackendAxios.get(`/api/${dmtProvider}/dmt/banks/${serviceId}`).then(res => {
-            setBankList(res.data)
-        }).catch(err => {
-            Toast({
-                description: err.response.data.message || err.response.data || err.message
+        if (dmtProvider == "paysprint") {
+            BackendAxios.get(`/api/paysprint/dmt/banks/${serviceId}`).then(res => {
+                setBankList(res.data)
+            }).catch(err => {
+                Toast({
+                    description: err.response.data.message || err.response.data || err.message
+                })
             })
-        })
-    }, [])
+        }
+        if (dmtProvider == "eko") {
+            BackendAxios.get(`/api/eko/aeps/fetch-bank/${serviceId}`).then(res => {
+                setBankList(res.data?.param_attributes?.list_elements)
+            }).catch(err => {
+                Toast({
+                    description: err.response.data.message || err.response.data || err.message
+                })
+            })
+        }
+    }, [dmtProvider])
 
     const registrationFormik = useFormik({
         initialValues: {
@@ -218,9 +230,9 @@ const Dmt = () => {
                 })
             }
             if (dmtProvider == "eko") {
-                BackendAxios.post(`/api/eko/dmt/initiate-payment/${serviceId}`, { 
+                BackendAxios.post(`/api/eko/dmt/initiate-payment/${serviceId}`, {
                     ...values, customerId: customerId,
-                 }).then(res => {
+                }).then(res => {
                     setPaymentConfirmationModal(false)
                     if (res.status == 501) {
                         Toast({
@@ -261,6 +273,7 @@ const Dmt = () => {
             bankCode: "",
             accountNumber: "",
             beneficiaryName: "",
+            beneficiaryPhone: "",
             ifsc: "",
             address: "",
             pincode: "",
@@ -271,12 +284,11 @@ const Dmt = () => {
                 ...values,
                 customerId: customerId,
             }).then((res) => {
-                if (dmtProvider == "paysprint") {
-                    Toast({
-                        description: 'Beneficiary Added'
-                    })
-                    setNewRecipientModal(false)
-                }
+                Toast({
+                    description: 'Beneficiary Added'
+                })
+                setNewRecipientModal(false)
+                fetchRecipients()
             }).catch((err) => {
                 Toast({
                     status: "error",
@@ -729,6 +741,7 @@ const Dmt = () => {
                                                         <Box
                                                             w={'full'} rounded={'inherit'}
                                                             boxShadow={'md'} pos={'relative'}
+                                                            key={key}
                                                         >
                                                             <Text
                                                                 w={'full'} px={4} py={1}
@@ -861,7 +874,10 @@ const Dmt = () => {
                             >
                                 {
                                     bankList.map((bank, key) => (
-                                        <option value={bank.bank_id}>{bank.name}</option>
+                                        dmtProvider == "paysprint" ?
+                                            <option key={key} value={bank.bank_id}>{bank.name}</option> :
+                                            dmtProvider == "eko" ?
+                                                <option key={key} value={bank.value}>{bank.label}</option> : null
                                     ))
                                 }
                             </Select>
@@ -877,6 +893,10 @@ const Dmt = () => {
                         <FormControl id='beneficiaryName' pb={4}>
                             <FormLabel>Beneficiary Name</FormLabel>
                             <Input value={addRecipientFormik.values.beneficiaryName} onChange={addRecipientFormik.handleChange} />
+                        </FormControl>
+                        <FormControl id='beneficiaryPhone' pb={4}>
+                            <FormLabel>Beneficiary Phone</FormLabel>
+                            <Input value={addRecipientFormik.values.beneficiaryPhone} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
                         <HStack justifyContent={'flex-end'} pt={2}>
                             <Button size={'xs'} onClick={getAccountHolderName}>Get Name</Button>
@@ -946,25 +966,57 @@ const Dmt = () => {
                                         <BsCheck2Circle color='#FFF' fontSize={72} /> :
                                         <BsXCircle color='#FFF' fontSize={72} />
                                 }
-                                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || "0"}</Text>
+                                <Text color={'#FFF'} fontSize={'xs'} textTransform={'uppercase'}>Transaction {receipt.status ? "success" : "failed"}</Text>
                             </VStack>
                         </ModalHeader>
                         <ModalBody p={0} bg={'azure'}>
                             <VStack w={'full'} p={4} bg={'#FFF'}>
                                 {
-                                    Object.entries(receipt.data).map((item, key) => (
-                                        <HStack
-                                            justifyContent={'space-between'}
-                                            gap={8} pb={4} w={'full'} key={key}
-                                        >
-                                            <Text fontSize={14}
-                                                fontWeight={'medium'}
-                                                textTransform={'capitalize'}
-                                            >{item[0]}</Text>
-                                            <Text fontSize={14} >{`${item[1]}`}</Text>
-                                        </HStack>
-                                    ))
+                                    receipt.data ?
+                                        Object.entries(receipt.data).map((item, key) => {
+
+                                            if (
+                                                item[0].toLowerCase() != "status" &&
+                                                item[0].toLowerCase() != "user" &&
+                                                item[0].toLowerCase() != "user_name" &&
+                                                item[0].toLowerCase() != "user_id" &&
+                                                item[0].toLowerCase() != "user_phone" &&
+                                                item[0].toLowerCase() != "amount"
+                                            )
+                                                return (
+                                                    <HStack
+                                                        justifyContent={'space-between'}
+                                                        gap={8} pb={1} w={'full'} key={key}
+                                                    >
+                                                        <Text
+                                                            fontSize={'xs'}
+                                                            fontWeight={'medium'}
+                                                            textTransform={'capitalize'}
+                                                        >{item[0].replace(/_/g, " ")}</Text>
+                                                        <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                                                    </HStack>
+                                                )
+
+                                        }
+                                        ) : null
                                 }
+                                <VStack pt={8} w={'full'}>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                                    </HStack>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                                    </HStack>
+                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                                        <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                                    </HStack>
+                                    <Image src='/logo_long.png' w={'20'} />
+                                    <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                                </VStack>
                             </VStack>
                         </ModalBody>
                     </Box>

@@ -41,15 +41,6 @@ import { MdContactSupport } from 'react-icons/md'
 
 const DashboardWrapper = (props) => {
     const [availablePages, setAvailablePages] = useState([])
-    const foreverAllowedPages = [
-        'view-profile',
-        'edit-profile',
-        'reset-mpin',
-        'reset-password',
-        'activate',
-        'request',
-        'support',
-    ]
 
     useEffect(() => {
         ClientAxios.post('/api/user/fetch', {
@@ -59,25 +50,11 @@ const DashboardWrapper = (props) => {
                 'Content-Type': 'application/json'
             }
         }).then((res) => {
-            foreverAllowedPages.concat(res.data[0].allowed_pages)
-            setAvailablePages(foreverAllowedPages.concat(res.data[0].allowed_pages))
+            setAvailablePages(res.data[0].allowed_pages)
         }).catch((err) => {
             console.log(err)
         })
     }, [])
-
-    // Check if user has paid onboarding fee or not
-    // useEffect(() => {
-    //     BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
-    //         if (res.data[0].onboard_fee == 0) {
-    //             if (!window.location.href.includes(`/services/activate`)) {
-    //                 if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
-    //                     window.location.assign('/dashboard/services/activate?pageId=services')
-    //                 }
-    //             }
-    //         }
-    //     })
-    // }, [])
 
 
     const [openNotification, setOpenNotification] = useState(false)
@@ -117,13 +94,20 @@ const DashboardWrapper = (props) => {
 
     }, [])
 
-    useEffect(() => {
+    async function fetchWallet() {
         // Check wallet balance
-        BackendAxios.post('/api/user/wallet').then((res) => {
+        await BackendAxios.post('/api/user/wallet').then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
             setWallet('0')
         })
+    }
+
+    useEffect(() => {
+        fetchWallet()
+        setTimeout(() => {
+            fetchWallet()
+        }, 1000);
     }, [])
 
 
@@ -171,7 +155,6 @@ const DashboardWrapper = (props) => {
                         userName={userName}
                         userType={userType.toUpperCase()}
                         userImage={profilePic}
-                        availablePages={availablePages}
                     />
 
                     {/* Main Dashboard Container */}
@@ -417,38 +400,45 @@ const DashboardWrapper = (props) => {
 
                                             <AccordionPanel px={0}>
 
-
                                                 <VStack
                                                     w={'full'}
                                                     alignItems={'flex-start'}
                                                     justifyContent={'flex-start'}
                                                     spacing={2}
                                                     overflow={'hidden'}
-                                                    id={'users'}
                                                 >
-                                                    <Link href={"/users/create-user?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >Create User</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementCreateUser') ?
+                                                            <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >Create User</Text>
+                                                            </Link> : null
+                                                    }
 
-                                                    <Link href={"/users/users-list?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >View User</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementUsersList') ?
+                                                            <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >View Users</Text>
+                                                            </Link> : null
+                                                    }
 
-                                                    <Link href={"/users/users-report?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >Users Report</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementUserLedger') ?
+                                                            <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >User Ledger</Text>
+                                                            </Link> : null
+                                                    }
 
                                                 </VStack>
 

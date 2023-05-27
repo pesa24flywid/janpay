@@ -72,7 +72,7 @@ export const SidebarOptions =
         {
           title: 'Activate services',
           link: '/dashboard/services/activate?pageId=services',
-          id: "activate",
+          id: "basicServiceActivate",
           soon: false,
         },
         {
@@ -84,8 +84,9 @@ export const SidebarOptions =
         {
           title: 'Aadhaar Pay',
           link: '/dashboard/services/aeps/pay?pageId=services',
-          id: "aadhaarPay",
+          id: "aepsAadhaarPay",
           soon: false
+
         },
         {
           title: 'DMT services',
@@ -417,17 +418,6 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                                   </Box>
                                 )
                               }
-                              // else {
-                              //   return (
-                              //     <Link key={key} href={item.link} style={{ width: '100%' }}>
-                              //       <Text
-                              //         w={'full'} textAlign={'left'}
-                              //         px={3} py={2} _hover={{ bg: 'aqua' }}
-                              //         textTransform={'capitalize'}
-                              //       >{item.title}</Text>
-                              //     </Link>
-                              //   )
-                              // }
                             })}
                           </VStack>
 
@@ -469,7 +459,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                       overflow={'hidden'}
                     >
                       {
-                        availablePages.includes('createUser') ?
+                        availablePages.includes('userManagementCreateUser') ?
                           <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
@@ -480,7 +470,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                       }
 
                       {
-                        availablePages.includes('usersList') ?
+                        availablePages.includes('userManagementUsersList') ?
                           <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
@@ -490,16 +480,8 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
                           </Link> : null
                       }
 
-                      {/* <Link href={"/dashboard/users/manage-user?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >Edit User</Text>
-                      </Link> */}
-
                       {
-                        availablePages.includes('userLedger') ?
+                        availablePages.includes('userManagementUserLedger') ?
                           <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}

@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalFooter,
   VStack,
+  Image
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -72,6 +73,11 @@ const Index = () => {
     {
       headerName: "Transaction Type",
       field: 'service_type'
+    },
+    {
+      headerName: "Transaction Status",
+      field: 'status',
+      cellRenderer: 'statusCellRenderer'
     },
     {
       headerName: "Created Timestamp",
@@ -161,6 +167,17 @@ const Index = () => {
     )
   }
 
+  const statusCellRenderer = (params) => {
+    return (
+      <>
+        {
+          JSON.parse(params.data.metadata).status ?
+            <Text color={'green'} fontWeight={'bold'}>SUCCESS</Text> : <Text color={'red'} fontWeight={'bold'}>FAILED</Text>
+        }
+      </>
+    )
+  }
+
   return (
     <>
       <DashboardWrapper pageTitle={'DMT Reports'}>
@@ -214,6 +231,7 @@ const Index = () => {
                 'receiptCellRenderer': receiptCellRenderer,
                 'creditCellRenderer': creditCellRenderer,
                 'debitCellRenderer': debitCellRenderer,
+                'statusCellRenderer': statusCellRenderer
               }}
             >
 
@@ -230,7 +248,7 @@ const Index = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
@@ -238,26 +256,56 @@ const Index = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || 0}</Text>
+                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "user" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "amount"
+                      )
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                          >
+                            <Text
+                              fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+
+                    }
+                    ) : null
                 }
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

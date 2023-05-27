@@ -24,6 +24,7 @@ import { states } from '../../../../lib/states'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 
 const Index = () => {
+    const [isLoading, setIsLoading] = useState(false)
     const [availablePlans, setAvailablePlans] = useState([])
     const [myRole, setMyRole] = useState("")
     const [myUserId, setMyUserId] = useState("")
@@ -67,17 +68,20 @@ const Index = () => {
         },
         onSubmit: (values) => {
             if (values.profilePic && values.aadhaarBack && values.aadhaarFront && values.pan) {
+                setIsLoading(true)
                 let userForm = document.getElementById('createUserForm')
                 FormAxios.postForm('/api/admin/create/user', userForm).then((res) => {
+                    setIsLoading(false)
                     Toast({
                         status: 'success',
                         title: 'User Created',
                     })
-                    console.log(res.data)
                 }).catch((err) => {
+                    setIsLoading(false)
                     Toast({
                         status: 'error',
-                        title: err.response.data.message || err.response.data || err.message,
+                        title: 'Error while creating user',
+                        description: err.response.data.message || err.response.data || err.message,
                     })
                     console.log(err)
                 })
@@ -92,7 +96,6 @@ const Index = () => {
     })
 
     useEffect(() => {
-
         // Fetching all users
         BackendAxios.get(`/api/admin/all-users-list/distributor`).then(res => {
             console.log(res.data)
@@ -263,7 +266,7 @@ const Index = () => {
                                         placeholder={'Enter Phone Number'}
                                     />
                                 </FormControl>
-                                <FormControl w={['full', '56']} isRequired>
+                                <FormControl w={['full', '56']}>
                                     <FormLabel fontSize={12}>Alternative Mobile Number</FormLabel>
                                     <Input
                                         fontSize={12}
@@ -296,16 +299,16 @@ const Index = () => {
                                         </HStack>
                                     </RadioGroup>
                                 </FormControl>
-                                <FormControl w={['full', '56']} isRequired>
-                                    <FormLabel fontSize={12}>Firm Name</FormLabel>
+                                <FormControl w={['full', '56']}>
+                                    <FormLabel fontSize={12}>Company Name</FormLabel>
                                     <Input
                                         fontSize={12}
                                         name='firmName' bg={'white'}
                                         onChange={Formik.handleChange}
-                                        placeholder={'Enter Firm Name'}
+                                        placeholder={'Enter Company Name'}
                                     />
                                 </FormControl>
-                                <FormControl w={['full', '56']} isRequired>
+                                <FormControl w={['full', '56']}>
                                     <FormLabel fontSize={12}>Company Type</FormLabel>
                                     <Select
                                         name={'companyType'}
@@ -694,7 +697,7 @@ const Index = () => {
                         justifyContent={'flex-end'}
                     >
                         <Button type={'reset'} onClick={Formik.handleReset}>Clear Form</Button>
-                        <Button type={'submit'} colorScheme={'twitter'}>Submit</Button>
+                        <Button type={'submit'} colorScheme={'twitter'} isLoading={isLoading}>Submit</Button>
                     </HStack>
                 </DashboardWrapper>
             </form>

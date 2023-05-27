@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalFooter,
   VStack,
+  Image
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -72,6 +73,11 @@ const Index = () => {
     {
       headerName: "Transaction Type",
       field: 'service_type'
+    },
+    {
+      headerName: "Transaction Status",
+      field: 'status',
+      cellRenderer: 'statusCellRenderer'
     },
     {
       headerName: "Created Timestamp",
@@ -161,6 +167,17 @@ const Index = () => {
     )
   }
 
+  const statusCellRenderer = (params) => {
+    return (
+      <>
+        {
+          JSON.parse(params.data.metadata).status ?
+            <Text color={'green'} fontWeight={'bold'}>SUCCESS</Text> : <Text color={'red'} fontWeight={'bold'}>FAILED</Text>
+        }
+      </>
+    )
+  }
+
   return (
     <>
       <DashboardWrapper pageTitle={'AePS Reports'}>
@@ -214,6 +231,7 @@ const Index = () => {
                 'receiptCellRenderer': receiptCellRenderer,
                 'creditCellRenderer': creditCellRenderer,
                 'debitCellRenderer': debitCellRenderer,
+                'statusCellRenderer': statusCellRenderer
               }}
             >
 

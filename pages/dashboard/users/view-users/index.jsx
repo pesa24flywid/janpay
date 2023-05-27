@@ -61,15 +61,6 @@ import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 
 const ExportPDF = (currentRowData) => {
     const doc = new jsPDF('landscape')
-    const columnDefs = [
-        '#',
-        'Basic Details',
-        'KYC Details',
-        'Balance Details',
-        'Complete Address',
-        'Parent Details',
-        'Actions',
-    ]
 
     doc.autoTable({ html: '#exportableTable' })
     doc.output('dataurlnewwindow');
@@ -81,40 +72,10 @@ const Index = () => {
         position: 'top-right'
     })
     const [myRole, setMyRole] = useState('')
-    const [userObjId, setUserObjId] = useState("")
-    const [permissionsDrawer, setPermissionsDrawer] = useState(false)
-
-    const [aepsPermissions, setAepsPermissions] = useState([])
-    const [aepsExpansion, setAepsExpansion] = useState([])
-
-    const [bbpsPermissions, setBbpsPermissions] = useState([])
-    const [bbpsExpansion, setBbpsExpansion] = useState([])
-
-    const [dmtPermissions, setDmtPermissions] = useState([])
-    const [dmtExpansion, setDmtExpansion] = useState([])
-
-    const [payoutPermissions, setPayoutPermissions] = useState([])
-    const [payoutExpansion, setPayoutExpansion] = useState([])
-
-    const [rechargePermissions, setRechargePermissions] = useState([])
-    const [rechargeExpansion, setRechargeExpansion] = useState([])
-
-    const [panPermissions, setPanPermissions] = useState([])
-    const [panExpansion, setPanExpansion] = useState([])
-
-    const [cmsPermissions, setCmsPermissions] = useState([])
-    const [cmsExpansion, setCmsExpansion] = useState([])
-
-    const [matmPermissions, setMatmPermissions] = useState([])
-    const [matmExpansion, setMatmExpansion] = useState([])
-
-    const [licPermissions, setLicPermissions] = useState([])
-    const [licExpansion, setLicExpansion] = useState([])
 
     const availableTabs = ['retailers', 'distributor']
     const [selectedTab, setSelectedTab] = useState("retailer")
     const [fetchedUsers, setFetchedUsers] = useState([])
-    const [selectedUser, setSelectedUser] = useState("")
     const [pagination, setPagination] = useState({
         current_page: "1",
         total_pages: "1",
@@ -127,7 +88,7 @@ const Index = () => {
     // Fetching users
     function fetchUsersList(pageLink) {
         setFetchedUsers([])
-        BackendAxios.get(pageLink || `api/parent/users-list/${selectedTab}/1?page=1`).then((res) => {
+        BackendAxios.get(pageLink || `api/parent/users-list/${selectedTab}?page=1`).then((res) => {
             setPagination({
                 current_page: res.data.current_page,
                 total_pages: parseInt(res.data.last_page),
@@ -136,7 +97,7 @@ const Index = () => {
                 next_page_url: res.data.next_page_url,
                 prev_page_url: res.data.prev_page_url,
             })
-            setFetchedUsers(res.data.data)
+            setFetchedUsers(res.data)
         }).catch((err) => {
             console.log(err)
             Toast({
@@ -154,97 +115,15 @@ const Index = () => {
         setMyRole(localStorage.getItem('userType'))
     }, [])
 
-
-    function changeUserStatus(userId, updateTo) {
-        BackendAxios.get(`/api/admin/user/status/${userId}/${updateTo}`).then(() => {
+    function searchUser(query) {
+        if (query) {
+            setFetchedUsers(fetchedUsers.filter((user) => (user.name.toLowerCase().includes(query))))
+        }
+        if (!query) {
             fetchUsersList()
-        }).catch((err) => {
-            console.log(err)
-            Toast({
-                status: 'error',
-                description: err.response.data.message || err.response.data || err.message
-            })
-        })
+        }
     }
 
-    // Fetch User Permissions
-    // function fetchUserPermissions() {
-
-    //     ClientAxios.post('/api/user/fetch', {
-    //         user_id: `${selectedUser}`,
-    //     },
-    //         {
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-    //     ).then((res) => {
-    //         setUserObjId(res.data[0]._id)
-    //         setAepsPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("aeps")
-    //         }))
-    //         setBbpsPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("bbps")
-    //         }))
-    //         setDmtPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("dmt")
-    //         }))
-    //         setRechargePermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("recharge")
-    //         }))
-    //         setPayoutPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("payout")
-    //         }))
-    //         setPanPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("pan")
-    //         }))
-    //         setCmsPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("cms")
-    //         }))
-    //         setLicPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("lic")
-    //         }))
-    //         setMatmPermissions(res.data[0].allowed_pages.filter((page) => {
-    //             return page.includes("matm")
-    //         }))
-    //     }).catch((err) => {
-    //         console.log("No permissions found")
-    //         console.log(err.message)
-    //     })
-    // }
-
-
-    // useEffect(() => {
-    //     fetchUserPermissions()
-    // }, [selectedUser])
-
-    // function openPermissionsDrawer(userId) {
-    //     setSelectedUser(userId)
-    //     setPermissionsDrawer(true)
-    // }
-
-    // function saveUserPermissions() {
-    //     ClientAxios.post('/api/user/update-permissions', {
-    //         allowed_pages: aepsPermissions.concat(aepsPermissions, bbpsPermissions, dmtPermissions, payoutPermissions, cmsPermissions, rechargePermissions, matmPermissions, panPermissions, licPermissions),
-    //         user_id: selectedUser
-    //     }, {
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     }).then((res) => {
-    //         Toast({
-    //             status: 'success',
-    //             description: 'User permissions were updated!'
-    //         })
-    //         fetchUserPermissions()
-    //     }).catch((err) => {
-    //         Toast({
-    //             status: 'error',
-    //             title: 'Error Occured',
-    //             description: err.response.data.message || err.message
-    //         })
-    //     })
-    // }
 
     return (
         <>
@@ -325,6 +204,7 @@ const Index = () => {
                                                 bg={'white'}
                                                 w={['full', 'xs']}
                                                 placeholder={'Search Here'}
+                                                onChange={e => searchUser(e.target.value)}
                                             />
                                         </Stack>
 
@@ -400,23 +280,16 @@ const Index = () => {
                                                                                 </a>
                                                                                 <Box>
                                                                                     <Text><b>ID: </b>{user.id}</Text>
-                                                                                    <Text>{user.first_name} {user.last_name} </Text>
+                                                                                    <Text>{user.name} </Text>
                                                                                     <Text>
                                                                                         <a href={`tel:${user.phone_number}`}><b>MOB: </b>{user.phone_number}</a>
                                                                                     </Text>
                                                                                 </Box>
                                                                             </HStack>
                                                                             <Text>{user.email}</Text>
+                                                                            <a href={`tel:${user.alternate_phone}`}><Text>{user.alternate_phone}</Text></a>
                                                                             <HStack spacing={0} my={2}>
-                                                                                {/* <Link href={`/dashboard/users/manage-user?pageId=users&user_id=${user.id}`}>
-                                                                                    <Button
-                                                                                        size={'sm'} rounded={0}
-                                                                                        colorScheme={'twitter'}
-                                                                                        title={'Edit'}
-                                                                                    >
-                                                                                        <BsPenFill />
-                                                                                    </Button>
-                                                                                </Link> */}
+
                                                                                 <Link href={`/dashboard/fund-transfer?pageId=transfer&user_id=${user.id}`}>
                                                                                     <Button
                                                                                         size={'sm'} rounded={0}
@@ -426,7 +299,7 @@ const Index = () => {
                                                                                         <BiRupee fontSize={18} />
                                                                                     </Button>
                                                                                 </Link>
-                                                                                <Link href={`/dashboard/reports/transactions/user-ledger?pageId=reports&user_id=${user.id}`}>
+                                                                                <Link href={`/dashboard/users/user-ledger?pageId=reports&user_id=${user.id}`}>
                                                                                     <Button
                                                                                         size={'sm'} rounded={0}
                                                                                         colorScheme={'red'}
@@ -435,32 +308,14 @@ const Index = () => {
                                                                                         <BsFileBarGraphFill />
                                                                                     </Button>
                                                                                 </Link>
-                                                                                {/* <Button
-                                                                                    size={'sm'} rounded={0}
-                                                                                    colorScheme={'teal'}
-                                                                                    title={'Reports'}
-                                                                                    onClick={() => openPermissionsDrawer(user.id)}
-                                                                                >
-                                                                                    <BsShield />
-                                                                                </Button> */}
-                                                                                <HStack p={2} bg={'white'}>
-                                                                                    <Switch
-                                                                                        size={'sm'}
-                                                                                        onChange={() => changeUserStatus(user.id, user.is_active == 1 ? 0 : 1)}
-                                                                                        defaultChecked={user.is_active === 1}
-                                                                                    ></Switch>
-                                                                                </HStack>
                                                                             </HStack>
-                                                                            <Text>
-                                                                                <a href={`tel:${user.alternate_phone}`}>{user.alternate_phone}</a>
-                                                                            </Text>
                                                                         </Box>
                                                                     </Td>
                                                                     <Td>
                                                                         <Box>
                                                                             <Text><b>Status: </b>&nbsp;&nbsp; Verified </Text>
-                                                                            <Text><b>Aadhaar No.: </b>&nbsp;&nbsp; {user.aadhaar} </Text>
-                                                                            <Text><b>PAN: </b>&nbsp;&nbsp; {user.pan_number} </Text>
+                                                                            {/* <Text><b>Aadhaar No.: </b>&nbsp;&nbsp; {user.aadhaar} </Text>
+                                                                            <Text><b>PAN: </b>&nbsp;&nbsp; {user.pan_number} </Text> */}
                                                                             <Text><b>GST No.: </b>&nbsp;&nbsp; {user.gst_number} </Text>
                                                                             <Text><b>Gender & DOB: </b>{user.gender} &nbsp;&nbsp;{user.dob}</Text>
                                                                             <Text><b>Organisation Code.: </b>&nbsp;&nbsp; RPAY </Text><br /><br />
@@ -471,7 +326,7 @@ const Index = () => {
                                                                         <Box>
                                                                             <Text><b>Current Balance: </b>&nbsp;&nbsp; ₹ {user.wallet} </Text>
                                                                             <Text><b>Capping Balance: </b>&nbsp;&nbsp; ₹ {user.minimum_balance} </Text>
-                                                                            <Text textTransform={'capitalize'}>{user.packages.length != 0 ? user.packages[0].name : "No"} Plan</Text>
+                                                                            <Text textTransform={'capitalize'}>{user.package_name || "No"} Plan</Text>
                                                                             <Text>{user.company_name} {user.firm_type}</Text>
                                                                         </Box>
                                                                     </Td>
@@ -481,8 +336,17 @@ const Index = () => {
                                                                             <Text>{user.city}, {user.state},</Text>
                                                                             <Text>Pincode - {user.pincode}</Text>
                                                                         </Box>
+                                                                        {/* <Box pt={16}>
+                                                                            <Text fontSize={'xs'}>Remarks</Text>
+                                                                            <Input
+                                                                                onBlur={(e) => saveRemarks(user.id, e.target.value)}
+                                                                                placeholder={user.delete_remarks} bg={'aqua'}
+                                                                            />
+                                                                            <Text color={'red'} onClick={() => saveRemarks(user.id, " ")}>Remove remarks</Text>
+                                                                        </Box> */}
                                                                     </Td>
-                                                                    <Td>{/* PAN Card */}
+                                                                    <Td>
+                                                                        {/* PAN Card */}
 
                                                                         {
                                                                             user.pan_photo &&
@@ -499,7 +363,7 @@ const Index = () => {
                                                                         <br /><br />
                                                                         {/* Aadhaar Front */}
                                                                         {
-                                                                            user.aadhaar_front &&
+                                                                            user.aadhar_front &&
                                                                             <Button size={'xs'}
                                                                                 onClick={() => BackendAxios.post(`/api/admin/file`, {
                                                                                     address: user.aadhaar_front
@@ -514,7 +378,7 @@ const Index = () => {
                                                                         <br /><br />
                                                                         {/* Aadhaar Back */}
                                                                         {
-                                                                            user.aadhaar_back &&
+                                                                            user.aadhar_back &&
                                                                             <Button size={'xs'}
                                                                                 onClick={() => BackendAxios.post(`/api/admin/file`, {
                                                                                     address: user.aadhaar_back
@@ -679,7 +543,7 @@ const Index = () => {
                                         expanded={dmtExpansion}
                                         onExpand={(expanded) => setDmtExpansion(expanded)}
                                     />
-                                    
+
                                     <CheckboxTree
                                         nodes={payoutList}
                                         checked={payoutPermissions}
@@ -687,7 +551,7 @@ const Index = () => {
                                         expanded={payoutExpansion}
                                         onExpand={(expanded) => setPayoutExpansion(expanded)}
                                     />
-                                    
+
                                     <CheckboxTree
                                         nodes={rechargeList}
                                         checked={rechargePermissions}
@@ -695,7 +559,7 @@ const Index = () => {
                                         expanded={rechargeExpansion}
                                         onExpand={(expanded) => setRechargeExpansion(expanded)}
                                     />
-                                    
+
 
                                     <CheckboxTree
                                         nodes={panList}
@@ -705,7 +569,7 @@ const Index = () => {
                                         onExpand={(expanded) => setPanExpansion(expanded)}
                                     />
 
-                                    
+
                                     <CheckboxTree
                                         nodes={matmList}
                                         checked={matmPermissions}
@@ -714,7 +578,7 @@ const Index = () => {
                                         onExpand={(expanded) => setMatmExpansion(expanded)}
                                     />
 
-                                    
+
                                     <CheckboxTree
                                         nodes={cmsList}
                                         checked={cmsPermissions}
@@ -723,7 +587,7 @@ const Index = () => {
                                         onExpand={(expanded) => setCmsExpansion(expanded)}
                                     />
 
-                                    
+
                                     <CheckboxTree
                                         nodes={licList}
                                         checked={licPermissions}
