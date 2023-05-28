@@ -260,7 +260,7 @@ export const SidebarOptions =
     },
   ]
 
-const Sidebar = ({ isProfileComplete, userName, userImage }) => {
+const Sidebar = ({ userName, userImage }) => {
   const alwaysAvailable = ['viewProfile', 'editProfile', 'resetMpin', 'resetPassword']
   const [availablePages, setAvailablePages] = useState(['activate'])
   const Router = useRouter()
@@ -284,14 +284,6 @@ const Sidebar = ({ isProfileComplete, userName, userImage }) => {
     Router.push("/auth/login")
   }
 
-
-  useMemo(() => {
-    // BackendAxios.get('/api/user/services').then((res) => {
-    //   setActiveServices(res.data.map((item) => item.type))
-    // }).catch((err) => {
-    //   console.log(err)
-    // })
-  }, [])
   useEffect(() => {
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')

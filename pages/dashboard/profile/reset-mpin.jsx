@@ -52,7 +52,7 @@ const ResetMpin = () => {
     return (
         <>
             <DashboardWrapper titleText={'Reset MPIN'}>
-                <HStack w={'full'} minH={'100vh'} justifyContent={'center'}>
+                <HStack w={'full'} justifyContent={'center'}>
                     <Box
                         bg={'white'}
                         boxShadow={'md'}

@@ -75,6 +75,11 @@ const Index = () => {
       field: 'service_type'
     },
     {
+      headerName: "Transaction Status",
+      field: 'status',
+      cellRenderer: 'statusCellRenderer'
+    },
+    {
       headerName: "Created Timestamp",
       field: 'created_at'
     },
@@ -234,6 +239,7 @@ const Index = () => {
           </Box>
         </Box>
       </DashboardWrapper>
+
 
       {/* Receipt */}
 

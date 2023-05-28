@@ -34,7 +34,6 @@ import { useRouter } from 'next/router';
 import BackendAxios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
 import SimpleAccordion from './SimpleAccordion';
-import { IoMdHome } from 'react-icons/io';
 import { FaUserAlt } from 'react-icons/fa';
 import { MdContactSupport } from 'react-icons/md'
 
@@ -100,14 +99,12 @@ const DashboardWrapper = (props) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
             setWallet('0')
+            location.reload()
         })
     }
 
     useEffect(() => {
         fetchWallet()
-        setTimeout(() => {
-            fetchWallet()
-        }, 1000);
     }, [])
 
 
