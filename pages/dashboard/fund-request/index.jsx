@@ -424,7 +424,7 @@ const FundRequest = () => {
                     </HStack>
                     <Box h={'12'} w={'full'}></Box>
                     <Box py={6}>
-                        <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
+                        <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
                             <AgGridReact
                                 columnDefs={columnDefs}
                                 rowData={rowData}

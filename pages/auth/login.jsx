@@ -50,15 +50,15 @@ const Login = () => {
     const [mpin, setMpin] = useState(null)
 
     useEffect(() => {
-        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
-        //     withCredentials: true,
-        //     headers: {
-        //         'Accept': 'application/json, text/plain, */*',
-        //         'Content-Type': 'application/json',
-        //         'X-Requested-With': 'XMLHttpRequest'
-        //     },
-        // })
         getLocation()
+        window.addEventListener("load", ()=>{
+            window.onkeydown(e=>{
+                if(e.keyCode === 13){
+                    e.preventDefault()
+                    return false
+                }
+            })
+        })
     }, [])
 
 
@@ -380,8 +380,9 @@ const Login = () => {
                                         rounded={'full'}
                                         colorScheme={'blue'}
                                         variant={'outline'}
+                                        autoFocus={false}
                                         disabled={otpBtnDisabled}
-                                        type={'submit'}
+                                        onClick={formik.handleSubmit}
                                     >
                                         Login
                                     </Button>
@@ -408,6 +409,7 @@ const Login = () => {
                                                     rounded={'full'}
                                                     colorScheme={'blue'}
                                                     bg={'#6C00FF'}
+                                                    autoFocus={false}
                                                     disabled={loginBtnDisabled}
                                                     isLoading={isBtnLoading}
                                                 >

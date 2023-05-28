@@ -13,7 +13,8 @@ import {
   ModalHeader,
   ModalFooter,
   VStack,
-  Image
+  Image,
+  VisuallyHidden
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -30,6 +31,15 @@ import {
 } from 'react-icons/bs'
 import BackendAxios from '../../../../lib/axios';
 import Pdf from 'react-to-pdf'
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'
+
+const ExportPDF = () => {
+  const doc = new jsPDF('landscape')
+
+  doc.autoTable({ html: '#printable-table' })
+  doc.output('dataurlnewwindow');
+}
 
 const Index = () => {
   const transactionKeyword = "aeps"
@@ -99,6 +109,7 @@ const Index = () => {
       cellRenderer: 'receiptCellRenderer'
     }
   ])
+  const [printableRow, setPrintableRow] = useState([])
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
@@ -111,6 +122,7 @@ const Index = () => {
         prev_page_url: res.data.prev_page_url,
       })
       setRowData(res.data.data)
+      setPrintableRow(res.data.data)
     }).catch((err) => {
       console.log(err)
       Toast({
@@ -181,6 +193,9 @@ const Index = () => {
   return (
     <>
       <DashboardWrapper pageTitle={'AePS Reports'}>
+        <HStack>
+          <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
+        </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
             colorScheme={'twitter'}
@@ -217,7 +232,7 @@ const Index = () => {
           </Button>
         </HStack>
         <Box py={6}>
-          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
+          <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -233,6 +248,15 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
+              onFilterChanged={
+                (params) => {
+                  setPrintableRow(params.api.getRenderedNodes().map((item) => {
+                    return (
+                      item.data
+                    )
+                  }))
+                }
+              }
             >
 
             </AgGridReact>
@@ -298,6 +322,56 @@ const Index = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+
+
+      <VisuallyHidden>
+        <table id='printable-table'>
+          <thead>
+            <tr>
+              <th>#</th>
+              {
+                columnDefs.filter((column) => {
+                  if (
+                    column.field != "metadata" &&
+                    column.field != "name" &&
+                    column.field != "receipt" &&
+                    column.field != "status"
+                  ) {
+                    return (
+                      column
+                    )
+                  }
+                }).map((column, key) => {
+                  return (
+                    <th key={key}>{column.headerName}</th>
+                  )
+                })
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              printableRow.map((data, key) => {
+                return (
+                  <tr key={key}>
+                    <td>{key + 1}</td>
+                    <td>{data.transaction_id}</td>
+                    <td>{data.debit_amount}</td>
+                    <td>{data.credit_amount}</td>
+                    <td>{data.opening_balance}</td>
+                    <td>{data.closing_balance}</td>
+                    <td>{data.service_type}</td>
+                    <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+                    <td>{data.created_at}</td>
+                    <td>{data.updated_at}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </>
   )
 }
