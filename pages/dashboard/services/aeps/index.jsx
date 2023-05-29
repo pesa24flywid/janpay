@@ -35,6 +35,36 @@ import Cookies from 'js-cookie'
 import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-icons/bs'
 import Pdf from 'react-to-pdf'
 
+function StatementTable({ ministatement }) {
+  if (ministatement.length === 0) {
+    return <p>No data available.</p>;
+  }
+
+  const tableHeaders = Object.keys(ministatement[0]);
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {tableHeaders.map(header => (
+            <th key={header}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {ministatement.map((item, index) => (
+          <tr key={index}>
+            {tableHeaders.map(header => (
+              <td key={header}>{item[header]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+
 const Aeps = () => {
   const [aepsProvider, setAepsProvider] = useState("")
   const transactionKeyword = "aeps"
@@ -710,7 +740,12 @@ const Aeps = () => {
                           ) }
                     }) : null
                 }
-
+{
+formik.values.serviceCode == "money-transfer" &&
+aepsProvider == "mini-statement" &&
+receipt.status ?
+<StatementTable ministatement={receipt.data?.ministatement} /> : null
+}
                 <VStack pt={8} w={'full'}>
                   <HStack pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
