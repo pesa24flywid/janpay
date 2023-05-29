@@ -724,6 +724,7 @@ const Aeps = () => {
                           item[0].toLowerCase() != "user_name" &&
                           item[0].toLowerCase() != "user_id" &&
                           item[0].toLowerCase() != "amount" &&
+                          item[0].toLowerCase() != "ministatement" &&
                           item[0].toLowerCase() != "user_phone"
                         ){
                           return (
@@ -741,8 +742,8 @@ const Aeps = () => {
                     }) : null
                 }
 {
-formik.values.serviceCode == "money-transfer" &&
-aepsProvider == "mini-statement" &&
+formik.values.serviceCode == "mini-statement" &&
+aepsProvider == "paysprint" &&
 receipt.status ?
 <StatementTable ministatement={receipt.data?.ministatement} /> : null
 }
