@@ -43,19 +43,19 @@ function StatementTable({ ministatement }) {
   const tableHeaders = Object.keys(ministatement[0]);
 
   return (
-    <table>
+    <table style={{ fontSize: '8px', borderCollapse: 'collapse', width: '100%' }}>
       <thead>
-        <tr>
+        <tr style={{ backgroundColor: '#f2f2f2' }}>
           {tableHeaders.map(header => (
-            <th key={header}>{header}</th>
+            <th key={header} style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{header}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {ministatement.map((item, index) => (
-          <tr key={index}>
+          <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
             {tableHeaders.map(header => (
-              <td key={header}>{item[header]}</td>
+              <td key={header} style={{ padding: '8px' }}>{item[header]}</td>
             ))}
           </tr>
         ))}
