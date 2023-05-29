@@ -687,7 +687,7 @@ const Aeps = () => {
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => {
-                      if (aepsProvider == 'eko')
+//                       if (aepsProvider == 'eko')
                         if (
                           item[0].toLowerCase() != "status" &&
                           item[0].toLowerCase() != "customer_balance" &&
@@ -695,7 +695,7 @@ const Aeps = () => {
                           item[0].toLowerCase() != "user_id" &&
                           item[0].toLowerCase() != "amount" &&
                           item[0].toLowerCase() != "user_phone"
-                        )
+                        ){
                           return (
                             <HStack
                               justifyContent={'space-between'}
@@ -707,7 +707,7 @@ const Aeps = () => {
                               >{item[0].replace(/_/g, " ")}</Text>
                               <Text fontSize={'xs'} >{`${item[1]}`}</Text>
                             </HStack>
-                          )
+                          ) }
                     }) : null
                 }
 
