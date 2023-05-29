@@ -205,6 +205,7 @@ const Index = () => {
             if (
               column.field != "metadata" &&
               column.field != "name" &&
+              column.field != "status" &&
               column.field != "receipt" 
             ) {
               return (
@@ -231,7 +232,7 @@ const Index = () => {
               <td>{data.opening_balance}</td>
               <td>{data.closing_balance}</td>
               <td>{data.service_type}</td>
-              <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+              {/* <td>{JSON.parse(data.metadata)?.status ? "SUCCESS" : "FAILED"}</td> */}
               <td>{data.created_at}</td>
               <td>{data.updated_at}</td>
             </tr>

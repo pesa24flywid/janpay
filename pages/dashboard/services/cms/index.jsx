@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
     Box,
@@ -30,11 +30,13 @@ const Cms = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const pdfRef = useRef()
     const [transactionResponse, setTransactionResponse] = useState({})
+    const [billers, setBillers] = useState([])
     const Formik = useFormik({
         initialValues: {
             provider: "airtel",
             transactionId: "",
-            referenceId: ""
+            referenceId: "",
+            billerId: ""
         },
         onSubmit: values => {
             BackendAxios.post(`/api/paysprint/cms/${values.provider}`, values).then(res => {
@@ -72,6 +74,19 @@ const Cms = () => {
         })
     }
 
+    useEffect(()=>{
+        BackendAxios.get(`/api/cms-billers`).then(res=>{
+            setBillers(res.data)
+        }).catch(err=>{
+            Toast({
+                status: 'error',
+                title: 'Error while fetching billers',
+                description: err.response?.data?.message || err.response?.data || err.message
+            })
+        })
+    },[])
+
+
     return (
         <>
             <DashboardWrapper pageTitle={'CMS'}>
@@ -89,6 +104,19 @@ const Cms = () => {
                             onChange={Formik.handleChange}>
                             <option value="airtel">Airtel CMS</option>
                             <option value="fino">Fino CMS</option>
+                        </Select>
+                    </FormControl>
+                    <FormControl w={['full', 'sm']} pb={8} isRequired>
+                        <FormLabel>Select Biller</FormLabel>
+                        <Select
+                            placeholder='Select CMS Biller'
+                            name={'billerId'} value={Formik.values.billerId}
+                            onChange={Formik.handleChange}>
+                            {
+                                billers.map((biller, key)=>(
+                                    <option value={biller.biller_id}>{biller.name}</option>
+                                ))
+                            }
                         </Select>
                     </FormControl>
                     <FormControl w={['full', 'sm']} pb={8} isRequired>
