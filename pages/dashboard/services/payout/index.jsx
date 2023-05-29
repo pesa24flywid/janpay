@@ -44,6 +44,16 @@ const Payout = () => {
     const Toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
 
+    useEffect(() => {
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].payout_status) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
+
     const Formik = useFormik({
         initialValues: {
             beneficiaryName: "",

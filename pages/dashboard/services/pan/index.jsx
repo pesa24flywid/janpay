@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
     Box,
@@ -20,13 +20,25 @@ import {
     ModalBody,
     ModalFooter,
 } from '@chakra-ui/react'
-import BackendAxios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { useFormik } from 'formik'
 import { IoIosMan, IoIosTransgender, IoIosWoman } from 'react-icons/io'
 
 
 const Pan = () => {
     const Toast = useToast({ position: 'top-right' })
+
+
+    useEffect(() => {
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].pan_status) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
+
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [encData, setEncData] = useState("")
     const [encUrl, setEncUrl] = useState("")

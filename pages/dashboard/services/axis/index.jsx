@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import {
     Box,
@@ -8,17 +8,27 @@ import {
     useToast,
     Text
 } from '@chakra-ui/react'
-import BackendAxios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 
 const AxisAccount = () => {
-    const Toast = useToast({position: 'top-right'})
+    const Toast = useToast({ position: 'top-right' })
     const [accountType, setAccountType] = useState("1")
+
+    useEffect(() => {
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].axis_status) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
 
     function applyNow() {
         BackendAxios.post(`/api/paysprint/axis/account`, {
             type: accountType
         }).then(res => {
-            if(res.data.data){
+            if (res.data.data) {
                 window.open(res.data.data, "_blank")
             }
         }).catch(err => {

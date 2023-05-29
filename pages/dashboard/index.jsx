@@ -55,8 +55,12 @@ const Dashboard = () => {
     if (!isProfileComplete) {
       setProfileAlert(true)
     }
-
   }, [])
+
+  useEffect(()=>{
+    // Fetch transactions overview
+    
+  },[])
 
   // ChartJS Configuration
   ChartJs.register(ArcElement, Tooltip, Legend, Filler, PointElement, CategoryScale, LinearScale)
@@ -183,6 +187,14 @@ const Dashboard = () => {
           </Box>
         </Show>
 
+        <HStack justifyContent={'space-between'} py={4}>
+          <Text>Your Earning Statistics</Text>
+          <Select name='earningStatsDuration' w={'xs'} bg={'white'}>
+            <option value="today">Today</option>
+            <option value="month">1 Month</option>
+            <option value="year">1 Year</option>
+          </Select>
+        </HStack>
         <Stack direction={['row']}
           w={'full'} py={8} spacing={[0, 4]}
           justifyContent={'space-between'}
@@ -213,15 +225,6 @@ const Dashboard = () => {
             color={'#88A47C'}
           />
         </Stack>
-
-        <HStack justifyContent={'space-between'} py={4}>
-          <Text>Your Earning Statistics</Text>
-          <Select name='earningStatsDuration' w={'xs'} bg={'white'}>
-            <option value="today">Today</option>
-            <option value="month">1 Month</option>
-            <option value="year">1 Year</option>
-          </Select>
-        </HStack>
         <Stack
           direction={['column', 'row']}
           py={2} spacing={4}
@@ -289,7 +292,14 @@ const Dashboard = () => {
 
           <TransactionCard
             color={'#678983'}
-            title={"Fund Requests"}
+            title={"Payouts"}
+            quantity={0}
+            amount={0}
+          />
+
+          <TransactionCard
+            color={'#676433'}
+            title={"Fastag"}
             quantity={0}
             amount={0}
           />
@@ -301,7 +311,7 @@ const Dashboard = () => {
           direction={['column-reverse', 'row']}
           justifyContent={['flex-start', 'space-between']}
         >
-          <Box
+          {/* <Box
             w={['full', 'md']}
             p={4} rounded={12}
             bg={'white'}
@@ -320,7 +330,7 @@ const Dashboard = () => {
               data={chartData}
               options={options}
             />
-          </Box>
+          </Box> */}
           <Hide below='md'>
             <Box
               w={['full', 'md', 'xl']}

@@ -23,7 +23,7 @@ import {
   PinInput,
   PinInputField
 } from '@chakra-ui/react'
-import BackendAxios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { useFormik } from 'formik'
 import Pdf from 'react-to-pdf'
 import { BsCheck2Circle, BsDownload, BsXCircle } from 'react-icons/bs'
@@ -32,6 +32,15 @@ import Cookies from 'js-cookie'
 
 const Lic = () => {
   const pdfRef = useRef(null)
+  useEffect(() => {
+    ClientAxios.get(`/api/organisation`).then(res => {
+        if (!res.data[0].lic_status) {
+            window.location.href('/dashboard/not-available')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
+}, [])
   const [receipt, setReceipt] = useState({
     status: false,
     data: {},

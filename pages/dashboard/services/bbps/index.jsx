@@ -79,10 +79,15 @@ const Bbps = () => {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
-      Toast({
-        title: 'Try again later',
-        description: 'We are facing some issues.'
-      })
+      console.log(err)
+    })
+
+    ClientAxios.get(`/api/organisation`).then(res => {
+      if (!res.data[0].bbps_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      console.log(err)
     })
   }, [])
 

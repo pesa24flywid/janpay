@@ -59,23 +59,6 @@ import Pdf from 'react-to-pdf'
 
 
 const Bbps = () => {
-
-  // useEffect(() => {
-  //   ClientAxios.post('/api/user/fetch', {
-  //     user_id: localStorage.getItem('userId')
-  //   }, {
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   }).then((res) => {
-  //     if(res.data[0].allowed_pages.includes('rechargeTransaction') == false){
-  //       window.location.assign('/dashboard/not-allowed')
-  //     }
-  //   }).catch((err) => {
-  //     console.log(err)
-  //   })
-  // }, [])
-
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [keyword, setKeyword] = useState("")
 
@@ -133,10 +116,16 @@ const Bbps = () => {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
-      Toast({
-        title: 'Try again later',
-        description: 'We are facing some issues.'
-      })
+      console.log(err)
+    })
+
+
+    ClientAxios.get(`/api/organisation`).then(res => {
+      if (!res.data[0].recharge_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      console.log(err)
     })
   }, [])
 

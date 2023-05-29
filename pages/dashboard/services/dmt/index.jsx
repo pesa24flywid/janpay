@@ -75,6 +75,17 @@ const Dmt = () => {
                 })
             }
         })
+
+
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (res.data[0].dmt_status == false) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+
+
     }, [])
 
     const [customerStatus, setCustomerStatus] = useState("hidden") // Available options - hidden, registered, unregistered

@@ -23,13 +23,24 @@ import {
     useDisclosure
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import BackendAxios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
 import { BsCheck2Circle, BsDownload, BsXCircle } from 'react-icons/bs'
 import Pdf from 'react-to-pdf'
 
 const Fastag = () => {
     const Toast = useToast({ position: 'top-right' })
+
+    useEffect(() => {
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].axis_status) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
+
     const pdfRef = useRef(null)
 
     const { isOpen, onClose, onOpen } = useDisclosure()

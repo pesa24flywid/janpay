@@ -19,7 +19,7 @@ import {
     Table,
     Tr, Td, Tbody, ModalFooter
 } from '@chakra-ui/react'
-import BackendAxios from '../../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { useFormik } from 'formik'
 import Pdf from 'react-to-pdf'
 import { BsDownload } from 'react-icons/bs'
@@ -86,6 +86,15 @@ const Cms = () => {
         })
     },[])
 
+    useEffect(() => {
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].cms_status) {
+                window.location.href('/dashboard/not-available')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
 
     return (
         <>
