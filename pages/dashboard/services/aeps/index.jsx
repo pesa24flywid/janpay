@@ -36,8 +36,12 @@ import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-ico
 import Pdf from 'react-to-pdf'
 
 function StatementTable({ ministatement }) {
-  if (ministatement.length === 0) {
-    return <p>No data available.</p>;
+  if (typeof(ministatement) == Array && ministatement.length === 0) {
+    return <p style={{fontSize: '8px', color: 'darkslategray'}}>No mini statement to show.</p>;
+  }
+
+  if (typeof(ministatement) != Array) {
+    return <p style={{fontSize: '8px', color: 'darkslategray'}}>No mini statement to show.</p>;
   }
 
   const tableHeaders = Object.keys(ministatement[0]);
@@ -722,36 +726,37 @@ const Aeps = () => {
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => {
-//                       if (aepsProvider == 'eko')
-                        if (
-                          item[0].toLowerCase() != "status" &&
-                          item[0].toLowerCase() != "customer_balance" &&
-                          item[0].toLowerCase() != "user_name" &&
-                          item[0].toLowerCase() != "user_id" &&
-                          item[0].toLowerCase() != "amount" &&
-                          item[0].toLowerCase() != "ministatement" &&
-                          item[0].toLowerCase() != "user_phone"
-                        ){
-                          return (
-                            <HStack
-                              justifyContent={'space-between'}
-                              gap={8} pb={1} w={'full'} key={key}
-                            >
-                              <Text fontSize={'xs'}
-                                fontWeight={'medium'}
-                                textTransform={'capitalize'}
-                              >{item[0].replace(/_/g, " ")}</Text>
-                              <Text fontSize={'xs'} >{`${item[1]}`}</Text>
-                            </HStack>
-                          ) }
+                      //if (aepsProvider == 'eko')
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "customer_balance" &&
+                        item[0].toLowerCase() != "user_name" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "amount" &&
+                        item[0].toLowerCase() != "ministatement" &&
+                        item[0].toLowerCase() != "user_phone"
+                      ) {
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                          >
+                            <Text fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+                      }
                     }) : null
                 }
-{
-formik.values.serviceCode == "mini-statement" &&
-aepsProvider == "paysprint" &&
-receipt.status ?
-<StatementTable ministatement={receipt.data?.ministatement} /> : null
-}
+                {
+                  formik.values.serviceCode == "mini-statement" &&
+                    aepsProvider == "paysprint" &&
+                    receipt.status ?
+                    <StatementTable ministatement={receipt.data?.ministatement} /> : null
+                }
                 <VStack pt={8} w={'full'}>
                   <HStack pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
