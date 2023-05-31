@@ -59,7 +59,11 @@ const Dashboard = () => {
 
   useEffect(()=>{
     // Fetch transactions overview
-    
+    BackendAxios.get('/api/user/overview').then(res => {
+      
+    }).catch(err =>{
+      console.log(err)
+    })
   },[])
 
   // ChartJS Configuration

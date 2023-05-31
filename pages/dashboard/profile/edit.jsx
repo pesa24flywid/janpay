@@ -330,27 +330,45 @@ const EditProfile = () => {
     }
   }
 
-  function onboardMe() {
-    BackendAxios.post('/api/user/pay/onboard-fee').then((res) => {
-      Toast({
-        status: 'success',
-        title: 'Welcome on board!',
-        description: 'You can now activate services'
+  function onboardMe(server) {
+    if (server == "paysprint") {
+      BackendAxios.post('/api/user/pay/onboard-fee').then((res) => {
+        Toast({
+          status: 'success',
+          title: 'Welcome on board!',
+          description: 'You can now activate services'
+        })
+        if (res.data.redirecturl) {
+          window.open(res.data.redirecturl, "_blank")
+        }
+      }).catch((err) => {
+        console.log(err)
+        Toast({
+          status: 'error',
+          title: 'Error Occured',
+          description: err.response.data.message || err.response.data || err.message
+        })
       })
-      if (res.data.redirecturl) {
-        window.open(res.data.redirecturl, "_blank")
-      }
-      // setTimeout(() => {
-      //     window.location.reload()
-      // }, 1000)
-    }).catch((err) => {
-      console.log(err)
-      Toast({
-        status: 'error',
-        title: 'Error Occured',
-        description: err.response.data.message || err.response.data || err.message
+    }
+    if (server == "eko") {
+      BackendAxios.get('/api/eko/onboard').then((res) => {
+        Toast({
+          status: 'success',
+          title: 'Welcome on board!',
+          description: 'You can now activate services'
+        })
+        if (res.data.redirecturl) {
+          window.open(res.data.redirecturl, "_blank")
+        }
+      }).catch((err) => {
+        console.log(err)
+        Toast({
+          status: 'error',
+          title: 'Error Occured',
+          description: err.response.data.message || err.response.data || err.message
+        })
       })
-    })
+    }
   }
 
   return (
@@ -591,18 +609,31 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
+              </Stack>
+              <HStack spacing={8}>
                 <Box>
                   <Button
                     colorScheme="whatsapp"
                     leftIcon={<IoMdFingerPrint />}
-                    onClick={onboardMe}
+                    onClick={() => onboardMe("paysprint")}
                     isDisabled={!isProfileComplete}
-                  >Register Device</Button>
+                  >Register On Server 1</Button>
                   {isProfileComplete ||
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
                   }
                 </Box>
-              </Stack>
+                <Box>
+                  <Button
+                    colorScheme="whatsapp"
+                    leftIcon={<IoMdFingerPrint />}
+                    onClick={() => onboardMe("eko")}
+                    isDisabled={!isProfileComplete}
+                  >Register On Server 2</Button>
+                  {isProfileComplete ||
+                    <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
+                  }
+                </Box>
+              </HStack>
             </VStack>
 
 

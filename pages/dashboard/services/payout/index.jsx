@@ -46,7 +46,7 @@ const Payout = () => {
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (!res.data[0].payout_status) {
+            if (!res.data.payout_status) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {

@@ -31,7 +31,7 @@ const Pan = () => {
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (!res.data[0].pan_status) {
+            if (!res.data.pan_status) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {

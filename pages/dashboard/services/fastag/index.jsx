@@ -33,7 +33,7 @@ const Fastag = () => {
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (!res.data[0].axis_status) {
+            if (!res.data.fastag_status) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {

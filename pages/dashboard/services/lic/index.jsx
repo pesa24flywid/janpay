@@ -34,7 +34,7 @@ const Lic = () => {
   const pdfRef = useRef(null)
   useEffect(() => {
     ClientAxios.get(`/api/organisation`).then(res => {
-        if (!res.data[0].lic_status) {
+        if (!res.data.lic_status) {
             window.location.href('/dashboard/not-available')
         }
     }).catch(err => {

@@ -16,7 +16,7 @@ const AxisAccount = () => {
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (!res.data[0].axis_status) {
+            if (!res.data.axis_status) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {

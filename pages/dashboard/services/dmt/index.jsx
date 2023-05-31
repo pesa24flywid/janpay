@@ -78,7 +78,7 @@ const Dmt = () => {
 
 
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (res.data[0].dmt_status == false) {
+            if (res.data.dmt_status == false) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {

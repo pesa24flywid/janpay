@@ -62,7 +62,7 @@ const Aeps = () => {
     })
 
     ClientAxios.get(`/api/organisation`).then(res => {
-      if (!res.data[0].aeps_status) {
+      if (!res.data.aeps_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {

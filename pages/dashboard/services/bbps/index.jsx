@@ -83,7 +83,7 @@ const Bbps = () => {
     })
 
     ClientAxios.get(`/api/organisation`).then(res => {
-      if (!res.data[0].bbps_status) {
+      if (!res.data.bbps_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {

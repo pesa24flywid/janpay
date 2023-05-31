@@ -121,7 +121,7 @@ const Bbps = () => {
 
 
     ClientAxios.get(`/api/organisation`).then(res => {
-      if (!res.data[0].recharge_status) {
+      if (!res.data.recharge_status) {
         window.location.href('/dashboard/not-available')
       }
     }).catch(err => {

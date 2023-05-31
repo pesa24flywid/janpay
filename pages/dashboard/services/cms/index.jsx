@@ -88,7 +88,7 @@ const Cms = () => {
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
-            if (!res.data[0].cms_status) {
+            if (!res.data.cms_status) {
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {
