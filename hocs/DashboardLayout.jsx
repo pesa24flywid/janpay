@@ -23,6 +23,7 @@ import {
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
+    Toast,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import Head from 'next/head'
@@ -93,18 +94,20 @@ const DashboardWrapper = (props) => {
 
     }, [])
 
-    async function fetchWallet() {
-        // Check wallet balance
-        await BackendAxios.post('/api/user/wallet').then((res) => {
+    useEffect(() => {
+        BackendAxios.post('/api/user/wallet').then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
             setWallet('0')
-            location.reload()
+            console.log(err)
         })
-    }
+    }, [])
 
     useEffect(() => {
-        fetchWallet()
+        if (localStorage.getItem("hasReloaded") != "true") {
+            location.reload()
+        }
+        localStorage.setItem("hasReloaded", "true")
     }, [])
 
 
