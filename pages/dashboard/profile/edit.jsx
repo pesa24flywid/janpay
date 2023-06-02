@@ -28,6 +28,7 @@ import DashboardWrapper from "../../../hocs/DashboardLayout";
 import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
 import { states } from '../../../lib/states'
 import { IoMdFingerPrint } from "react-icons/io";
+import Link from "next/link";
 const EditProfile = () => {
   const date = new Date()
   const [profile, setProfile] = useState({
@@ -623,12 +624,14 @@ const EditProfile = () => {
                   }
                 </Box>
                 <Box>
-                  <Button
-                    colorScheme="whatsapp"
-                    leftIcon={<IoMdFingerPrint />}
-                    onClick={() => onboardMe("eko")}
-                    isDisabled={!isProfileComplete}
-                  >Register On Server 2</Button>
+                  <Link href={'/dashboard/eko/onboard?pageId=dashboard'} target="_blank">
+                    <Button
+                      colorScheme="whatsapp"
+                      leftIcon={<IoMdFingerPrint />}
+                      // onClick={() => onboardMe("eko")}
+                      isDisabled={!isProfileComplete}
+                    >Register On Server 2</Button>
+                  </Link>
                   {isProfileComplete ||
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
                   }

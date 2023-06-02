@@ -13,17 +13,44 @@ import {
 import BackendAxios from '../../../lib/axios'
 
 const OnboardEko = () => {
+  const Toast = useToast({ position: 'top-right' })
   const [onboardState, setOnboardState] = useState("otp")
   const [isOtpSent, setIsOtpSent] = useState(false)
-  const Toast = useToast({ position: 'top-right' })
+  const [otp, setOtp] = useState("")
 
   function sendOtp() {
     BackendAxios.get("/api/eko/send-otp").then(res => {
-
+      Toast({
+        status: 'success',
+        description: 'OTP Sent To Your Number'
+      })
     }).catch(err => {
       Toast({
         status: 'error',
         title: 'Error while sending OTP',
+        description: err.message
+      })
+    })
+  }
+
+  function verifyOtp() {
+    if(!otp){
+      Toast({
+        description: 'Please enter OTP'
+      })
+      return
+    }
+    BackendAxios.post('/api/eko/verify-otp', {
+      otp: otp
+    }).then(res => {
+      Toast({
+        status: 'Successfully Onboarded!',
+        description: 'You can close this window now.'
+      })
+    }).catch(err => {
+      Toast({
+        status: 'error',
+        title: 'Error while verifying OTP',
         description: err.message
       })
     })
@@ -36,11 +63,11 @@ const OnboardEko = () => {
         <VStack gap={8} w={['full', 'xs']} mx={'auto'}>
           <FormControl>
             <FormLabel>Enter OTP Sent To Your Phone</FormLabel>
-            <Input type='phone' bg={'white'} />
+            <Input type='phone' bg={'white'} onChange={e => setOtp(e.target.value)} />
           </FormControl>
           <HStack>
             <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
-            <Button colorScheme='twitter'>Confirm</Button>
+            <Button colorScheme='twitter' onClick={verifyOtp}>Confirm</Button>
           </HStack>
         </VStack>
       </DashboardWrapper>
