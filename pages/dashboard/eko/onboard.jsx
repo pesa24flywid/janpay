@@ -76,6 +76,7 @@ const OnboardEko = () => {
       if (res.data.redirecturl) {
         window.location.replace(res.data.redirecturl)
       }
+      setIsOnboarded(true)
     }).catch((err) => {
       console.log(err)
       Toast({
@@ -103,7 +104,7 @@ const OnboardEko = () => {
         {
           isOnboarded ?
             <VStack gap={8} w={['full', 'xs']} mx={'auto'}>
-              <Text>You Are Already Onboarded!</Text>
+              <Text>You Are Onboarded!</Text>
               <br />
               <Link href={'/dashboard?pageId=dashboard'}>
                 <Button colorScheme='twitter' variant={'outline'} >Go To Dashboard</Button>
@@ -120,12 +121,12 @@ const OnboardEko = () => {
               <HStack>
                 {
                   isVerified ?
-                    <>
-                      <Text>
+                    <VStack w={'full'} gap={8}>
+                      <Text textAlign={'center'}>
                         Click the button below to start onboarding process.
                       </Text>
                       <Button colorScheme='twitter' onClick={onboardMe} >Onboard Now</Button>
-                    </> :
+                    </VStack> :
                     <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
                 }
                 {
