@@ -351,25 +351,25 @@ const EditProfile = () => {
         })
       })
     }
-    if (server == "eko") {
-      BackendAxios.get('/api/eko/onboard').then((res) => {
-        Toast({
-          status: 'success',
-          title: 'Welcome on board!',
-          description: 'You can now activate services'
-        })
-        if (res.data.redirecturl) {
-          window.open(res.data.redirecturl, "_blank")
-        }
-      }).catch((err) => {
-        console.log(err)
-        Toast({
-          status: 'error',
-          title: 'Error Occured',
-          description: err.response.data.message || err.response.data || err.message
-        })
-      })
-    }
+    // if (server == "eko") {
+    //   BackendAxios.get('/api/eko/onboard').then((res) => {
+    //     Toast({
+    //       status: 'success',
+    //       title: 'Welcome on board!',
+    //       description: 'You can now activate services'
+    //     })
+    //     if (res.data.redirecturl) {
+    //       window.location.replace(res.data.redirecturl)
+    //     }
+    //   }).catch((err) => {
+    //     console.log(err)
+    //     Toast({
+    //       status: 'error',
+    //       title: 'Error Occured',
+    //       description: err.response.data.message || err.response.data || err.message
+    //     })
+    //   })
+    // }
   }
 
   return (
@@ -624,7 +624,7 @@ const EditProfile = () => {
                   }
                 </Box>
                 <Box>
-                  <Link href={'/dashboard/eko/onboard?pageId=dashboard'} target="_blank">
+                  <Link href={'/dashboard/eko/onboard?pageId=dashboard'}>
                     <Button
                       colorScheme="whatsapp"
                       leftIcon={<IoMdFingerPrint />}
