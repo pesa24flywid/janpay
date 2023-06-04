@@ -14,7 +14,7 @@ import BackendAxios from '../../../lib/axios'
 
 const OnboardEko = () => {
   const Toast = useToast({ position: 'top-right' })
-  const [onboardState, setOnboardState] = useState("otp")
+  const [isOnboarded, setIsOnboarded] = useState(false)
   const [isOtpSent, setIsOtpSent] = useState(false)
   const [otp, setOtp] = useState("")
 
@@ -24,17 +24,18 @@ const OnboardEko = () => {
         status: 'success',
         description: 'OTP Sent To Your Number'
       })
+      setIsOtpSent(true)
     }).catch(err => {
       Toast({
         status: 'error',
         title: 'Error while sending OTP',
-        description: err.message
+        description: err.response?.data || err.message
       })
     })
   }
 
   function verifyOtp() {
-    if(!otp){
+    if (!otp) {
       Toast({
         description: 'Please enter OTP'
       })
@@ -44,14 +45,13 @@ const OnboardEko = () => {
       otp: otp
     }).then(res => {
       Toast({
-        status: 'Successfully Onboarded!',
-        description: 'You can close this window now.'
+        description: res.data || 'You can close this window now.'
       })
     }).catch(err => {
       Toast({
         status: 'error',
         title: 'Error while verifying OTP',
-        description: err.message
+        description: err.response?.data || err.message
       })
     })
   }
@@ -60,16 +60,26 @@ const OnboardEko = () => {
     <>
       <DashboardWrapper pageTitle={'Server 2 Onboarding'}>
         <Box w={'full'} p={8}></Box>
+
         <VStack gap={8} w={['full', 'xs']} mx={'auto'}>
-          <FormControl>
-            <FormLabel>Enter OTP Sent To Your Phone</FormLabel>
-            <Input type='phone' bg={'white'} onChange={e => setOtp(e.target.value)} />
-          </FormControl>
+          {
+            isOtpSent ?
+              <FormControl>
+                <FormLabel>Enter OTP Sent To Your Phone</FormLabel>
+                <Input type='phone' bg={'white'} onChange={e => setOtp(e.target.value)} />
+              </FormControl>
+              : null
+          }
           <HStack>
-            <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
-            <Button colorScheme='twitter' onClick={verifyOtp}>Confirm</Button>
+            <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Click Here To Send"} OTP</Button>
+            {
+              isOtpSent ?
+                <Button colorScheme='twitter' onClick={verifyOtp}>Confirm</Button>
+                : null
+            }
           </HStack>
         </VStack>
+
       </DashboardWrapper>
     </>
   )
