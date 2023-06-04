@@ -18,14 +18,15 @@ const OnboardEko = () => {
   const Toast = useToast({ position: 'top-right' })
   const [isOnboarded, setIsOnboarded] = useState(false)
   const [isOtpSent, setIsOtpSent] = useState(false)
-  const [isVeried, setIsVeried] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
   const [otp, setOtp] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   function sendOtp() {
     BackendAxios.get("/api/eko/send-otp").then(res => {
       if (res.data.status == 0 && res.data.response_status_id == -1) {
-        setIsOnboarded(true)
+        setIsVerified(true)
+        setIsOnboarded(false)
         return
       }
       Toast({
@@ -52,14 +53,35 @@ const OnboardEko = () => {
     BackendAxios.post('/api/eko/verify-otp', {
       otp: otp
     }).then(res => {
+      setIsVerified(true)
       Toast({
-        description: res.data || 'You can close this window now.'
+        description: res.data?.message || 'You can close this window now.'
       })
     }).catch(err => {
       Toast({
         status: 'error',
         title: 'Error while verifying OTP',
-        description: err.response?.data || err.message
+        description: err.response?.data?.message || err.response?.data || err.message
+      })
+    })
+  }
+
+  function onboardMe() {
+    BackendAxios.get('/api/eko/onboard').then((res) => {
+      Toast({
+        status: 'success',
+        title: 'Welcome on board!',
+        description: 'You can now activate services'
+      })
+      if (res.data.redirecturl) {
+        window.location.replace(res.data.redirecturl)
+      }
+    }).catch((err) => {
+      console.log(err)
+      Toast({
+        status: 'error',
+        title: 'Error while onboarding',
+        description: err.response?.data?.message || err.response?.data || err.message
       })
     })
   }
@@ -96,7 +118,16 @@ const OnboardEko = () => {
                 </FormControl> : null
               }
               <HStack>
-                <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
+                {
+                  isVerified ?
+                    <>
+                      <Text>
+                        Click the button below to start onboarding process.
+                      </Text>
+                      <Button colorScheme='twitter' onClick={onboardMe} >Onboard Now</Button>
+                    </> :
+                    <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
+                }
                 {
                   isOtpSent ?
                     <Button colorScheme='twitter' onClick={verifyOtp}>Confirm</Button>
