@@ -41,14 +41,18 @@ import { BiMobileAlt, BiRupee } from 'react-icons/bi'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)
-  const [notifications, setNotifications] = useState([
-    {
-      title: "Under Development",
-      content: "This website is currently under development. Contact support for any issues."
-    }
-  ])
+  const [notifications, setNotifications] = useState([])
   let isProfileComplete
   const [profileAlert, setProfileAlert] = useState(false)
+  const [aepsData, setAepsData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [bbpsData, setBbpsData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [dmtData, setDmtData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [panData, setPanData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [payoutData, setPayoutData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [licData, setLicData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [fastagData, setFastagData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [cmsData, setCmsData] = useState({ count: 0, debit: 0, credit: 0 })
+  const [rechargeData, setRechargeData] = useState({ count: 0, debit: 0, credit: 0 })
 
   useEffect(() => {
     isProfileComplete = (localStorage.getItem("isProfileComplete") === "true")
@@ -57,14 +61,26 @@ const Dashboard = () => {
     }
   }, [])
 
-  useEffect(()=>{
+  function getOverview(tenure) {
     // Fetch transactions overview
-    BackendAxios.get('/api/user/overview').then(res => {
-      
-    }).catch(err =>{
+    BackendAxios.get(`/api/user/overview?tenure=${tenure || "today"}`).then(res => {
+      setAepsData(res.data[0].aeps)
+      setBbpsData(res.data[1].bbps)
+      setDmtData(res.data[2].dmt)
+      setPanData(res.data[3].pan)
+      setPayoutData(res.data[4].payout)
+      setLicData(res.data[5].lic)
+      setFastagData(res.data[6].fastag)
+      setCmsData(res.data[7].cms)
+      setRechargeData(res.data[8].recharge)
+    }).catch(err => {
       console.log(err)
     })
-  },[])
+  }
+
+  useEffect(() => {
+    getOverview()
+  }, [])
 
   // ChartJS Configuration
   ChartJs.register(ArcElement, Tooltip, Legend, Filler, PointElement, CategoryScale, LinearScale)
@@ -193,7 +209,11 @@ const Dashboard = () => {
 
         <HStack justifyContent={'space-between'} py={4}>
           <Text>Your Earning Statistics</Text>
-          <Select name='earningStatsDuration' w={'xs'} bg={'white'}>
+          <Select
+            name='earningStatsDuration'
+            w={'xs'} bg={'white'}
+            onChange={e => getOverview(e.target.value)}
+          >
             <option value="today">Today</option>
             <option value="month">1 Month</option>
             <option value="year">1 Year</option>
@@ -206,13 +226,13 @@ const Dashboard = () => {
         >
           <DataCard
             title={'AePS Transactions'}
-            data={0}
+            data={aepsData?.credit - aepsData?.debit}
             icon={<GiReceiveMoney color='white' size={'32'} />}
             color={'#FF7B54'}
           />
           <DataCard
             title={'DMT Transactions'}
-            data={0}
+            data={dmtData?.debit - dmtData?.credit}
             icon={<FaMoneyBillAlt color='white' size={'32'} />}
             color={'#6C00FF'}
           />
@@ -233,26 +253,25 @@ const Dashboard = () => {
           direction={['column', 'row']}
           py={2} spacing={4}
         >
-
           <TransactionCard
             color={'#6C00FF'}
             title={"AePS"}
-            quantity={0}
-            amount={0}
+            quantity={aepsData?.count}
+            amount={aepsData?.credit - aepsData?.debit}
           />
 
           <TransactionCard
             color={'#3C79F5'}
             title={"BBPS"}
-            quantity={0}
-            amount={0}
+            quantity={bbpsData?.count}
+            amount={bbpsData?.debit - bbpsData?.credit}
           />
 
           <TransactionCard
             color={'#2DCDDF'}
             title={"DMT"}
-            quantity={0}
-            amount={0}
+            quantity={dmtData?.count}
+            amount={dmtData?.debit - dmtData?.credit}
           />
         </Stack>
 
@@ -263,22 +282,22 @@ const Dashboard = () => {
           <TransactionCard
             color={'#F2DEBA'}
             title={"PAN"}
-            quantity={0}
-            amount={0}
+            quantity={panData?.count}
+            amount={panData?.debit - panData?.credit}
           />
 
           <TransactionCard
             color={'#FF8B13'}
             title={"LIC"}
-            quantity={0}
-            amount={0}
+            quantity={licData?.count}
+            amount={licData?.debit - licData?.credit}
           />
 
           <TransactionCard
             color={'#13005A'}
             title={"CMS"}
-            quantity={0}
-            amount={0}
+            quantity={cmsData?.count}
+            amount={cmsData?.debit - cmsData?.credit}
           />
 
         </Stack>
@@ -288,24 +307,24 @@ const Dashboard = () => {
           py={2} spacing={4}
         >
           <TransactionCard
-            color={'#ABC270'}
-            title={"Recharges"}
-            quantity={0}
-            amount={0}
-          />
-
-          <TransactionCard
-            color={'#678983'}
-            title={"Payouts"}
-            quantity={0}
-            amount={0}
-          />
-
-          <TransactionCard
-            color={'#676433'}
+            color={'#13005A'}
             title={"Fastag"}
-            quantity={0}
-            amount={0}
+            quantity={fastagData?.count}
+            amount={fastagData?.debit - fastagData?.credit}
+          />
+
+          <TransactionCard
+            color={'#26845A'}
+            title={"Payout"}
+            quantity={payoutData?.count}
+            amount={payoutData?.debit - payoutData?.credit}
+          />
+
+          <TransactionCard
+            color={'#FF8B13'}
+            title={"Recharge"}
+            quantity={rechargeData?.count}
+            amount={rechargeData?.debit - rechargeData?.credit}
           />
 
         </Stack>
