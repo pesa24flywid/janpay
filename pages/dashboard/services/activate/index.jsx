@@ -145,7 +145,7 @@ const Activate = () => {
                                     <Button
                                         colorScheme={'twitter'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
-                                        onClick={() => activateEko(service.eko_id)}
+                                        onClick={() => activateEko(service.id)}
                                     >Activate</Button>
                                 </Box>
                             )
