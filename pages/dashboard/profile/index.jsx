@@ -34,8 +34,8 @@ const Profile = () => {
   })
 
 
-  function fetchProfile() {
-    BackendAxios.post("api/user/info").then((res) => {
+  async function fetchProfile() {
+    await BackendAxios.post("api/user/info").then((res) => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
 
       localStorage.setItem("firstName", res.data.data.first_name || "")
@@ -73,6 +73,15 @@ const Profile = () => {
 
       setProfile({
         ...profile,
+        fullName: res.data?.data?.name,
+        phone: res.data?.data?.phone_number,
+        dob: res.data?.data?.dob,
+        aadhaarNumber: res.data?.data?.aadhaar,
+        pan: res.data?.data?.pan_number,
+        merchantId: res.data?.data?.id,
+        companyName: res.data?.data?.company_name + " " + res.data?.data?.firm_type,
+        address: res.data?.data?.line + " " + res.data?.data?.city + " " + res.data?.data?.state + " " + res.data?.data?.pincode,
+        kycStatus: Number(res.data?.data?.kyc) === 1,
         aadhaarBack: res.data.data.aadhar_back,
         aadhaarFront: res.data.data.aadhar_front,
         panCard: res.data.data.pan_photo,
@@ -84,18 +93,6 @@ const Profile = () => {
         description: err.message
       })
       console.log(err)
-    })
-    setProfile({
-      ...profile,
-      fullName: localStorage.getItem("userName"),
-      kycStatus: localStorage.getItem("kycStatus"),
-      phone: localStorage.getItem("phone"),
-      dob: localStorage.getItem("dob"),
-      aadhaarNumber: localStorage.getItem("aadhaar"),
-      pan: localStorage.getItem("pan"),
-      merchantId: localStorage.getItem("merchantId"),
-      companyName: localStorage.getItem("companyName"),
-      address: localStorage.getItem("line") + " " + localStorage.getItem("city") + " " + localStorage.getItem("state") + " " + localStorage.getItem("pincode"),
     })
   }
 
