@@ -56,7 +56,6 @@ const Profile = () => {
 
       localStorage.setItem("companyName", (res.data.data.company_name || "") + " " + (res.data.data.firm_type || ""))
 
-
       localStorage.setItem("line", res.data.data.line || "")
 
       localStorage.setItem("city", res.data.data.city || "")
