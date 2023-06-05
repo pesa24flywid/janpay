@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.2"
+   viewBox="0 0 1552 1346"
+   width="1552"
+   height="1346"
+   id="svg14"
+   sodipodi:docname="AXISBANK.BO.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs18" />
+  <sodipodi:namedview
+     id="namedview16"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.21985452"
+     inkscape:cx="1334.9737"
+     inkscape:cy="172.84157"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g872" />
+  <title
+     id="title2">AXISBank_Logo-svg (2)-svg</title>
+  <style
+     id="style4">
+		.s0 { fill: #97144d } 
+	</style>
+  <g
+     id="g870">
+    <g
+       id="Clip-Path: g872">
+      <g
+         id="g872">
+        <g
+           id="g878"
+           style="fill:#ffffff">
+          <path
+             id="path880"
+             class="s0"
+             d="m 1551.8,1345.7 h -482.5 l -293,-511.2 h 482.5 z"
+             style="fill:#ffffff" />
+        </g>
+        <g
+           id="g882"
+           style="fill:#ffffff">
+          <path
+             id="path884"
+             class="s0"
+             d="m 774.5,0.2 242,416.4 L 482,1345.7 H 0.3 Z"
+             style="fill:#ffffff" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

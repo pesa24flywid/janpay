@@ -79,7 +79,7 @@ const Register = () => {
     })
 
     useEffect(() => {
-        
+
         ClientAxios.get('/api/global').then((res) => {
             setIsRetailerDisabled(!res.data[0].retailer)
             setIsDistributorDisabled(!res.data[0].distributor)
@@ -96,10 +96,9 @@ const Register = () => {
             <Head>
                 <title>RPay - Register</title>
             </Head>
-            <Navbar />
-
-            <Box>
-                <HStack mx={'auto'} my={[0, '12']}
+            <Box p={[4, 8, 16]}>
+                <HStack
+                    mx={'auto'}
                     w={['full', 'fit-content', 'fit-content']}
                     boxShadow={['none', 'lg']}
                     bg={['white']} border={'1px'}
@@ -219,9 +218,9 @@ const Register = () => {
                                         textAlign={'left'}
                                         color={'darkslategray'}>Register as:
                                     </FormLabel>
-                                    <RadioGroup name={'user_type'} 
-                                    onChange={(value)=>formik.setFieldValue("user_type", value)} 
-                                    value={formik.values.user_type} >
+                                    <RadioGroup name={'user_type'}
+                                        onChange={(value) => formik.setFieldValue("user_type", value)}
+                                        value={formik.values.user_type} >
                                         <Stack direction={['column', 'row']} spacing={[3, 6]}>
                                             <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>
                                             <Radio isDisabled={isDistributorDisabled} value={'distributor'}>Distributor</Radio>
@@ -256,6 +255,7 @@ const Register = () => {
                         />
                     </VStack>
                 </HStack>
+                <Text fontSize={'xs'} w={'full'} textAlign={'center'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
             </Box>
         </>
     )

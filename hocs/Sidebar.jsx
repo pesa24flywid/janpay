@@ -12,6 +12,7 @@ import {
   AccordionButton,
   AccordionIcon,
   AccordionPanel,
+  Avatar,
 } from "@chakra-ui/react";
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
@@ -313,19 +314,9 @@ const Sidebar = ({ userName, userImage }) => {
           borderColor={"gray.300"}
           overflowY={"scroll"}
         >
-          {/* Sidebar Profile */}
-
           <Link href={"/dashboard/profile?pageId=profile"}>
             <VStack spacing={2}>
-              <Image
-                src={userImage || "/avatar.png"}
-                w={"24"}
-                rounded={"full"}
-                mx={"auto"}
-                p={1}
-                border={"2px"}
-                borderColor={"gray.200"}
-              />
+              <Avatar name={userName} src={userImage} size={'xl'} />
               <Text fontSize={"xl"} textAlign={'center'}>{userName}</Text>
               <Text
                 fontSize={"sm"}
@@ -335,7 +326,7 @@ const Sidebar = ({ userName, userImage }) => {
             </VStack>
           </Link>
 
-          {/* Sidebar Menu Options */}
+
           <VStack pt={8} w={"full"} spacing={4}>
             {
               SidebarOptions.map((option, key) => {

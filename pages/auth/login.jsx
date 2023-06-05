@@ -51,9 +51,9 @@ const Login = () => {
 
     useEffect(() => {
         getLocation()
-        window.addEventListener("load", ()=>{
-            window.onkeydown(e=>{
-                if(e.keyCode === 13){
+        window.addEventListener("load", () => {
+            window.onkeydown(e => {
+                if (e.keyCode === 13) {
                     e.preventDefault()
                     return false
                 }
@@ -281,18 +281,19 @@ const Login = () => {
             <Head>
                 <title>Pesa24 - Login</title>
             </Head>
-            <Navbar />
             <Box>
-                <HStack mx={'auto'} my={[0, '12']}
+                <HStack
+                    mx={'auto'} my={[0, '12']} minH={'90vh'}
                     w={['full', 'fit-content', 'fit-content']}
                     boxShadow={['none', 'lg']}
-                    bg={['white']} border={'1px'}
+                    bg={['white']} borderWidth={['0px', '0.5px']}
                     borderColor={'rgb(224,224,224)'}
                     rounded={['unset', 12]} h={['auto', 'auto']}
                     alignItems={'center'} justifyContent={'center'}
                 >
                     <form action="#" method="post" onSubmit={formik.handleSubmit}>
                         <VStack p={[4, 8]} w={['full', 'md', 'lg']}>
+                            <Image src='/logo_long.png' w={'28'} pos={'relative'} top={'-16'} />
                             <Text fontSize={'3xl'}
                                 textTransform={'capitalize'}
                                 fontWeight={'600'}
@@ -365,7 +366,7 @@ const Login = () => {
                                             textAlign={'right'}>Reset Password</Text>
                                     </Link>
                                 </Box>
-                                <HStack spacing={6}>
+                                <HStack spacing={6} pt={4}>
                                     <Text>Login Preference</Text>
                                     <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
                                         <HStack spacing={4}>
@@ -418,10 +419,7 @@ const Login = () => {
                                             </Box>
                                         </VStack>
                                     </> : null
-
                             }
-                            <Link href={'/auth/reset-mpin'}>
-                            </Link>
 
                             <Link href={'/auth/register'}>
                                 <Text color={'blue.700'} fontWeight={'semibold'}>Not a member yet? Register here.</Text>
@@ -439,6 +437,7 @@ const Login = () => {
                         />
                     </VStack>
                 </HStack>
+                <Text fontSize={'xs'} w={'full'} textAlign={'center'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
             </Box>
 
 
@@ -446,6 +445,7 @@ const Login = () => {
             <Modal
                 isOpen={ModalStatus}
                 onClose={() => setModalStatus(false)}
+                isCentered={true}
             >
                 <ModalOverlay />
                 <ModalContent>

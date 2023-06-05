@@ -13,7 +13,7 @@ const reports = () => {
                     SidebarOptions.find(item => (item.title == 'reports')).children.map((item, key) => (
                         <Box
                             px={3} py={4} w={'full'}
-                            _hover={{ bg: 'aqua' }}
+                            _hover={{ bg: 'FFF' }}
                         >
                             <Link key={key} href={item.soon ? "#" : item.link}
                                 style={{

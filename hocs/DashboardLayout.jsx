@@ -24,6 +24,7 @@ import {
     DrawerContent,
     DrawerCloseButton,
     Toast,
+    Avatar,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import Head from 'next/head'
@@ -61,7 +62,7 @@ const DashboardWrapper = (props) => {
             setProfilePic(localStorage.getItem("profilePic"))
             Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         ClientAxios.post('/api/user/fetch', {
@@ -144,8 +145,7 @@ const DashboardWrapper = (props) => {
 
             <Box
                 bg={'aliceblue'}
-                w={'full'} minH={'100vh'}>
-
+                w={'full'}>
                 <HStack spacing={8} alignItems={'flex-start'}>
                     {/* Sidebar */}
                     <Sidebar
@@ -157,11 +157,10 @@ const DashboardWrapper = (props) => {
 
                     {/* Main Dashboard Container */}
                     <Box
-                        p={4}
                         display={'flex'}
                         flexDir={'column'}
-                        flex={['unset', 8]}
-                        w={'full'} h={'100vh'}
+                        flex={[1, 8]}
+                        w={'full'} h={['100vh', '100vh']}
                         overflowY={'scroll'}
                     >
                         <Show above='md'>
@@ -170,16 +169,18 @@ const DashboardWrapper = (props) => {
 
                         {/* Topbar Starts */}
                         <HStack
-                            pt={[4, 0]}
-                            pb={[0, 2]}
-                            px={[0, 2]}
+                            py={[4, 0]}
+                            pb={[4, 2]}
+                            px={[4, 2]}
+                            bgImage={['/mobileBg.svg', 'unset']}
+                            color={['#FFF', '#222']}
                         >
                             <Show below={'md'}>
                                 <Box fontSize={'2xl'} onClick={onOpen}>
-                                    <FiMenu color='#333' />
+                                    <FiMenu color='#FFF' />
                                 </Box>
                             </Show>
-                            <Text fontSize={'xl'} fontWeight={'500'} color={'#333'}>{props.titleText || props.pageTitle}</Text>
+                            <Text fontSize={'xl'} fontWeight={'500'} color={['#FFF', '#222']}>{props.titleText || props.pageTitle}</Text>
                             <Spacer />
                             <HStack
                                 spacing={4}
@@ -226,13 +227,19 @@ const DashboardWrapper = (props) => {
                                 </Box>
 
                             </HStack>
+                            <Show below='md'>
+                                <Link href={'/dashboard/profile?pageId=prfile'}>
+                                    <Avatar name={userName} src={profilePic} size={'sm'} />
+                                </Link>
+                            </Show>
                         </HStack>
                         {/* Topbar Ends */}
-
-                        {props.children}
+                        <Box p={[4, 0]}>
+                            {props.children}
+                        </Box>
 
                         <Show below='md'>
-                            <Box w={'full'} py={64}>
+                            <Box w={'full'} py={16}>
 
                             </Box>
                         </Show>
@@ -269,7 +276,7 @@ const DashboardWrapper = (props) => {
                             </VStack>
                         </Link>
 
-                        <Link href={'/dashboard/mobile/reports'}>
+                        <Link href={'/dashboard/mobile/reports?pageId=reports'}>
                             <VStack h={'100%'} justifyContent={'space-between'}>
                                 <BsFileEarmarkBarGraphFill fontSize={'20'} />
                                 <Text fontSize={'xs'} textAlign={'center'}>Reports</Text>
@@ -311,7 +318,7 @@ const DashboardWrapper = (props) => {
 
                         <DrawerBody mt={8}>
 
-                            <VStack spacing={6}>
+                            <VStack spacing={4}>
 
                                 {
                                     SidebarOptions.map((option, key) => {
@@ -327,7 +334,7 @@ const DashboardWrapper = (props) => {
                                                         id={option.id || option.title}
                                                     >
                                                         {option.icon}
-                                                        <Text textTransform={'capitalize'}>{option.title}</Text>
+                                                        <Text textTransform={'capitalize'} fontSize={'md'}>{option.title}</Text>
                                                     </HStack>
                                                 </Link>
                                             )
@@ -337,9 +344,9 @@ const DashboardWrapper = (props) => {
                                             return (
                                                 <Accordion allowToggle w={'full'}>
 
-                                                    <AccordionItem>
-                                                        <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
-                                                            <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
+                                                    <AccordionItem border={'none'}>
+                                                        <AccordionButton px={[3, 3]} _expanded={{ bg: 'aqua' }} border={'none'}>
+                                                            <HStack spacing={1} flex={1} fontSize={'md'} alignItems={'center'}>
                                                                 {option.icon}
                                                                 <Text textTransform={'capitalize'}>{option.title}</Text>
                                                             </HStack>
