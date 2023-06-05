@@ -167,7 +167,7 @@ const EditProfile = () => {
       localStorage.setItem("deviceNumber", res.data.data.device_number || "")
       formik.setFieldValue("deviceNumber", res.data.data.device_number || "")
 
-      setIsProfileComplete(res.data.data.profile === 1)
+      setIsProfileComplete(Number(res.data?.data?.profile) === 1)
     }).catch((err) => {
       Toast({
         status: "error",
