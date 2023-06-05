@@ -549,25 +549,29 @@ const Dmt = () => {
             })
         }
         if (dmtProvider == "eko") {
-            BackendAxios.get(`/api/eko/dmt/recipient-list/${serviceId}`, {
-                customerId: customerId
-            }).then(res => {
-                console.log(res.data)
-                setRecipients(res.data.data.recipient_list.map((recipient) => {
-                    return {
-                        accountNumber: recipient.account,
-                        beneficiaryName: recipient.recipient_name,
-                        bankCode: null,
-                        bankName: recipient.bank,
-                        bankIfsc: recipient.ifsc,
-                        beneficiaryId: recipient.recipient_id,
-                    }
-                }))
+            BackendAxios.get(`/api/eko/dmt/recipient-list/${serviceId}?customerId=${customerId}`).then(res => {
+                if (res.data?.data?.recipient_list?.length) {
+                    setRecipients(res.data.data.recipient_list.map((recipient) => {
+                        return {
+                            accountNumber: recipient.account,
+                            beneficiaryName: recipient.recipient_name,
+                            bankCode: null,
+                            bankName: recipient.bank,
+                            bankIfsc: recipient.ifsc,
+                            beneficiaryId: recipient.recipient_id,
+                        }
+                    }))
+                }
+                else {
+                    Toast({
+                        description: res.data.message || "No recipients found"
+                    })
+                }
             }).catch(err => {
                 Toast({
                     status: 'error',
                     title: "Error Occured",
-                    description: err.response.data.message || err.response.data || err.message,
+                    description: err?.response?.data?.message || err.response?.data || err.message,
                 })
             })
         }
