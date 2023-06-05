@@ -160,7 +160,7 @@ const Profile = () => {
                 variant={'outline'} mt={4}
                 colorScheme={profile.aadhaarFront ? "green" : "red"}
               >
-                {profile.panCard ? "Uploaded" : "Not Uploaded"}
+                {profile.aadhaarFront ? "Uploaded" : "Not Uploaded"}
               </Button>
             </Box>
             <Box
@@ -172,7 +172,7 @@ const Profile = () => {
                 variant={'outline'} mt={4}
                 colorScheme={profile.aadhaarBack ? "green" : "red"}
               >
-                {profile.panCard ? "Uploaded" : "Not Uploaded"}
+                {profile.aadhaarBack ? "Uploaded" : "Not Uploaded"}
               </Button>
             </Box>
           </Flex>
