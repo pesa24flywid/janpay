@@ -34,7 +34,6 @@ const Index = () => {
     const [settlementProvider, setSettlementProvider] = useState("paysprint")
     const [banksList, setBanksList] = useState([])
     const [userName, setUserName] = useState("")
-    const [isActive, setIsActive] = useState(false)
     const [adminRemarks, setAdminRemarks] = useState("")
     const [isModalVisible, setIsModalVisible] = useState(true)
     const [userBanks, setUserBanks] = useState([])
@@ -42,15 +41,19 @@ const Index = () => {
     const Toast = useToast({
         position: 'top-right'
     })
+
+    const [settlements, setSettlements] = useState([])
+
     const Formik = useFormik({
         initialValues: {
             amount: "",
-            transactionType: "",
+            // transactionType: "",
             bank: "",
-            mpin: ""
+            mpin: "",
+            message: ""
         },
         onSubmit: values => {
-            BackendAxios.post(`/api/paysprint/payout/new-payout`, values).then(res => {
+            BackendAxios.post(`/api/fund/settlement-request`, values).then(res => {
                 Toast({
                     description: 'Transaction Successful!'
                 })
@@ -80,28 +83,37 @@ const Index = () => {
             FormAxios.postForm('api/user/add-bank', values).then(res => {
                 // console.log(res.data)
                 Toast({
-                    description: 'Bank Added!'
+                    description: res.data.message || "Bank details sent for review!"
                 })
+                setIsModalVisible(false)
             }).catch(err => {
                 // console.log(err.message)
                 Toast({
                     status: 'error',
-                    title: 'Error Occured',
-                    description: err.response.data.message || err.response.data || err.message
+                    title: 'Error while adding bank.',
+                    description: err.response?.data?.message || err.response?.data || err.message
                 })
+                setIsModalVisible(false)
             })
-            setIsModalVisible(false)
         }
     })
 
+    function fetchSettlements() {
+        BackendAxios.get(`/api/fund/settlement-request`).then(res => {
+            setSettlements(res.data)
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
     useEffect(() => {
         setUserName(localStorage.getItem('userName'))
+        fetchSettlements()
         BackendAxios.get('api/user/bank').then(res => {
             if (res.data[0].account_number) {
                 setIsModalVisible(false)
                 setUserBanks(res.data)
                 setAdminRemarks(res.data[0].bank_account_remarks)
-                setIsActive(res.data[0].is_verified === 1)
             }
             else {
                 setIsModalVisible(true)
@@ -160,27 +172,33 @@ const Index = () => {
                         </InputGroup>
                         <FormControl mt={8}>
                             <FormLabel>Select Bank Account</FormLabel>
-                            <Select name={'bank'} onChange={Formik.handleChange}>
+                            <Select name={'bank'} onChange={Formik.handleChange} placeholder='Select Here'>
                                 {
                                     userBanks.map((bank, key) => {
                                         return (
-                                            <option value={bank.paysprint_bank_code} key={key}>{bank.account_number}</option>
+                                            <option
+                                                value={bank.paysprint_bank_code} key={key}
+                                                disabled={bank.is_verified === 0}
+                                            >{bank.account_number} {bank.is_verified === 0 && "(Verification Pending)"}</option>
                                         )
                                     })
                                 }
                             </Select>
                         </FormControl>
-                        <FormControl mt={8}>
+                        {/* <FormControl mt={8}>
                             <FormLabel>Transaction Type</FormLabel>
                             <Select name={'transactionType'} onChange={Formik.handleChange}>
                                 <option value="imps">IMPS (2-4 hours)</option>
                                 <option value="neft">NEFT (instant)</option>
                             </Select>
+                        </FormControl> */}
+                        <FormControl mt={8}>
+                            <FormLabel>Remarks (optional)</FormLabel>
+                            <Input name='message' onChange={Formik.handleChange} />
                         </FormControl>
                         <Button
                             colorScheme={'twitter'} mt={8} w={'full'}
                             onClick={() => setIsPinModalVisible(true)}
-                            isDisabled={!isActive}
                         >
                             Done
                         </Button>
@@ -198,21 +216,23 @@ const Index = () => {
                                     <Tr>
                                         <Th>#</Th>
                                         <Th>Amount</Th>
-                                        <Th>Type</Th>
-                                        <Th>Account</Th>
                                         <Th>Status</Th>
-                                        <Th>Timestamp</Th>
+                                        <Th>Created At</Th>
+                                        <Th>Updated At</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    <Tr>
-                                        <Td>1</Td>
-                                        <Td>1000</Td>
-                                        <Td>IMPS</Td>
-                                        <Td>39488734970</Td>
-                                        <Td>Success</Td>
-                                        <Td>28-01-2023 16:39</Td>
-                                    </Tr>
+                                    {
+                                        settlements.map((settlement, key) => (
+                                            <Tr key={key}>
+                                                <Td>{key + 1}</Td>
+                                                <Td>{settlement.amount}</Td>
+                                                <Td>{settlement.status}</Td>
+                                                <Td>{settlement.created_at}</Td>
+                                                <Td>{settlement.updated_at}</Td>
+                                            </Tr>
+                                        ))
+                                    }
                                 </Tbody>
                             </Table>
                         </TableContainer>
@@ -225,30 +245,32 @@ const Index = () => {
             <Modal
                 isOpen={isPinModalVisible}
                 isCentered
-                onClose={()=>setIsPinModalVisible(false)}
+                onClose={() => setIsPinModalVisible(false)}
             >
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
-                        <Text>Confirm Transaction</Text>
+                        <Text textAlign={'center'}>Confirm Transaction</Text>
                     </ModalHeader>
                     <ModalBody>
-                        <Text>Are you sure you want to settle ₹{Formik.amount}</Text>
-                        <FormControl mb={8}>
-                            <FormLabel>Enter your MPIN to confirm</FormLabel>
-                            <HStack spacing={4}>
-                                <PinInput onComplete={values => Formik.setFieldValue("mpin", values)}>
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                    <PinInputField bg={'aqua'} />
-                                </PinInput>
-                            </HStack>
-                        </FormControl>
+                        <VStack>
+                            <Text>Are you sure you want to settle ₹{Formik.amount}</Text>
+                            <FormControl mb={8}>
+                                <FormLabel textAlign={'center'}>Enter your MPIN to confirm</FormLabel>
+                                <HStack spacing={4} w={'full'} alignItems={'center'} justifyContent={'center'}>
+                                    <PinInput onComplete={values => Formik.setFieldValue("mpin", values)}>
+                                        <PinInputField bg={'aqua'} />
+                                        <PinInputField bg={'aqua'} />
+                                        <PinInputField bg={'aqua'} />
+                                        <PinInputField bg={'aqua'} />
+                                    </PinInput>
+                                </HStack>
+                            </FormControl>
+                        </VStack>
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'}>
-                            <Button onClick={Formik.handleSubmit} colorScheme='twitter'>Confirm & Settle</Button>
+                            <Button onClick={Formik.handleSubmit} colorScheme='twitter'>Confirm</Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>
@@ -260,7 +282,7 @@ const Index = () => {
             <Modal
                 isOpen={isModalVisible}
                 isCentered
-                onClose={()=>setIsModalVisible(false)}
+                onClose={() => setIsModalVisible(false)}
             >
                 <ModalOverlay />
                 <ModalContent>
