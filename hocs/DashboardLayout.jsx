@@ -43,6 +43,27 @@ const DashboardWrapper = (props) => {
     const [availablePages, setAvailablePages] = useState([])
 
     useEffect(() => {
+        let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
+        if (authentic != true) {
+            BackendAxios.post("/logout").then(() => {
+                Cookies.remove("verified")
+                Cookies.remove("access_token")
+                Cookies.remove("XSRF-TOKEN")
+                Cookies.remove("laravel_session")
+                localStorage.clear()
+            })
+            setTimeout(() => Router.push("/auth/login"), 2000)
+        }
+        if (authentic) {
+            setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
+            setUserName(localStorage.getItem("userName"))
+            setUserType(localStorage.getItem("userType"))
+            setProfilePic(localStorage.getItem("profilePic"))
+            Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
+        }
+    },[])
+
+    useEffect(() => {
         ClientAxios.post('/api/user/fetch', {
             user_id: Cookies.get('userId')
         }, {
@@ -73,12 +94,6 @@ const DashboardWrapper = (props) => {
     const Router = useRouter()
 
     useEffect(() => {
-        setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
-        setUserName(localStorage.getItem("userName"))
-        setUserType(localStorage.getItem("userType"))
-        setProfilePic(localStorage.getItem("profilePic"))
-        Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
-
         // Fetch all notifications
         ClientAxios.post('/api/user/fetch', {
             user_id: localStorage.getItem('userId')
@@ -91,23 +106,20 @@ const DashboardWrapper = (props) => {
         }).catch((err) => {
             console.log(err)
         })
-
     }, [])
 
     useEffect(() => {
-        BackendAxios.post('/api/user/wallet').then((res) => {
+        BackendAxios.post('/api/user/wallet', {
+        }, {
+            headers: {
+                Authorization: `Bearer ${Cookies.get("access-token")}`
+            }
+        }).then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
             setWallet('0')
             console.log(err)
         })
-    }, [])
-
-    useEffect(() => {
-        if (localStorage.getItem("hasReloaded") != "true") {
-            location.reload()
-        }
-        localStorage.setItem("hasReloaded", "true")
     }, [])
 
 
@@ -117,20 +129,6 @@ const DashboardWrapper = (props) => {
             setNewNotification(true)
         }
     }, [globalNotifications, organisationNotifications, userNotifications])
-
-    useEffect(() => {
-        let authentic = bcrypt.compareSync(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
-        if (authentic != true) {
-            BackendAxios.post("/logout").then(() => {
-                Cookies.remove("verified")
-                Cookies.remove("access_token")
-                Cookies.remove("XSRF-TOKEN")
-                Cookies.remove("laravel_session")
-                localStorage.clear()
-            })
-            setTimeout(() => Router.push("/auth/login"), 2000)
-        }
-    })
 
 
     async function signout() {
@@ -153,7 +151,7 @@ const DashboardWrapper = (props) => {
                     <Sidebar
                         isProfileComplete={isProfileComplete}
                         userName={userName}
-                        userType={userType.toUpperCase()}
+                        userType={userType?.toUpperCase()}
                         userImage={profilePic}
                     />
 

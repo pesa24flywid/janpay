@@ -183,8 +183,8 @@ const Login = () => {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-            }).then((res) => {
-                var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
+            }).then(async (res) => {
+                var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
                 localStorage.setItem("userId", res.data.id)
                 Cookies.set("userId", res.data.id)
@@ -245,8 +245,8 @@ const Login = () => {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-            }).then((res) => {
-                var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
+            }).then(async (res) => {
+                var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
                 Cookies.set("verified", hashedValue)
                 localStorage.setItem("userId", res.data.id)
                 Cookies.set("userId", res.data.id)
