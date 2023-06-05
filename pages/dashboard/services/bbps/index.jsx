@@ -240,7 +240,7 @@ const Bbps = () => {
         {
           ...object,
           mpin: mpin,
-          bill: fetchBillResponse,
+          ...(fetchBillResponse.length ? {bill : fetchBillResponse} : {}),
           utility_acc_no: object.utility_acc_no,
           confirmation_mobile_no: object.confirmation_mobile_no,
           amount: amount,

@@ -28,12 +28,12 @@ const Profile = () => {
     companyName: "NA",
     address: "NA",
     profilePic: "",
-    panCard: false,
-    aadhaarFront: false,
-    aadhaarBack: false,
+    panCard: "",
+    aadhaarFront: "",
+    aadhaarBack: "",
   })
 
-  
+
   function fetchProfile() {
     BackendAxios.post("api/user/info").then((res) => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
@@ -70,6 +70,13 @@ const Profile = () => {
       localStorage.setItem("deviceNumber", res.data.data.device_number || "")
 
       localStorage.setItem("kycStatus", res.data.data.profile === 1)
+
+      setProfile({
+        ...profile,
+        aadhaarBack: res.data.data.aadhar_back,
+        aadhaarFront: res.data.data.aadhar_front,
+        panCard: res.data.data.pan_photo,
+      })
     }).catch((err) => {
       Toast({
         status: "error",
@@ -94,6 +101,10 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile()
+    setProfile({
+      ...profile,
+      profilePic: localStorage.getItem("profilePic"),
+    })
   }, [])
 
 
@@ -122,53 +133,53 @@ const Profile = () => {
             address={profile.address}
           />
           {/*KYC Document cards*/}
-          
-            <Flex
-              px={[0, 4]}
-              flexWrap="wrap"
-              gap={8} h={['auto','lg']}
+
+          <Flex
+            px={[0, 4]}
+            flexWrap="wrap"
+            gap={8} h={['auto', 'lg']}
+          >
+            <KycDocsCard
+              docType="Profile Picture"
+              docUrl={profile.profilePic}
+            />
+            <Box
+              w={["full", "md", "56"]} padding={4} bg={'#FFF'}
+              boxShadow={'lg'} rounded={12} h={28} my={4}
             >
-              <KycDocsCard
-                docType="Profile Picture"
-                docUrl="https://i.pinimg.com/600x315/1f/a0/ae/1fa0ae7b636c487a91f39f61953a3c76.jpg"
-              />
-              <Box
-                w={["full", "md", "56"]} padding={4} bg={'#FFF'}
-                boxShadow={'lg'} rounded={12} h={28} my={4}
+              <Text fontWeight={'semibold'}>PAN Card</Text>
+              <Button
+                variant={'outline'} mt={4}
+                colorScheme={profile.panCard ? "green" : "red"}
               >
-                <Text fontWeight={'semibold'}>PAN Card</Text>
-                <Button
-                  variant={'outline'} mt={4}
-                  colorScheme={profile.panCard ? "green" : "red"}
-                >
-                  {profile.panCard ? "Uploaded" : "Not Uploaded"}
-                </Button>
-              </Box>
-              <Box
-                w={["full", "md", "56"]} padding={4} bg={'#FFF'}
-                boxShadow={'lg'} rounded={12} h={28} my={4}
+                {profile.panCard ? "Uploaded" : "Not Uploaded"}
+              </Button>
+            </Box>
+            <Box
+              w={["full", "md", "56"]} padding={4} bg={'#FFF'}
+              boxShadow={'lg'} rounded={12} h={28} my={4}
+            >
+              <Text fontWeight={'semibold'}>Aadhaar Card Front</Text>
+              <Button
+                variant={'outline'} mt={4}
+                colorScheme={profile.aadhaarFront ? "green" : "red"}
               >
-                <Text fontWeight={'semibold'}>Aadhaar Card Front</Text>
-                <Button
-                  variant={'outline'} mt={4}
-                  colorScheme={profile.aadhaarFront ? "green" : "red"}
-                >
-                  {profile.panCard ? "Uploaded" : "Not Uploaded"}
-                </Button>
-              </Box>
-              <Box
-                w={["full", "md", "56"]} padding={4} bg={'#FFF'}
-                boxShadow={'lg'} rounded={12} h={28} my={4}
+                {profile.panCard ? "Uploaded" : "Not Uploaded"}
+              </Button>
+            </Box>
+            <Box
+              w={["full", "md", "56"]} padding={4} bg={'#FFF'}
+              boxShadow={'lg'} rounded={12} h={28} my={4}
+            >
+              <Text fontWeight={'semibold'}>Aadhaar Card Back</Text>
+              <Button
+                variant={'outline'} mt={4}
+                colorScheme={profile.aadhaarBack ? "green" : "red"}
               >
-                <Text fontWeight={'semibold'}>Aadhaar Card Back</Text>
-                <Button
-                  variant={'outline'} mt={4}
-                  colorScheme={profile.aadhaarBack ? "green" : "red"}
-                >
-                  {profile.panCard ? "Uploaded" : "Not Uploaded"}
-                </Button>
-              </Box>
-            </Flex>
+                {profile.panCard ? "Uploaded" : "Not Uploaded"}
+              </Button>
+            </Box>
+          </Flex>
         </Stack>
       </DashboardWrapper>
     </>
