@@ -639,13 +639,16 @@ const Dmt = () => {
                                         <Button type={'submit'} colorScheme={'twitter'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
                                     </HStack>
                                 </Box> :
-                                <Button 
-                                size={'sm'} 
-                                colorScheme='red'
-                                onClick={() => {
-                                    setShowSenderIdInput(true)
-                                    setCustomerStatus("hidden")
-                                }}>Logout</Button>
+                                <HStack justifyContent={'space-between'} w={'full'}>
+                                    <Text>{customerId}</Text>
+                                    <Button
+                                        size={'sm'}
+                                        colorScheme='red'
+                                        onClick={() => {
+                                            setShowSenderIdInput(true)
+                                            setCustomerStatus("hidden")
+                                        }}>Logout</Button>
+                                </HStack>
                         }
                     </HStack>
 
