@@ -636,7 +636,10 @@ const Dmt = () => {
                                         <Button type={'submit'} colorScheme={'twitter'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
                                     </HStack>
                                 </Box> :
-                                <Button size={'sm'} onClick={() => {
+                                <Button 
+                                size={'sm'} 
+                                colorScheme='red'
+                                onClick={() => {
                                     setShowSenderIdInput(true)
                                     setCustomerStatus("hidden")
                                 }}>Logout</Button>
