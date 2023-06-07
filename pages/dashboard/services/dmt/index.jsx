@@ -61,12 +61,13 @@ const Dmt = () => {
             console.log(err)
         })
 
-
+        setIsBtnLoading(true)
         ClientAxios.get(`/api/global`).then(res => {
             setDmtProvider(res.data[0].dmt_provider)
             if (res.data[0].dmt_status == false) {
                 window.location.href('/dashboard/not-available')
             }
+            setIsBtnLoading(false)
         }).catch(err => {
             if (err.status > 400) {
                 Toast({
@@ -74,6 +75,7 @@ const Dmt = () => {
                     description: 'We are facing some issues.'
                 })
             }
+            setIsBtnLoading(true)
         })
 
 
@@ -365,6 +367,7 @@ const Dmt = () => {
                         sendOtp()
                         setShowSenderIdInput(false)
                     }
+                    setIsBtnLoading(false)
                 }
                 if (dmtProvider == "paysprint") {
                     if (res.data.response_code == 0) {
