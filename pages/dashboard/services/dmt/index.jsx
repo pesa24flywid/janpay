@@ -88,6 +88,7 @@ const Dmt = () => {
 
     }, [])
 
+    const [showSenderIdInput, setShowSenderIdInput] = useState(true)
     const [customerStatus, setCustomerStatus] = useState("hidden") // Available options - hidden, registered, unregistered
     const [customerName, setCustomerName] = useState("")
     const [customerTotalLimit, setCustomerTotalLimit] = useState(50000)
@@ -349,6 +350,7 @@ const Dmt = () => {
                 if (dmtProvider == "eko") {
                     if (res.data.status == 463 && res.data.response_status_id == 1) {
                         setCustomerStatus("unregistered")
+                        setShowSenderIdInput(false)
                     }
                     if (res.data.status == 0 && res.data.response_status_id == 0) {
                         setCustomerRemainingLimit(res.data.data.available_limit)
@@ -356,10 +358,12 @@ const Dmt = () => {
                         setCustomerTotalLimit(res.data.data.total_limit)
                         setCustomerName(res.data.data.name)
                         setCustomerStatus("registered")
+                        setShowSenderIdInput(false)
                         fetchRecipients()
                     }
                     if (res.data.status == 0 && res.data.response_status_id == -1) {
                         sendOtp()
+                        setShowSenderIdInput(false)
                     }
                 }
                 if (dmtProvider == "paysprint") {
@@ -372,6 +376,7 @@ const Dmt = () => {
                             description: `An OTP has been sent to ${customerId}`,
                             position: "top-right"
                         })
+                        setShowSenderIdInput(false)
                     }
                     if (res.data.response_code == 1) {
                         setCustomerName(res.data.data.fname + " " + res.data.data.lname)
@@ -383,6 +388,7 @@ const Dmt = () => {
                         )
                         setCustomerTotalLimit("75000")
                         setCustomerStatus("registered")
+                        setShowSenderIdInput(false)
                         fetchRecipients()
                     }
                 }
@@ -394,6 +400,7 @@ const Dmt = () => {
                     title: "Error Occured",
                     description: err.response?.data?.message || err.response?.data || err.message,
                 })
+                setRecipients([])
             })
             setIsBtnLoading(false)
         }
@@ -612,20 +619,29 @@ const Dmt = () => {
                     boxShadow={'md'}
                     rounded={12} mt={6}
                 >
-                    {/* <Button onClick={()=>activateDmt()}>Activate DMT</Button> */}
-                    <FormLabel>Sender Mobile Number</FormLabel>
-                    <HStack spacing={2}>
-                        <Input
-                            w={['full', 'xs']} type={'tel'}
-                            name={'customerId'}
-                            placeholder={'Enter Here'}
-                            minLength={10} maxLength={10} isRequired
-                            value={customerId}
-                            onChange={(e) => setCustomerId(e.target.value)}
-                        />
-                        <Button type={'submit'} colorScheme={'twitter'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
+                    <HStack>
+                        {
+                            showSenderIdInput ?
+                                <Box>
+                                    <FormLabel>Sender Mobile Number</FormLabel>
+                                    <HStack spacing={2}>
+                                        <Input
+                                            w={['full', 'xs']} type={'tel'}
+                                            name={'customerId'}
+                                            placeholder={'Enter Here'}
+                                            minLength={10} maxLength={10} isRequired
+                                            value={customerId}
+                                            onChange={(e) => setCustomerId(e.target.value)}
+                                        />
+                                        <Button type={'submit'} colorScheme={'twitter'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
+                                    </HStack>
+                                </Box> :
+                                <Button size={'sm'} onClick={() => {
+                                    setShowSenderIdInput(true)
+                                    setCustomerStatus("hidden")
+                                }}>Logout</Button>
+                        }
                     </HStack>
-
 
                     {/* If the customer is not registered */}
                     {
