@@ -674,9 +674,9 @@ const Aeps = () => {
             <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
 
-          <Box w={['full', 'full', 'sm']} >
+          <Box w={['full', 'full', 'sm']} rounded={16} overflow={'hidden'}>
             <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
-            <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+            <Box className='ag-theme-alpine ag-theme-pesa24-blue' w={'full'} h={['sm', 'xs']}>
               <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rowData}

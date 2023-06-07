@@ -14,7 +14,7 @@ import {
   AccordionPanel,
   Avatar,
 } from "@chakra-ui/react";
-import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
+import { BiRupee, BiUser, BiPowerOff, BiHomeAlt } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
 import { IoMdHelpBuoy } from "react-icons/io";
 import BackendAxios, { ClientAxios } from "../lib/axios";
@@ -58,6 +58,12 @@ export const SidebarOptions =
           soon: false,
         },
       ]
+    },
+    {
+      type: 'link',
+      title: 'home',
+      icon: <BiHomeAlt />,
+      link: '/dashboard/home?pageId=home',
     },
     {
       type: 'link',
@@ -340,7 +346,7 @@ const Sidebar = ({ userName, userImage }) => {
                         py={2}
                         rounded={'full'}
                         overflow={'hidden'}
-                        
+                        bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
                         id={option.id || option.title}
                       >
                         {option.icon}
@@ -355,8 +361,13 @@ const Sidebar = ({ userName, userImage }) => {
                     <Accordion allowToggle w={'full'}>
 
                       <AccordionItem border={'none'}>
-                        <AccordionButton px={[0, 3]}>
-                          <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
+                        <AccordionButton px={[0, 3]} rounded={'full'}>
+                          <HStack
+                            spacing={1} flex={1}
+                            fontSize={['1.2rem', 'md']}
+                            alignItems={'center'}
+                            bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
+                          >
                             {option.icon}
                             <Text textTransform={'capitalize'}>{option.title}</Text>
                           </HStack>
@@ -380,7 +391,7 @@ const Sidebar = ({ userName, userImage }) => {
                                 return (
                                   <Box
                                     px={3} py={2} w={'full'}
-                                    
+
                                   >
                                     <Link key={key} href={item.soon ? "#" : item.link}
                                       style={{
@@ -447,7 +458,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} 
+                              px={3} py={2}
                               textTransform={'capitalize'}
                             >Create User</Text>
                           </Link> : null
@@ -458,7 +469,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} 
+                              px={3} py={2}
                               textTransform={'capitalize'}
                             >View Users</Text>
                           </Link> : null
@@ -469,7 +480,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} 
+                              px={3} py={2}
                               textTransform={'capitalize'}
                             >User Ledger</Text>
                           </Link> : null

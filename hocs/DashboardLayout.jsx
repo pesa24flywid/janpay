@@ -180,8 +180,14 @@ const DashboardWrapper = (props) => {
                                     <FiMenu color='#FFF' />
                                 </Box>
                             </Show>
-                            <Text fontSize={'xl'} fontWeight={'500'} color={['#FFF', '#222']}>{props.titleText || props.pageTitle}</Text>
-                            <Spacer />
+                            <Show above='md'>
+                                <Text fontSize={'xl'} fontWeight={'500'} color={['#FFF', '#222']}>{props.titleText || props.pageTitle}</Text>
+                                <Spacer />
+                            </Show>
+                            <Show below='md'>
+                                <Spacer />
+                                <Text fontSize={'xl'} fontWeight={'500'} color={['#FFF', '#222']}>{userName}</Text>
+                            </Show>
                             <HStack
                                 spacing={4}
                                 w={'auto'}
@@ -234,7 +240,8 @@ const DashboardWrapper = (props) => {
                             </Show>
                         </HStack>
                         {/* Topbar Ends */}
-                        <Box p={[4, 0]} pr={[0, 4]}>
+                        
+                        <Box p={[4, 0]} pr={[4, 4]}>
                             {props.children}
                         </Box>
 

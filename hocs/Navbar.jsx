@@ -16,6 +16,7 @@ import {
     PopoverCloseButton,
     PopoverAnchor,
     Show,
+    Image
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { FaChevronDown } from 'react-icons/fa'
@@ -32,54 +33,10 @@ const Navbar = () => {
     return (
         <>
             <Box
-                px={4} py={2}
-                bg={theme.primary}
-                backdropBlur={'5px'} color={'white'}
+                px={4} py={2} color={'white'}
             >
                 <HStack justifyContent={'space-between'}>
-                    <Text fontSize={'xl'} fontWeight={'bold'}>PESA24</Text>
-                    <Show above={'md'}>
-                        <HStack w={'full'}>
-                            <Spacer />
-                            <HStack spacing={8}>
-                                <Popover>
-                                    <PopoverTrigger>
-                                        <Button variant={'unstyled'} display={'flex'} alignItems={'center'} p={0} rightIcon={<FaChevronDown />}>Services</Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent>
-                                        <PopoverBody p={0}>
-                                            <Link href={'#'}>
-                                                <Box className={Styles.MenuDropdownItem} p={2} color={'black'} rounded={'4'}
-                                                    _hover={{ bg: theme.primary, color: '#FFF' }}>
-                                                    Aadhar enabled Payment Services (AePS)
-                                                </Box>
-                                            </Link>
-                                            <Link href={'#'}>
-                                                <Box p={2} color={'black'} rounded={'4'}
-                                                    _hover={{ bg: theme.primary, color: '#FFF' }}>
-                                                    Bharat Bill Pay System (BBPS)
-                                                </Box>
-                                            </Link>
-                                        </PopoverBody>
-                                    </PopoverContent>
-                                </Popover>
-                                <Link href={'#'}>
-                                    <Text fontWeight={'semibold'}>Pricing</Text>
-                                </Link>
-                                <Link href={'#'}>
-                                    <Text fontWeight={'semibold'}>About Us</Text>
-                                </Link>
-                            </HStack>
-                            <Spacer />
-                            <HStack spacing={4}>
-                                <Link href={'../auth/register'}><Button variant={'outline'} rounded={'full'} _hover={{ textColor: theme.primary, bg: "aqua" }}>Register</Button></Link>
-                                <Link href={'../auth/login'}><Button variant={'solid'} px={6} rounded={'full'} color={'#6C00FF'}>Login</Button></Link>
-                            </HStack>
-                        </HStack>
-                    </Show>
-                    <Show below={'md'}>
-                        <FiMenu fontSize={'1.5rem'} color={'white'} />
-                    </Show>
+                    <Image src='/logo_long.png' width={'28'} objectFit={'contain'} />
                 </HStack>
             </Box>
         </>

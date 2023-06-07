@@ -10,7 +10,7 @@ const Middleware = (req) => {
         return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/auth/login")
     }
     if(verified && url.includes("/auth")){
-        return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/dashboard")
+        return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/dashboard/home?pageId=home")
     }
 }
 

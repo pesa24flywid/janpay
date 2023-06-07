@@ -93,170 +93,140 @@ const Register = () => {
 
     return (
         <>
-            <Head>
-                <title>RPay - Register</title>
-            </Head>
-            <Box p={[4, 8, 16]}>
-                <HStack
-                    mx={'auto'}
-                    w={['full', 'fit-content', 'fit-content']}
-                    boxShadow={['none', 'lg']}
-                    bg={['white']} border={'1px'}
-                    borderColor={'rgb(224,224,224)'}
-                    rounded={['unset', 12]}
-                    alignItems={'center'} justifyContent={'center'}
-                >
-                    <form action="#" method="post" onSubmit={formik.handleSubmit}>
-                        <VStack p={[4, 8]} w={['full', 'md', 'lg']} h={'auto'}>
-                            <Text fontSize={'3xl'}
-                                textTransform={'capitalize'}
-                                fontWeight={'600'}
-                                color={'#444'}
-                            >
-                                Register
-                            </Text>
+            <form action="#" method="post" onSubmit={formik.handleSubmit}>
+                <VStack p={[4, 8]} w={'full'}>
+                    <Text fontSize={'2xl'}
+                        textTransform={'capitalize'}
+                        fontWeight={'600'}
+                        color={'#444'} pb={4}
+                    >
+                        Register
+                    </Text>
 
-                            <VStack py={8} spacing={8} alignItems={'flex-start'}>
-                                <HStack spacing={4} w={['xs', 'sm']}>
-                                    <Box>
-                                        <FormLabel
-                                            pl={2}
-                                            htmlFor='first_name'
-                                            textAlign={'left'} mb={0}
-                                            color={'darkslategray'}
-                                        >
-                                            First Name
-                                        </FormLabel>
-                                        <InputGroup>
-                                            <Input
-                                                rounded={'full'}
-                                                name={'first_name'}
-                                                placeholder={'First Name'}
-                                                bg={'blue.100'}
-                                                required value={formik.values.first_name}
-                                                onChange={formik.handleChange}
-                                            />
-                                        </InputGroup>
-                                    </Box>
-                                    <Box>
-                                        <FormLabel
-                                            pl={2}
-                                            htmlFor='user_id'
-                                            textAlign={'left'} mb={0}
-                                            color={'darkslategray'}
-                                        >
-                                            Last Name
-                                        </FormLabel>
-                                        <InputGroup>
-                                            <Input
-                                                rounded={'full'}
-                                                name={'last_name'}
-                                                placeholder={'Last Name'}
-                                                bg={'blue.100'}
-                                                required value={formik.values.last_name}
-                                                onChange={formik.handleChange}
-                                            />
-                                        </InputGroup>
-                                    </Box>
-                                </HStack>
-                                <Box>
-                                    <FormLabel pl={2}
-                                        htmlFor='user_id'
-                                        textAlign={'left'} mb={0}
-                                        color={'darkslategray'}
-                                    >
-                                        Email
-                                    </FormLabel>
-                                    <InputGroup w={['xs', 'sm']}>
-                                        <Input
-                                            rounded={'full'}
-                                            name={'email'}
-                                            placeholder={'Your Email'}
-                                            bg={'blue.100'} type={'email'}
-                                            required value={formik.values.email}
-                                            onChange={formik.handleChange}
-                                        />
-                                    </InputGroup>
-                                </Box>
-                                <Box>
-                                    <FormLabel pl={2}
-                                        htmlFor='user_id'
-                                        textAlign={'left'} mb={0}
-                                        color={'darkslategray'}
-                                    >
-                                        Phone Number
-                                    </FormLabel>
-                                    <InputGroup w={['xs', 'sm']}>
-                                        <Input
-                                            rounded={'full'}
-                                            name={'phone'}
-                                            placeholder={'Your Phone Number'}
-                                            bg={'blue.100'} type={'tel'}
-                                            required value={formik.values.phone}
-                                            onChange={formik.handleChange}
-                                        />
-                                    </InputGroup>
-                                </Box>
-                                <Box>
-                                    <FormLabel
-                                        htmlFor='password'
-                                        textAlign={'left'} mb={0}
-                                        color={'darkslategray'}>Referral ID
-                                    </FormLabel>
+                    <VStack spacing={8} alignItems={'flex-start'}>
+                        <HStack spacing={4} w={['xs', 'sm']}>
+                            <Box>
+                                <FormLabel
+                                    pl={2}
+                                    htmlFor='first_name'
+                                    textAlign={'left'} mb={0}
+                                    color={'darkslategray'}
+                                >
+                                    First Name
+                                </FormLabel>
+                                <InputGroup>
                                     <Input
                                         rounded={'full'}
-                                        name={'referral_id'}
-                                        placeholder={'Enter Referral ID'}
-                                        bg={'blue.100'} w={['xs', 'sm']}
-                                        value={formik.values.referral_id}
+                                        name={'first_name'}
+                                        placeholder={'First Name'}
+                                        bg={'blue.100'}
+                                        required value={formik.values.first_name}
                                         onChange={formik.handleChange}
                                     />
-                                </Box>
-                                <Box>
-                                    <FormLabel
-                                        htmlFor='user_type'
-                                        textAlign={'left'}
-                                        color={'darkslategray'}>Register as:
-                                    </FormLabel>
-                                    <RadioGroup name={'user_type'}
-                                        onChange={(value) => formik.setFieldValue("user_type", value)}
-                                        value={formik.values.user_type} >
-                                        <Stack direction={['column', 'row']} spacing={[3, 6]}>
-                                            <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>
-                                            <Radio isDisabled={isDistributorDisabled} value={'distributor'}>Distributor</Radio>
-                                            <Radio isDisabled={isSuperDistributorDisabled} value={'super_distributor'}>Super Distributor</Radio>
-                                        </Stack>
-                                    </RadioGroup>
-                                </Box>
-                                <Button
-                                    w={['xs', 'sm']} type={'submit'}
-                                    rounded={'full'}
-                                    colorScheme={'blue'}
-                                    bg={'#6C00FF'}
-                                    isLoading={isBtnLoading}
+                                </InputGroup>
+                            </Box>
+                            <Box>
+                                <FormLabel
+                                    pl={2}
+                                    htmlFor='user_id'
+                                    textAlign={'left'} mb={0}
+                                    color={'darkslategray'}
                                 >
-                                    Register
-                                </Button>
-                            </VStack>
-                            <Link href={'/auth/login'}>
-                                <Text color={'blue.700'} fontWeight={'semibold'}>Already a member? Login here.</Text>
-                            </Link>
-                        </VStack>
-                    </form>
-
-                    <VStack
-                        w={['none', 'sm', 'md']} pr={6}
-                        display={['none', 'flex', 'flex']}
-                        alignItems={'center'} justifyContent={'center'}
-                        h={'full'} borderRadius={['unset', '0 12 12 0']}
-                    >
-                        <Image
-                            src={'../register.png'}
-                        />
+                                    Last Name
+                                </FormLabel>
+                                <InputGroup>
+                                    <Input
+                                        rounded={'full'}
+                                        name={'last_name'}
+                                        placeholder={'Last Name'}
+                                        bg={'blue.100'}
+                                        required value={formik.values.last_name}
+                                        onChange={formik.handleChange}
+                                    />
+                                </InputGroup>
+                            </Box>
+                        </HStack>
+                        <Box>
+                            <FormLabel pl={2}
+                                htmlFor='user_id'
+                                textAlign={'left'} mb={0}
+                                color={'darkslategray'}
+                            >
+                                Email
+                            </FormLabel>
+                            <InputGroup w={['xs', 'sm']}>
+                                <Input
+                                    rounded={'full'}
+                                    name={'email'}
+                                    placeholder={'Your Email'}
+                                    bg={'blue.100'} type={'email'}
+                                    required value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                />
+                            </InputGroup>
+                        </Box>
+                        <Box>
+                            <FormLabel pl={2}
+                                htmlFor='user_id'
+                                textAlign={'left'} mb={0}
+                                color={'darkslategray'}
+                            >
+                                Phone Number
+                            </FormLabel>
+                            <InputGroup w={['xs', 'sm']}>
+                                <Input
+                                    rounded={'full'}
+                                    name={'phone'}
+                                    placeholder={'Your Phone Number'}
+                                    bg={'blue.100'} type={'tel'}
+                                    required value={formik.values.phone}
+                                    onChange={formik.handleChange}
+                                />
+                            </InputGroup>
+                        </Box>
+                        <Box>
+                            <FormLabel
+                                htmlFor='password'
+                                textAlign={'left'} mb={0}
+                                color={'darkslategray'}>Referral ID
+                            </FormLabel>
+                            <Input
+                                rounded={'full'}
+                                name={'referral_id'}
+                                placeholder={'Enter Referral ID'}
+                                bg={'blue.100'} w={['xs', 'sm']}
+                                value={formik.values.referral_id}
+                                onChange={formik.handleChange}
+                            />
+                        </Box>
+                        <Box>
+                            <FormLabel
+                                htmlFor='user_type'
+                                textAlign={'left'}
+                                color={'darkslategray'}>Register as:
+                            </FormLabel>
+                            <RadioGroup name={'user_type'}
+                                onChange={(value) => formik.setFieldValue("user_type", value)}
+                                value={formik.values.user_type} >
+                                <Stack direction={['column', 'row']} spacing={[3, 6]}>
+                                    <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>
+                                    <Radio isDisabled={isDistributorDisabled} value={'distributor'}>Distributor</Radio>
+                                    <Radio isDisabled={isSuperDistributorDisabled} value={'super_distributor'}>Super Distributor</Radio>
+                                </Stack>
+                            </RadioGroup>
+                        </Box>
+                        <Button
+                            w={['xs', 'sm']} type={'submit'}
+                            rounded={'full'}
+                            colorScheme={'blue'}
+                            bg={'#6C00FF'}
+                            isLoading={isBtnLoading}
+                        >
+                            Register
+                        </Button>
                     </VStack>
-                </HStack>
-                <Text fontSize={'xs'} w={'full'} textAlign={'center'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
-            </Box>
+                </VStack>
+            </form>
         </>
     )
 }

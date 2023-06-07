@@ -8,7 +8,7 @@ const reports = () => {
     return (
         <>
             <DashboardWrapper pageTitle={'Reports'}>
-                <Box w={'full'} py={8} ></Box>
+                <Box w={'full'} ></Box>
                 {
                     SidebarOptions.find(item => (item.title == 'reports')).children.map((item, key) => (
                         <Box

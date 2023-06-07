@@ -17,3 +17,16 @@
 /* body::-webkit-scrollbar{
     display: none;
 } */
+
+.ag-theme-pesa24-blue .ag-root-wrapper{
+    border: none !important;
+}
+.ag-theme-pesa24-blue .ag-header-row{
+    background-color: #30A2FF !important;
+}
+.ag-theme-pesa24-blue .ag-header-cell{
+    color: #FFF;
+}
+.ag-theme-pesa24-blue .ag-floating-filter{
+    color: #333;
+}
