@@ -121,7 +121,7 @@ const Activate = () => {
                 <Text py={4}>Server 2 Services</Text>
                 <Flex direction={'row'} gap={4} flexWrap={'wrap'} pb={8}>
                     {
-                        services.filter(service => (service.eko_id)).map((service, key) => {
+                        services.filter(service => (service.eko_id && Number(service.eko_id) != 0)).map((service, key) => {
                             return (
                                 <Box
                                     w={['28', '56']} key={key}
