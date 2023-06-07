@@ -640,7 +640,7 @@ const Dmt = () => {
                                     </HStack>
                                 </Box> :
                                 <HStack justifyContent={'space-between'} w={'full'}>
-                                    <Text>{customerId}</Text>
+                                    <Input value={customerId} fontSize={'lg'} isDisabled={true} size={['full', 'xs']} />
                                     <Button
                                         size={'sm'}
                                         colorScheme='red'
