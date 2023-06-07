@@ -355,7 +355,7 @@ const Sidebar = ({ userName, userImage }) => {
                     <Accordion allowToggle w={'full'}>
 
                       <AccordionItem border={'none'}>
-                        <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+                        <AccordionButton px={[0, 3]}>
                           <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
                             {option.icon}
                             <Text textTransform={'capitalize'}>{option.title}</Text>
