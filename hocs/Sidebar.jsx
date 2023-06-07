@@ -154,7 +154,7 @@ export const SidebarOptions =
     },
     {
       type: 'link',
-      title: 'fund transfer',
+      title: 'wallet transfer',
       id: 'transfer',
       icon: <FaShare />,
       link: '/dashboard/fund-transfer?pageId=transfer',
@@ -307,8 +307,10 @@ const Sidebar = ({ userName, userImage }) => {
           w={"64"}
           boxShadow={"md"}
           h={"100vh"}
-          bg={"white"}
-          p={4}
+          bgImage={'/sidebarBg.svg'}
+          bgSize={'cover'}
+          bgRepeat={'no-repeat'}
+          p={4} color={'#FFF'}
           rounded={"12"}
           border={"1px"}
           borderColor={"gray.300"}
@@ -320,7 +322,7 @@ const Sidebar = ({ userName, userImage }) => {
               <Text fontSize={"xl"} textAlign={'center'}>{userName}</Text>
               <Text
                 fontSize={"sm"}
-                color={"darkslategray"}
+                color={"#FAFAFA"}
                 textTransform={'capitalize'}
               >{userType.replace("_", " ")}</Text>
             </VStack>
@@ -352,7 +354,7 @@ const Sidebar = ({ userName, userImage }) => {
                   return (
                     <Accordion allowToggle w={'full'}>
 
-                      <AccordionItem>
+                      <AccordionItem border={'none'}>
                         <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
                           <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
                             {option.icon}

@@ -234,7 +234,7 @@ const DashboardWrapper = (props) => {
                             </Show>
                         </HStack>
                         {/* Topbar Ends */}
-                        <Box p={[4, 0]}>
+                        <Box p={[4, 0]} pr={[0, 4]}>
                             {props.children}
                         </Box>
 

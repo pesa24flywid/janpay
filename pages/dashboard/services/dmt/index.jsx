@@ -546,6 +546,7 @@ const Dmt = () => {
                     title: "Error Occured",
                     description: err.response.data.message || err.response.data || err.message,
                 })
+                setRecipients([])
             })
         }
         if (dmtProvider == "eko") {
@@ -566,6 +567,7 @@ const Dmt = () => {
                     Toast({
                         description: res.data.message || "No recipients found"
                     })
+                    setRecipients([])
                 }
             }).catch(err => {
                 Toast({
@@ -573,6 +575,7 @@ const Dmt = () => {
                     title: "Error Occured",
                     description: err?.response?.data?.message || err.response?.data || err.message,
                 })
+                setRecipients([])
             })
         }
     }

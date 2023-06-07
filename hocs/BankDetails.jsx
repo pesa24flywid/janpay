@@ -18,7 +18,7 @@ const BankDetails = () => {
         <>
             <Box
                 w={['full', 'auto']}
-                bg={'white'} py={4}
+                color={'#FFF'} py={4}
             >
                 <Text mb={2} fontSize={'xs'}>You can deposit your money to any of these accounts</Text>
                 <Stack
@@ -30,7 +30,7 @@ const BankDetails = () => {
                             return (
                                 <Box
                                     key={key}
-                                    border={'1px'} rounded={'inherit'}
+                                    border={'1px'} rounded={'8'}
                                     borderColor={'gray.200'} p={2}
                                 >
                                     <Text fontSize={'12'} mb={2}><b>Bank: </b> {detail.bank_name}</Text>
