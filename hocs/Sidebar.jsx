@@ -340,7 +340,7 @@ const Sidebar = ({ userName, userImage }) => {
                         py={2}
                         rounded={'full'}
                         overflow={'hidden'}
-                        _hover={{ bg: 'aqua' }}
+                        
                         id={option.id || option.title}
                       >
                         {option.icon}
@@ -380,7 +380,7 @@ const Sidebar = ({ userName, userImage }) => {
                                 return (
                                   <Box
                                     px={3} py={2} w={'full'}
-                                    _hover={{ bg: 'aqua' }}
+                                    
                                   >
                                     <Link key={key} href={item.soon ? "#" : item.link}
                                       style={{
@@ -424,7 +424,6 @@ const Sidebar = ({ userName, userImage }) => {
 
                 <AccordionItem>
                   <AccordionButton px={[0, 3]}
-                    _expanded={{ bg: 'aqua' }}
                     id={'users'}
                   >
                     <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
@@ -448,7 +447,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              px={3} py={2} 
                               textTransform={'capitalize'}
                             >Create User</Text>
                           </Link> : null
@@ -459,7 +458,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              px={3} py={2} 
                               textTransform={'capitalize'}
                             >View Users</Text>
                           </Link> : null
@@ -470,7 +469,7 @@ const Sidebar = ({ userName, userImage }) => {
                           <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
                             <Text
                               w={'full'} textAlign={'left'}
-                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              px={3} py={2} 
                               textTransform={'capitalize'}
                             >User Ledger</Text>
                           </Link> : null
