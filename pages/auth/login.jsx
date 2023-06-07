@@ -193,7 +193,7 @@ const Login = () => {
 
 
     // Handling login after OTP submission
-    async function handleLogin() {
+    function handleLogin() {
         setIsBtnLoading(true)
         if (!Cookies.get("latlong")) {
             Toast({
@@ -204,7 +204,7 @@ const Login = () => {
             return
         }
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
+            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 "authMethod": authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
                 ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
@@ -237,7 +237,7 @@ const Login = () => {
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             }).then(() => {
                 setTimeout(() => {
-                    Router.push("/dashboard?pageId=dashboard")
+                    Router.push("/dashboard/home?pageId=home")
                 }, 1000);
             })
 
@@ -257,7 +257,7 @@ const Login = () => {
 
 
     // Handling MPIN Login
-    async function handleMpin() {
+    function handleMpin() {
         if (!Cookies.get("latlong")) {
             Toast({
                 status: 'warning',
@@ -267,7 +267,7 @@ const Login = () => {
             return
         }
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
+            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 authMethod: authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
                 ...(authMethod === "phone" && { "phone": formik.values.user_id }),
@@ -300,7 +300,7 @@ const Login = () => {
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             }).then(() => {
                 setTimeout(() => {
-                    Router.push("/dashboard?pageId=dashboard")
+                    Router.push("/dashboard/home?pageId=home")
                 }, 1000);
             })
 
