@@ -1,38 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import DashboardWrapper from '../../../hocs/DashboardLayout'
-import { Box, Button, HStack, Icon, Image, Show, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Image, Stack, Text, VStack } from '@chakra-ui/react'
 import { Carousel } from 'react-responsive-carousel'
 import Link from 'next/link'
-import { FaCar, FaFingerprint } from 'react-icons/fa'
-import { BiIdCard, BiMobileAlt, BiRupee } from 'react-icons/bi'
+import { FaCar, FaFingerprint, FaMobile, FaRegMoneyBillAlt } from 'react-icons/fa'
+import { BiIdCard, BiMobileAlt } from 'react-icons/bi'
 import { BsArrowRight, BsHeartFill } from 'react-icons/bs'
-import { FcPlus } from 'react-icons/fc'
+import { IoMdFingerPrint, IoMdUmbrella } from 'react-icons/io'
 import BackendAxios from '../../../lib/axios'
 import Cookies from 'js-cookie'
 import Marquee from 'react-fast-marquee'
 
 const Index = () => {
-    const [wallet, setWallet] = useState("")
     const images = [
         'https://cdn.corporatefinanceinstitute.com/assets/online-payment-companies-1024x683.jpeg',
         'https://images.gizbot.com/fit-in/img/600x338/2020/11/ds4-1605688425.jpg',
         'https://sbnri.com/blog/wp-content/uploads/2022/09/Bharat-Bill-Payment-1.jpg',
         // Add more image URLs as needed
     ];
-
-    useEffect(() => {
-        BackendAxios.post('/api/user/wallet', {
-        }, {
-            headers: {
-                Authorization: `Bearer ${Cookies.get("access-token")}`
-            }
-        }).then((res) => {
-            setWallet(res.data[0].wallet)
-        }).catch((err) => {
-            setWallet('0')
-            console.log(err)
-        })
-    }, [])
 
     return (
         <>
@@ -43,26 +28,63 @@ const Index = () => {
                             <Text><span style={{ fontWeight: 'bold', color: 'red' }}>NEW: </span> Enjoy great offers on mobile recharge!</Text>
                         </Marquee>
                     </Box>
-                    <Show below='md'>
-                        <Box
-                            w={'full'} p={4} mt={8}
-                            rounded={16} boxShadow={'lg'}
-                            bgColor={'#11009E'}
+                    <HStack mt={8}>
+                        <Stack 
+                        direction={['column', 'row']} 
+                        p={4} boxShadow={'md'}
+                        rounded={8} flex={1}
+                        bgImage={'/greenbg.svg'}
+                        bgSize={'cover'}
+                        bgRepeat={'no-repeat'}
+                        color={'#FFF'}
+                        spacing={4}
+                        alignItems={'center'}
+                        justifyContent={['center', 'flex-start']}
                         >
-                            <HStack justifyContent={'space-between'}>
-                                <Box>
-                                    <Text color={'#FFF'} fontSize={'xs'}>Your Wallet Balance</Text>
-                                    <Text color={'#FFF'} fontSize={'2xl'} fontWeight={'semibold'}>₹ {wallet}</Text>
-                                </Box>
-                                <Link href={'/dashboard/fund-request?pageId=request'}>
-                                    <VStack gap={0}>
-                                        <FcPlus size={28} />
-                                        <Text color={'#FFF'} fontSize={'xs'}>Top Up</Text>
-                                    </VStack>
-                                </Link>
-                            </HStack>
-                        </Box>
-                    </Show>
+                            <Icon as={IoMdFingerPrint} fontSize={[28, 48]} />
+                            <Box>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>AePS</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                            </Box>
+                        </Stack>
+                        <Stack 
+                        direction={['column', 'row']} 
+                        p={4} boxShadow={'md'}
+                        rounded={8} flex={1}
+                        bgImage={'/greenbg.svg'}
+                        bgSize={'cover'}
+                        bgRepeat={'no-repeat'}
+                        color={'#FFF'}
+                        spacing={4}
+                        alignItems={'center'}
+                        justifyContent={['center', 'flex-start']}
+                        >
+                            <Icon as={FaMobile} fontSize={[28, 48]} />
+                            <Box>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Recharges</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                            </Box>
+                        </Stack>
+                        <Stack 
+                        direction={['column', 'row']} 
+                        p={4} boxShadow={'md'}
+                        rounded={8} flex={1}
+                        bgImage={'/greenbg.svg'}
+                        bgSize={'cover'}
+                        bgRepeat={'no-repeat'}
+                        color={'#FFF'}
+                        spacing={4}
+                        alignItems={'center'}
+                        justifyContent={['center', 'flex-start']}
+                        >
+                            <Icon as={FaRegMoneyBillAlt} fontSize={[28, 48]} />
+                            <Box>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>DMT</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                            </Box>
+                        </Stack>
+                    </HStack>
+
 
                     <Box
                         width={'100%'}
@@ -87,7 +109,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={FaFingerprint} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={FaFingerprint} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -104,24 +126,22 @@ const Index = () => {
                                         flexDirection: 'column',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        gap: '8px'
                                     }}
                                 >
                                     <Text
                                         fontWeight={'extrabold'}
                                         color={'#FFF'}
-                                        w={5} h={5}
-                                        p={2} border={'1px'}
-                                        borderColor={'#FFF'}
                                         rounded={'full'}
                                         display={'grid'}
                                         placeContent={'center'}
-                                        fontSize={12}
+                                        fontSize={[36, 24]}
+                                        lineHeight={['9', '9']}
                                     >B</Text>
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
                                         fontSize={['sm', 'md']}
+                                        paddingTop={1}
                                     >Bill Pay</Text>
                                 </Link>
                             </Box>
@@ -137,7 +157,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={BiRupee} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={FaRegMoneyBillAlt} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -157,7 +177,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={BiMobileAlt} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={BiMobileAlt} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -177,7 +197,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={FaCar} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={FaCar} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -197,7 +217,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={BsHeartFill} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={BsHeartFill} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -217,7 +237,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[24, 24]} as={BiIdCard} color={'#FFF'} />
+                                    <Icon fontSize={[36, 24]} as={BiIdCard} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -237,11 +257,12 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Image src='/axisbank.svg' boxSize={5} objectFit={'contain'} />
+                                    <Image src='/axisbank.svg' boxSize={[8, 8]} objectFit={'contain'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
                                         fontSize={['sm', 'md']}
+                                        paddingTop={1}
                                     >Axis Bank</Text>
                                 </Link>
                             </Box>

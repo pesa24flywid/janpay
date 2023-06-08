@@ -381,7 +381,7 @@ const EditProfile = () => {
         <Stack direction={['column', 'row']} my={4} spacing={4} alignItems={'flex-start'}>
           <Stack
             spacing={4}
-            maxW={"4xl"}
+            maxW={["full", "4xl"]}
             bg={"white"}
             boxShadow={"lg"}
             rounded={"xl"}
@@ -391,7 +391,7 @@ const EditProfile = () => {
             {/* Edit info Form */}
             <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Personal Details</Text>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="firstName" isRequired>
+              <FormControl py={[0, 2]} id="firstName" isRequired>
                 <FormLabel>First Name</FormLabel>
                 <Input
                   placeholder="First Name"
@@ -401,7 +401,7 @@ const EditProfile = () => {
                   onChange={formik.handleChange}
                 />
               </FormControl>
-              <FormControl py={2} id="lastName" isRequired>
+              <FormControl py={[0, 2]} id="lastName" isRequired>
                 <FormLabel>Last Name</FormLabel>
                 <Input
                   placeholder="Last Name"
@@ -413,7 +413,7 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="Email" isRequired>
+              <FormControl py={[0, 2]} id="Email" isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input
                   _placeholder={{ color: "gray.500" }}
@@ -422,7 +422,7 @@ const EditProfile = () => {
                   disabled
                 />
               </FormControl>
-              <FormControl py={2} id="phone" isRequired>
+              <FormControl py={[0, 2]} id="phone" isRequired>
                 <FormLabel>Contact Number</FormLabel>
                 <Input
                   placeholder="Phone number"
@@ -437,7 +437,7 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="dob" w={['xs']} isRequired>
+              <FormControl py={[0, 2]} id="dob" w={['xs']} isRequired>
                 <FormLabel>Date of Birth</FormLabel>
                 <Input
                   placeholder="dd/mm/yyyy"
@@ -455,7 +455,7 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column", "row"]} spacing="8">
-              <FormControl py={2} id="verifiedAadhaar" isRequired>
+              <FormControl py={[0, 2]} id="verifiedAadhaar" isRequired>
                 <FormLabel>Aadhar Number</FormLabel>
                 <Input
                   placeholder="Aadhar number"
@@ -466,7 +466,7 @@ const EditProfile = () => {
                   disabled={isAadhaarDisabled}
                 />
               </FormControl>
-              <FormControl py={2} id="pan" isRequired>
+              <FormControl py={[0, 2]} id="pan" isRequired>
                 <FormLabel>Your PAN</FormLabel>
                 <Input
                   name={'pan'} isDisabled={isPanVerified}
@@ -492,7 +492,7 @@ const EditProfile = () => {
               <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Business Details</Text>
 
               <Stack direction={['column', 'row']} spacing={8}>
-                <FormControl py={2} id="firmType">
+                <FormControl py={[0, 2]} id="firmType">
                   <FormLabel>Company name</FormLabel>
                   <Input
                     placeholder="Company name"
@@ -502,7 +502,7 @@ const EditProfile = () => {
                     onChange={formik.handleChange}
                   />
                 </FormControl>
-                <FormControl py={2} id="companyName">
+                <FormControl py={[0, 2]} id="companyName">
                   <FormLabel>Company Type</FormLabel>
                   <Select
                     name="companyName" placeholder="Select here"
@@ -514,7 +514,7 @@ const EditProfile = () => {
                   </Select>
                 </FormControl>
               </Stack>
-              <FormControl py={2} id="gst" w={['xs']}>
+              <FormControl py={[0, 2]} id="gst" w={['xs']}>
                 <FormLabel>GST Number</FormLabel>
                 <Input
                   placeholder="GST Number"
@@ -529,7 +529,7 @@ const EditProfile = () => {
             <VStack alignItems={'flex-start'} py={8}>
               <Text fontSize={'lg'} pb={2} fontWeight={'medium'} color={'#333'}>Address Details</Text>
               <Stack direction={['column', 'row']} w={'full'} spacing={8}>
-                <FormControl py={2} id="line" isRequired>
+                <FormControl py={[0, 2]} id="line" isRequired>
                   <FormLabel>Street Address</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -542,7 +542,7 @@ const EditProfile = () => {
                 </FormControl>
               </Stack>
               <Stack direction={['column', 'row']} spacing={8}>
-                <FormControl py={2} id="city" isRequired>
+                <FormControl py={[0, 2]} id="city" isRequired>
                   <FormLabel>City</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -553,7 +553,7 @@ const EditProfile = () => {
                     disabled
                   />
                 </FormControl>
-                <FormControl py={2} id="pincode" isRequired>
+                <FormControl py={[0, 2]} id="pincode" isRequired>
                   <FormLabel>Pincode</FormLabel>
                   <Input
                     placeholder="Enter here..."
@@ -564,7 +564,7 @@ const EditProfile = () => {
                   // disabled
                   />
                 </FormControl>
-                <FormControl py={2} id="state" isRequired>
+                <FormControl py={[0, 2]} id="state" isRequired>
                   <FormLabel>State</FormLabel>
                   <Select name="state" placeholder="Select State" value={formik.values.state}
                     // onChange={formik.handleChange}
@@ -590,7 +590,7 @@ const EditProfile = () => {
               <Stack
                 direction={['column', 'row']}
                 alignItems={'flex-end'}
-                spacing={4} py={2} w={'full'}
+                spacing={4} py={[0, 2]} w={'full'}
               >
                 <FormControl id="modelName" w={'xs'} isRequired>
                   <FormLabel>Model Name</FormLabel>
@@ -611,13 +611,17 @@ const EditProfile = () => {
                   />
                 </FormControl>
               </Stack>
-              <HStack spacing={8}>
+              <Stack 
+              w={'full'} direction={['column', 'row']} 
+              alignItems={'center'} pt={4}
+              justifyContent={'center'} spacing={[4, 8]}>
                 <Box>
                   <Button
                     colorScheme="whatsapp"
                     leftIcon={<IoMdFingerPrint />}
                     onClick={() => onboardMe("paysprint")}
                     isDisabled={!isProfileComplete}
+                    size={['sm', 'md']}
                   >Register On Server 1</Button>
                   {isProfileComplete ||
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
@@ -630,13 +634,14 @@ const EditProfile = () => {
                       leftIcon={<IoMdFingerPrint />}
                       // onClick={() => onboardMe("eko")}
                       isDisabled={!isProfileComplete}
+                      size={['sm', 'md']}
                     >Register On Server 2</Button>
                   </Link>
                   {isProfileComplete ||
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
                   }
                 </Box>
-              </HStack>
+              </Stack>
             </VStack>
 
 
@@ -668,7 +673,7 @@ const EditProfile = () => {
           <Stack w={['full', 'sm']} rounded={12} bg={'white'} p={4} boxShadow={'lg'}>
             <Text fontSize={'lg'} fontWeight={'medium'} color={'#333'}>Upload Documents</Text>
             <Stack direction={["column"]} spacing="6" pb={6}>
-              <FormControl py={2} id="profilePic" isRequired>
+              <FormControl py={[0, 2]} id="profilePic" isRequired>
                 <FormLabel>Profile Picture</FormLabel>
                 <Input
                   type="file"
@@ -676,7 +681,7 @@ const EditProfile = () => {
                   accept={"image/png, image/jpg, image/jpeg"}
                 />
               </FormControl>
-              <FormControl py={2} id="panCard" isRequired>
+              <FormControl py={[0, 2]} id="panCard" isRequired>
                 <FormLabel>Pan Card</FormLabel>
                 <Input
                   type="file"
@@ -686,7 +691,7 @@ const EditProfile = () => {
               </FormControl>
             </Stack>
             <Stack direction={["column"]} spacing="6" pb={6}>
-              <FormControl py={2} id="eAadharBack" isRequired>
+              <FormControl py={[0, 2]} id="eAadharBack" isRequired>
                 <FormLabel>eAadhar (Back)</FormLabel>
                 <Input
                   type="file"
@@ -694,7 +699,7 @@ const EditProfile = () => {
                   accept={"image/png, image/jpg, image/jpeg, application/pdf"}
                 />
               </FormControl>
-              <FormControl py={2} id="eAadharFront" isRequired>
+              <FormControl py={[0, 2]} id="eAadharFront" isRequired>
                 <FormLabel>eAadhar (Front)</FormLabel>
                 <Input
                   type="file"
@@ -721,13 +726,13 @@ const EditProfile = () => {
               <InputLeftAddon children={"+91"} />
               <Input type={'tel'} maxLength={10} placeholder={'Your Phone Number'} value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
             </InputGroup>
-            <HStack justifyContent={'flex-end'} py={2}>
+            <HStack justifyContent={'flex-end'} py={[0, 2]}>
               <Button colorScheme={'twitter'} disabled={isPhoneOtpDisabled} size={'xs'} onClick={sendPhoneOtp}>Send OTP</Button>
             </HStack>
 
             <VStack display={otpSent ? "flex" : "none"}>
               <Text>Enter OTP</Text>
-              <HStack py={2}>
+              <HStack py={[0, 2]}>
                 <PinInput otp onComplete={(value) => setOtp(value)}>
                   <PinInputField />
                   <PinInputField />
@@ -752,13 +757,13 @@ const EditProfile = () => {
           </ModalHeader>
           <ModalBody>
             <Input type={'tel'} placeholder={'Your Aadhaar Number'} maxLength={12} value={newAadhaar} onChange={(e) => setNewAadhaar(e.target.value)} />
-            <HStack justifyContent={'flex-end'} py={2}>
+            <HStack justifyContent={'flex-end'} py={[0, 2]}>
               <Button colorScheme={'twitter'} disabled={isAadhaarOtpDisabled} size={'xs'} onClick={sendAadhaarOtp}>Send OTP</Button>
             </HStack>
 
             <VStack display={otpSent ? "flex" : "none"}>
               <Text>Enter OTP</Text>
-              <HStack py={2}>
+              <HStack py={[0, 2]}>
                 <PinInput otp onComplete={(value) => setOtp(value)}>
                   <PinInputField />
                   <PinInputField />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { BsWallet, BsBell, BsPeopleFill, BsFillFileEarmarkBarGraphFill, BsFileEarmarkBarGraphFill, BsHouseDoorFill } from 'react-icons/bs'
+import { BsWallet, BsBell, BsPeopleFill, BsFillFileEarmarkBarGraphFill, BsFileEarmarkBarGraphFill, BsHouseDoorFill, BsPlusCircleFill } from 'react-icons/bs'
 import { FiMenu } from 'react-icons/fi'
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
@@ -185,8 +185,8 @@ const DashboardWrapper = (props) => {
                                 <Spacer />
                             </Show>
                             <Show below='md'>
+                                <Text fontSize={'lg'} fontWeight={'500'} color={['#FFF', '#222']}>Hi {userName.split(" ")[0]}</Text>
                                 <Spacer />
-                                <Text fontSize={'xl'} fontWeight={'500'} color={['#FFF', '#222']}>{userName}</Text>
                             </Show>
                             <HStack
                                 spacing={4}
@@ -235,7 +235,10 @@ const DashboardWrapper = (props) => {
                             </HStack>
                             <Show below='md'>
                                 <Link href={'/dashboard/profile?pageId=prfile'}>
-                                    <Avatar name={userName} src={profilePic} size={'sm'} />
+                                    <HStack p={2} rounded={'full'} bgColor={'twitter.500'}>
+                                        <Text fontSize={'md'} fontWeight={'semibold'}>₹ {wallet}</Text>
+                                        <BsPlusCircleFill size={20} />
+                                    </HStack>
                                 </Link>
                             </Show>
                         </HStack>

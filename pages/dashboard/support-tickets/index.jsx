@@ -75,7 +75,9 @@ const SupportTickets = () => {
         <>
             <DashboardWrapper titleText={'Support Tickets'}>
                 <Box w={'full'} h={12}></Box>
-                <Box h={'sm'} w={'full'} className='ag-theme-alpine'>
+                <Box 
+                h={'sm'} w={'full'} rounded={16} overflow={'hidden'}
+                className='ag-theme-alpine ag-theme-pesa24-blue'>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}

@@ -203,56 +203,53 @@ const Login = () => {
             })
             return
         }
-        try {
-            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
-                "authMethod": authMethod,
-                ...(authMethod === "email" && { "email": formik.values.user_id }),
-                ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
-                "otp": otp,
-                "password": formik.values.password,
-                "remember": 1,
-                "latlong": Cookies.get("latlong"),
-                organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
-            }), {
-                withCredentials: true,
-                headers: {
-                    "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-            }).then(async (res) => {
-                var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
-                Cookies.set("verified", hashedValue)
-                localStorage.setItem("userId", res.data.id)
-                Cookies.set("userId", res.data.id)
-                localStorage.setItem("userName", res.data.name)
-                Cookies.set("userName", res.data.name)
-                localStorage.setItem("userType", res.data.role[0].name)
-                localStorage.setItem("balance", res.data.wallet)
-                localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
+        axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
+            "authMethod": authMethod,
+            ...(authMethod === "email" && { "email": formik.values.user_id }),
+            ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
+            "otp": otp,
+            "password": formik.values.password,
+            "remember": 1,
+            "latlong": Cookies.get("latlong"),
+            organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
+        }), {
+            withCredentials: true,
+            headers: {
+                "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        }).then(async (res) => {
+            var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
+            Cookies.set("verified", hashedValue)
+            localStorage.setItem("userId", res.data.id)
+            Cookies.set("userId", res.data.id)
+            localStorage.setItem("userName", res.data.name)
+            Cookies.set("userName", res.data.name)
+            localStorage.setItem("userType", res.data.role[0].name)
+            localStorage.setItem("balance", res.data.wallet)
+            localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
-                Cookies.set('access-token', res.data.token.original.access_token)
-                if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
-                if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
-            }).then(() => {
-                setTimeout(() => {
-                    Router.push("/dashboard/home?pageId=home")
-                }, 1000);
-            })
-
-        } catch (err) {
+            Cookies.set('access-token', res.data.token.original.access_token)
+            if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
+            if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+        }).then(() => {
+            setTimeout(() => {
+                Router.push("/dashboard/home?pageId=home")
+            }, 1000);
+        }).catch(err => {
             console.log(err)
             Toast({
                 status: "error",
                 title: "Error Occured",
-                description: err.response.data.message || err.response.data || err.message,
+                description: err.response?.data?.message || err.response?.data || err.message,
                 isClosable: true,
                 duration: 3000,
                 position: "top-right"
             })
             setIsBtnLoading(false)
-        }
+        })
     }
 
 
@@ -266,52 +263,52 @@ const Login = () => {
             })
             return
         }
-        try {
-            axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
-                authMethod: authMethod,
-                ...(authMethod === "email" && { "email": formik.values.user_id }),
-                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
-                password: formik.values.password,
-                mpin: mpin,
-                organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
-                latlong: Cookies.get("latlong"),
-            }), {
-                withCredentials: true,
-                headers: {
-                    "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-            }).then(async (res) => {
-                var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
-                Cookies.set("verified", hashedValue)
-                localStorage.setItem("userId", res.data.id)
-                Cookies.set("userId", res.data.id)
-                localStorage.setItem("userName", res.data.name)
-                Cookies.set("userName", res.data.name)
-                localStorage.setItem("userType", res.data.role[0].name)
-                localStorage.setItem("balance", res.data.wallet)
-                localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
+        axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
+            authMethod: authMethod,
+            ...(authMethod === "email" && { "email": formik.values.user_id }),
+            ...(authMethod === "phone" && { "phone": formik.values.user_id }),
+            password: formik.values.password,
+            mpin: mpin,
+            organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
+            latlong: Cookies.get("latlong"),
+        }), {
+            withCredentials: true,
+            headers: {
+                "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN"),
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        }).then(async (res) => {
+            var hashedValue = await bcrypt.hash(`${res.data.id + res.data.name}`, 2)
+            Cookies.set("verified", hashedValue)
+            localStorage.setItem("userId", res.data.id)
+            Cookies.set("userId", res.data.id)
+            localStorage.setItem("userName", res.data.name)
+            Cookies.set("userName", res.data.name)
+            localStorage.setItem("userType", res.data.role[0].name)
+            localStorage.setItem("balance", res.data.wallet)
+            localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
-                Cookies.set('access-token', res.data.token.original.access_token)
+            Cookies.set('access-token', res.data.token.original.access_token)
 
-                if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
-                if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
-            }).then(() => {
-                setTimeout(() => {
-                    Router.push("/dashboard/home?pageId=home")
-                }, 1000);
-            })
-
-        } catch (err) {
+            if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
+            if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+        }).then(() => {
+            setTimeout(() => {
+                Router.push("/dashboard/home?pageId=home")
+            }, 1000);
+        }).catch(err => {
             console.log(err)
             Toast({
-                status: 'error',
-                description: err.response.data.message || err.response.data || err.message,
-                title: 'Error Occured',
+                status: "error",
+                title: "Error Occured",
+                description: err.response?.data?.message || err.response?.data || err.message,
+                isClosable: true,
+                duration: 3000,
+                position: "top-right"
             })
-        }
+        })
     }
 
     return (
