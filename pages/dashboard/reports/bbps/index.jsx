@@ -34,6 +34,7 @@ import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 import html2canvas from 'html2canvas';
+import { toJpeg } from 'html-to-image'
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -41,6 +42,18 @@ const ExportPDF = () => {
   doc.autoTable({ html: '#printable-table' })
   doc.output('dataurlnewwindow');
 }
+
+export const dataURLtoFile = (dataurl, filename) => {
+  var arr = dataurl.split(","),
+    mimeType = arr[0].match(/:(.*?);/)[1],
+    decodedData = atob(arr[1]),
+    lengthOfDecodedData = decodedData.length,
+    u8array = new Uint8Array(lengthOfDecodedData);
+  while (lengthOfDecodedData--) {
+    u8array[lengthOfDecodedData] = decodedData.charCodeAt(lengthOfDecodedData);
+  }
+  return new File([u8array], filename, { type: mimeType });
+};
 
 const Index = () => {
   const transactionKeyword = "bbps"
@@ -136,6 +149,29 @@ const Index = () => {
     } catch (error) {
       console.error('Error sharing:', error);
     }
+  };
+
+  const shareFile = (file, title, text) => {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator
+        .share({
+          files: [file],
+          title,
+          text
+        })
+        .then(() => console.log("Share was successful."))
+        .catch((error) => console.log("Sharing failed", error));
+    } else {
+      console.log(`Your system doesn't support sharing files.`);
+    }
+  };
+  const createImage = () => {
+    toJpeg(pdfRef.current, { quality: 0.95 }).then(
+      (dataUrl) => {
+        const file = dataURLtoFile(dataUrl, "receipt.png");
+        shareFile(file, "Receipt", process.env.NEXT_PUBLIC_FRONTEND_URL);
+      }
+    );
   };
 
   function fetchTransactions(pageLink) {
@@ -365,7 +401,7 @@ const Index = () => {
               <Button
                 colorScheme='yellow'
                 size={'sm'} rounded={'full'}
-                onClick={handleShare}
+                onClick={createImage}
               >Share</Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                 {

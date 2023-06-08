@@ -68,6 +68,9 @@ dependencies:
   gridjs-react:
     specifier: ^6.0.1
     version: 6.0.1(gridjs@6.0.5)(react@18.2.0)
+  html-to-image:
+    specifier: ^1.11.11
+    version: 1.11.11
   html2canvas:
     specifier: ^1.4.1
     version: 1.4.1
@@ -3510,6 +3513,10 @@ packages:
 
   /hsl-to-rgb-for-reals@1.1.1:
     resolution: {integrity: sha512-LgOWAkrN0rFaQpfdWBQlv/VhkOxb5AsBjk6NQVx4yEzWS923T07X0M1Y0VNko2H52HeSpZrZNNMJ0aFqsdVzQg==}
+    dev: false
+
+  /html-to-image@1.11.11:
+    resolution: {integrity: sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==}
     dev: false
 
   /html2canvas@1.0.0-alpha.12:
