@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
   '@babel/core':
@@ -103,6 +107,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-fast-marquee:
+    specifier: ^1.6.0
+    version: 1.6.0(react-dom@18.2.0)(react@18.2.0)
   react-icons:
     specifier: ^4.7.1
     version: 4.7.1(react@18.2.0)
@@ -112,6 +119,9 @@ dependencies:
   react-to-pdf:
     specifier: ^0.0.14
     version: 0.0.14(react-dom@18.2.0)(react@18.2.0)
+  swiper:
+    specifier: ^9.3.2
+    version: 9.3.2
   yup:
     specifier: ^0.32.11
     version: 0.32.11
@@ -4098,6 +4108,16 @@ packages:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
     dev: false
 
+  /react-fast-marquee@1.6.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jtuwT9SNjrqxnE7lGZ8mTL1I8Q4+9G4aBta2p+y2Pa3SjR17QROblwrLICyM8rbjQFHgHawTHcaH9HvoVO2NOA==}
+    peerDependencies:
+      react: '>= 16.8.0 || 18.0.0'
+      react-dom: '>= 16.8.0 || 18.0.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /react-focus-lock@2.9.2(@types/react@18.0.28)(react@18.2.0):
     resolution: {integrity: sha512-5JfrsOKyA5Zn3h958mk7bAcfphr24jPoMoznJ8vaJF6fUrPQ8zrtEd3ILLOK8P5jvGxdMd96OxWNjDzATfR2qw==}
     peerDependencies:
@@ -4339,6 +4359,10 @@ packages:
     dev: false
     optional: true
 
+  /ssr-window@4.0.2:
+    resolution: {integrity: sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==}
+    dev: false
+
   /stackblur-canvas@2.5.0:
     resolution: {integrity: sha512-EeNzTVfj+1In7aSLPKDD03F/ly4RxEuF/EX0YcOG0cKoPXs+SLZxDawQbexQDBzwROs4VKLWTOaZQlZkGBFEIQ==}
     engines: {node: '>=0.1.14'}
@@ -4415,6 +4439,13 @@ packages:
     engines: {node: '>=12.0.0'}
     dev: false
     optional: true
+
+  /swiper@9.3.2:
+    resolution: {integrity: sha512-Kj9Z4kXRmJR3YT/Wj+XLWj8P6IcRt+WG38uL8M3/Wny7+6sV0TlP9vnE1X+Co9c7VzNooojWGnFa+Wf/9+CUMA==}
+    engines: {node: '>= 4.7.0'}
+    dependencies:
+      ssr-window: 4.0.2
+    dev: false
 
   /tar@6.1.13:
     resolution: {integrity: sha512-jdIBIN6LTIe2jqzay/2vtYLlBHa3JF42ot3h1dW8Q0PaAG4v8rm0cvpVePtau5C6OKXGGcgO9q2AMNSWxiLqKw==}
