@@ -253,7 +253,7 @@ export const SidebarOptions =
         {
           title: 'Daily Sales',
           link: '/dashboard/reports/axis?pageId=reports',
-          id: "dailySales",
+          id: "basicDailySales",
           soon: false,
         },
       ]

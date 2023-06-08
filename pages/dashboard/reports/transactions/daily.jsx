@@ -135,7 +135,7 @@ const Index = () => {
   };
 
   function fetchTransactions(pageLink) {
-    BackendAxios.get(pageLink || `/api/user/ledger?page=1`).then((res) => {
+    BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`).then((res) => {
       setPagination({
         current_page: res.data.current_page,
         total_pages: parseInt(res.data.last_page),
@@ -271,7 +271,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
-              onFirstDataRendered={(params) => params.api.sizeColumnsToFit()}
+              
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {

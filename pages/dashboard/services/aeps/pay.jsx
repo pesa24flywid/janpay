@@ -588,7 +588,7 @@ const Aeps = () => {
                 components={{
                   'receiptCellRenderer': receiptCellRenderer
                 }}
-                onFirstDataRendered={(params) => params.api.sizeColumnsToFit()}
+                
               >
 
               </AgGridReact>

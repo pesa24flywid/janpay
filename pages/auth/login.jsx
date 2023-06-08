@@ -35,6 +35,7 @@ import Cookies from 'js-cookie'
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 import Register from './register'
+import Loader from '../../hocs/Loader'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
@@ -86,6 +87,8 @@ const Login = () => {
     const [loginPreference, setLoginPreference] = useState('otp')
     const [mpinModalStatus, setMpinModalStatus] = useState(false)
     const [mpin, setMpin] = useState(null)
+
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         getLocation()
@@ -195,6 +198,7 @@ const Login = () => {
     // Handling login after OTP submission
     function handleLogin() {
         setIsBtnLoading(true)
+        setIsLoading(true)
         if (!Cookies.get("latlong")) {
             Toast({
                 status: 'warning',
@@ -234,6 +238,7 @@ const Login = () => {
             Cookies.set('access-token', res.data.token.original.access_token)
             if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
             if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            setIsLoading(false)
         }).then(() => {
             setTimeout(() => {
                 Router.push("/dashboard/home?pageId=home")
@@ -248,6 +253,7 @@ const Login = () => {
                 duration: 3000,
                 position: "top-right"
             })
+            setIsLoading(false)
             setIsBtnLoading(false)
         })
     }
@@ -255,6 +261,7 @@ const Login = () => {
 
     // Handling MPIN Login
     function handleMpin() {
+        setIsLoading(true)
         if (!Cookies.get("latlong")) {
             Toast({
                 status: 'warning',
@@ -290,10 +297,14 @@ const Login = () => {
             localStorage.setItem("balance", res.data.wallet)
             localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
+            localStorage.setItem("ekoId", res.data.eko_id)
+            localStorage.setItem("paysprintId", res.data.paysprint_id)
+            
             Cookies.set('access-token', res.data.token.original.access_token)
 
             if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
             if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            setIsLoading(false)
         }).then(() => {
             setTimeout(() => {
                 Router.push("/dashboard/home?pageId=home")
@@ -308,6 +319,7 @@ const Login = () => {
                 duration: 3000,
                 position: "top-right"
             })
+            setIsLoading(false)
         })
     }
 
@@ -317,6 +329,9 @@ const Login = () => {
                 <title>Pesa24</title>
             </Head>
             <Navbar />
+            {
+                isLoading ? <Loader /> : null
+            }
             <Box minH={'100vh'}>
                 <HStack
                     w={'full'} pos={'relative'}
@@ -450,10 +465,11 @@ const Login = () => {
                 src='/bottomwave.svg'
                 pos={'absolute'}
                 bottom={0} left={0}
-                right={0} objectFit={'cover'}
+                width={'100%'}
+                objectFit={'cover'}
                 objectPosition={'top'}
                 opacity={'20%'}
-                height={'10%'}
+                height={['10%', '25%']}
             />
 
             {/* MPIN Modal */}

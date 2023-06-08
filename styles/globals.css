@@ -37,3 +37,9 @@
 .ag-theme-pesa24-blue .ag-floating-filter {
     color: #333;
 }
+
+@media (max-width: 768px) {
+    .ag-theme-pesa24-blue .ag-cell {
+        min-width: 100px !important;
+    }
+}

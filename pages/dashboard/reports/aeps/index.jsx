@@ -305,7 +305,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
-              onFirstDataRendered={(params)=>params.api.sizeColumnsToFit()}
+              
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {

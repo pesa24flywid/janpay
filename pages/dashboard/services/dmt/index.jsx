@@ -41,12 +41,15 @@ import { BsCheck2Circle, BsDownload, BsTrash, BsXCircle } from 'react-icons/bs'
 import { AiOutlinePlus } from 'react-icons/ai'
 import Pdf from 'react-to-pdf'
 import Cookies from 'js-cookie'
+import Loader from '../../../../hocs/Loader'
 
 const Dmt = () => {
     const [dmtProvider, setDmtProvider] = useState("")
     const serviceId = 24
+    const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
-
+        setIsLoading(true)
+        setIsBtnLoading(true)
         ClientAxios.post('/api/user/fetch', {
             user_id: localStorage.getItem('userId')
         }, {
@@ -61,13 +64,13 @@ const Dmt = () => {
             console.log(err)
         })
 
-        setIsBtnLoading(true)
         ClientAxios.get(`/api/global`).then(res => {
             setDmtProvider(res.data[0].dmt_provider)
             if (res.data[0].dmt_status == false) {
                 window.location.href('/dashboard/not-available')
             }
             setIsBtnLoading(false)
+            setIsLoading(false)
         }).catch(err => {
             if (err.status > 400) {
                 Toast({
@@ -76,14 +79,18 @@ const Dmt = () => {
                 })
             }
             setIsBtnLoading(true)
+            setIsLoading(false)
         })
 
 
+        setIsLoading(true)
         ClientAxios.get(`/api/organisation`).then(res => {
             if (res.data.dmt_status == false) {
+                setIsLoading(false)
                 window.location.href('/dashboard/not-available')
             }
         }).catch(err => {
+            setIsLoading(false)
             console.log(err)
         })
 
@@ -124,22 +131,27 @@ const Dmt = () => {
     })
 
     useEffect(() => {
+        setIsLoading(true)
         if (dmtProvider == "paysprint") {
             BackendAxios.get(`/api/paysprint/dmt/banks/${serviceId}`).then(res => {
                 setBankList(res.data)
+                setIsLoading(false)
             }).catch(err => {
                 Toast({
                     description: err.response.data.message || err.response.data || err.message
                 })
+                setIsLoading(false)
             })
         }
         if (dmtProvider == "eko") {
             BackendAxios.get(`/api/eko/aeps/fetch-bank/${serviceId}`).then(res => {
                 setBankList(res.data?.param_attributes?.list_elements)
+                setIsLoading(false)
             }).catch(err => {
                 Toast({
                     description: err.response.data.message || err.response.data || err.message
                 })
+                setIsLoading(false)
             })
         }
     }, [dmtProvider])
@@ -155,6 +167,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             setIsBtnLoading(true)
+            setIsLoading(true)
             if (dmtProvider == "eko") {
                 BackendAxios.post(`api/${dmtProvider}/dmt/create-customer/${serviceId}`, {
                     ...values, customerId: customerId
@@ -163,6 +176,7 @@ const Dmt = () => {
                         setIsOtpSent(true)
                     }
                     setIsBtnLoading(false)
+                    setIsLoading(false)
                 }).catch((err) => {
                     console.log(err)
                     if (err.response.status == 409) {
@@ -182,10 +196,12 @@ const Dmt = () => {
                         })
                     }
                     setIsBtnLoading(false)
+                    setIsLoading(false)
                 })
             }
             if (dmtProvider == "paysprint") {
                 setIsOtpSent(true)
+                setIsLoading(false)
             }
         }
     })
@@ -210,6 +226,7 @@ const Dmt = () => {
             mpin: ""
         },
         onSubmit: values => {
+            setIsLoading(true)
             if (dmtProvider == "paysprint") {
                 BackendAxios.post(`/api/paysprint/dmt/initiate-payment/${serviceId}`, { ...values, customerId: customerId }).then(res => {
                     setPaymentConfirmationModal(false)
@@ -219,8 +236,10 @@ const Dmt = () => {
                             title: "Error Occured",
                             description: "Server Busy"
                         })
+                        setIsLoading(false)
                         return
                     }
+                    setIsLoading(false)
                     setReceipt({
                         status: res.data.metadata.status || false,
                         show: true,
@@ -234,8 +253,10 @@ const Dmt = () => {
                             title: "Error Occured",
                             description: "Server Busy"
                         })
+                        setIsLoading(false)
                         return
                     }
+                    setIsLoading(false)
                     Toast({
                         status: "error",
                         title: "Error Occured",
@@ -254,8 +275,10 @@ const Dmt = () => {
                             title: "Error Occured",
                             description: "Server Busy"
                         })
+                        setIsLoading(false)
                         return
                     }
+                    setIsLoading(false)
                     setReceipt({
                         status: res.data.metadata?.status || false,
                         show: true,
@@ -269,8 +292,10 @@ const Dmt = () => {
                             title: "Error Occured",
                             description: "Server Busy"
                         })
+                        setIsLoading(false)
                         return
                     }
+                    setIsLoading(false)
                     Toast({
                         status: "error",
                         title: "Error Occured",
@@ -315,6 +340,7 @@ const Dmt = () => {
         },
         onSubmit: (values) => {
             // Adding New Recipient
+            setIsLoading(false)
             BackendAxios.post(`api/${dmtProvider}/dmt/add-recipient/${serviceId}`, {
                 ...values,
                 customerId: customerId,
@@ -323,6 +349,7 @@ const Dmt = () => {
                     description: 'Beneficiary Added'
                 })
                 setNewRecipientModal(false)
+                setIsLoading(false)
                 fetchRecipients()
             }).catch((err) => {
                 Toast({
@@ -331,6 +358,7 @@ const Dmt = () => {
                     description: err.message,
                     position: "top-right"
                 })
+                setIsLoading(false)
                 console.log(err)
             })
         }
@@ -338,16 +366,20 @@ const Dmt = () => {
 
     // Get Account Holder Name
     function getAccountHolderName() {
+        setIsLoading(true)
         BackendAxios.post(`/api/paysprint/bank/bank-verify`, {
             accountNumber: addRecipientFormik.values.accountNumber,
             ifsc: addRecipientFormik.values.ifsc,
         }).then(res => {
+            setIsLoading(false)
             console.log(res.data)
             if (res.data.data.account_exists) {
+                setIsLoading(false)
                 addRecipientFormik.setFieldValue("beneficiaryName", res.data.data.full_name)
             }
         }).catch(err => {
             console.log(err)
+            setIsLoading(false)
             Toast({
                 status: 'warning',
                 description: "Could not verify bank account."
@@ -358,12 +390,14 @@ const Dmt = () => {
     // Check if customer is registered or not
     function checkSender(event) {
         event.preventDefault()
+        setIsLoading(true)
         setCustomerStatus("hide")
         setIsBtnLoading(true)
         if (!customerId || parseInt(customerId) <= 6000000000) {
             Toast({
                 description: "Enter Correct Customer ID",
             })
+            setIsLoading(false)
             setIsBtnLoading(false)
         }
         else {
@@ -374,6 +408,7 @@ const Dmt = () => {
                     if (res.data.status == 463 && res.data.response_status_id == 1) {
                         setCustomerStatus("unregistered")
                         setShowSenderIdInput(false)
+                        setIsLoading(false)
                     }
                     if (res.data.status == 0 && res.data.response_status_id == 0) {
                         setCustomerRemainingLimit(res.data.data.available_limit)
@@ -383,10 +418,12 @@ const Dmt = () => {
                         setCustomerStatus("registered")
                         setShowSenderIdInput(false)
                         fetchRecipients()
+                        setIsLoading(false)
                     }
                     if (res.data.status == 0 && res.data.response_status_id == -1) {
                         sendOtp()
                         setShowSenderIdInput(false)
+                        setIsLoading(false)
                     }
                     setIsBtnLoading(false)
                 }
@@ -401,6 +438,7 @@ const Dmt = () => {
                             position: "top-right"
                         })
                         setShowSenderIdInput(false)
+                        setIsLoading(false)
                     }
                     if (res.data.response_code == 1) {
                         setCustomerName(res.data.data.fname + " " + res.data.data.lname)
@@ -414,6 +452,7 @@ const Dmt = () => {
                         setCustomerStatus("registered")
                         setShowSenderIdInput(false)
                         fetchRecipients()
+                        setIsLoading(false)
                     }
                 }
                 setIsBtnLoading(false)
@@ -424,9 +463,11 @@ const Dmt = () => {
                     title: "Error Occured",
                     description: err.response?.data?.message || err.response?.data || err.message,
                 })
+                setIsLoading(false)
                 setRecipients([])
             })
             setIsBtnLoading(false)
+            setIsLoading(false)
         }
     }
 
@@ -449,6 +490,7 @@ const Dmt = () => {
 
     // Send OTP for account verification
     function sendOtp() {
+        setIsLoading(true)
         if (dmtProvider == "eko") {
             BackendAxios.post(`api/${dmtProvider}/dmt/resend-otp/${serviceId}`, {
                 customerId
@@ -463,6 +505,7 @@ const Dmt = () => {
                         position: "top-right"
                     })
                 }
+                setIsLoading(false)
             }).catch((err) => {
                 console.log(err)
                 Toast({
@@ -471,6 +514,7 @@ const Dmt = () => {
                     description: err.message,
                     position: "top-right"
                 })
+                setIsLoading(false)
             })
         }
         if (dmtProvider == "paysprint") {
@@ -486,6 +530,7 @@ const Dmt = () => {
                     description: `An OTP has been sent to ${customerId}`,
                     position: "top-right"
                 })
+                setIsLoading(false)
                 setIsBtnLoading(false)
             }).catch((err) => {
                 console.log(err)
@@ -495,12 +540,15 @@ const Dmt = () => {
                     description: err.message,
                     position: "top-right"
                 })
+                setIsLoading(false)
             })
             setIsBtnLoading(false)
+            setIsLoading(false)
         }
     }
 
     function verifyOtp() {
+        setIsLoading(true)
         if (dmtProvider == "eko") {
             BackendAxios.post(`api/${dmtProvider}/dmt/verify-customer/${serviceId}`, {
                 customerId: customerId,
@@ -519,6 +567,7 @@ const Dmt = () => {
                     }, 2000);
                 }
                 else {
+                    setIsLoading(false)
                     Toast({
                         status: 'info',
                         title: "Error Occured!",
@@ -528,6 +577,7 @@ const Dmt = () => {
                 }
             }).catch((err) => {
                 console.log(err)
+                setIsLoading(false)
                 Toast({
                     status: 'error',
                     title: "Error Occured",
@@ -543,8 +593,10 @@ const Dmt = () => {
                 stateresp: otpRefId,
                 customerId: customerId
             }).then(res => {
+                setIsLoading(false)
                 console.log(res.data)
             }).catch((err) => {
+                setIsLoading(false)
                 console.log(err)
                 Toast({
                     status: 'error',
@@ -556,10 +608,12 @@ const Dmt = () => {
     }
 
     function fetchRecipients() {
+        setIsLoading(true)
         if (dmtProvider == "paysprint") {
             BackendAxios.post(`/api/paysprint/dmt/recipient-list/${serviceId}`, {
                 customerId: customerId
             }).then(res => {
+                setIsLoading(false)
                 console.log(res.data)
                 setRecipients(res.data.data.map((recipient) => {
                     return {
@@ -572,6 +626,7 @@ const Dmt = () => {
                     }
                 }))
             }).catch(err => {
+                setIsLoading(false)
                 Toast({
                     status: 'error',
                     title: "Error Occured",
@@ -583,6 +638,7 @@ const Dmt = () => {
         if (dmtProvider == "eko") {
             BackendAxios.get(`/api/eko/dmt/recipient-list/${serviceId}?customerId=${customerId}`).then(res => {
                 if (res.data?.data?.recipient_list?.length) {
+                    setIsLoading(false)
                     setRecipients(res.data.data.recipient_list.map((recipient) => {
                         return {
                             accountNumber: recipient.account,
@@ -595,12 +651,14 @@ const Dmt = () => {
                     }))
                 }
                 else {
+                    setIsLoading(false)
                     Toast({
                         description: res.data.message || "No recipients found"
                     })
                     setRecipients([])
                 }
             }).catch(err => {
+                setIsLoading(false)
                 Toast({
                     status: 'error',
                     title: "Error Occured",
@@ -638,6 +696,9 @@ const Dmt = () => {
     return (
         <>
             <DashboardWrapper titleText={"Domestic Money Transfer"}>
+                {
+                    isLoading ? <Loader /> : null
+                }
                 <Box
                     p={6} bg={'white'}
                     boxShadow={'md'}

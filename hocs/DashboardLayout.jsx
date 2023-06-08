@@ -91,6 +91,10 @@ const DashboardWrapper = (props) => {
     const [userType, setUserType] = useState("Undefined")
     const [profilePic, setProfilePic] = useState("/avatar.png")
     const [wallet, setWallet] = useState("0")
+
+    const [paysprintId, setPaysprintId] = useState("")
+    const [ekoId, setEkoId] = useState("")
+
     const { isOpen, onOpen, onClose } = useDisclosure()
     var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
     const Router = useRouter()
@@ -124,6 +128,10 @@ const DashboardWrapper = (props) => {
         })
     }, [])
 
+    useEffect(()=>{
+        setEkoId(localStorage.getItem("ekoId"))
+        setPaysprintId(localStorage.getItem("paysprintId"))
+    },[])
 
     useEffect(() => {
         // Check for new notifications
@@ -328,15 +336,15 @@ const DashboardWrapper = (props) => {
                             <HStack mt={4}>
                                 <Avatar size={'sm'} name={userName} src={profilePic} />
                                 <Box>
-                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>EKO ID: </span> EKO1234</Text>
-                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>PAYSPRINT ID: </span> PS1234</Text>
+                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>EKO ID: </span> {ekoId}</Text>
+                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>PAYSPRINT ID: </span> {paysprintId}</Text>
                                 </Box>
                             </HStack>
                         </DrawerHeader>
 
-                        <DrawerBody mt={8}>
+                        <DrawerBody mt={2}>
 
-                            <VStack spacing={4}>
+                            <VStack spacing={2}>
 
                                 {
                                     SidebarOptions.map((option, key) => {
