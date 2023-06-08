@@ -181,7 +181,7 @@ const Index = () => {
                         boxShadow={'lg'}
                         p={4} marginTop={8}
                         bgImage={'/mobileBg.svg'}
-                        bgAttachment={'fixed'}
+                        bgSize={'cover'}
                         bgRepeat={'no-repeat'}
                     >
                         <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Explore Our Services</Text>
@@ -366,7 +366,7 @@ const Index = () => {
                         boxShadow={'lg'}
                         p={['6', 4]} marginTop={8}
                         bgImage={'/mobileBg.svg'}
-                        bgAttachment={'fixed'}
+                        bgSize={'cover'}
                         bgRepeat={'no-repeat'}
                     >
                         <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Bill Payment & Recharge</Text>
@@ -376,7 +376,7 @@ const Index = () => {
                                 bbpsProvider == "eko" ?
                                     categories.map((item, key) => (
                                         <Box
-                                            w={['28%', '20%']} p={[4]} key={key}
+                                            w={['25%', '20%']} p={[4]} key={key}
                                             _hover={{ bgColor: 'rgba(0,0,0,0.2)' }}
                                             rounded={'full'} transition={'all .3s ease'}
                                         >
