@@ -101,7 +101,8 @@ const Index = () => {
     {
       headerName: "Additional Info",
       field: 'metadata',
-      defaultMinWidth: 300
+      defaultMinWidth: 300,
+      hide: true
     },
     {
       headerName: "Receipt",
@@ -111,6 +112,30 @@ const Index = () => {
       width: 80
     }
   ])
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        const canvas = await html2canvas(pdfRef.current);
+        const imageBlob = await new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          });
+        });
+
+        await navigator.share({
+          title: title,
+          files: [new File([imageBlob], 'image.png', { type: 'image/png' })],
+          url: url
+        });
+      } else {
+        // Fallback code if the Web Share API is not supported
+        console.log('Web Share API not supported');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
@@ -249,7 +274,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
-              onFirstDataRendered={(params)=>params.api.sizeColumnsToFit()}
+              onFirstDataRendered={(params) => params.api.sizeColumnsToFit()}
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {
@@ -335,8 +360,12 @@ const Index = () => {
             </ModalBody>
           </Box>
           <ModalFooter>
-            <HStack justifyContent={'center'} gap={8}>
-
+            <HStack justifyContent={'center'} gap={4}>
+              <Button
+                colorScheme='yellow'
+                size={'sm'} rounded={'full'}
+                onClick={handleShare}
+              >Share</Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                 {
                   ({ toPdf }) => <Button
