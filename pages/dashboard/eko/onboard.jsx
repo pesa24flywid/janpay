@@ -93,6 +93,7 @@ const OnboardEko = () => {
     }).catch(err => {
       if (err.response.status == 502) {
         setIsOnboarded(false)
+        sendOtp()
       }
     })
   }, [])
