@@ -317,134 +317,144 @@ const Login = () => {
                 <title>Pesa24</title>
             </Head>
             <Navbar />
-            <HStack
-                w={'full'} pos={'relative'}
-                alignItems={'center'} justifyContent={'center'}
-            >
-                <Box w={['full', 'md']} overflow={'hidden'}>
-                    <Box ref={swiperRef} className='swiper-container'>
-                        <Box className='swiper-wrapper'>
-                            <Box w={['full', 'md']} className='swiper-slide'>
-                                <form action="#" method="post" onSubmit={formik.handleSubmit}>
-                                    <VStack p={[4, 8]} w={['full', 'md', 'lg']}>
-                                        <Text fontSize={'2xl'}
-                                            textTransform={'capitalize'}
-                                            fontWeight={'600'}
-                                            color={'#444'}
-                                        >Login</Text>
+            <Box minH={'100vh'}>
+                <HStack
+                    w={'full'} pos={'relative'}
+                    alignItems={'center'} justifyContent={'center'}
+                >
+                    <Box w={['full', 'md']} overflow={'hidden'}>
+                        <Box ref={swiperRef} className='swiper-container'>
+                            <Box className='swiper-wrapper'>
+                                <Box w={['full', 'md']} className='swiper-slide'>
+                                    <form action="#" method="post" onSubmit={formik.handleSubmit}>
+                                        <VStack p={[4, 8]} w={['full', 'md', 'lg']}>
+                                            <Text fontSize={'2xl'}
+                                                textTransform={'capitalize'}
+                                                fontWeight={'600'}
+                                                color={'#444'}
+                                            >Login</Text>
 
-                                        <VStack py={8} alignItems={'flex-start'}>
-                                            <Box mb={4}>
-                                                <FormLabel pl={2}
-                                                    htmlFor='user_id'
-                                                    textAlign={'left'} mb={0}
-                                                    color={'darkslategray'}>Phone Number or Email ID
-                                                </FormLabel>
-                                                <InputGroup w={['xs', 'sm']}>
-                                                    <InputLeftAddon
-                                                        children={authMethod == "phone" ? <FiPhone /> : <FiMail />} rounded={'full'}
-                                                    />
-                                                    <Input
+                                            <VStack py={8} alignItems={'flex-start'}>
+                                                <Box mb={4}>
+                                                    <FormLabel pl={2}
+                                                        htmlFor='user_id'
+                                                        textAlign={'left'} mb={0}
+                                                        color={'darkslategray'}>Phone Number or Email ID
+                                                    </FormLabel>
+                                                    <InputGroup w={['xs', 'sm']}>
+                                                        <InputLeftAddon
+                                                            children={authMethod == "phone" ? <FiPhone /> : <FiMail />} rounded={'full'}
+                                                        />
+                                                        <Input
+                                                            rounded={'full'}
+                                                            name={'user_id'}
+                                                            placeholder={'Phone Number or Email'}
+                                                            bg={'blue.100'}
+                                                            required value={formik.values.user_id}
+                                                            onChange={(e) => { checkAuthMethod(e); formik.handleChange(e) }}
+                                                        />
+                                                    </InputGroup>
+                                                </Box>
+                                                <Box mb={4}>
+                                                    <FormLabel
+                                                        htmlFor='password'
+                                                        textAlign={'left'} mb={0}
+                                                        color={'darkslategray'}>Password
+                                                    </FormLabel>
+                                                    <InputGroup w={['xs', 'sm']}>
+                                                        <Input
+                                                            rounded={'full'}
+                                                            type={passwordVisible ? 'text' : 'password'} name={'password'}
+                                                            placeholder={'Password'} bg={'blue.100'}
+                                                            required onChange={formik.handleChange}
+                                                        />
+                                                        <InputRightElement
+                                                        >
+                                                            {passwordVisible ?
+                                                                <Button
+                                                                    w={'2em'}
+                                                                    display={'grid'} bg={'none'}
+                                                                    placeContent={'center'}
+                                                                    cursor={'pointer'} rounded={'full'}
+                                                                    onClick={() => setPasswordVisible(!passwordVisible)}
+                                                                >
+                                                                    <BsEyeSlashFill fontSize={20} />
+                                                                </Button>
+                                                                :
+                                                                <Button
+                                                                    w={'2em'}
+                                                                    display={'grid'} bg={'none'}
+                                                                    placeContent={'center'}
+                                                                    cursor={'pointer'} rounded={'full'}
+                                                                    onClick={() => setPasswordVisible(!passwordVisible)}
+                                                                >
+                                                                    <BsEyeFill fontSize={20} />
+                                                                </Button>}
+                                                        </InputRightElement>
+                                                    </InputGroup>
+                                                    <Link href={'../auth/reset-password'}>
+                                                        <Text
+                                                            pt={2}
+                                                            fontSize={'sm'}
+                                                            color={'blue'}
+                                                            textAlign={'right'}>Reset Password</Text>
+                                                    </Link>
+                                                </Box>
+                                                <HStack spacing={6} pt={4}>
+                                                    <Text>Login Preference</Text>
+                                                    <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
+                                                        <HStack spacing={4}>
+                                                            <Radio value='otp'>OTP</Radio>
+                                                            <Radio value='mpin'>MPIN</Radio>
+                                                        </HStack>
+                                                    </RadioGroup>
+                                                </HStack>
+                                                <Box pt={6}>
+                                                    <Button
+                                                        w={['xs', 'sm']}
                                                         rounded={'full'}
-                                                        name={'user_id'}
-                                                        placeholder={'Phone Number or Email'}
-                                                        bg={'blue.100'}
-                                                        required value={formik.values.user_id}
-                                                        onChange={(e) => { checkAuthMethod(e); formik.handleChange(e) }}
-                                                    />
-                                                </InputGroup>
-                                            </Box>
-                                            <Box mb={4}>
-                                                <FormLabel
-                                                    htmlFor='password'
-                                                    textAlign={'left'} mb={0}
-                                                    color={'darkslategray'}>Password
-                                                </FormLabel>
-                                                <InputGroup w={['xs', 'sm']}>
-                                                    <Input
-                                                        rounded={'full'}
-                                                        type={passwordVisible ? 'text' : 'password'} name={'password'}
-                                                        placeholder={'Password'} bg={'blue.100'}
-                                                        required onChange={formik.handleChange}
-                                                    />
-                                                    <InputRightElement
+                                                        colorScheme={'blue'}
+                                                        variant={'outline'}
+                                                        autoFocus={false}
+                                                        disabled={otpBtnDisabled}
+                                                        onClick={formik.handleSubmit}
                                                     >
-                                                        {passwordVisible ?
-                                                            <Button
-                                                                w={'2em'}
-                                                                display={'grid'} bg={'none'}
-                                                                placeContent={'center'}
-                                                                cursor={'pointer'} rounded={'full'}
-                                                                onClick={() => setPasswordVisible(!passwordVisible)}
-                                                            >
-                                                                <BsEyeSlashFill fontSize={20} />
-                                                            </Button>
-                                                            :
-                                                            <Button
-                                                                w={'2em'}
-                                                                display={'grid'} bg={'none'}
-                                                                placeContent={'center'}
-                                                                cursor={'pointer'} rounded={'full'}
-                                                                onClick={() => setPasswordVisible(!passwordVisible)}
-                                                            >
-                                                                <BsEyeFill fontSize={20} />
-                                                            </Button>}
-                                                    </InputRightElement>
-                                                </InputGroup>
-                                                <Link href={'../auth/reset-password'}>
-                                                    <Text
-                                                        pt={2}
-                                                        fontSize={'sm'}
-                                                        color={'blue'}
-                                                        textAlign={'right'}>Reset Password</Text>
-                                                </Link>
-                                            </Box>
-                                            <HStack spacing={6} pt={4}>
-                                                <Text>Login Preference</Text>
-                                                <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
-                                                    <HStack spacing={4}>
-                                                        <Radio value='otp'>OTP</Radio>
-                                                        <Radio value='mpin'>MPIN</Radio>
-                                                    </HStack>
-                                                </RadioGroup>
-                                            </HStack>
-                                            <Box pt={6}>
-                                                <Button
-                                                    w={['xs', 'sm']}
-                                                    rounded={'full'}
-                                                    colorScheme={'blue'}
-                                                    variant={'outline'}
-                                                    autoFocus={false}
-                                                    disabled={otpBtnDisabled}
-                                                    onClick={formik.handleSubmit}
-                                                >
-                                                    Login
-                                                </Button>
-                                            </Box>
+                                                        Login
+                                                    </Button>
+                                                </Box>
+                                            </VStack>
                                         </VStack>
-                                    </VStack>
-                                </form>
-                                <Text w={'full'} cursor={'pointer'} color={'blue.700'} fontWeight={'semibold'} textAlign={'center'} onClick={handleNext}>Not a member? Register here.</Text>
-                            </Box>
-                            <Box w={['full', 'md']} className='swiper-slide'>
-                                <Register />
-                                <Text w={'full'} cursor={'pointer'} color={'blue.700'} fontWeight={'semibold'} textAlign={'center'} onClick={handlePrev}>Already Registered? Login here.</Text>
+                                    </form>
+                                    <Text w={'full'} cursor={'pointer'} color={'blue.700'} fontWeight={'semibold'} textAlign={'center'} onClick={handleNext}>Not a member? Register here.</Text>
+                                </Box>
+                                <Box w={['full', 'md']} className='swiper-slide'>
+                                    <Register />
+                                    <Text w={'full'} cursor={'pointer'} color={'blue.700'} fontWeight={'semibold'} textAlign={'center'} onClick={handlePrev}>Already Registered? Login here.</Text>
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
-                </Box>
-                <VStack w={['none', 'sm', 'md']}
-                    display={['none', 'flex', 'flex']}
-                    alignItems={'center'} justifyContent={'center'}
-                    h={'full'} borderRadius={['unset', '0 12 12 0']}
-                >
-                    <Image
-                        src={'../auth.png'}
-                    />
-                </VStack>
-            </HStack>
-            <Text my={8} fontSize={'xs'} w={'full'} textAlign={'center'}>&copy; {new Date().getFullYear()} {process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
-
+                    <VStack w={['none', 'sm', 'md']}
+                        display={['none', 'flex', 'flex']}
+                        alignItems={'center'} justifyContent={'center'}
+                        h={'full'} borderRadius={['unset', '0 12 12 0']}
+                    >
+                        <Image
+                            src={'../auth.png'}
+                        />
+                    </VStack>
+                </HStack>
+                <Text mt={8} fontSize={'xs'} w={'full'} textAlign={'center'}>&copy; {new Date().getFullYear()} {process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+            </Box>
+            <Image
+                src='/bottomwave.svg'
+                pos={'absolute'}
+                bottom={0} left={0}
+                right={0} objectFit={'cover'}
+                objectPosition={'top'}
+                opacity={'20%'}
+                height={'10%'}
+            />
 
             {/* MPIN Modal */}
             <Modal

@@ -103,7 +103,7 @@ const Register = () => {
                         Register
                     </Text>
 
-                    <VStack spacing={8} alignItems={'flex-start'}>
+                    <VStack spacing={8} alignItems={'center'}>
                         <HStack spacing={4} w={['xs', 'sm']}>
                             <Box>
                                 <FormLabel
@@ -208,10 +208,16 @@ const Register = () => {
                             <RadioGroup name={'user_type'}
                                 onChange={(value) => formik.setFieldValue("user_type", value)}
                                 value={formik.values.user_type} >
-                                <Stack direction={['column', 'row']} spacing={[3, 6]}>
+                                <Stack
+                                    direction={'row'} gap={[3, 6]}
+                                    alignItems={'center'} justifyContent={'flex-start'}
+                                >
                                     <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>
                                     <Radio isDisabled={isDistributorDisabled} value={'distributor'}>Distributor</Radio>
-                                    <Radio isDisabled={isSuperDistributorDisabled} value={'super_distributor'}>Super Distributor</Radio>
+                                    <Radio
+                                        isDisabled={isSuperDistributorDisabled}
+                                        value={'super_distributor'}
+                                    >Super Distributor</Radio>
                                 </Stack>
                             </RadioGroup>
                         </Box>

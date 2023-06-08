@@ -38,10 +38,6 @@ import SimpleAccordion from '../../hocs/SimpleAccordion'
 import DashboardWrapper from '../../hocs/DashboardLayout'
 import Link from 'next/link'
 import BackendAxios from '../../lib/axios'
-import { BiIdCard, BiMobileAlt, BiRupee } from 'react-icons/bi'
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { BsArrowRight, BsHeartFill } from 'react-icons/bs'
 
 const Dashboard = () => {
   const [newNotification, setNewNotification] = useState(true)

@@ -1,27 +1,112 @@
 import React, { useState, useEffect } from 'react'
 import DashboardWrapper from '../../../hocs/DashboardLayout'
-import { Box, Button, HStack, Icon, Image, Stack, Text, VStack } from '@chakra-ui/react'
+import {
+    Box,
+    Button,
+    HStack,
+    Icon,
+    Image,
+    Stack,
+    Text,
+    VStack,
+    useToast
+} from '@chakra-ui/react'
 import { Carousel } from 'react-responsive-carousel'
 import Link from 'next/link'
-import { FaCar, FaFingerprint, FaMobile, FaRegMoneyBillAlt } from 'react-icons/fa'
-import { BiIdCard, BiMobileAlt } from 'react-icons/bi'
-import { BsArrowRight, BsHeartFill } from 'react-icons/bs'
+import { FaCar, FaCity, FaFingerprint, FaHeart, FaMobile, FaMoneyBillAlt, FaRegMoneyBillAlt, FaSatelliteDish, FaUsers } from 'react-icons/fa'
+import { BiIdCard, BiMobileAlt, BiRupee } from 'react-icons/bi'
+import { BsArrowRight, BsCreditCardFill, BsDropletFill, BsEmojiSmileFill, BsHeartFill, BsHouseDoorFill, BsLightningChargeFill } from 'react-icons/bs'
 import { IoMdFingerPrint, IoMdUmbrella } from 'react-icons/io'
-import BackendAxios from '../../../lib/axios'
+import BackendAxios, { ClientAxios } from '../../../lib/axios'
 import Cookies from 'js-cookie'
 import Marquee from 'react-fast-marquee'
+import Loader from '../../../hocs/Loader'
+import { HiServerStack } from 'react-icons/hi2'
+import { AiFillFire } from 'react-icons/ai'
+import { GiMoneyStack, GiRotaryPhone } from 'react-icons/gi'
+import { GoMortarBoard } from 'react-icons/go'
+import { FiMonitor } from 'react-icons/fi'
 
 const Index = () => {
+    const Toast = useToast({ position: 'top-right' })
+    const [isLoading, setIsLoading] = useState(false)
     const images = [
         'https://cdn.corporatefinanceinstitute.com/assets/online-payment-companies-1024x683.jpeg',
         'https://images.gizbot.com/fit-in/img/600x338/2020/11/ds4-1605688425.jpg',
         'https://sbnri.com/blog/wp-content/uploads/2022/09/Bharat-Bill-Payment-1.jpg',
         // Add more image URLs as needed
     ];
+    const [aepsData, setAepsData] = useState({ count: 0, debit: 0, credit: 0 })
+    const [bbpsData, setBbpsData] = useState({ count: 0, debit: 0, credit: 0 })
+    const [dmtData, setDmtData] = useState({ count: 0, debit: 0, credit: 0 })
+    const [rechargeData, setRechargeData] = useState({ count: 0, debit: 0, credit: 0 })
+    const [bbpsProvider, setBbpsProvider] = useState("")
+    const [categories, setCategories] = useState([])
+
+    // Fetch all available categories
+    useEffect(() => {
+        setIsLoading(true)
+        if (bbpsProvider == "eko") {
+            BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
+                setCategories(res.data.data)
+                setIsLoading(false)
+            }).catch((err) => {
+                console.log(err)
+                setIsLoading(false)
+                Toast({
+                    status: 'warning',
+                    title: "Error while fetching operators",
+                    description: err.response?.data?.message || err.response?.data || err.message
+                })
+            })
+        }
+        if (bbpsProvider == "paysprint") {
+            BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then(res => {
+                setAllData(Object.keys(res.data).map((item, key) => ({
+                    operator_category_name: item,
+                    operators: res.data[item],
+                    status: 1
+                })))
+                setCategories(Object.keys(res.data).map((item, key) => ({
+                    operator_category_name: item,
+                    status: 1
+                })))
+                setIsLoading(false)
+            }).catch(err => {
+                console.log(err)
+                Toast({
+                    status: 'warning',
+                    description: "Error while fetching operators"
+                })
+                setIsLoading(false)
+            })
+        }
+    }, [bbpsProvider])
+
+    useEffect(() => {
+        setIsLoading(true)
+        BackendAxios.get('/api/user/overview?tenure=today').then(res => {
+            setAepsData(res.data[0].aeps)
+            setBbpsData(res.data[1].bbps)
+            setDmtData(res.data[2].dmt)
+            setRechargeData(res.data[8].recharge)
+            setIsLoading(false)
+        })
+
+        ClientAxios.get(`/api/global`).then(res => {
+            setBbpsProvider(res.data[0]?.bbps_provider)
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [])
 
     return (
         <>
             <DashboardWrapper pageTitle={'Home'}>
+                {
+                    isLoading ?
+                        <Loader /> : null
+                }
                 <Box>
                     <Box py={2} bgColor={'yellow.50'} mt={4} rounded={8}>
                         <Marquee pauseOnHover={true} delay={3}>
@@ -29,58 +114,62 @@ const Index = () => {
                         </Marquee>
                     </Box>
                     <HStack mt={8}>
-                        <Stack 
-                        direction={['column', 'row']} 
-                        p={4} boxShadow={'md'}
-                        rounded={8} flex={1}
-                        bgImage={'/greenbg.svg'}
-                        bgSize={'cover'}
-                        bgRepeat={'no-repeat'}
-                        color={'#FFF'}
-                        spacing={4}
-                        alignItems={'center'}
-                        justifyContent={['center', 'flex-start']}
+                        <Stack
+                            direction={['column', 'row']}
+                            p={4} boxShadow={'md'}
+                            rounded={8} flex={1}
+                            bgImage={'/greenbg.svg'}
+                            bgSize={'cover'}
+                            bgRepeat={'no-repeat'}
+                            color={'#FFF'}
+                            spacing={4}
+                            alignItems={'center'}
+                            justifyContent={['center', 'flex-start']}
                         >
                             <Icon as={IoMdFingerPrint} fontSize={[28, 48]} />
                             <Box>
                                 <Text fontSize={['sm']} textAlign={['center', 'left']}>AePS</Text>
-                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ {Math.abs(aepsData.credit - aepsData.debit) || 0}</Text>
                             </Box>
                         </Stack>
-                        <Stack 
-                        direction={['column', 'row']} 
-                        p={4} boxShadow={'md'}
-                        rounded={8} flex={1}
-                        bgImage={'/greenbg.svg'}
-                        bgSize={'cover'}
-                        bgRepeat={'no-repeat'}
-                        color={'#FFF'}
-                        spacing={4}
-                        alignItems={'center'}
-                        justifyContent={['center', 'flex-start']}
+                        <Stack
+                            direction={['column', 'row']}
+                            p={4} boxShadow={'md'}
+                            rounded={8} flex={1}
+                            bgImage={'/greenbg.svg'}
+                            bgSize={'cover'}
+                            bgRepeat={'no-repeat'}
+                            color={'#FFF'}
+                            spacing={4}
+                            alignItems={'center'}
+                            justifyContent={['center', 'flex-start']}
                         >
                             <Icon as={FaMobile} fontSize={[28, 48]} />
                             <Box>
                                 <Text fontSize={['sm']} textAlign={['center', 'left']}>Recharges</Text>
-                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>
+                                    ₹ {Math.abs(bbpsData.credit + rechargeData.credit - (bbpsData.debit + bbpsData.debit)) || 0}
+                                </Text>
                             </Box>
                         </Stack>
-                        <Stack 
-                        direction={['column', 'row']} 
-                        p={4} boxShadow={'md'}
-                        rounded={8} flex={1}
-                        bgImage={'/greenbg.svg'}
-                        bgSize={'cover'}
-                        bgRepeat={'no-repeat'}
-                        color={'#FFF'}
-                        spacing={4}
-                        alignItems={'center'}
-                        justifyContent={['center', 'flex-start']}
+                        <Stack
+                            direction={['column', 'row']}
+                            p={4} boxShadow={'md'}
+                            rounded={8} flex={1}
+                            bgImage={'/greenbg.svg'}
+                            bgSize={'cover'}
+                            bgRepeat={'no-repeat'}
+                            color={'#FFF'}
+                            spacing={4}
+                            alignItems={'center'}
+                            justifyContent={['center', 'flex-start']}
                         >
                             <Icon as={FaRegMoneyBillAlt} fontSize={[28, 48]} />
                             <Box>
                                 <Text fontSize={['sm']} textAlign={['center', 'left']}>DMT</Text>
-                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ 23453</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>
+                                    ₹ {Math.abs(dmtData.credit - dmtData.debit) || 0}
+                                </Text>
                             </Box>
                         </Stack>
                     </HStack>
@@ -109,7 +198,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={FaFingerprint} color={'#FFF'} />
+                                    <Icon fontSize={36} as={FaFingerprint} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -134,7 +223,7 @@ const Index = () => {
                                         rounded={'full'}
                                         display={'grid'}
                                         placeContent={'center'}
-                                        fontSize={[36, 24]}
+                                        fontSize={36}
                                         lineHeight={['9', '9']}
                                     >B</Text>
                                     <Text
@@ -157,7 +246,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={FaRegMoneyBillAlt} color={'#FFF'} />
+                                    <Icon fontSize={36} as={FaRegMoneyBillAlt} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -177,7 +266,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={BiMobileAlt} color={'#FFF'} />
+                                    <Icon fontSize={36} as={BiMobileAlt} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -197,7 +286,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={FaCar} color={'#FFF'} />
+                                    <Icon fontSize={36} as={FaCar} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -217,7 +306,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={BsHeartFill} color={'#FFF'} />
+                                    <Icon fontSize={36} as={IoMdUmbrella} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -237,7 +326,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={[36, 24]} as={BiIdCard} color={'#FFF'} />
+                                    <Icon fontSize={36} as={BiIdCard} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -266,6 +355,90 @@ const Index = () => {
                                     >Axis Bank</Text>
                                 </Link>
                             </Box>
+
+                        </HStack>
+                    </Box>
+
+                    <Box
+                        width={'100%'}
+                        rounded={16}
+                        boxShadow={'lg'}
+                        p={['6', 4]} marginTop={8}
+                        bgImage={'/mobileBg.svg'}
+                        bgAttachment={'fixed'}
+                    >
+                        <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Bill Payment & Recharge</Text>
+
+                        <HStack justifyContent={['space-between', 'flex-start']} gap={[4, 8]} flexWrap={'wrap'}>
+                            {
+                                bbpsProvider == "eko" ?
+                                    categories.map((item, key) => (
+                                        <Box
+                                            w={['28%', '20%']} p={[4]} key={key}
+                                            _hover={{ bgColor: 'rgba(0,0,0,0.2)' }}
+                                            rounded={'full'} transition={'all .3s ease'}
+                                        >
+                                            <Link
+                                                href={'#'}
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'flex-start',
+                                                    gap: '8px',
+                                                    height: '84px'
+                                                }}
+                                            >
+                                                {
+                                                    item.operator_category_name.toLowerCase().includes("mobile")
+                                                        ? <FaMobile color={'#FFF'} size={28} /> :
+                                                        item.operator_category_name.toLowerCase().includes("broadband")
+                                                            ? <HiServerStack color={'#FFF'} size={28} /> :
+                                                            item.operator_category_name.toLowerCase().includes("gas") || item.operator_category_name.toLowerCase().includes("lpg")
+                                                                ? <AiFillFire color={'#FFF'} size={28} /> :
+                                                                item.operator_category_name.toLowerCase().includes("dth")
+                                                                    ? <FaSatelliteDish color={'#FFF'} size={28} /> :
+                                                                    item.operator_category_name.toLowerCase().includes("card")
+                                                                        ? <BsCreditCardFill color={'#FFF'} size={28} /> :
+                                                                        item.operator_category_name.toLowerCase().includes("electricity")
+                                                                            ? <BsLightningChargeFill color={'#FFF'} size={28} /> :
+                                                                            item.operator_category_name.toLowerCase().includes("landline")
+                                                                                ? <GiRotaryPhone color={'#FFF'} size={28} /> :
+                                                                                item.operator_category_name.toLowerCase().includes("water")
+                                                                                    ? <BsDropletFill color={'#FFF'} size={28} /> :
+                                                                                    item.operator_category_name.toLowerCase().includes("housing") || item.operator_category_name.toLowerCase().includes("rental")
+                                                                                        ? <BsHouseDoorFill color={'#FFF'} size={28} /> :
+                                                                                        item.operator_category_name.toLowerCase().includes("education")
+                                                                                            ? <GoMortarBoard color={'#FFF'} size={28} /> :
+                                                                                            item.operator_category_name.toLowerCase().includes("tax")
+                                                                                                ? <BiRupee color={'#FFF'} size={28} /> :
+                                                                                                item.operator_category_name.toLowerCase().includes("associations")
+                                                                                                    ? <FaUsers color={'#FFF'} size={28} /> :
+                                                                                                    item.operator_category_name.toLowerCase().includes("tv")
+                                                                                                        ? <FiMonitor color={'#FFF'} size={28} /> :
+                                                                                                        item.operator_category_name.toLowerCase().includes("hospital") || item.operator_category_name.toLowerCase().includes("donation")
+                                                                                                            ? <FaHeart color={'#FFF'} size={28} /> :
+                                                                                                            item.operator_category_name.toLowerCase().includes("insurance")
+                                                                                                                ? <IoMdUmbrella color={'#FFF'} size={28} /> :
+                                                                                                                item.operator_category_name.toLowerCase().includes("loan")
+                                                                                                                    ? <GiMoneyStack color={'#FFF'} size={28} /> :
+                                                                                                                    item.operator_category_name.toLowerCase().includes("fastag")
+                                                                                                                        ? <FaCar color={'#FFF'} size={28} /> :
+                                                                                                                        item.operator_category_name.toLowerCase().includes("municipal services")
+                                                                                                                            ? <FaCity color={'#FFF'} size={28} /> :
+                                                                                                                            item.operator_category_name.toLowerCase().includes("subscription")
+                                                                                                                                ? <FaMoneyBillAlt color={'#FFF'} size={28} /> : <BiRupee color={'#FFF'} size={28} />
+                                                }
+                                                <Text
+                                                    textAlign={'center'}
+                                                    color={'#FFF'}
+                                                    fontSize={['sm', 'md']}
+                                                >{item.operator_category_name}</Text>
+                                            </Link>
+                                        </Box>
+                                    ))
+                                    : null
+                            }
 
                         </HStack>
                     </Box>

@@ -270,6 +270,7 @@ export const SidebarOptions =
 const Sidebar = ({ userName, userImage }) => {
   const alwaysAvailable = ['viewProfile', 'editProfile', 'resetMpin', 'resetPassword']
   const [availablePages, setAvailablePages] = useState(['activate'])
+  const [servicesLoading, setServicesLoading] = useState(false)
   const Router = useRouter()
   const { pageId } = Router.query
   const [userType, setUserType] = useState("")
@@ -292,6 +293,7 @@ const Sidebar = ({ userName, userImage }) => {
   }
 
   useEffect(() => {
+    setServicesLoading(true)
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -300,8 +302,10 @@ const Sidebar = ({ userName, userImage }) => {
       }
     }).then((res) => {
       setAvailablePages(res.data[0].allowed_pages)
+      setServicesLoading(false)
     }).catch((err) => {
       console.log(err)
+      setServicesLoading(false)
     })
   }, [])
 
@@ -385,6 +389,9 @@ const Sidebar = ({ userName, userImage }) => {
                             overflow={'hidden'}
                             id={'payout'}
                           >
+                            {
+                              servicesLoading ? <Text fontSize={'xs'} color={'aqua'}>Loading services...</Text> : null
+                            }
 
                             {option.children.map((item, key) => {
                               if (availablePages.includes(item.id) || alwaysAvailable.includes(item.id)) {
@@ -430,7 +437,6 @@ const Sidebar = ({ userName, userImage }) => {
 
             {
               userType != "retailer" &&
-
               <Accordion allowToggle w={'full'}>
 
                 <AccordionItem>

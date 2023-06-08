@@ -249,7 +249,7 @@ const DashboardWrapper = (props) => {
                         </Box>
 
                         <Show below='md'>
-                            <Box w={'full'} py={16}>
+                            <Box w={'full'} py={10}>
 
                             </Box>
                         </Show>

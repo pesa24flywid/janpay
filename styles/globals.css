@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-*{
+* {
     font-family: 'Poppins', sans-serif;
 }
 
@@ -10,7 +10,7 @@
 /* Tertiary - #2DCDDF */
 /* Additional - #F2DEBA */
 
-.menu-dropdown-item:not(:last-of-type){
+.menu-dropdown-item:not(:last-of-type) {
     border-bottom: 1px solid #999;
 }
 
@@ -18,15 +18,18 @@
     display: none;
 } */
 
-.ag-theme-pesa24-blue .ag-root-wrapper{
+.ag-theme-pesa24-blue .ag-root-wrapper {
     border: none !important;
 }
-.ag-theme-pesa24-blue .ag-header-row{
+
+.ag-theme-pesa24-blue .ag-header-row {
     background-color: #30A2FF !important;
 }
-.ag-theme-pesa24-blue .ag-header-cell{
+
+.ag-theme-pesa24-blue .ag-header-cell {
     color: #FFF;
 }
-.ag-theme-pesa24-blue .ag-floating-filter{
+
+.ag-theme-pesa24-blue .ag-floating-filter {
     color: #333;
 }
