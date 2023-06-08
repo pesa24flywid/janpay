@@ -276,7 +276,7 @@ const DashboardWrapper = (props) => {
                         border={'1px'}
                         borderColor={'#FAFAFA'}
                     >
-                        <Link href={'/'}>
+                        <Link href={'/dashboard/home?pageId=home'}>
                             <VStack h={'100%'} justifyContent={'space-between'}>
                                 <BsHouseDoorFill fontSize={'20'} />
                                 <Text fontSize={'xs'} textAlign={'center'}>Home</Text>

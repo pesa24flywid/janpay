@@ -133,160 +133,159 @@ const Dashboard = () => {
       },
     ]
   }
-  
+
   return (
     <>
       <DashboardWrapper titleText='Dashboard'>
-        <Show above='md'>
-          <HStack justifyContent={'space-between'} py={4}>
-            <Text>Your Earning Statistics</Text>
-            <Select
-              name='earningStatsDuration'
-              w={'xs'} bg={'white'}
-              onChange={e => getOverview(e.target.value)}
+
+        <HStack justifyContent={'space-between'} py={4}>
+          <Text>Your Earning Statistics</Text>
+          <Select
+            name='earningStatsDuration'
+            w={'xs'} bg={'white'}
+            onChange={e => getOverview(e.target.value)}
+          >
+            <option value="today">Today</option>
+            <option value="month">1 Month</option>
+            <option value="year">1 Year</option>
+          </Select>
+        </HStack>
+        <Stack direction={['row']}
+          w={'full'} py={8} spacing={[0, 4]}
+          justifyContent={'space-between'}
+          flexWrap={'wrap'} alignItems={['flex-start']}
+        >
+          <DataCard
+            title={'AePS Transactions'}
+            data={aepsData?.credit - aepsData?.debit}
+            icon={<GiReceiveMoney color='white' size={'32'} />}
+            color={'#FF7B54'}
+          />
+          <DataCard
+            title={'DMT Transactions'}
+            data={dmtData?.debit - dmtData?.credit}
+            icon={<FaMoneyBillAlt color='white' size={'32'} />}
+            color={'#6C00FF'}
+          />
+          <DataCard
+            title={'Mobile Recharge'}
+            data={0}
+            icon={<FaMobile color='white' size={'32'} />}
+            color={'#FFB100'}
+          />
+          <DataCard
+            title={'Your Earnings'}
+            data={0}
+            icon={<GiTakeMyMoney color='white' size={'32'} />}
+            color={'#88A47C'}
+          />
+        </Stack>
+        <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+          <TransactionCard
+            color={'#6C00FF'}
+            title={"AePS"}
+            quantity={aepsData?.count}
+            amount={aepsData?.credit - aepsData?.debit}
+          />
+
+          <TransactionCard
+            color={'#3C79F5'}
+            title={"BBPS"}
+            quantity={bbpsData?.count}
+            amount={bbpsData?.debit - bbpsData?.credit}
+          />
+
+          <TransactionCard
+            color={'#2DCDDF'}
+            title={"DMT"}
+            quantity={dmtData?.count}
+            amount={dmtData?.debit - dmtData?.credit}
+          />
+        </Stack>
+
+        <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+          <TransactionCard
+            color={'#F2DEBA'}
+            title={"PAN"}
+            quantity={panData?.count}
+            amount={panData?.debit - panData?.credit}
+          />
+
+          <TransactionCard
+            color={'#FF8B13'}
+            title={"LIC"}
+            quantity={licData?.count}
+            amount={licData?.debit - licData?.credit}
+          />
+
+          <TransactionCard
+            color={'#13005A'}
+            title={"CMS"}
+            quantity={cmsData?.count}
+            amount={cmsData?.debit - cmsData?.credit}
+          />
+
+        </Stack>
+
+        <Stack
+          direction={['column', 'row']}
+          py={2} spacing={4}
+        >
+          <TransactionCard
+            color={'#13005A'}
+            title={"Fastag"}
+            quantity={fastagData?.count}
+            amount={fastagData?.debit - fastagData?.credit}
+          />
+
+          <TransactionCard
+            color={'#26845A'}
+            title={"Payout"}
+            quantity={payoutData?.count}
+            amount={payoutData?.debit - payoutData?.credit}
+          />
+
+          <TransactionCard
+            color={'#FF8B13'}
+            title={"Recharge"}
+            quantity={rechargeData?.count}
+            amount={rechargeData?.debit - rechargeData?.credit}
+          />
+
+        </Stack>
+
+        <Stack
+          pt={4}
+          direction={['column-reverse', 'row']}
+          justifyContent={['flex-start', 'space-between']}
+        >
+          <Hide below='md'>
+            <Box
+              w={['full', 'md', 'xl']}
+              p={4} rounded={12}
+              bg={'white'}
+              boxShadow={'md'}
             >
-              <option value="today">Today</option>
-              <option value="month">1 Month</option>
-              <option value="year">1 Year</option>
-            </Select>
-          </HStack>
-          <Stack direction={['row']}
-            w={'full'} py={8} spacing={[0, 4]}
-            justifyContent={'space-between'}
-            flexWrap={'wrap'} alignItems={['flex-start']}
-          >
-            <DataCard
-              title={'AePS Transactions'}
-              data={aepsData?.credit - aepsData?.debit}
-              icon={<GiReceiveMoney color='white' size={'32'} />}
-              color={'#FF7B54'}
-            />
-            <DataCard
-              title={'DMT Transactions'}
-              data={dmtData?.debit - dmtData?.credit}
-              icon={<FaMoneyBillAlt color='white' size={'32'} />}
-              color={'#6C00FF'}
-            />
-            <DataCard
-              title={'Mobile Recharge'}
-              data={0}
-              icon={<FaMobile color='white' size={'32'} />}
-              color={'#FFB100'}
-            />
-            <DataCard
-              title={'Your Earnings'}
-              data={0}
-              icon={<GiTakeMyMoney color='white' size={'32'} />}
-              color={'#88A47C'}
-            />
-          </Stack>
-          <Stack
-            direction={['column', 'row']}
-            py={2} spacing={4}
-          >
-            <TransactionCard
-              color={'#6C00FF'}
-              title={"AePS"}
-              quantity={aepsData?.count}
-              amount={aepsData?.credit - aepsData?.debit}
-            />
+              <Text mb={4}>New Notifications</Text>
+              {newNotification ? (
+                notifications.map((notification, key) =>
+                  <SimpleAccordion
+                    key={key}
+                    title={notification.title}
+                    content={notification.content}
+                  />
+                )
+              ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
+            </Box>
+          </Hide>
 
-            <TransactionCard
-              color={'#3C79F5'}
-              title={"BBPS"}
-              quantity={bbpsData?.count}
-              amount={bbpsData?.debit - bbpsData?.credit}
-            />
-
-            <TransactionCard
-              color={'#2DCDDF'}
-              title={"DMT"}
-              quantity={dmtData?.count}
-              amount={dmtData?.debit - dmtData?.credit}
-            />
-          </Stack>
-
-          <Stack
-            direction={['column', 'row']}
-            py={2} spacing={4}
-          >
-            <TransactionCard
-              color={'#F2DEBA'}
-              title={"PAN"}
-              quantity={panData?.count}
-              amount={panData?.debit - panData?.credit}
-            />
-
-            <TransactionCard
-              color={'#FF8B13'}
-              title={"LIC"}
-              quantity={licData?.count}
-              amount={licData?.debit - licData?.credit}
-            />
-
-            <TransactionCard
-              color={'#13005A'}
-              title={"CMS"}
-              quantity={cmsData?.count}
-              amount={cmsData?.debit - cmsData?.credit}
-            />
-
-          </Stack>
-
-          <Stack
-            direction={['column', 'row']}
-            py={2} spacing={4}
-          >
-            <TransactionCard
-              color={'#13005A'}
-              title={"Fastag"}
-              quantity={fastagData?.count}
-              amount={fastagData?.debit - fastagData?.credit}
-            />
-
-            <TransactionCard
-              color={'#26845A'}
-              title={"Payout"}
-              quantity={payoutData?.count}
-              amount={payoutData?.debit - payoutData?.credit}
-            />
-
-            <TransactionCard
-              color={'#FF8B13'}
-              title={"Recharge"}
-              quantity={rechargeData?.count}
-              amount={rechargeData?.debit - rechargeData?.credit}
-            />
-
-          </Stack>
-
-          <Stack
-            pt={4}
-            direction={['column-reverse', 'row']}
-            justifyContent={['flex-start', 'space-between']}
-          >
-            <Hide below='md'>
-              <Box
-                w={['full', 'md', 'xl']}
-                p={4} rounded={12}
-                bg={'white'}
-                boxShadow={'md'}
-              >
-                <Text mb={4}>New Notifications</Text>
-                {newNotification ? (
-                  notifications.map((notification, key) =>
-                    <SimpleAccordion
-                      key={key}
-                      title={notification.title}
-                      content={notification.content}
-                    />
-                  )
-                ) : <Box display={'grid'} placeContent={'center'}>No new notifications</Box>}
-              </Box>
-            </Hide>
-
-          </Stack>
-        </Show>
+        </Stack>
 
       </DashboardWrapper>
 
