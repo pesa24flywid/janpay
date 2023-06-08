@@ -18,10 +18,10 @@ const Loader = () => {
             >
                 <Lottie
                     animationData={loadingAnimation}
-                    style={{ width: '32px', height: '32px' }}
+                    style={{ width: '64px', height: '64px' }}
                     loop={true}
                 />
-                <Text textAlign={'center'} color={'#FFF'}>Loading... Please wait...</Text>
+                <Text textAlign={'center'} color={'#FFF'}>Loading data...</Text>
             </VStack>
         </>
     )

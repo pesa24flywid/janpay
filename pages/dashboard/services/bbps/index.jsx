@@ -51,14 +51,19 @@ import { BiRupee } from 'react-icons/bi'
 import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
 import Cookies from 'js-cookie'
 import Pdf from 'react-to-pdf'
+import { useRouter } from 'next/router'
+import Loader from '../../../../hocs/Loader'
 
 
 const Bbps = () => {
   const [bbpsProvider, setBbpsProvider] = useState("")
   const Toast = useToast({ position: 'top-right' })
   const { isOpen, onOpen, onClose } = useDisclosure()
-  useEffect(() => {
+  const [paramCategory, setParamCategory] = useState("")
+  const Router = useRouter()
+  const { passedCategory } = Router.query;
 
+  useEffect(() => {
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -90,14 +95,12 @@ const Bbps = () => {
       console.log(err)
     })
   }, [])
-
+  const [isLoading, setIsLoading] = useState(false)
   const [allData, setAllData] = useState([])
 
   const [categories, setCategories] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState()
 
   const [operators, setOperators] = useState([])
-  const [operatorListDisabled, setOperatorListDisabled] = useState(false)
   const [selectedOperator, setSelectedOperator] = useState()
 
   const [operatorParams, setOperatorParams] = useState()
@@ -111,12 +114,13 @@ const Bbps = () => {
 
   const [latlong, setLatlong] = useState("")
 
-
   // Fetch all available categories
   useEffect(() => {
+    setIsLoading(true)
     if (bbpsProvider == "eko") {
       BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
         setCategories(res.data.data)
+        setIsLoading(false)
       }).catch((err) => {
         console.log(err)
         Toast({
@@ -124,6 +128,7 @@ const Bbps = () => {
           title: "Error while fetching operators",
           description: err.response?.data?.message || err.response.data || err.message
         })
+        setIsLoading(false)
       })
     }
     if (bbpsProvider == "paysprint") {
@@ -137,12 +142,14 @@ const Bbps = () => {
           operator_category_name: item,
           status: 1
         })))
+        setIsLoading(false)
       }).catch(err => {
         console.log(err)
         Toast({
           status: 'warning',
           description: "Error while fetching operators"
         })
+        setIsLoading(false)
       })
     }
   }, [bbpsProvider])
@@ -150,32 +157,54 @@ const Bbps = () => {
   useEffect(() => {
     setLatlong(Cookies.get("latlong"))
     console.log(latlong)
-  })
+  }, [])
 
-
-  function fetchOperators(category_id) {
-    setSelectedOperator(null)
-    setOperatorParams()
+  useEffect(() => {
+    if (!Router.query.passedCategory) return
+    setIsLoading(true)
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/${category_id}`).then((res) => {
+      BackendAxios.get(`api/eko/bbps/operators/${Router.query.passedCategory}`).then((res) => {
         setOperators(res.data.data)
+        setIsLoading(false)
       }).catch((err) => {
         console.log(err)
+        setIsLoading(false)
       })
     }
     if (bbpsProvider == "paysprint") {
       setOperators(allData.filter(data => (category_id == data.operator_category_name))[0].operators)
+      setIsLoading(false)
+    }
+  }, [bbpsProvider])
+
+  function fetchOperators(category_id) {
+    setIsLoading(true)
+    if (bbpsProvider == "eko") {
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/${category_id}`).then((res) => {
+        setOperators(res.data.data)
+        setIsLoading(false)
+      }).catch((err) => {
+        console.log(err)
+        setIsLoading(false)
+      })
+    }
+    if (bbpsProvider == "paysprint") {
+      setOperators(allData.filter(data => (category_id == data.operator_category_name))[0].operators)
+      setIsLoading(false)
     }
   }
 
   function fetchParams(operator_id) {
+    setIsLoading(true)
     if (bbpsProvider == "eko") {
       BackendAxios.get(`api/${bbpsProvider}/bbps/operators/fields/${operator_id}`).then((res) => {
         setSelectedOperator(operator_id)
         setOperatorParams(res.data.data)
         res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)
+        setIsLoading(false)
       }).catch((err) => {
         console.log(err)
+        setIsLoading(false)
       })
     }
   }
@@ -183,6 +212,7 @@ const Bbps = () => {
   // Fetch Bill
   function fetchBill(e) {
     e.preventDefault()
+    setIsLoading(true)
     let formData = new FormData(document.getElementById('bbpsForm'))
     if (bbpsProvider == "eko") {
       FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
@@ -197,12 +227,14 @@ const Bbps = () => {
         setFetchBillResponse(res.data.data)
         setAmount(res.data.data.amount)
         setFetchBillBtn(false)
+        setIsLoading(false)
       }).catch(err => {
         Toast({
           status: 'error',
           title: 'Error while fetching bill',
           description: err.response?.data?.message || err.response?.data || err.message
         })
+        setIsLoading(false)
       })
     }
     if (bbpsProvider == "paysprint") {
@@ -214,15 +246,18 @@ const Bbps = () => {
           Toast({
             description: res.data.message
           })
+          setIsLoading(false)
           return
         }
         setFetchBillBtn(false)
         setAmount(res.data.amount)
+        setIsLoading(false)
       }).catch(err => {
         Toast({
           status: 'error',
           description: err.response.data.message || err.response.data || err.message
         })
+        setIsLoading(false)
       })
     }
   }
@@ -230,6 +265,7 @@ const Bbps = () => {
   // Pay Bill
   function payBill(e) {
     e.preventDefault()
+    setIsLoading(true)
     let formData = new FormData(document.getElementById('bbpsForm'))
     if (bbpsProvider == "eko") {
       var object = {};
@@ -240,7 +276,7 @@ const Bbps = () => {
         {
           ...object,
           mpin: mpin,
-          ...(fetchBillResponse.length ? {bill : fetchBillResponse} : {}),
+          ...(fetchBillResponse.length ? { bill: fetchBillResponse } : {}),
           utility_acc_no: object.utility_acc_no,
           confirmation_mobile_no: object.confirmation_mobile_no,
           amount: amount,
@@ -249,6 +285,7 @@ const Bbps = () => {
           latlong: latlong
         }
       ).then(res => {
+        setIsLoading(false)
         setReceipt({
           status: res.data.metadata?.status,
           show: true,
@@ -261,8 +298,10 @@ const Bbps = () => {
             status: 'error',
             description: 'MPIN is incorrect'
           })
+          setIsLoading(false)
           return
         }
+        setIsLoading(false)
         setReceipt({
           status: err.response.data?.metadata?.status,
           show: true,
@@ -286,6 +325,7 @@ const Bbps = () => {
           longitude: latlong.split(",")[1]
         }
       ).then(res => {
+        setIsLoading(false)
         setReceipt({
           status: res.data.metadata?.status,
           show: true,
@@ -298,8 +338,10 @@ const Bbps = () => {
             status: 'error',
             description: 'MPIN is incorrect'
           })
+          setIsLoading(false)
           return
         }
+        setIsLoading(false)
         setReceipt({
           status: err.response.data?.metadata?.status,
           show: true,
@@ -320,6 +362,9 @@ const Bbps = () => {
   return (
     <>
       <DashboardWrapper titleText={'BBPS Transaction'}>
+        {
+          isLoading ? <Loader /> : null
+        }
         <Stack
           w={'full'} bg={'white'}
           boxShadow={'md'} mt={6}
@@ -327,7 +372,9 @@ const Bbps = () => {
           direction={['column', 'row']}
         >
           <VStack
-            w={['full', 'xs']} h={['sm', 'xl']}
+            w={['full', 'xs']}
+            h={['sm', 'xl']}
+            display={['none', 'flex']}
             overflowY={['scroll']}
             alignItems={['flex-start']}
             justifyContent={['flex-start']}
@@ -346,7 +393,8 @@ const Bbps = () => {
                       _hover={{ bg: "aqua" }}
                       direction={['row']}
                       spacing={2} key={key} alignItems={'center'}
-                      cursor={'pointer'} onClick={() => {
+                      cursor={'pointer'}
+                      onClick={() => {
                         bbpsProvider == "eko" &&
                           fetchOperators(item.operator_category_id)
                         bbpsProvider == 'paysprint' &&

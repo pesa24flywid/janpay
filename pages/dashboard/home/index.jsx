@@ -381,7 +381,14 @@ const Index = () => {
                                             rounded={'full'} transition={'all .3s ease'}
                                         >
                                             <Link
-                                                href={'#'}
+                                                href={{
+                                                    pathname: `/dashboard/services/bbps`,
+                                                    query: {
+                                                        pageId: 'services',
+                                                        passedCategory: item.operator_category_id
+                                                    }
+                                                }}
+                                                
                                                 style={{
                                                     display: 'flex',
                                                     flexDirection: 'column',

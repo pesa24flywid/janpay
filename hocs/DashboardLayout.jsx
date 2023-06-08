@@ -38,6 +38,7 @@ import Topbar from './Topbar';
 import SimpleAccordion from './SimpleAccordion';
 import { FaUserAlt } from 'react-icons/fa';
 import { MdContactSupport } from 'react-icons/md'
+import { Image } from '@chakra-ui/react';
 
 
 const DashboardWrapper = (props) => {
@@ -323,7 +324,14 @@ const DashboardWrapper = (props) => {
                     <DrawerContent>
                         <DrawerCloseButton />
                         <DrawerHeader>
-                            <Text fontWeight={'semibold'}>Pesa24</Text>
+                            <Image src='/logo_long.png' w={'24'} objectFit={'contain'} />
+                            <HStack mt={4}>
+                                <Avatar size={'sm'} name={userName} src={profilePic} />
+                                <Box>
+                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>EKO ID: </span> EKO1234</Text>
+                                    <Text fontSize={'xs'}><span style={{fontWeight: 'bold'}}>PAYSPRINT ID: </span> PS1234</Text>
+                                </Box>
+                            </HStack>
                         </DrawerHeader>
 
                         <DrawerBody mt={8}>
@@ -467,17 +475,11 @@ const DashboardWrapper = (props) => {
 
                             </VStack>
 
-                            <BankDetails />
+                            <BankDetails color={'#000'} />
                         </DrawerBody>
 
                         <DrawerFooter justifyContent={'center'}>
                             <VStack w={'full'} spacing={8}>
-                                <HStack w={'full'} spacing={4} justifyContent={'space-between'}>
-                                    <Box>
-                                        <Text fontSize={'xs'} color={'#888'}>Wallet</Text>
-                                        <Text fontSize={'xl'}>₹ {wallet || 0}</Text>
-                                    </Box>
-                                </HStack>
                                 <HStack spacing={2} color={'red'} onClick={() => signout()}>
                                     <BiPowerOff fontSize={'1.5rem'} />
                                     <Text fontSize={'lg'}>

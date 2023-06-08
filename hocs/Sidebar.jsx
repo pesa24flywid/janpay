@@ -247,7 +247,7 @@ export const SidebarOptions =
         {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',
-          id: "transactionLedger",
+          id: "basicTransactionLedger",
           soon: false,
         },
         {
@@ -517,7 +517,7 @@ const Sidebar = ({ userName, userImage }) => {
               <Text>Sign Out</Text>
             </HStack>
 
-            <BankDetails />
+            <BankDetails color={'#FFF'} />
           </VStack>
         </VStack>
       </Hide>

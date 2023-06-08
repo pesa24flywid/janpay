@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { ClientAxios } from '../lib/axios'
 
-const BankDetails = () => {
+const BankDetails = ({color}) => {
     const [bankDetails, setBankDetails] = useState([])
     useEffect(() => {
         ClientAxios.post('/api/cms/banks/fetch').then((res) => {
@@ -18,7 +18,7 @@ const BankDetails = () => {
         <>
             <Box
                 w={['full', 'auto']}
-                color={'#FFF'} py={4}
+                color={color} py={4}
             >
                 <Text mb={2} fontSize={'xs'}>You can deposit your money to any of these accounts</Text>
                 <Stack
