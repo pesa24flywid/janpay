@@ -33,6 +33,7 @@ import BackendAxios from '../../../../lib/axios';
 import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
+import html2canvas from 'html2canvas';
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
