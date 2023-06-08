@@ -801,8 +801,12 @@ const Aeps = () => {
             </ModalBody>
           </Box>
           <ModalFooter>
-            <HStack justifyContent={'center'} gap={8}>
-
+            <HStack justifyContent={'center'} gap={4}>
+              <Button
+                colorScheme='yellow'
+                size={'sm'} rounded={'full'}
+                onClick={handleShare}
+              >Share</Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                 {
                   ({ toPdf }) => <Button

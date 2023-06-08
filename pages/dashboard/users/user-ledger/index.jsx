@@ -105,6 +105,28 @@ const UserLedger = () => {
     const Router = useRouter()
     const { user_id } = Router.query
 
+    const handleShare = async () => {
+        const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
+        const data = {
+            files: [
+                new File([myFile], 'receipt.jpeg', {
+                    type: myFile.type
+                })
+            ],
+            title: 'Receipt',
+            text: 'Receipt'
+        }
+        try {
+            await navigator.share(data)
+        } catch (error) {
+            console.error('Error sharing:', error?.toString());
+            Toast({
+                status: 'warning',
+                description: error?.toString()
+            })
+        }
+    };
+
     function fetchLedger(pageLink) {
         BackendAxios.get(pageLink || `/api/parent/users-transactions?page=1`).then((res) => {
             setPagination({
@@ -430,8 +452,12 @@ const UserLedger = () => {
                         </ModalBody>
                     </Box>
                     <ModalFooter>
-                        <HStack justifyContent={'center'} gap={8}>
-
+                        <HStack justifyContent={'center'} gap={4}>
+                            <Button
+                                colorScheme='yellow'
+                                size={'sm'} rounded={'full'}
+                                onClick={handleShare}
+                            >Share</Button>
                             <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                                 {
                                     ({ toPdf }) => <Button

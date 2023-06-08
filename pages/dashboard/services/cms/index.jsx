@@ -40,10 +40,10 @@ const Cms = () => {
         },
         onSubmit: values => {
             BackendAxios.post(`/api/paysprint/cms/${values.provider}`, values).then(res => {
-                if(res.data.redirecturl){
+                if (res.data.redirecturl) {
                     window.open(`${res.data.redirecturl}`, "_blank")
                 }
-                else{
+                else {
                     Toast({
                         status: 'warning',
                         description: res.data.message || "Unable to process transaction"
@@ -74,17 +74,39 @@ const Cms = () => {
         })
     }
 
-    useEffect(()=>{
-        BackendAxios.get(`/api/cms-billers`).then(res=>{
+    const handleShare = async () => {
+        const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
+        const data = {
+            files: [
+                new File([myFile], 'receipt.jpeg', {
+                    type: myFile.type
+                })
+            ],
+            title: 'Receipt',
+            text: 'Receipt'
+        }
+        try {
+            await navigator.share(data)
+        } catch (error) {
+            console.error('Error sharing:', error?.toString());
+            Toast({
+                status: 'warning',
+                description: error?.toString()
+            })
+        }
+    };
+
+    useEffect(() => {
+        BackendAxios.get(`/api/cms-billers`).then(res => {
             setBillers(res.data)
-        }).catch(err=>{
+        }).catch(err => {
             Toast({
                 status: 'error',
                 title: 'Error while fetching billers',
                 description: err.response?.data?.message || err.response?.data || err.message
             })
         })
-    },[])
+    }, [])
 
     useEffect(() => {
         ClientAxios.get(`/api/organisation`).then(res => {
@@ -122,7 +144,7 @@ const Cms = () => {
                             name={'billerId'} value={Formik.values.billerId}
                             onChange={Formik.handleChange}>
                             {
-                                billers.map((biller, key)=>(
+                                billers.map((biller, key) => (
                                     <option value={biller.biller_id}>{biller.name}</option>
                                 ))
                             }
@@ -188,8 +210,13 @@ const Cms = () => {
                         </Table>
                     </ModalBody>
                     <ModalFooter>
-                        <HStack w={'full'} justifyContent={'flex-end'}>
-                            <Pdf targetRef={pdfRef} filename="Status.pdf" scale={1.2}>
+                        <HStack justifyContent={'center'} gap={4}>
+                            <Button
+                                colorScheme='yellow'
+                                size={'sm'} rounded={'full'}
+                                onClick={handleShare}
+                            >Share</Button>
+                            <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                                 {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
