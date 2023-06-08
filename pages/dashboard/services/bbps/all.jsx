@@ -59,7 +59,6 @@ const Bbps = () => {
   const [bbpsProvider, setBbpsProvider] = useState("")
   const Toast = useToast({ position: 'top-right' })
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const Router = useRouter()
 
   useEffect(() => {
     ClientAxios.post('/api/user/fetch', {
@@ -156,11 +155,6 @@ const Bbps = () => {
     setLatlong(Cookies.get("latlong"))
     console.log(latlong)
   }, [])
-
-  useEffect(() => {
-    if (!Router.query.passedCategory) return
-    fetchOperators(Router.query.passedCategory)
-  }, [bbpsProvider])
 
   function fetchOperators(category_id) {
     setIsLoading(true)
@@ -359,7 +353,7 @@ const Bbps = () => {
           <VStack
             w={['full', 'xs']}
             h={['sm', 'xl']}
-            display={['none', 'flex']}
+            display={'flex'}
             overflowY={['scroll']}
             alignItems={['flex-start']}
             justifyContent={['flex-start']}

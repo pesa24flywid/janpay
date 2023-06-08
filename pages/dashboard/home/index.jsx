@@ -12,13 +12,13 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Link from 'next/link'
 import { FaCar, FaCity, FaFingerprint, FaHeart, FaMobile, FaMoneyBillAlt, FaRegMoneyBillAlt, FaSatelliteDish, FaUsers } from 'react-icons/fa'
 import { BiIdCard, BiMobileAlt, BiRupee } from 'react-icons/bi'
 import { BsArrowRight, BsCreditCardFill, BsDropletFill, BsEmojiSmileFill, BsHeartFill, BsHouseDoorFill, BsLightningChargeFill } from 'react-icons/bs'
 import { IoMdFingerPrint, IoMdUmbrella } from 'react-icons/io'
 import BackendAxios, { ClientAxios } from '../../../lib/axios'
-import Cookies from 'js-cookie'
 import Marquee from 'react-fast-marquee'
 import Loader from '../../../hocs/Loader'
 import { HiServerStack } from 'react-icons/hi2'
@@ -210,7 +210,7 @@ const Index = () => {
 
                             <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
-                                    href={'/dashboard/services/bbps?pageId=services'}
+                                    href={'/dashboard/services/bbps/all?pageId=services'}
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'column',
@@ -385,7 +385,7 @@ const Index = () => {
                                                     pathname: `/dashboard/services/bbps`,
                                                     query: {
                                                         pageId: 'services',
-                                                        passedCategory: item.operator_category_id
+                                                        passedCategory: bbpsProvider == "eko" ? item.operator_category_id : item.operator_category_name
                                                     }
                                                 }}
                                                 
