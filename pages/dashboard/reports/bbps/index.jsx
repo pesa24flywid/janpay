@@ -166,7 +166,7 @@ const Index = () => {
     }
   };
   const createImage = () => {
-    toJpeg(pdfRef.current, { quality: 0.95 }).then(
+    toJpeg(document.getElementById('receipt'), { quality: 0.95 }).then(
       (dataUrl) => {
         const file = dataURLtoFile(dataUrl, "receipt.png");
         shareFile(file, "Receipt", process.env.NEXT_PUBLIC_FRONTEND_URL);
@@ -335,7 +335,7 @@ const Index = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+          <Box ref={pdfRef} id='receipt' style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
