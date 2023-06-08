@@ -34,7 +34,7 @@ import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 import html2canvas from 'html2canvas';
-import { toJpeg } from 'html-to-image'
+import { toJpeg, toBlob } from 'html-to-image'
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -128,51 +128,27 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        const canvas = await html2canvas(pdfRef.current);
-        const imageBlob = await new Promise((resolve) => {
-          canvas.toBlob((blob) => {
-            resolve(blob);
-          });
-        });
-
-        await navigator.share({
-          title: title,
-          files: [new File([imageBlob], 'image.png', { type: 'image/png' })],
-          url: url
-        });
-      } else {
-        // Fallback code if the Web Share API is not supported
-        console.log('Web Share API not supported');
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
-
-  const shareFile = (file, title, text) => {
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator
-        .share({
-          files: [file],
-          title,
-          text
+    const myFile = await toBlob(pdfRef.current)
+    const data = {
+      files: [
+        new File([myFile], 'receipt.jpeg', {
+          type: myFile.type
         })
-        .then(() => console.log("Share was successful."))
-        .catch((error) => console.log("Sharing failed", error));
-    } else {
-      console.log(`Your system doesn't support sharing files.`);
+      ],
+      title: 'Receipt',
+      text: 'Receipt'
+    }
+    try {
+      await navigator.share(data)
+    } catch (error) {
+      console.error('Error sharing:', error?.toString());
+      Toast({
+        status: 'warning',
+        description: error?.toString()
+      })
     }
   };
-  const createImage = () => {
-    toJpeg(document.getElementById('receipt'), { quality: 0.95 }).then(
-      (dataUrl) => {
-        const file = dataURLtoFile(dataUrl, "receipt.png");
-        shareFile(file, "Receipt", process.env.NEXT_PUBLIC_FRONTEND_URL);
-      }
-    );
-  };
+
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
@@ -401,7 +377,7 @@ const Index = () => {
               <Button
                 colorScheme='yellow'
                 size={'sm'} rounded={'full'}
-                onClick={createImage}
+                onClick={handleShare}
               >Share</Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                 {
