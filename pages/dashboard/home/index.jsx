@@ -182,6 +182,7 @@ const Index = () => {
                         p={4} marginTop={8}
                         bgImage={'/mobileBg.svg'}
                         bgAttachment={'fixed'}
+                        bgRepeat={'no-repeat'}
                     >
                         <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Explore Our Services</Text>
 
@@ -366,6 +367,7 @@ const Index = () => {
                         p={['6', 4]} marginTop={8}
                         bgImage={'/mobileBg.svg'}
                         bgAttachment={'fixed'}
+                        bgRepeat={'no-repeat'}
                     >
                         <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Bill Payment & Recharge</Text>
 
