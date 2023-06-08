@@ -33,8 +33,7 @@ import BackendAxios from '../../../../lib/axios';
 import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
-import html2canvas from 'html2canvas';
-import { toJpeg, toBlob } from 'html-to-image'
+import { toBlob } from 'html-to-image'
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -43,17 +42,6 @@ const ExportPDF = () => {
   doc.output('dataurlnewwindow');
 }
 
-export const dataURLtoFile = (dataurl, filename) => {
-  var arr = dataurl.split(","),
-    mimeType = arr[0].match(/:(.*?);/)[1],
-    decodedData = atob(arr[1]),
-    lengthOfDecodedData = decodedData.length,
-    u8array = new Uint8Array(lengthOfDecodedData);
-  while (lengthOfDecodedData--) {
-    u8array[lengthOfDecodedData] = decodedData.charCodeAt(lengthOfDecodedData);
-  }
-  return new File([u8array], filename, { type: mimeType });
-};
 
 const Index = () => {
   const transactionKeyword = "bbps"
@@ -128,7 +116,7 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current)
+    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {

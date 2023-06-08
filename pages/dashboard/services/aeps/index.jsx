@@ -34,6 +34,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Cookies from 'js-cookie'
 import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-icons/bs'
 import Pdf from 'react-to-pdf'
+import { toBlob } from 'html-to-image'
 
 function StatementTable({ ministatement }) {
   if (typeof(ministatement) == Array && ministatement.length === 0) {
@@ -358,6 +359,27 @@ const Aeps = () => {
     }
   })
 
+  const handleShare = async () => {
+    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const data = {
+      files: [
+        new File([myFile], 'receipt.jpeg', {
+          type: myFile.type
+        })
+      ],
+      title: 'Receipt',
+      text: 'Receipt'
+    }
+    try {
+      await navigator.share(data)
+    } catch (error) {
+      console.error('Error sharing:', error?.toString());
+      Toast({
+        status: 'warning',
+        description: error?.toString()
+      })
+    }
+  };
 
   useEffect(() => {
     formik.values.serviceCode != "2" ? formik.setFieldValue("amount", "0") : null

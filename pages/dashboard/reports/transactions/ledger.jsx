@@ -33,6 +33,7 @@ import BackendAxios from '../../../../lib/axios';
 import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
+import { toBlob } from 'html-to-image'
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -110,6 +111,28 @@ const Index = () => {
       width: 80
     }
   ])
+
+  const handleShare = async () => {
+    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const data = {
+      files: [
+        new File([myFile], 'receipt.jpeg', {
+          type: myFile.type
+        })
+      ],
+      title: 'Receipt',
+      text: 'Receipt'
+    }
+    try {
+      await navigator.share(data)
+    } catch (error) {
+      console.error('Error sharing:', error?.toString());
+      Toast({
+        status: 'warning',
+        description: error?.toString()
+      })
+    }
+  };
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(pageLink || `/api/user/ledger?page=1`).then((res) => {
