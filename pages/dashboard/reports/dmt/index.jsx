@@ -107,7 +107,8 @@ const Index = () => {
       headerName: "Receipt",
       field: "receipt",
       pinned: 'right',
-      cellRenderer: 'receiptCellRenderer'
+      cellRenderer: 'receiptCellRenderer',
+      width: 80
     }
   ])
 
@@ -232,7 +233,10 @@ const Index = () => {
           </Button>
         </HStack>
         <Box py={6}>
-          <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
+          <Box
+            className='ag-theme-alpine ag-theme-pesa24-blue'
+            rounded={'16'} overflow={'hidden'} w={'full'} h={['2xl']}
+          >
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -248,6 +252,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
+              onFirstDataRendered={(params)=>params.api.sizeColumnsToFit()}
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {
@@ -272,7 +277,7 @@ const Index = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-        <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
@@ -354,52 +359,52 @@ const Index = () => {
       </Modal>
 
 
-<VisuallyHidden>
-  <table id='printable-table'>
-    <thead>
-      <tr>
-        <th>#</th>
-        {
-          columnDefs.filter((column) => {
-            if (
-              column.field != "metadata" &&
-              column.field != "name" &&
-              column.field != "receipt" 
-            ) {
-              return (
-                column
-              )
-            }
-          }).map((column, key) => {
-            return (
-              <th key={key}>{column.headerName}</th>
-            )
-          })
-        }
-      </tr>
-    </thead>
-    <tbody>
-      {
-        printableRow.map((data, key) => {
-          return (
-            <tr key={key}>
-              <td>{key + 1}</td>
-              <td>{data.transaction_id}</td>
-              <td>{data.debit_amount}</td>
-              <td>{data.credit_amount}</td>
-              <td>{data.opening_balance}</td>
-              <td>{data.closing_balance}</td>
-              <td>{data.service_type}</td>
-              <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
-              <td>{data.created_at}</td>
-              <td>{data.updated_at}</td>
+      <VisuallyHidden>
+        <table id='printable-table'>
+          <thead>
+            <tr>
+              <th>#</th>
+              {
+                columnDefs.filter((column) => {
+                  if (
+                    column.field != "metadata" &&
+                    column.field != "name" &&
+                    column.field != "receipt"
+                  ) {
+                    return (
+                      column
+                    )
+                  }
+                }).map((column, key) => {
+                  return (
+                    <th key={key}>{column.headerName}</th>
+                  )
+                })
+              }
             </tr>
-          )
-        })
-      }
-    </tbody>
-  </table>
-</VisuallyHidden>
+          </thead>
+          <tbody>
+            {
+              printableRow.map((data, key) => {
+                return (
+                  <tr key={key}>
+                    <td>{key + 1}</td>
+                    <td>{data.transaction_id}</td>
+                    <td>{data.debit_amount}</td>
+                    <td>{data.credit_amount}</td>
+                    <td>{data.opening_balance}</td>
+                    <td>{data.closing_balance}</td>
+                    <td>{data.service_type}</td>
+                    <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+                    <td>{data.created_at}</td>
+                    <td>{data.updated_at}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </>
   )
 }

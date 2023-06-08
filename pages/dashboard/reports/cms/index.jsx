@@ -107,7 +107,8 @@ const Index = () => {
       headerName: "Receipt",
       field: "receipt",
       pinned: 'right',
-      cellRenderer: 'receiptCellRenderer'
+      cellRenderer: 'receiptCellRenderer',
+      width: 80
     }
   ])
 
@@ -232,7 +233,10 @@ const Index = () => {
           </Button>
         </HStack>
         <Box py={6}>
-          <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
+          <Box
+            className='ag-theme-alpine ag-theme-pesa24-blue'
+            rounded={16} overflow={'hidden'} w={'full'} h={['2xl']}
+          >
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -248,6 +252,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
+              onFirstDataRendered={(params)=>params.api.sizeColumnsToFit()}
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {

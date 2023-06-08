@@ -382,7 +382,8 @@ const Aeps = () => {
       headerName: "Receipt",
       field: "receipt",
       pinned: 'right',
-      cellRenderer: 'receiptCellRenderer'
+      cellRenderer: 'receiptCellRenderer',
+      width: 80
     }
   ])
 
@@ -557,13 +558,14 @@ const Aeps = () => {
 
           <Box w={['full', 'full', 'sm']}>
             <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
-            <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+            <Box className='ag-theme-alpine ag-theme-pesa24-blue' rounded={16} overflow={'hidden'} w={'full'} h={['sm', 'xs']}>
               <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rowData}
                 components={{
                   'receiptCellRenderer': receiptCellRenderer
                 }}
+                onFirstDataRendered={(params)=>params.api.sizeColumnsToFit()}
               >
 
               </AgGridReact>

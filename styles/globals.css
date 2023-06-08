@@ -28,6 +28,10 @@
 
 .ag-theme-pesa24-blue .ag-header-cell {
     color: #FFF;
+    font-size: 10px;
+}
+.ag-theme-pesa24-blue .ag-cell {
+    font-size: 10px;
 }
 
 .ag-theme-pesa24-blue .ag-floating-filter {

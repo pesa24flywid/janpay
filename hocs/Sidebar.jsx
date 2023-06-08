@@ -365,12 +365,14 @@ const Sidebar = ({ userName, userImage }) => {
                     <Accordion allowToggle w={'full'}>
 
                       <AccordionItem border={'none'}>
-                        <AccordionButton px={[0, 3]} rounded={'full'}>
+                        <AccordionButton
+                          px={[0, 3]} py={2}
+                          bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
+                          rounded={'full'}>
                           <HStack
                             spacing={1} flex={1}
                             fontSize={['1.2rem', 'md']}
                             alignItems={'center'}
-                            bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
                           >
                             {option.icon}
                             <Text textTransform={'capitalize'}>{option.title}</Text>
