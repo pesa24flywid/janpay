@@ -29,7 +29,8 @@ import {
     Th,
     Tbody,
     Td,
-    useToast
+    useToast,
+    Image
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
