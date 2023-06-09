@@ -221,6 +221,7 @@ const Dmt = () => {
             selectedBankCode: "",
             beneficiaryAccount: "",
             beneficiaryName: "",
+            ifsc: "",
             beneficiaryId: "",
             transactionType: "imps",
             mpin: ""
@@ -484,6 +485,7 @@ const Dmt = () => {
         paymentFormik.setFieldValue("beneficiaryName", Recipient.beneficiaryName)
         paymentFormik.setFieldValue("beneficiaryAccount", Recipient.accountNumber)
         paymentFormik.setFieldValue("beneficiaryId", Recipient.beneficiaryId)
+        paymentFormik.setFieldValue("ifsc", Recipient.ifsc)
         setIsBtnHidden(false)
 
     }
@@ -1019,13 +1021,13 @@ const Dmt = () => {
                             <FormLabel>Beneficiary Name</FormLabel>
                             <Input value={addRecipientFormik.values.beneficiaryName} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
+                        <HStack justifyContent={'flex-end'} pt={2}>
+                            <Button size={'xs'} onClick={getAccountHolderName}>Get Name</Button>
+                        </HStack>
                         <FormControl id='beneficiaryPhone' pb={4}>
                             <FormLabel>Beneficiary Phone</FormLabel>
                             <Input value={addRecipientFormik.values.beneficiaryPhone} onChange={addRecipientFormik.handleChange} />
                         </FormControl>
-                        <HStack justifyContent={'flex-end'} pt={2}>
-                            <Button size={'xs'} onClick={getAccountHolderName}>Get Name</Button>
-                        </HStack>
 
                         <HStack gap={2} mt={8}>
                             <FormControl id='address'>

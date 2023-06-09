@@ -295,6 +295,7 @@ const Aeps = () => {
       aadhaarNo: "",
       customerId: "",
       bankCode: "",
+      bankName: "",
       bankAccountNo: "",
       ifsc: "",
       serviceCode: "aadhaar-pay",         // Services Code as per service provider
@@ -462,6 +463,11 @@ const Aeps = () => {
     )
   }
 
+  function handleBankSelection(params) {
+    formik.setFieldValue("bankCode", params.split("_")[0])
+    formik.setFieldValue("bankName", params.split("_")[1])
+  }
+
   return (
     <>
       <DashboardWrapper titleText={'AePS Transaction'}>
@@ -493,19 +499,19 @@ const Aeps = () => {
             <FormControl w={'full'} pb={6}>
               <FormLabel>Select Bank</FormLabel>
               <Select name='bankCode'
-                value={formik.values.bankCode}
-                onChange={formik.handleChange} w={'xs'}
+                value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                onChange={e => handleBankSelection(e.target.value)} w={'xs'}
               >
                 {
                   aepsProvider == "eko" &&
                   banksList.map((bank, key) => (
-                    <option key={key} value={bank.short_code}>{bank.name}</option>
+                    <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
                   ))
                 }
                 {
                   aepsProvider == "paysprint" &&
                   banksList.map((bank, key) => (
-                    <option key={key} value={bank.iino}>{bank.bankName}</option>
+                    <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
                   ))
                 }
               </Select>
@@ -588,7 +594,7 @@ const Aeps = () => {
                 components={{
                   'receiptCellRenderer': receiptCellRenderer
                 }}
-                
+
               >
 
               </AgGridReact>
