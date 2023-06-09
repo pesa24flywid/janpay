@@ -524,6 +524,8 @@ const Aeps = () => {
   function handleBankSelection(params) {
     formik.setFieldValue("bankCode", params.split("_")[0])
     formik.setFieldValue("bankName", params.split("_")[1])
+    console.log(params.split("_")[0])
+    console.log(params.split("_")[1])
   }
 
   return (
@@ -562,7 +564,7 @@ const Aeps = () => {
                   <FormLabel>Select Bank</FormLabel>
                   <Select name='bankCode'
                     value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                    onChange={e => handleBankSelection(e.target.value)} w={'xs'}
+                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
                   >
                     {
                       aepsProvider == "eko" &&
@@ -645,7 +647,7 @@ const Aeps = () => {
                     <FormLabel>Select Bank</FormLabel>
                     <Select name='bankCode'
                       value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                      onChange={e => handleBankSelection(e.target.value)} w={'xs'}
+                      onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
                     >
                       {
                         aepsProvider == "eko" &&
@@ -684,7 +686,7 @@ const Aeps = () => {
                     <FormLabel>Select Bank</FormLabel>
                     <Select name='bankCode'
                       value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                      onChange={e => handleBankSelection(e.target.value)} w={'xs'}
+                      onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
                     >
                       {
                         aepsProvider == "eko" &&
