@@ -399,7 +399,7 @@ const Aeps = () => {
     {
       headerName: "Additional Info",
       field: 'metadata',
-      defaultMinWidth: 300
+      hide: true
     },
     {
       headerName: "Receipt",
@@ -616,23 +616,52 @@ const Aeps = () => {
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={4} bg={'#FFF'}>
+              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0].replace(/_/g, " ")}</Text>
-                        <Text fontSize={14} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+                      //if (aepsProvider == 'eko')
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "customer_balance" &&
+                        item[0].toLowerCase() != "user_name" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "amount" &&
+                        item[0].toLowerCase() != "ministatement" &&
+                        item[0].toLowerCase() != "user_phone"
+                      ) {
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                            p={2} borderWidth={'1px'}
+                          >
+                            <Text fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+                      }
+                    }) : null
                 }
-
+                <VStack pt={8} w={'full'} spacing={0}>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_name}</Text>
+                  </HStack>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image pt={4} src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

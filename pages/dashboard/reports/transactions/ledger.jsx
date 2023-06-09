@@ -113,7 +113,7 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {
@@ -308,7 +308,7 @@ const Index = () => {
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={4} bg={'#FFF'}>
+              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => {
@@ -324,6 +324,7 @@ const Index = () => {
                           <HStack
                             justifyContent={'space-between'}
                             gap={8} pb={1} w={'full'} key={key}
+                            borderWidth={'0.75px'} p={2}
                           >
                             <Text
                               fontSize={'xs'}
@@ -337,20 +338,20 @@ const Index = () => {
                     }
                     ) : null
                 }
-                <VStack pt={8} w={'full'}>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                <VStack pt={8} spacing={0} w={'full'}>
+                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
                   </HStack>
-                  <Image src='/logo_long.png' w={'20'} />
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
                   <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                 </VStack>
               </VStack>
@@ -381,52 +382,52 @@ const Index = () => {
       </Modal>
 
 
-<VisuallyHidden>
-  <table id='printable-table'>
-    <thead>
-      <tr>
-        <th>#</th>
-        {
-          columnDefs.filter((column) => {
-            if (
-              column.field != "metadata" &&
-              column.field != "name" &&
-              column.field != "receipt" 
-            ) {
-              return (
-                column
-              )
-            }
-          }).map((column, key) => {
-            return (
-              <th key={key}>{column.headerName}</th>
-            )
-          })
-        }
-      </tr>
-    </thead>
-    <tbody>
-      {
-        printableRow.map((data, key) => {
-          return (
-            <tr key={key}>
-              <td>{key + 1}</td>
-              <td>{data.transaction_id}</td>
-              <td>{data.debit_amount}</td>
-              <td>{data.credit_amount}</td>
-              <td>{data.opening_balance}</td>
-              <td>{data.closing_balance}</td>
-              <td>{data.service_type}</td>
-              <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
-              <td>{data.created_at}</td>
-              <td>{data.updated_at}</td>
+      <VisuallyHidden>
+        <table id='printable-table'>
+          <thead>
+            <tr>
+              <th>#</th>
+              {
+                columnDefs.filter((column) => {
+                  if (
+                    column.field != "metadata" &&
+                    column.field != "name" &&
+                    column.field != "receipt"
+                  ) {
+                    return (
+                      column
+                    )
+                  }
+                }).map((column, key) => {
+                  return (
+                    <th key={key}>{column.headerName}</th>
+                  )
+                })
+              }
             </tr>
-          )
-        })
-      }
-    </tbody>
-  </table>
-</VisuallyHidden>
+          </thead>
+          <tbody>
+            {
+              printableRow.map((data, key) => {
+                return (
+                  <tr key={key}>
+                    <td>{key + 1}</td>
+                    <td>{data.transaction_id}</td>
+                    <td>{data.debit_amount}</td>
+                    <td>{data.credit_amount}</td>
+                    <td>{data.opening_balance}</td>
+                    <td>{data.closing_balance}</td>
+                    <td>{data.service_type}</td>
+                    <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+                    <td>{data.created_at}</td>
+                    <td>{data.updated_at}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </>
   )
 }

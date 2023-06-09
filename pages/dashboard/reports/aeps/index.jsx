@@ -134,7 +134,7 @@ const Index = () => {
     {
       headerName: "Additional Info",
       field: 'metadata',
-      defaultMinWidth: 300
+      hide: true
     },
     {
       headerName: "Receipt",
@@ -342,7 +342,7 @@ const Index = () => {
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={4} bg={'#FFF'}>
+              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => {
@@ -360,6 +360,7 @@ const Index = () => {
                           <HStack
                             justifyContent={'space-between'}
                             gap={8} pb={1} w={'full'} key={key}
+                            p={2} borderWidth={'1px'}
                           >
                             <Text fontSize={'xs'}
                               fontWeight={'medium'}
@@ -375,20 +376,20 @@ const Index = () => {
                   receipt.status ?
                     <StatementTable ministatement={receipt.data?.ministatement || [{}]} /> : null
                 }
-                <VStack pt={8} w={'full'}>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                <VStack pt={8} w={'full'} spacing={0}>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_name}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'1px'} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
                   </HStack>
-                  <Image src='/logo_long.png' w={'20'} />
+                  <Image pt={4} src='/logo_long.png' w={'20'} />
                   <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                 </VStack>
               </VStack>

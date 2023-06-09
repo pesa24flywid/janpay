@@ -1096,7 +1096,7 @@ const Dmt = () => {
                             </VStack>
                         </ModalHeader>
                         <ModalBody p={0} bg={'azure'}>
-                            <VStack w={'full'} p={4} bg={'#FFF'}>
+                            <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
                                 {
                                     receipt.data ?
                                         Object.entries(receipt.data).map((item, key) => {
@@ -1104,7 +1104,6 @@ const Dmt = () => {
                                             if (
                                                 item[0].toLowerCase() != "status" &&
                                                 item[0].toLowerCase() != "user" &&
-                                                item[0].toLowerCase() != "user_name" &&
                                                 item[0].toLowerCase() != "user_id" &&
                                                 item[0].toLowerCase() != "user_phone" &&
                                                 item[0].toLowerCase() != "amount"
@@ -1113,6 +1112,7 @@ const Dmt = () => {
                                                     <HStack
                                                         justifyContent={'space-between'}
                                                         gap={8} pb={1} w={'full'} key={key}
+                                                        borderWidth={'0.75px'} p={2}
                                                     >
                                                         <Text
                                                             fontSize={'xs'}
@@ -1126,20 +1126,20 @@ const Dmt = () => {
                                         }
                                         ) : null
                                 }
-                                <VStack pt={8} w={'full'}>
-                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                <VStack pt={8} spacing={0} w={'full'}>
+                                    <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                                         <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
                                         <Text fontSize={'xs'}>{receipt.data.user}</Text>
                                     </HStack>
-                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                    <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                                         <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
                                         <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
                                     </HStack>
-                                    <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                                    <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                                         <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
                                         <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
                                     </HStack>
-                                    <Image src='/logo_long.png' w={'20'} />
+                                    <Image src='/logo_long.png' w={'20'} pt={4} />
                                     <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                                 </VStack>
                             </VStack>

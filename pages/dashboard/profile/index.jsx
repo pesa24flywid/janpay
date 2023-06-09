@@ -9,7 +9,6 @@ import {
   Flex
 } from "@chakra-ui/react";
 import Head from "next/head";
-
 import ProfileInfoCard from "../../../hocs/ProfileInfoCard";
 import KycDocsCard from "../../../hocs/KycDocsCard";
 import DashboardWrapper from "../../../hocs/DashboardLayout";
@@ -39,6 +38,8 @@ const Profile = () => {
       localStorage.setItem("kycStatus", res.data.data.kyc)
 
       localStorage.setItem("firstName", res.data.data.first_name || "")
+
+      localStorage.setItem("middleName", res.data.data.middle_name || "")
 
       localStorage.setItem("lastName", res.data.data.last_name || "")
 

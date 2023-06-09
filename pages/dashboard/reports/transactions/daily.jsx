@@ -14,7 +14,10 @@ import {
   ModalHeader,
   ModalFooter,
   VStack,
-  VisuallyHidden
+  VisuallyHidden,
+  FormControl,
+  FormLabel,
+  Input
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -101,7 +104,7 @@ const Index = () => {
     {
       headerName: "Additional Info",
       field: 'metadata',
-      defaultMinWidth: 300
+      hide: true
     },
     {
       headerName: "Receipt",
@@ -111,6 +114,9 @@ const Index = () => {
       width: 80
     }
   ])
+
+  const [from, setFrom] = useState(null)
+  const [to, setTo] = useState(null)
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, {quality: 0.95})
@@ -144,8 +150,8 @@ const Index = () => {
         next_page_url: res.data.next_page_url,
         prev_page_url: res.data.prev_page_url,
       })
-      setPrintableRow(res.data.data)
-      setRowData(res.data.data)
+      setPrintableRow(res?.data?.data)
+      setRowData(res?.data?.data)
     }).catch((err) => {
       console.log(err)
       Toast({
@@ -218,6 +224,21 @@ const Index = () => {
       <DashboardWrapper pageTitle={'Daily Sales'}>
         <HStack>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
+        </HStack>
+        <HStack justifyContent={'flex-start'} py={4}>
+          <FormControl w={['full', 'xs']}>
+            <FormLabel>From</FormLabel>
+            <Input type='date' bgColor={'#FFF'} name='from' onChange={e => setFrom(e.target.value)} />
+          </FormControl>
+          <FormControl w={['full', 'xs']}>
+            <FormLabel>To</FormLabel>
+            <Input type='date' bgColor={'#FFF'} name='to' onChange={e => setTo(e.target.value)} />
+          </FormControl>
+        </HStack>
+        <HStack justifyContent={'flex-end'}>
+          <Button colorScheme='twitter' onClick={()=>{
+            fetchTransactions(`/api/user/daily-sales?page=1&from=${from}&to=${to}`)
+          }}>Search</Button>
         </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
@@ -311,7 +332,7 @@ const Index = () => {
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} p={4} bg={'#FFF'}>
+              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
                     Object.entries(receipt.data).map((item, key) => {
@@ -327,6 +348,7 @@ const Index = () => {
                           <HStack
                             justifyContent={'space-between'}
                             gap={8} pb={1} w={'full'} key={key}
+                            borderWidth={'0.75px'} p={2}
                           >
                             <Text
                               fontSize={'xs'}
@@ -340,20 +362,20 @@ const Index = () => {
                     }
                     ) : null
                 }
-                <VStack pt={8} w={'full'}>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                <VStack pt={8} spacing={0} w={'full'}>
+                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
                   </HStack>
-                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                  <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
                   </HStack>
-                  <Image src='/logo_long.png' w={'20'} />
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
                   <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                 </VStack>
               </VStack>

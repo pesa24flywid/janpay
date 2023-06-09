@@ -34,6 +34,7 @@ const Register = () => {
     const formik = useFormik({
         initialValues: {
             first_name: "",
+            middle_name: "",
             last_name: "",
             email: "",
             phone: "",
@@ -114,16 +115,32 @@ const Register = () => {
                                 >
                                     First Name
                                 </FormLabel>
-                                <InputGroup>
-                                    <Input
-                                        rounded={'full'}
-                                        name={'first_name'}
-                                        placeholder={'First Name'}
-                                        bg={'blue.100'}
-                                        required value={formik.values.first_name}
-                                        onChange={formik.handleChange}
-                                    />
-                                </InputGroup>
+                                <Input
+                                    rounded={'full'}
+                                    name={'first_name'}
+                                    placeholder={'First Name'}
+                                    bg={'blue.100'}
+                                    required value={formik.values.first_name}
+                                    onChange={formik.handleChange}
+                                />
+                            </Box>
+                            <Box>
+                                <FormLabel
+                                    pl={2}
+                                    htmlFor='first_name'
+                                    textAlign={'left'} mb={0}
+                                    color={'darkslategray'}
+                                >
+                                    Middle Name
+                                </FormLabel>
+                                <Input
+                                    rounded={'full'}
+                                    name={'middle_name'}
+                                    placeholder={'Middle Name'}
+                                    bg={'blue.100'}
+                                    required value={formik.values.middle_name}
+                                    onChange={formik.handleChange}
+                                />
                             </Box>
                             <Box>
                                 <FormLabel

@@ -66,6 +66,7 @@ const EditProfile = () => {
   const formik = useFormik({
     initialValues: {
       firstName: "",
+      middleName: "",
       lastName: "",
       phone: null,
       email: "",
@@ -116,6 +117,9 @@ const EditProfile = () => {
 
       localStorage.setItem("firstName", res.data.data.first_name || "")
       formik.setFieldValue("firstName", res.data.data.first_name || "")
+
+      localStorage.setItem("middleName", res.data.data.middle_name || "")
+      formik.setFieldValue("middleName", res.data.data.middle_name || "")
 
       localStorage.setItem("lastName", res.data.data.last_name || "")
       formik.setFieldValue("lastName", res.data.data.last_name || "")
@@ -398,6 +402,16 @@ const EditProfile = () => {
                   _placeholder={{ color: "gray.500" }}
                   type="text" disabled
                   value={formik.values.firstName}
+                  onChange={formik.handleChange}
+                />
+              </FormControl>
+              <FormControl py={[0, 2]} id="firstName" isRequired>
+                <FormLabel>Middle Name</FormLabel>
+                <Input
+                  placeholder="Middle Name"
+                  _placeholder={{ color: "gray.500" }}
+                  type="text" disabled
+                  value={formik.values.middleName}
                   onChange={formik.handleChange}
                 />
               </FormControl>
