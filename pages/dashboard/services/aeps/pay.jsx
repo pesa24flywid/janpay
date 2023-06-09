@@ -516,27 +516,6 @@ const Aeps = () => {
                   ))
                 }
               </Select>
-              {/* <HStack spacing={2} py={2}>
-
-              <Button
-                fontSize={'xs'}
-                value={"SBIN"}
-                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-              >State Bank of India</Button>
-
-              <Button
-                fontSize={'xs'}
-                value={"pnb"}
-                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-              >Punjab National Bank</Button>
-
-              <Button
-                fontSize={'xs'}
-                value={"yb"}
-                onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-              >Yes Bank</Button>
-
-            </HStack> */}
             </FormControl>
             <Stack direction={['column', 'row']} spacing={6} pb={6}>
               <FormControl w={'full'}>
@@ -553,35 +532,35 @@ const Aeps = () => {
                   <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
                 </InputGroup>
               </FormControl>
-              <FormControl w={'full'}>
-                <FormLabel>Amount</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon children={"₹"} />
-                  <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-                </InputGroup>
-                <HStack spacing={2} py={2}>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={1000}
-                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                  >1000</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={2000}
-                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                  >2000</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={5000}
-                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                  >5000</Button>
-
-                </HStack>
-              </FormControl>
             </Stack>
+            <FormControl w={['full', 'xs']}>
+              <FormLabel>Amount</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children={"₹"} />
+                <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
+              </InputGroup>
+              <HStack spacing={2} py={2}>
+
+                <Button
+                  fontSize={'xs'}
+                  value={1000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >1000</Button>
+
+                <Button
+                  fontSize={'xs'}
+                  value={2000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >2000</Button>
+
+                <Button
+                  fontSize={'xs'}
+                  value={5000}
+                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                >5000</Button>
+
+              </HStack>
+            </FormControl>
 
             <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>

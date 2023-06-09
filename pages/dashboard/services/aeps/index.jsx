@@ -596,35 +596,35 @@ const Aeps = () => {
                       <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
                     </InputGroup>
                   </FormControl>
-                  <FormControl w={'full'}>
-                    <FormLabel>Amount</FormLabel>
-                    <InputGroup>
-                      <InputLeftAddon children={"₹"} />
-                      <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-                    </InputGroup>
-                    <HStack spacing={2} py={2}>
-
-                      <Button
-                        fontSize={'xs'}
-                        value={1000}
-                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                      >1000</Button>
-
-                      <Button
-                        fontSize={'xs'}
-                        value={2000}
-                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                      >2000</Button>
-
-                      <Button
-                        fontSize={'xs'}
-                        value={5000}
-                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                      >5000</Button>
-
-                    </HStack>
-                  </FormControl>
                 </Stack>
+                <FormControl w={['full', 'xs']}>
+                  <FormLabel>Amount</FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon children={"₹"} />
+                    <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
+                  </InputGroup>
+                  <HStack spacing={2} py={2}>
+
+                    <Button
+                      fontSize={'xs'}
+                      value={1000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >1000</Button>
+
+                    <Button
+                      fontSize={'xs'}
+                      value={2000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >2000</Button>
+
+                    <Button
+                      fontSize={'xs'}
+                      value={5000}
+                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                    >5000</Button>
+
+                  </HStack>
+                </FormControl>
               </> : null
             }
 
@@ -643,27 +643,27 @@ const Aeps = () => {
                       <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
                     </InputGroup>
                   </FormControl>
-                  <FormControl w={'full'}>
-                    <FormLabel>Select Bank</FormLabel>
-                    <Select name='bankCode'
-                      value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                      onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
-                    >
-                      {
-                        aepsProvider == "eko" &&
-                        banksList.map((bank, key) => (
-                          <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                        ))
-                      }
-                      {
-                        aepsProvider == "paysprint" &&
-                        banksList.map((bank, key) => (
-                          <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                        ))
-                      }
-                    </Select>
-                  </FormControl>
                 </Stack>
+                <FormControl w={['full', 'xs']}>
+                  <FormLabel>Select Bank</FormLabel>
+                  <Select name='bankCode'
+                    value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
+                  >
+                    {
+                      aepsProvider == "eko" &&
+                      banksList.map((bank, key) => (
+                        <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
+                      ))
+                    }
+                    {
+                      aepsProvider == "paysprint" &&
+                      banksList.map((bank, key) => (
+                        <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
               </> : null
             }
 
@@ -682,27 +682,27 @@ const Aeps = () => {
                       <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
                     </InputGroup>
                   </FormControl>
-                  <FormControl w={'full'}>
-                    <FormLabel>Select Bank</FormLabel>
-                    <Select name='bankCode'
-                      value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                      onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
-                    >
-                      {
-                        aepsProvider == "eko" &&
-                        banksList.map((bank, key) => (
-                          <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                        ))
-                      }
-                      {
-                        aepsProvider == "paysprint" &&
-                        banksList.map((bank, key) => (
-                          <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                        ))
-                      }
-                    </Select>
-                  </FormControl>
                 </Stack>
+                <FormControl w={['full', 'xs']}>
+                  <FormLabel>Select Bank</FormLabel>
+                  <Select name='bankCode'
+                    value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
+                  >
+                    {
+                      aepsProvider == "eko" &&
+                      banksList.map((bank, key) => (
+                        <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
+                      ))
+                    }
+                    {
+                      aepsProvider == "paysprint" &&
+                      banksList.map((bank, key) => (
+                        <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
               </> : null
             }
 
