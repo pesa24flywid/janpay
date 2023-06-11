@@ -229,6 +229,7 @@ const Bbps = () => {
           Toast({
             description: res.data.message || "Unable to fetch bill"
           })
+          setIsLoading(false)
           return
         }
         setFetchBillResponse(res.data.data)
