@@ -157,7 +157,7 @@ const Bbps = () => {
   }, [])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {
@@ -223,6 +223,7 @@ const Bbps = () => {
           Toast({
             description: res.data.message || "Unable to fetch bill"
           })
+          setIsLoading(false)
           return
         }
         setFetchBillResponse(res.data.data)
