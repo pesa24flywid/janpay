@@ -227,7 +227,7 @@ const Bbps = () => {
       ).then(res => {
         if (res.data.response_type_id == -1) {
           Toast({
-            description: res.data.message || "Unable to fetch bill"
+            description: res.data.invalid_params?.reason || res.data.message || "Unable to fetch bill"
           })
           setIsLoading(false)
           return
