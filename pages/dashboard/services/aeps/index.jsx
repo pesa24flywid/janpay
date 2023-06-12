@@ -8,9 +8,9 @@ import {
   InputGroup,
   InputLeftAddon,
   Button,
+  Select,
   FormControl,
   FormLabel,
-  Select,
   Stack,
   HStack,
   useToast,
@@ -26,6 +26,7 @@ import {
   Text,
   ModalOverlay
 } from '@chakra-ui/react'
+import { Select as BankSelect } from 'chakra-react-select'
 import { useFormik } from 'formik'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { AgGridReact } from 'ag-grid-react'
@@ -562,23 +563,23 @@ const Aeps = () => {
               formik.values.serviceCode == "money-transfer" ? <>
                 <FormControl w={'full'} pb={6}>
                   <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode'
-                    value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
+                  <BankSelect
+                    name='bankCode' mb={4}
+                    placeholder={'Select Bank'}
+                    options={
+                      aepsProvider == "eko" ?
+                        banksList.map((bank, key) => (
+                          { value: `${bank.value}_${bank.label}`, label: bank.label }
+                        )) :
+                        aepsProvider == "paysprint" ?
+                          banksList.map((bank, key) => (
+                            { value: `${bank.iinno}_${bank.bankName}`, label: bank.bankName }
+                          )) : null
+                    }
+                    // value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                    onChange={opt => handleBankSelection(opt.value)} w={'xs'}
                   >
-                    {
-                      aepsProvider == "eko" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                      ))
-                    }
-                    {
-                      aepsProvider == "paysprint" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                      ))
-                    }
-                  </Select>
+                  </BankSelect>
 
                 </FormControl>
                 <Stack direction={['column', 'row']} spacing={6} pb={6}>
@@ -646,23 +647,23 @@ const Aeps = () => {
                 </Stack>
                 <FormControl w={['full', 'xs']}>
                   <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode'
-                    value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
+                  <BankSelect
+                    name='bankCode' mb={4}
+                    placeholder={'Select Bank'}
+                    options={
+                      aepsProvider == "eko" ?
+                        banksList.map((bank, key) => (
+                          { value: `${bank.value}_${bank.label}`, label: bank.label }
+                        )) :
+                        aepsProvider == "paysprint" ?
+                          banksList.map((bank, key) => (
+                            { value: `${bank.iinno}_${bank.bankName}`, label: bank.bankName }
+                          )) : null
+                    }
+                    // value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                    onChange={opt => handleBankSelection(opt.value)} w={'xs'}
                   >
-                    {
-                      aepsProvider == "eko" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                      ))
-                    }
-                    {
-                      aepsProvider == "paysprint" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                      ))
-                    }
-                  </Select>
+                  </BankSelect>
                 </FormControl>
               </> : null
             }
@@ -685,28 +686,28 @@ const Aeps = () => {
                 </Stack>
                 <FormControl w={['full', 'xs']}>
                   <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode'
-                    value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                    onChange={e => handleBankSelection(e.currentTarget.value)} w={'xs'}
+                  <BankSelect
+                    name='bankCode' mb={4}
+                    placeholder={'Select Bank'}
+                    options={
+                      aepsProvider == "eko" ?
+                        banksList.map((bank, key) => (
+                          { value: `${bank.value}_${bank.label}`, label: bank.label }
+                        )) :
+                        aepsProvider == "paysprint" ?
+                          banksList.map((bank, key) => (
+                            { value: `${bank.iinno}_${bank.bankName}`, label: bank.bankName }
+                          )) : null
+                    }
+                    // value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                    onChange={opt => handleBankSelection(opt.value)} w={'xs'}
                   >
-                    {
-                      aepsProvider == "eko" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                      ))
-                    }
-                    {
-                      aepsProvider == "paysprint" &&
-                      banksList.map((bank, key) => (
-                        <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                      ))
-                    }
-                  </Select>
+                  </BankSelect>
                 </FormControl>
               </> : null
             }
 
-            <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
+            <Button mt={4} colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
 
           <Box w={['full', 'full', 'sm']}>
