@@ -27,6 +27,7 @@ import {
   Image
 } from '@chakra-ui/react'
 import { useFormik } from 'formik'
+import { Select as BankSelect } from 'chakra-react-select'
 import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -499,23 +500,23 @@ const Aeps = () => {
             {/* Aadhaar Pay Form */}
             <FormControl w={'full'} pb={6}>
               <FormLabel>Select Bank</FormLabel>
-              <Select name='bankCode'
-                value={`${formik.values.bankCode}_${formik.values.bankName}`}
-                onChange={e => handleBankSelection(e.target.value)} w={'xs'}
+              <BankSelect
+                name='bankCode' mb={4}
+                placeholder={'Select Bank'}
+                options={
+                  aepsProvider == "eko" ?
+                    banksList.map((bank, key) => (
+                      { value: `${bank.value}_${bank.label}`, label: bank.label }
+                    )) :
+                    aepsProvider == "paysprint" ?
+                      banksList.map((bank, key) => (
+                        { value: `${bank.iinno}_${bank.bankName}`, label: bank.bankName }
+                      )) : null
+                }
+                // value={`${formik.values.bankCode}_${formik.values.bankName}`}
+                onChange={opt => handleBankSelection(opt.value)} w={'xs'}
               >
-                {
-                  aepsProvider == "eko" &&
-                  banksList.map((bank, key) => (
-                    <option key={key} value={`${bank.value}_${bank.label}`}>{bank.label}</option>
-                  ))
-                }
-                {
-                  aepsProvider == "paysprint" &&
-                  banksList.map((bank, key) => (
-                    <option key={key} value={`${bank.iinno}_${bank.bankName}`}>{bank.bankName}</option>
-                  ))
-                }
-              </Select>
+              </BankSelect>
             </FormControl>
             <Stack direction={['column', 'row']} spacing={6} pb={6}>
               <FormControl w={'full'}>
