@@ -9,7 +9,8 @@ import {
   Stack,
   FormLabel,
   FormControl,
-  Input
+  Input,
+  Text
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
