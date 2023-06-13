@@ -28,16 +28,23 @@ import { useFormik } from 'formik'
 import Pdf from 'react-to-pdf'
 import { BsCheck2Circle, BsDownload, BsXCircle } from 'react-icons/bs'
 import Cookies from 'js-cookie'
+import Loader from '../../../../hocs/Loader'
 
 
 const Lic = () => {
   const pdfRef = useRef(null)
+  const [transactionType, setTransactionType] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
+    setIsLoading(true)
     ClientAxios.get(`/api/organisation`).then(res => {
+      setIsLoading(false)
       if (!res.data.lic_status) {
         window.location.href('/dashboard/not-available')
       }
+      setTransactionType(res.data?.lic_type)
     }).catch(err => {
+      setIsLoading(false)
       console.log(err)
     })
   }, [])
@@ -118,7 +125,8 @@ const Lic = () => {
       mpin: mpin,
       canumber: Formik.values.canumber,
       latlong: Cookies.get("latlong"),
-      amount: Formik.values.amount
+      amount: Formik.values.amount,
+      transactionType: transactionType
     }).then(res => {
       onClose()
       setReceipt({
@@ -137,6 +145,9 @@ const Lic = () => {
 
   return (
     <>
+    {
+      isLoading ? <Loader /> : null
+    }
       <DashboardWrapper pageTitle={'LIC Services'}>
         <Box
           w={['full', 'lg']}
