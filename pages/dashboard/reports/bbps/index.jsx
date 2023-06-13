@@ -14,7 +14,11 @@ import {
   ModalFooter,
   VStack,
   Image,
-  VisuallyHidden
+  VisuallyHidden,
+  Stack,
+  FormControl,
+  FormLabel,
+  Input
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -34,6 +38,7 @@ import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 import { toBlob } from 'html-to-image'
+import { useFormik } from 'formik';
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -136,9 +141,15 @@ const Index = () => {
     }
   };
 
+  const Formik = useFormik({
+    initialValues: {
+      from: "",
+      to: ""
+    }
+  })
 
   function fetchTransactions(pageLink) {
-    BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
+    BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&page=1`).then((res) => {
       setPagination({
         current_page: res.data.current_page,
         total_pages: parseInt(res.data.last_page),
@@ -222,6 +233,34 @@ const Index = () => {
         <HStack>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
         </HStack>
+        <Box p={2} bg={'twitter.500'}>
+          <Text color={'#FFF'}>Search Transactions</Text>
+        </Box>
+        <Stack
+          p={4} spacing={8} w={'full'}
+          direction={['column', 'row']}
+        >
+          <FormControl w={['full', 'xs']}>
+            <FormLabel>From Date</FormLabel>
+            <Input
+              name='from' onChange={Formik.handleChange}
+              type='date' bg={'white'}
+            />
+          </FormControl>
+          <FormControl w={['full', 'xs']}>
+            <FormLabel>To Date</FormLabel>
+            <Input
+              name='to' onChange={Formik.handleChange}
+              type='date' bg={'white'}
+            />
+          </FormControl>
+        </Stack>
+        <HStack mb={4} justifyContent={'flex-end'}>
+          <Button
+            onClick={() => fetchTransactions()}
+            colorScheme={'twitter'}
+          >Search</Button>
+        </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
             colorScheme={'twitter'}
@@ -274,7 +313,7 @@ const Index = () => {
                 'debitCellRenderer': debitCellRenderer,
                 'statusCellRenderer': statusCellRenderer
               }}
-              
+
               onFilterChanged={
                 (params) => {
                   setPrintableRow(params.api.getRenderedNodes().map((item) => {
