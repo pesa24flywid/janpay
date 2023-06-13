@@ -36,6 +36,7 @@ import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 import Register from './register'
 import Loader from '../../hocs/Loader'
+import BackendAxios from '../../lib/axios'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
@@ -237,6 +238,8 @@ const Login = () => {
                 localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
                 Cookies.set('access-token', res.data.token.original.access_token)
+                BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
+                
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)
@@ -301,7 +304,7 @@ const Login = () => {
                 localStorage.setItem("paysprintId", res.data.paysprint_id)
 
                 Cookies.set('access-token', res.data.token.original.access_token)
-
+                BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)
