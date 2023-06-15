@@ -64,7 +64,13 @@ const Cms = () => {
             referenceId: Formik.values.referenceId,
             provider: Formik.values.provider
         }).then(res => {
-            setTransactionResponse(res.data.data)
+            if(!res.data?.status){
+                Toast({
+                    description: res.data?.message
+                })
+                return
+            }
+            setTransactionResponse(res.data?.data)
             onOpen()
         }).catch(err => {
             Toast({
