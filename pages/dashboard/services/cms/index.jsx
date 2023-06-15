@@ -60,8 +60,9 @@ const Cms = () => {
     })
 
     function checkStatus() {
-        BackendAxios.post(`/api/paysprint/cms/${Formik.values.provider}-status`, {
-            referenceId: Formik.values.referenceId
+        BackendAxios.post(`/api/paysprint/cms/status`, {
+            referenceId: Formik.values.referenceId,
+            provider: Formik.values.provider
         }).then(res => {
             setTransactionResponse(res.data.data)
             onOpen()
