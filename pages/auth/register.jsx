@@ -105,7 +105,7 @@ const Register = () => {
                     </Text>
 
                     <VStack spacing={8} alignItems={'center'}>
-                        <HStack spacing={4} w={['xs', 'sm']}>
+                        <VStack spacing={4} w={['xs', 'sm']}>
                             <Box>
                                 <FormLabel
                                     pl={2}
@@ -162,7 +162,7 @@ const Register = () => {
                                     />
                                 </InputGroup>
                             </Box>
-                        </HStack>
+                        </VStack>
                         <Box>
                             <FormLabel pl={2}
                                 htmlFor='user_id'
