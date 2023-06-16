@@ -658,7 +658,10 @@ const Bbps = () => {
                     }
                     ) : null
                 }
-
+                <VStack pt={8} spacing={0} w={'full'}>
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

@@ -120,7 +120,7 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {
@@ -380,6 +380,10 @@ const Index = () => {
                     }
                     ) : null
                 }
+                <VStack pt={8} spacing={0} w={'full'}>
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

@@ -244,7 +244,14 @@ const Payout = () => {
                                                             size={'xs'}
                                                             colorScheme='twitter'
                                                             rounded={'full'}
-                                                            onClick={() => showReceipt(item.metadata)}
+                                                            onClick={() => showReceipt({
+                                                                status: item.status == "processing" || item.status == "processed" ? true : false,
+                                                                amount: item?.amount,
+                                                                account_number: item?.account_number,
+                                                                UTR: item?.utr || " ",
+                                                                timestamp: item?.created_at,
+                                                                reference_id: item?.reference_id
+                                                            })}
                                                         >Receipt</Button>
                                                     </Td>
                                                     <Td>{item.beneficiary_name || "No name"}</Td>
@@ -361,6 +368,10 @@ const Payout = () => {
                                         }
                                         ) : null
                                 }
+                                <VStack pt={8} spacing={0} w={'full'}>
+                                    <Image src='/logo_long.png' w={'20'} pt={4} />
+                                    <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                                </VStack>
                             </VStack>
                         </ModalBody>
                     </Box>

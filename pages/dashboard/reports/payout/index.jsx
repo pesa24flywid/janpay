@@ -119,7 +119,7 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {
@@ -337,7 +337,7 @@ const Index = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-        <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
@@ -380,7 +380,10 @@ const Index = () => {
                     }
                     ) : null
                 }
-
+                <VStack pt={8} spacing={0} w={'full'}>
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>
@@ -409,52 +412,52 @@ const Index = () => {
       </Modal>
 
 
-<VisuallyHidden>
-  <table id='printable-table'>
-    <thead>
-      <tr>
-        <th>#</th>
-        {
-          columnDefs.filter((column) => {
-            if (
-              column.field != "metadata" &&
-              column.field != "name" &&
-              column.field != "receipt"
-            ) {
-              return (
-                column
-              )
-            }
-          }).map((column, key) => {
-            return (
-              <th key={key}>{column.headerName}</th>
-            )
-          })
-        }
-      </tr>
-    </thead>
-    <tbody>
-      {
-        printableRow.map((data, key) => {
-          return (
-            <tr key={key}>
-              <td>{key + 1}</td>
-              <td>{data.transaction_id}</td>
-              <td>{data.debit_amount}</td>
-              <td>{data.credit_amount}</td>
-              <td>{data.opening_balance}</td>
-              <td>{data.closing_balance}</td>
-              <td>{data.service_type}</td>
-              <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
-              <td>{data.created_at}</td>
-              <td>{data.updated_at}</td>
+      <VisuallyHidden>
+        <table id='printable-table'>
+          <thead>
+            <tr>
+              <th>#</th>
+              {
+                columnDefs.filter((column) => {
+                  if (
+                    column.field != "metadata" &&
+                    column.field != "name" &&
+                    column.field != "receipt"
+                  ) {
+                    return (
+                      column
+                    )
+                  }
+                }).map((column, key) => {
+                  return (
+                    <th key={key}>{column.headerName}</th>
+                  )
+                })
+              }
             </tr>
-          )
-        })
-      }
-    </tbody>
-  </table>
-</VisuallyHidden>
+          </thead>
+          <tbody>
+            {
+              printableRow.map((data, key) => {
+                return (
+                  <tr key={key}>
+                    <td>{key + 1}</td>
+                    <td>{data.transaction_id}</td>
+                    <td>{data.debit_amount}</td>
+                    <td>{data.credit_amount}</td>
+                    <td>{data.opening_balance}</td>
+                    <td>{data.closing_balance}</td>
+                    <td>{data.service_type}</td>
+                    <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+                    <td>{data.created_at}</td>
+                    <td>{data.updated_at}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </>
   )
 }
