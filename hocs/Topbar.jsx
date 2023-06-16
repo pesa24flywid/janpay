@@ -69,7 +69,7 @@ const Topbar = () => {
                 boxShadow={'base'}
             >
                 <Image
-                    w={'20'}
+                    w={'36'}
                     src={'/logo_long.png'}
                 />
                 {/* <Text fontWeight={'semibold'}>Pesa24</Text> */}
