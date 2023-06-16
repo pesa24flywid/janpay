@@ -6,7 +6,7 @@ const Middleware = (req) => {
 
     const url = req.url
 
-    if(!verified && url.includes(process.env.NODE_ENV == "production" ? "in/dashboard" : "/dashboard")){
+    if(!verified && url.includes(process.env.NODE_ENV == "production" ? "online/dashboard" : "/dashboard")){
         return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL+"/auth/login")
     }
     if(verified && url.includes("/auth")){
