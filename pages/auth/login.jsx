@@ -239,7 +239,7 @@ const Login = () => {
 
                 Cookies.set('access-token', res.data.token.original.access_token)
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
-                
+
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)
@@ -327,7 +327,7 @@ const Login = () => {
     return (
         <>
             <Head>
-                <title>Pesa24</title>
+                <title>Janpay</title>
             </Head>
             <Navbar />
             {
