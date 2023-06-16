@@ -138,7 +138,7 @@ const Register = () => {
                                     name={'middle_name'}
                                     placeholder={'Middle Name'}
                                     bg={'blue.100'}
-                                    required value={formik.values.middle_name}
+                                    value={formik.values.middle_name}
                                     onChange={formik.handleChange}
                                 />
                             </Box>
