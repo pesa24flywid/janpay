@@ -490,19 +490,20 @@ const Index = () => {
                     </Box>
                     <Text my={8} fontWeight={'semibold'}>Your Transaction Reports</Text>
                     <HStack>
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://onlinedigitalsevakendra.in/Content/HomePage/images/logoslider/6.png' boxSize={16} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>AePS</Text>
                             <Link href={'/dashboard/reports/aeps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
+                        </VStack> */}
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://setu.co/_next/static/media/b_assured.8a87bea7.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>BBPS</Text>
                             <Link href={'/dashboard/reports/bbps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
-                            </Link>              </VStack>
+                            </Link>
+                        </VStack>
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
@@ -512,16 +513,16 @@ const Index = () => {
                         </VStack>
                     </HStack>
                     <HStack pt={8}>
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/mobile.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>Recharge</Text>
                             <Link href={'/dashboard/reports/recharge?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
+                        </VStack> */}
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/payout.png' boxSize={16} w={12} objectFit={'contain'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Payout</Text>
+                            <Text fontSize={'xs'} textAlign={'center'}>Bigpay</Text>
                             <Link href={'/dashboard/reports/payout?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
