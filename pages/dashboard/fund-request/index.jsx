@@ -404,7 +404,7 @@ const FundRequest = () => {
                                 colorScheme={'red'}
                                 variant={'outline'}
                                 onClick={Formik.handleReset}
-                            >Cear Data</Button>
+                            >Clear Data</Button>
                             <Button colorScheme={'twitter'} onClick={Formik.handleSubmit}>Send Request</Button>
                         </HStack>
                     </Box>
