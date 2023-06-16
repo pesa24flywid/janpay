@@ -56,9 +56,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     isProfileComplete = (localStorage.getItem("isProfileComplete") === "true")
-    if (!isProfileComplete) {
-      setProfileAlert(true)
-    }
+    // if (!isProfileComplete) {
+    //   setProfileAlert(true)
+    // }
   }, [])
 
   function getOverview(tenure) {
