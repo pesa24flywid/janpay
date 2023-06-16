@@ -293,7 +293,7 @@ const Dashboard = () => {
       </DashboardWrapper>
 
       {/* Profile Incompletion Alert */}
-      <Modal isOpen={profileAlert} isCentered>
+      {/* <Modal isOpen={profileAlert} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Incomplete Profile</ModalHeader>
@@ -310,7 +310,7 @@ const Dashboard = () => {
             <Button variant='ghost' onClick={() => setProfileAlert(false)}>Finish Later</Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   )
 }
