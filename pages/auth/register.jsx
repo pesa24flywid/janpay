@@ -106,7 +106,7 @@ const Register = () => {
 
                     <VStack spacing={8} alignItems={'center'}>
                         <VStack spacing={4} w={['xs', 'sm']}>
-                            <Box>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='first_name'
@@ -124,7 +124,7 @@ const Register = () => {
                                     onChange={formik.handleChange}
                                 />
                             </Box>
-                            <Box>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='first_name'
@@ -142,7 +142,7 @@ const Register = () => {
                                     onChange={formik.handleChange}
                                 />
                             </Box>
-                            <Box>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='user_id'
