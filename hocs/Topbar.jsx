@@ -74,7 +74,7 @@ const Topbar = () => {
                 />
                 {/* <Text fontWeight={'semibold'}>Pesa24</Text> */}
                 <Spacer />
-                <Show above={'md'}>
+                {/* <Show above={'md'}>
                     <Link href={'tel:+9178380742'} style={{ paddingRight: '2rem' }}>
                         <Text fontSize={'xs'} color={'#666'}>
                             Helpline Number
@@ -83,7 +83,7 @@ const Topbar = () => {
                             +91 1234567890
                         </Text>
                     </Link>
-                </Show>
+                </Show> */}
                 <Button
                     leftIcon={<IoMdHelpBuoy fontSize={'1.25rem'} />}
                     rounded={'full'} colorScheme={'twitter'}
