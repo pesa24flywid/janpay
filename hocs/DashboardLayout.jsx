@@ -332,7 +332,7 @@ const DashboardWrapper = (props) => {
                     <DrawerContent>
                         <DrawerCloseButton />
                         <DrawerHeader>
-                            <Image src='/logo_long.jpeg' w={'24'} objectFit={'contain'} />
+                            <Image src='/logo_long.png' w={'24'} objectFit={'contain'} />
                             <HStack mt={4}>
                                 <Avatar size={'sm'} name={userName} src={profilePic} />
                                 <Box>

@@ -396,7 +396,7 @@ const Index = () => {
                     <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
                     <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
                   </HStack>
-                  <Image src='/logo_long.jpeg' w={'20'} pt={4} />
+                  <Image src='/logo_long.png' w={'20'} pt={4} />
                   <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                 </VStack>
               </VStack>

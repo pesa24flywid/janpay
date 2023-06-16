@@ -70,7 +70,7 @@ const Topbar = () => {
             >
                 <Image
                     w={'20'}
-                    src={'/logo_long.jpeg'}
+                    src={'/logo_long.png'}
                 />
                 {/* <Text fontWeight={'semibold'}>Pesa24</Text> */}
                 <Spacer />

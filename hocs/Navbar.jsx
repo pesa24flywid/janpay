@@ -36,7 +36,7 @@ const Navbar = () => {
                 px={4} py={2} color={'white'}
             >
                 <HStack justifyContent={'space-between'}>
-                    <Image src='/logo_long.jpeg' width={'28'} objectFit={'contain'} />
+                    <Image src='/logo_long.png' width={'28'} objectFit={'contain'} />
                 </HStack>
             </Box>
         </>
