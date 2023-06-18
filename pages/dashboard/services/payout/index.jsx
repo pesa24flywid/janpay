@@ -244,7 +244,14 @@ const Payout = () => {
                                                             size={'xs'}
                                                             colorScheme='twitter'
                                                             rounded={'full'}
-                                                            onClick={() => showReceipt(item.metadata)}
+                                                            onClick={() => showReceipt({
+                                                                status: item.status == "processing" || item.status == "processed" ? true : false,
+                                                                amount: item?.amount,
+                                                                account_number: item?.account_number,
+                                                                UTR: item?.utr || " ",
+                                                                timestamp: item?.created_at,
+                                                                reference_id: item?.reference_id
+                                                            })}
                                                         >Receipt</Button>
                                                     </Td>
                                                     <Td>{item.beneficiary_name || "No name"}</Td>
@@ -253,7 +260,7 @@ const Payout = () => {
                                                     <Td>{item.created_at || "Non-Format"}</Td>
                                                     <Td>
                                                         {
-                                                            item.status == 'processing' ?
+                                                            item.status == 'processing' || item.status == 'processed' ?
                                                                 <Text color={'green'}>Success</Text> :
                                                                 <Text textTransform={'capitalize'}>{item.status}</Text>
                                                         }
@@ -324,7 +331,9 @@ const Payout = () => {
                                         <BsCheck2Circle color='#FFF' fontSize={72} /> :
                                         <BsXCircle color='#FFF' fontSize={72} />
                                 }
-                                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+
+                                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt?.data?.amount || 0}</Text>
+                                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt?.status ? "success" : "failed"}</Text>
                             </VStack>
                         </ModalHeader>
                         <ModalBody p={0} bg={'azure'}>
@@ -338,7 +347,8 @@ const Payout = () => {
                                                 item[0].toLowerCase() != "user" &&
                                                 item[0].toLowerCase() != "user_id" &&
                                                 item[0].toLowerCase() != "user_phone" &&
-                                                item[0].toLowerCase() != "amount"
+                                                item[0].toLowerCase() != "amount" &&
+                                                item[0].toLowerCase() != "to"
                                             )
                                                 return (
                                                     <HStack
@@ -359,18 +369,6 @@ const Payout = () => {
                                         ) : null
                                 }
                                 <VStack pt={8} spacing={0} w={'full'}>
-                                    <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
-                                        <Text fontSize={'xs'}>{receipt.data.user}</Text>
-                                    </HStack>
-                                    <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
-                                        <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
-                                    </HStack>
-                                    <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                                        <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
-                                        <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
-                                    </HStack>
                                     <Image src='/logo_long.png' w={'20'} pt={4} />
                                     <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                                 </VStack>

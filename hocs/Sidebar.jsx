@@ -82,19 +82,18 @@ export const SidebarOptions =
           id: "basicServiceActivate",
           soon: false,
         },
-        {
-          title: 'AePS services',
-          link: '/dashboard/services/aeps?pageId=services',
-          id: "aepsTransaction",
-          soon: false
-        },
-        {
-          title: 'Aadhaar Pay',
-          link: '/dashboard/services/aeps/pay?pageId=services',
-          id: "aepsAadhaarPay",
-          soon: false
-
-        },
+        // {
+        //   title: 'AePS services',
+        //   link: '/dashboard/services/aeps?pageId=services',
+        //   id: "aepsTransaction",
+        //   soon: false
+        // },
+        // {
+        //   title: 'Aadhaar Pay',
+        //   link: '/dashboard/services/aeps/pay?pageId=services',
+        //   id: "aepsAadhaarPay",
+        //   soon: false
+        // },
         {
           title: 'DMT services',
           link: '/dashboard/services/dmt?pageId=services',
@@ -107,48 +106,48 @@ export const SidebarOptions =
           id: "bbpsTransaction",
           soon: false,
         },
+        // {
+        //   title: 'recharge',
+        //   link: '/dashboard/services/recharge?pageId=services',
+        //   id: "rechargeTransaction",
+        //   soon: false,
+        // },
         {
-          title: 'recharge',
-          link: '/dashboard/services/recharge?pageId=services',
-          id: "rechargeTransaction",
-          soon: false,
-        },
-        {
-          title: 'payout',
+          title: 'bigpay',
           link: '/dashboard/services/payout?pageId=services',
           id: "payoutTransaction",
           soon: false,
         },
-        {
-          title: 'axis bank account',
-          link: '/dashboard/services/axis?pageId=services',
-          id: "axisTransaction",
-          soon: false,
-        },
-        {
-          title: 'LIC services',
-          link: '/dashboard/services/lic?pageId=services',
-          id: "licTransaction",
-          soon: false,
-        },
-        {
-          title: 'PAN services',
-          link: '/dashboard/services/pan?pageId=services',
-          id: "panTransaction",
-          soon: false,
-        },
-        {
-          title: 'CMS services',
-          link: '/dashboard/services/cms?pageId=services',
-          id: "cmsTransaction",
-          soon: false,
-        },
-        {
-          title: 'Fastag',
-          link: '/dashboard/services/fastag?pageId=services',
-          id: "fastagTransaction",
-          soon: false,
-        },
+        // {
+        //   title: 'axis bank account',
+        //   link: '/dashboard/services/axis?pageId=services',
+        //   id: "axisTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'LIC services',
+        //   link: '/dashboard/services/lic?pageId=services',
+        //   id: "licTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'PAN services',
+        //   link: '/dashboard/services/pan?pageId=services',
+        //   id: "panTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'CMS services',
+        //   link: '/dashboard/services/cms?pageId=services',
+        //   id: "cmsTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'Fastag',
+        //   link: '/dashboard/services/fastag?pageId=services',
+        //   id: "fastagTransaction",
+        //   soon: false,
+        // },
       ]
     },
     {
@@ -165,37 +164,37 @@ export const SidebarOptions =
       icon: <FaShare />,
       link: '/dashboard/fund-transfer?pageId=transfer',
     },
-    {
-      type: 'link',
-      title: 'fund settlement',
-      id: 'settlement',
-      icon: <BsBank />,
-      link: '/dashboard/fund-settlement?pageId=settlement',
-    },
+    // {
+    //   type: 'link',
+    //   title: 'fund settlement',
+    //   id: 'settlement',
+    //   icon: <BsBank />,
+    //   link: '/dashboard/fund-settlement?pageId=settlement',
+    // },
     {
       type: 'accordion',
       title: 'reports',
       id: 'reports',
       icon: <BsFileEarmarkBarGraph />,
       children: [
-        {
-          title: 'AePS reports',
-          link: '/dashboard/reports/aeps?pageId=reports',
-          id: "aepsReport",
-          soon: false,
-        },
+        // {
+        //   title: 'AePS reports',
+        //   link: '/dashboard/reports/aeps?pageId=reports',
+        //   id: "aepsReport",
+        //   soon: false,
+        // },
         {
           title: 'BBPS reports',
           link: '/dashboard/reports/bbps?pageId=reports',
           id: "bbpsReport",
           soon: false,
         },
-        {
-          title: 'recharge reports',
-          link: '/dashboard/reports/recharge?pageId=reports',
-          id: "rechargeReport",
-          soon: false,
-        },
+        // {
+        //   title: 'recharge reports',
+        //   link: '/dashboard/reports/recharge?pageId=reports',
+        //   id: "rechargeReport",
+        //   soon: false,
+        // },
         {
           title: 'DMT reports',
           link: '/dashboard/reports/dmt?pageId=reports',
@@ -203,7 +202,7 @@ export const SidebarOptions =
           soon: false,
         },
         {
-          title: 'payout reports',
+          title: 'bigpay reports',
           link: '/dashboard/reports/payout?pageId=reports',
           id: "payoutReport",
           soon: false,
@@ -214,36 +213,36 @@ export const SidebarOptions =
           id: "fundRequests",
           soon: false,
         },
-        {
-          title: 'LIC reports',
-          link: '/dashboard/reports/lic?pageId=reports',
-          id: "licReport",
-          soon: false,
-        },
-        {
-          title: 'PAN reports',
-          link: '/dashboard/reports/pan?pageId=reports',
-          id: "panReport",
-          soon: false,
-        },
-        {
-          title: 'CMS reports',
-          link: '/dashboard/reports/cms?pageId=reports',
-          id: "cmsReport",
-          soon: false,
-        },
-        {
-          title: 'axis accounts',
-          link: '/dashboard/reports/axis?pageId=reports',
-          id: "axisReport",
-          soon: true,
-        },
-        {
-          title: 'fastag reports',
-          link: '/dashboard/reports/fastag?pageId=reports',
-          id: "fastagReport",
-          soon: false,
-        },
+        // {
+        //   title: 'LIC reports',
+        //   link: '/dashboard/reports/lic?pageId=reports',
+        //   id: "licReport",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'PAN reports',
+        //   link: '/dashboard/reports/pan?pageId=reports',
+        //   id: "panReport",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'CMS reports',
+        //   link: '/dashboard/reports/cms?pageId=reports',
+        //   id: "cmsReport",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'axis accounts',
+        //   link: '/dashboard/reports/axis?pageId=reports',
+        //   id: "axisReport",
+        //   soon: true,
+        // },
+        // {
+        //   title: 'fastag reports',
+        //   link: '/dashboard/reports/fastag?pageId=reports',
+        //   id: "fastagReport",
+        //   soon: false,
+        // },
         {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',

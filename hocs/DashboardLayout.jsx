@@ -150,7 +150,7 @@ const DashboardWrapper = (props) => {
 
     return (
         <>
-            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Janpay - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}
@@ -252,7 +252,7 @@ const DashboardWrapper = (props) => {
                             </Show>
                         </HStack>
                         {/* Topbar Ends */}
-                        
+
                         <Box p={[4, 0]} pr={[4, 4]}>
                             {props.children}
                         </Box>

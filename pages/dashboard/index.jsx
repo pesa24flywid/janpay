@@ -152,8 +152,8 @@ const Dashboard = () => {
           flexWrap={'wrap'} alignItems={['flex-start']}
         >
           <DataCard
-            title={'AePS Transactions'}
-            data={aepsData?.credit - aepsData?.debit}
+            title={'Bigpay Transactions'}
+            data={payoutData?.credit - payoutData?.debit}
             icon={<GiReceiveMoney color='white' size={'32'} />}
             color={'#FF7B54'}
           />
@@ -180,11 +180,18 @@ const Dashboard = () => {
           direction={['column', 'row']}
           py={2} spacing={4}
         >
-          <TransactionCard
+          {/* <TransactionCard
             color={'#6C00FF'}
             title={"AePS"}
             quantity={aepsData?.count}
             amount={aepsData?.credit - aepsData?.debit}
+          /> */}
+
+          <TransactionCard
+            color={'#26845A'}
+            title={"Bigpay"}
+            quantity={payoutData?.count}
+            amount={payoutData?.debit - payoutData?.credit}
           />
 
           <TransactionCard
@@ -202,7 +209,7 @@ const Dashboard = () => {
           />
         </Stack>
 
-        <Stack
+        {/* <Stack
           direction={['column', 'row']}
           py={2} spacing={4}
         >
@@ -227,9 +234,9 @@ const Dashboard = () => {
             amount={cmsData?.debit - cmsData?.credit}
           />
 
-        </Stack>
+        </Stack> */}
 
-        <Stack
+        {/* <Stack
           direction={['column', 'row']}
           py={2} spacing={4}
         >
@@ -242,7 +249,7 @@ const Dashboard = () => {
 
           <TransactionCard
             color={'#26845A'}
-            title={"Payout"}
+            title={"Bigpay"}
             quantity={payoutData?.count}
             amount={payoutData?.debit - payoutData?.credit}
           />
@@ -254,7 +261,7 @@ const Dashboard = () => {
             amount={rechargeData?.debit - rechargeData?.credit}
           />
 
-        </Stack>
+        </Stack> */}
 
         <Stack
           pt={4}
@@ -286,7 +293,7 @@ const Dashboard = () => {
       </DashboardWrapper>
 
       {/* Profile Incompletion Alert */}
-      <Modal isOpen={profileAlert} isCentered>
+      {/* <Modal isOpen={profileAlert} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Incomplete Profile</ModalHeader>
@@ -303,7 +310,7 @@ const Dashboard = () => {
             <Button variant='ghost' onClick={() => setProfileAlert(false)}>Finish Later</Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   )
 }

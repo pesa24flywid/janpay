@@ -239,7 +239,7 @@ const Login = () => {
 
                 Cookies.set('access-token', res.data.token.original.access_token)
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
-                
+
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)
@@ -327,7 +327,7 @@ const Login = () => {
     return (
         <>
             <Head>
-                <title>Pesa24</title>
+                <title>Janpay</title>
             </Head>
             <Navbar />
             {
@@ -405,7 +405,8 @@ const Login = () => {
                                                                     onClick={() => setPasswordVisible(!passwordVisible)}
                                                                 >
                                                                     <BsEyeFill fontSize={20} />
-                                                                </Button>}
+                                                                </Button>
+                                                            }
                                                         </InputRightElement>
                                                     </InputGroup>
                                                     <Link href={'../auth/reset-password'}>
@@ -421,7 +422,7 @@ const Login = () => {
                                                     <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
                                                         <HStack spacing={4}>
                                                             <Radio value='otp'>OTP</Radio>
-                                                            <Radio value='mpin'>MPIN</Radio>
+                                                            {/* <Radio value='mpin'>MPIN</Radio> */}
                                                         </HStack>
                                                     </RadioGroup>
                                                 </HStack>

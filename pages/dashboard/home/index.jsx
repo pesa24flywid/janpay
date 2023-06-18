@@ -16,7 +16,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Link from 'next/link'
 import { FaCar, FaCity, FaFingerprint, FaHeart, FaMobile, FaMoneyBillAlt, FaRegMoneyBillAlt, FaSatelliteDish, FaUsers } from 'react-icons/fa'
 import { BiIdCard, BiMobileAlt, BiRupee } from 'react-icons/bi'
-import { BsArrowRight, BsCreditCardFill, BsDropletFill, BsEmojiSmileFill, BsHeartFill, BsHouseDoorFill, BsLightningChargeFill } from 'react-icons/bs'
+import { BsArrowRight, BsCreditCardFill, BsCurrencyRupee, BsDropletFill, BsEmojiSmileFill, BsHeartFill, BsHouseDoorFill, BsLightningChargeFill } from 'react-icons/bs'
 import { IoMdFingerPrint, IoMdUmbrella } from 'react-icons/io'
 import BackendAxios, { ClientAxios } from '../../../lib/axios'
 import Marquee from 'react-fast-marquee'
@@ -40,6 +40,7 @@ const Index = () => {
     const [bbpsData, setBbpsData] = useState({ count: 0, debit: 0, credit: 0 })
     const [dmtData, setDmtData] = useState({ count: 0, debit: 0, credit: 0 })
     const [rechargeData, setRechargeData] = useState({ count: 0, debit: 0, credit: 0 })
+    const [payoutData, setPayoutData] = useState({ count: 0, debit: 0, credit: 0 })
     const [bbpsProvider, setBbpsProvider] = useState("")
     const [categories, setCategories] = useState([])
 
@@ -90,6 +91,7 @@ const Index = () => {
             setBbpsData(res.data[1].bbps)
             setDmtData(res.data[2].dmt)
             setRechargeData(res.data[8].recharge)
+            setPayoutData(res.data[4].payout)
             setIsLoading(false)
         })
 
@@ -126,10 +128,10 @@ const Index = () => {
                             alignItems={'center'}
                             justifyContent={['center', 'flex-start']}
                         >
-                            <Icon as={IoMdFingerPrint} fontSize={[28, 48]} />
+                            <Icon as={BsCurrencyRupee} fontSize={[28, 48]} />
                             <Box>
-                                <Text fontSize={['sm']} textAlign={['center', 'left']}>AePS</Text>
-                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ {Math.abs(aepsData.credit - aepsData.debit) || 0}</Text>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Bigpay</Text>
+                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ {Math.abs(payoutData?.credit - payoutData?.debit) || 0}</Text>
                             </Box>
                         </Stack>
                         <Stack
@@ -146,9 +148,9 @@ const Index = () => {
                         >
                             <Icon as={FaMobile} fontSize={[28, 48]} />
                             <Box>
-                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Recharges</Text>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Bill Pay</Text>
                                 <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>
-                                    ₹ {Math.abs(bbpsData.credit + rechargeData.credit - (bbpsData.debit + bbpsData.debit)) || 0}
+                                    ₹ {Math.abs(bbpsData.credit - bbpsData.debit) || 0}
                                 </Text>
                             </Box>
                         </Stack>
@@ -188,7 +190,7 @@ const Index = () => {
 
                         <HStack justifyContent={'flex-start'} gap={[4, 8]} flexWrap={'wrap'}>
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/aeps?pageId=services'}
                                     style={{
@@ -205,6 +207,26 @@ const Index = () => {
                                         color={'#FFF'}
                                         fontSize={['sm', 'md']}
                                     >AePS</Text>
+                                </Link>
+                            </Box> */}
+
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                                <Link
+                                    href={'/dashboard/services/payout?pageId=services'}
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    <Icon fontSize={36} as={BsCurrencyRupee} color={'#FFF'} />
+                                    <Text
+                                        textAlign={'center'}
+                                        color={'#FFF'}
+                                        fontSize={['sm', 'md']}
+                                    >Bigpay</Text>
                                 </Link>
                             </Box>
 
@@ -256,7 +278,7 @@ const Index = () => {
                                 </Link>
                             </Box>
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/recharge?pageId=services'}
                                     style={{
@@ -274,9 +296,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >Recharge</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/fastag?pageId=services'}
                                     style={{
@@ -294,9 +316,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >Fastag</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/lic?pageId=services'}
                                     style={{
@@ -314,9 +336,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >LIC</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/pan?pageId=services'}
                                     style={{
@@ -334,9 +356,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >PAN Card</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/axis?pageId=services'}
                                     style={{
@@ -355,7 +377,7 @@ const Index = () => {
                                         paddingTop={1}
                                     >Axis Bank</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
                         </HStack>
                     </Box>
@@ -388,7 +410,7 @@ const Index = () => {
                                                         passedCategory: bbpsProvider == "eko" ? item.operator_category_id : item.operator_category_name
                                                     }
                                                 }}
-                                                
+
                                                 style={{
                                                     display: 'flex',
                                                     flexDirection: 'column',
@@ -468,19 +490,20 @@ const Index = () => {
                     </Box>
                     <Text my={8} fontWeight={'semibold'}>Your Transaction Reports</Text>
                     <HStack>
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://onlinedigitalsevakendra.in/Content/HomePage/images/logoslider/6.png' boxSize={16} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>AePS</Text>
                             <Link href={'/dashboard/reports/aeps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
+                        </VStack> */}
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://setu.co/_next/static/media/b_assured.8a87bea7.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>BBPS</Text>
                             <Link href={'/dashboard/reports/bbps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
-                            </Link>              </VStack>
+                            </Link>
+                        </VStack>
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
@@ -490,16 +513,16 @@ const Index = () => {
                         </VStack>
                     </HStack>
                     <HStack pt={8}>
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/mobile.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>Recharge</Text>
                             <Link href={'/dashboard/reports/recharge?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
+                        </VStack> */}
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/payout.png' boxSize={16} w={12} objectFit={'contain'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Payout</Text>
+                            <Text fontSize={'xs'} textAlign={'center'}>Bigpay</Text>
                             <Link href={'/dashboard/reports/payout?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>

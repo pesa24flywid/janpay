@@ -105,8 +105,8 @@ const Register = () => {
                     </Text>
 
                     <VStack spacing={8} alignItems={'center'}>
-                        <HStack spacing={4} w={['xs', 'sm']}>
-                            <Box>
+                        <VStack spacing={4} w={['xs', 'sm']}>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='first_name'
@@ -124,7 +124,7 @@ const Register = () => {
                                     onChange={formik.handleChange}
                                 />
                             </Box>
-                            <Box>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='first_name'
@@ -138,11 +138,11 @@ const Register = () => {
                                     name={'middle_name'}
                                     placeholder={'Middle Name'}
                                     bg={'blue.100'}
-                                    required value={formik.values.middle_name}
+                                    value={formik.values.middle_name}
                                     onChange={formik.handleChange}
                                 />
                             </Box>
-                            <Box>
+                            <Box w={'full'}>
                                 <FormLabel
                                     pl={2}
                                     htmlFor='user_id'
@@ -162,7 +162,7 @@ const Register = () => {
                                     />
                                 </InputGroup>
                             </Box>
-                        </HStack>
+                        </VStack>
                         <Box>
                             <FormLabel pl={2}
                                 htmlFor='user_id'

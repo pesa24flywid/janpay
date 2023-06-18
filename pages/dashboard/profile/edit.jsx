@@ -378,9 +378,6 @@ const EditProfile = () => {
 
   return (
     <>
-      <Head>
-        <title>Pesa24 - Edit Profile</title>
-      </Head>
       <DashboardWrapper titleText="Edit Profile">
         <Stack direction={['column', 'row']} my={4} spacing={4} alignItems={'flex-start'}>
           <Stack
@@ -625,8 +622,8 @@ const EditProfile = () => {
                   />
                 </FormControl>
               </Stack>
-              <Stack 
-              w={'full'} direction={['column', 'row']} 
+              <Stack
+              w={'full'} direction={['column', 'row']}
               alignItems={'center'} pt={4}
               justifyContent={'center'} spacing={[4, 8]}>
                 <Box>

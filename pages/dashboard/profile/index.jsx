@@ -108,10 +108,6 @@ const Profile = () => {
 
   return (
     <>
-      <Head>
-        <title>Pesa24 - Profile</title>
-      </Head>
-
       <DashboardWrapper titleText='Your Profile'>
         <Stack
           direction={["column", "row"]}

@@ -120,7 +120,7 @@ const Index = () => {
   ])
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
     const data = {
       files: [
         new File([myFile], 'receipt.jpeg', {
@@ -381,18 +381,6 @@ const Index = () => {
                     ) : null
                 }
                 <VStack pt={8} spacing={0} w={'full'}>
-                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
-                  </HStack>
-                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
-                  </HStack>
-                  <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
-                  </HStack>
                   <Image src='/logo_long.png' w={'20'} pt={4} />
                   <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
                 </VStack>
