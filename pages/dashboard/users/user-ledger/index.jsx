@@ -176,7 +176,7 @@ const UserLedger = () => {
         }
         return (
             <HStack height={'full'} w={'full'} gap={4}>
-                <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+                <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
             </HStack>
         )
     }
@@ -236,33 +236,33 @@ const UserLedger = () => {
                     </HStack>
                     <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.first_page_url)}
                         ><BsChevronDoubleLeft />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.prev_page_url)}
                         ><BsChevronLeft />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'solid'}
                         >{pagination.current_page}</Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.next_page_url)}
                         ><BsChevronRight />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.last_page_url)}
@@ -297,33 +297,33 @@ const UserLedger = () => {
                     </Box>
                     <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.first_page_url)}
                         ><BsChevronDoubleLeft />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.prev_page_url)}
                         ><BsChevronLeft />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'solid'}
                         >{pagination.current_page}</Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.next_page_url)}
                         ><BsChevronRight />
                         </Button>
                         <Button
-                            colorScheme={'twitter'}
+                            colorScheme={'orange'}
                             fontSize={12} size={'xs'}
                             variant={'outline'}
                             onClick={() => fetchLedger(pagination.last_page_url)}
@@ -464,7 +464,7 @@ const UserLedger = () => {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
                                         size={'sm'}
-                                        colorScheme={'twitter'}
+                                        colorScheme={'orange'}
                                         leftIcon={<BsDownload />}
                                         onClick={toPdf}
                                     >Download

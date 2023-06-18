@@ -108,7 +108,7 @@ const Activate = () => {
                                         textTransform={'capitalize'}
                                     >{service.service_name} Services</Text>
                                     <Button
-                                        colorScheme={'twitter'}
+                                        colorScheme={'orange'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
                                         onClick={() => activateService(service.id)}
                                     >Activate</Button>
@@ -143,7 +143,7 @@ const Activate = () => {
                                         textTransform={'capitalize'}
                                     >{service.service_name} Services</Text>
                                     <Button
-                                        colorScheme={'twitter'}
+                                        colorScheme={'orange'}
                                         isDisabled={alreadyActiveServices.includes(service.service_name)}
                                         onClick={() => activateEko(service.id)}
                                     >Activate</Button>

@@ -44,45 +44,6 @@ const Index = () => {
     const [bbpsProvider, setBbpsProvider] = useState("")
     const [categories, setCategories] = useState([])
 
-    // Fetch all available categories
-    useEffect(() => {
-        setIsLoading(true)
-        if (bbpsProvider == "eko") {
-            BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
-                setCategories(res.data.data)
-                setIsLoading(false)
-            }).catch((err) => {
-                console.log(err)
-                setIsLoading(false)
-                Toast({
-                    status: 'warning',
-                    title: "Error while fetching operators",
-                    description: err.response?.data?.message || err.response?.data || err.message
-                })
-            })
-        }
-        if (bbpsProvider == "paysprint") {
-            BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then(res => {
-                setAllData(Object.keys(res.data).map((item, key) => ({
-                    operator_category_name: item,
-                    operators: res.data[item],
-                    status: 1
-                })))
-                setCategories(Object.keys(res.data).map((item, key) => ({
-                    operator_category_name: item,
-                    status: 1
-                })))
-                setIsLoading(false)
-            }).catch(err => {
-                console.log(err)
-                Toast({
-                    status: 'warning',
-                    description: "Error while fetching operators"
-                })
-                setIsLoading(false)
-            })
-        }
-    }, [bbpsProvider])
 
     useEffect(() => {
         setIsLoading(true)
@@ -128,13 +89,13 @@ const Index = () => {
                             alignItems={'center'}
                             justifyContent={['center', 'flex-start']}
                         >
-                            <Icon as={BsCurrencyRupee} fontSize={[28, 48]} />
+                            <Icon as={BiRupee} fontSize={[28, 48]} />
                             <Box>
                                 <Text fontSize={['sm']} textAlign={['center', 'left']}>Bigpay</Text>
                                 <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ {Math.abs(payoutData?.credit - payoutData?.debit) || 0}</Text>
                             </Box>
                         </Stack>
-                        <Stack
+                        {/* <Stack
                             direction={['column', 'row']}
                             p={4} boxShadow={'md'}
                             rounded={8} flex={1}
@@ -153,7 +114,7 @@ const Index = () => {
                                     ₹ {Math.abs(bbpsData.credit - bbpsData.debit) || 0}
                                 </Text>
                             </Box>
-                        </Stack>
+                        </Stack> */}
                         <Stack
                             direction={['column', 'row']}
                             p={4} boxShadow={'md'}
@@ -221,7 +182,7 @@ const Index = () => {
                                         gap: '8px'
                                     }}
                                 >
-                                    <Icon fontSize={36} as={BsCurrencyRupee} color={'#FFF'} />
+                                    <Icon fontSize={36} as={BiRupee} color={'#FFF'} />
                                     <Text
                                         textAlign={'center'}
                                         color={'#FFF'}
@@ -230,7 +191,7 @@ const Index = () => {
                                 </Link>
                             </Box>
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/bbps/all?pageId=services'}
                                     style={{
@@ -256,7 +217,7 @@ const Index = () => {
                                         paddingTop={1}
                                     >Bill Pay</Text>
                                 </Link>
-                            </Box>
+                            </Box> */}
 
                             <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
@@ -382,7 +343,7 @@ const Index = () => {
                         </HStack>
                     </Box>
 
-                    <Box
+                    {/* <Box
                         width={'100%'}
                         rounded={16}
                         boxShadow={'lg'}
@@ -472,7 +433,7 @@ const Index = () => {
                             }
 
                         </HStack>
-                    </Box>
+                    </Box> */}
 
                     <Box w={'full'} mt={8} p={4} rounded={16} boxShadow={'lg'} bgColor={'whatsapp.400'}>
                         <HStack justifyContent={'space-between'}>
@@ -497,20 +458,20 @@ const Index = () => {
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
                         </VStack> */}
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://setu.co/_next/static/media/b_assured.8a87bea7.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>BBPS</Text>
                             <Link href={'/dashboard/reports/bbps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
-                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        </VStack> */}
+                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
                             <Link href={'/dashboard/reports/dmt?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack>
+                        </VStack> */}
                     </HStack>
                     <HStack pt={8}>
                         {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
@@ -520,6 +481,13 @@ const Index = () => {
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
                         </VStack> */}
+                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                            <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
+                            <Link href={'/dashboard/reports/dmt?pageId=reports'}>
+                                <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
+                            </Link>
+                        </VStack>
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/payout.png' boxSize={16} w={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>Bigpay</Text>

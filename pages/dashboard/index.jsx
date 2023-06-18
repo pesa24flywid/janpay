@@ -147,14 +147,14 @@ const Dashboard = () => {
           </Select>
         </HStack>
         <Stack direction={['row']}
-          w={'full'} py={8} spacing={[0, 4]}
-          justifyContent={'space-between'}
+          w={'full'} py={8} spacing={[0, 8]}
+          justifyContent={'flex-start'}
           flexWrap={'wrap'} alignItems={['flex-start']}
         >
           <DataCard
             title={'Bigpay Transactions'}
             data={payoutData?.credit - payoutData?.debit}
-            icon={<GiReceiveMoney color='white' size={'32'} />}
+            icon={<GiTakeMyMoney color='white' size={'32'} />}
             color={'#FF7B54'}
           />
           <DataCard
@@ -163,7 +163,7 @@ const Dashboard = () => {
             icon={<FaMoneyBillAlt color='white' size={'32'} />}
             color={'#6C00FF'}
           />
-          <DataCard
+          {/* <DataCard
             title={'Mobile Recharge'}
             data={0}
             icon={<FaMobile color='white' size={'32'} />}
@@ -174,7 +174,7 @@ const Dashboard = () => {
             data={0}
             icon={<GiTakeMyMoney color='white' size={'32'} />}
             color={'#88A47C'}
-          />
+          /> */}
         </Stack>
         <Stack
           direction={['column', 'row']}
@@ -194,12 +194,12 @@ const Dashboard = () => {
             amount={payoutData?.debit - payoutData?.credit}
           />
 
-          <TransactionCard
+          {/* <TransactionCard
             color={'#3C79F5'}
             title={"BBPS"}
             quantity={bbpsData?.count}
             amount={bbpsData?.debit - bbpsData?.credit}
-          />
+          /> */}
 
           <TransactionCard
             color={'#2DCDDF'}

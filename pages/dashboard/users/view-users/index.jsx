@@ -140,7 +140,7 @@ const Index = () => {
                     <TabList>
                         <Tab
                             fontSize={['xs', 'lg']}
-                            _selected={{ bg: 'twitter.500', color: 'white' }}
+                            _selected={{ bg: 'orange.500', color: 'white' }}
                             onClick={() => setSelectedTab("retailer")}
                             width={'xs'} flex={'unset'}
                         >
@@ -149,7 +149,7 @@ const Index = () => {
                         {myRole == 'super_distributor' ?
                             <Tab
                                 fontSize={['xs', 'lg']}
-                                _selected={{ bg: 'twitter.500', color: 'white' }}
+                                _selected={{ bg: 'orange.500', color: 'white' }}
                                 onClick={() => setSelectedTab("distributor")}
                                 width={'xs'} flex={'unset'}
                             >
@@ -171,7 +171,7 @@ const Index = () => {
                                             <HStack spacing={4}>
                                                 <Button
                                                     size={['xs', 'sm']}
-                                                    colorScheme={'twitter'}
+                                                    colorScheme={'orange'}
                                                     leftIcon={<FaFileCsv />}
                                                 >
                                                     CSV
@@ -210,33 +210,33 @@ const Index = () => {
 
                                         <HStack spacing={2} mt={12} py={4} bg={'white'} justifyContent={'center'}>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.first_page_url)}
                                             ><BsChevronDoubleLeft />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.prev_page_url)}
                                             ><BsChevronLeft />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'solid'}
                                             >{pagination.current_page}</Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.next_page_url)}
                                             ><BsChevronRight />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.last_page_url)}
@@ -401,33 +401,33 @@ const Index = () => {
                                         </TableContainer>
                                         <HStack spacing={2} py={4} bg={'white'} justifyContent={'center'}>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.first_page_url)}
                                             ><BsChevronDoubleLeft />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.prev_page_url)}
                                             ><BsChevronLeft />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'solid'}
                                             >{pagination.current_page}</Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.next_page_url)}
                                             ><BsChevronRight />
                                             </Button>
                                             <Button
-                                                colorScheme={'twitter'}
+                                                colorScheme={'orange'}
                                                 fontSize={12} size={'xs'}
                                                 variant={'outline'}
                                                 onClick={() => fetchUsersList(pagination.last_page_url)}

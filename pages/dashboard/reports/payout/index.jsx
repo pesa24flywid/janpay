@@ -67,42 +67,51 @@ const Index = () => {
   const [columnDefs, setColumnDefs] = useState([
     {
       headerName: "Trnxn ID",
-      field: 'transaction_id'
+      field: 'transaction_id',
+      width: 150
     },
     {
-      headerName: "Debit Amount",
+      headerName: "Debit",
       field: 'debit_amount',
-      cellRenderer: 'debitCellRenderer'
+      cellRenderer: 'debitCellRenderer',
+      width: 150
     },
     {
-      headerName: "Credit Amount",
+      headerName: "Credit",
       field: 'credit_amount',
-      cellRenderer: 'creditCellRenderer'
+      cellRenderer: 'creditCellRenderer',
+      width: 150
     },
     {
       headerName: "Opening Balance",
-      field: 'opening_balance'
+      field: 'opening_balance',
+      width: 150
     },
     {
       headerName: "Closing Balance",
-      field: 'closing_balance'
+      field: 'closing_balance',
+      width: 150
     },
     {
       headerName: "Transaction Type",
-      field: 'service_type'
+      field: 'service_type',
+      hide: true
     },
     {
-      headerName: "Transaction Status",
+      headerName: "Status",
       field: 'status',
-      cellRenderer: 'statusCellRenderer'
+      cellRenderer: 'statusCellRenderer',
+      width: 100
     },
     {
-      headerName: "Created Timestamp",
-      field: 'created_at'
+      headerName: "Created At",
+      field: 'created_at',
+      width: 150
     },
     {
-      headerName: "Updated Timestamp",
-      field: 'updated_at'
+      headerName: "Updated At",
+      field: 'updated_at',
+      width: 150
     },
     {
       headerName: "Additional Info",
@@ -194,14 +203,14 @@ const Index = () => {
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
     )
   }
 
   const creditCellRenderer = (params) => {
     return (
-      <Text px={1} flex={'unset'} w={'fit-content'} bgColor={params.value > 0 && "green.400"} color={params.value > 0 && "#FFF"}>
+      <Text px={1} flex={'unset'} w={'fit-content'} fontWeight={'semibold'} color={params.value > 0 && "green.400"}>
         {params.value}
       </Text>
     )
@@ -209,7 +218,7 @@ const Index = () => {
 
   const debitCellRenderer = (params) => {
     return (
-      <Text px={1} flex={'unset'} w={'fit-content'} bgColor={params.value > 0 && "red.400"} color={params.value > 0 && "#FFF"}>
+      <Text px={1} flex={'unset'} w={'fit-content'} fontWeight={'semibold'} color={params.value > 0 && "red.400"}>
         {params.value}
       </Text>
     )
@@ -229,10 +238,10 @@ const Index = () => {
   return (
     <>
       <DashboardWrapper pageTitle={'Payout Reports'}>
-        <HStack>
+        <HStack pb={8}>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
         </HStack>
-        <Box p={2} bg={'twitter.500'}>
+        <Box p={2} bg={'orange.500'} roundedTop={16}>
           <Text color={'#FFF'}>Search Transactions</Text>
         </Box>
         <Stack
@@ -257,38 +266,38 @@ const Index = () => {
         <HStack mb={4} justifyContent={'flex-end'}>
           <Button
             onClick={() => fetchTransactions()}
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
           >Search</Button>
         </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.first_page_url)}
           ><BsChevronDoubleLeft />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.prev_page_url)}
           ><BsChevronLeft />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'solid'}
           >{pagination.current_page}</Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.next_page_url)}
           ><BsChevronRight />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.last_page_url)}
@@ -296,7 +305,7 @@ const Index = () => {
           </Button>
         </HStack>
         <Box py={6}>
-          <Box className='ag-theme-alpin ag-theme-pesa24-blue' rounded={16} overflow={'hidden'} w={'full'} h={['2xl']}>
+          <Box className='ag-theme-alpine ag-theme-pesa24-blue' rounded={16} overflow={'hidden'} w={'full'} h={['2xl']}>
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -399,7 +408,7 @@ const Index = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'twitter'}
+                    colorScheme={'orange'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download

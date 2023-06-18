@@ -697,7 +697,7 @@ const Index = () => {
                         justifyContent={'flex-end'}
                     >
                         <Button type={'reset'} onClick={Formik.handleReset}>Clear Form</Button>
-                        <Button type={'submit'} colorScheme={'twitter'} isLoading={isLoading}>Submit</Button>
+                        <Button type={'submit'} colorScheme={'orange'} isLoading={isLoading}>Submit</Button>
                     </HStack>
                 </DashboardWrapper>
             </form>

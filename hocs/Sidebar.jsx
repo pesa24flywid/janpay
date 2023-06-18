@@ -76,12 +76,12 @@ export const SidebarOptions =
       title: 'services',
       icon: <BiRupee />,
       children: [
-        {
-          title: 'Activate services',
-          link: '/dashboard/services/activate?pageId=services',
-          id: "basicServiceActivate",
-          soon: false,
-        },
+        // {
+        //   title: 'Activate services',
+        //   link: '/dashboard/services/activate?pageId=services',
+        //   id: "basicServiceActivate",
+        //   soon: false,
+        // },
         // {
         //   title: 'AePS services',
         //   link: '/dashboard/services/aeps?pageId=services',
@@ -100,12 +100,12 @@ export const SidebarOptions =
           id: "dmtTransaction",
           soon: false,
         },
-        {
-          title: 'BBPS services',
-          link: '/dashboard/services/bbps?pageId=services',
-          id: "bbpsTransaction",
-          soon: false,
-        },
+        // {
+        //   title: 'BBPS services',
+        //   link: '/dashboard/services/bbps?pageId=services',
+        //   id: "bbpsTransaction",
+        //   soon: false,
+        // },
         // {
         //   title: 'recharge',
         //   link: '/dashboard/services/recharge?pageId=services',
@@ -183,12 +183,12 @@ export const SidebarOptions =
         //   id: "aepsReport",
         //   soon: false,
         // },
-        {
-          title: 'BBPS reports',
-          link: '/dashboard/reports/bbps?pageId=reports',
-          id: "bbpsReport",
-          soon: false,
-        },
+        // {
+        //   title: 'BBPS reports',
+        //   link: '/dashboard/reports/bbps?pageId=reports',
+        //   id: "bbpsReport",
+        //   soon: false,
+        // },
         // {
         //   title: 'recharge reports',
         //   link: '/dashboard/reports/recharge?pageId=reports',
@@ -349,7 +349,7 @@ const Sidebar = ({ userName, userImage }) => {
                         py={2}
                         rounded={'full'}
                         overflow={'hidden'}
-                        bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
+                        bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'orange.800' : 'transparent'}
                         id={option.id || option.title}
                       >
                         {option.icon}
@@ -366,7 +366,7 @@ const Sidebar = ({ userName, userImage }) => {
                       <AccordionItem border={'none'}>
                         <AccordionButton
                           px={[0, 3]} py={2}
-                          bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'twitter.500' : 'transparent'}
+                          bgColor={Router.asPath.includes(`pageId=${option.id}`) ? 'orange.800' : 'transparent'}
                           rounded={'full'}>
                           <HStack
                             spacing={1} flex={1}

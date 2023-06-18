@@ -422,7 +422,7 @@ const Login = () => {
                                                     <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
                                                         <HStack spacing={4}>
                                                             <Radio value='otp'>OTP</Radio>
-                                                            {/* <Radio value='mpin'>MPIN</Radio> */}
+                                                            <Radio value='mpin'>MPIN</Radio>
                                                         </HStack>
                                                     </RadioGroup>
                                                 </HStack>
@@ -497,7 +497,7 @@ const Login = () => {
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'} spacing={6}>
-                            <Button colorScheme={'twitter'} onClick={() => handleMpin()}>Login</Button>
+                            <Button colorScheme={'orange'} onClick={() => handleMpin()}>Login</Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>

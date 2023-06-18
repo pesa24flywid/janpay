@@ -85,7 +85,7 @@ const ResetPassword = () => {
                 onChange={PasswordFormik.handleChange}
               />
             </FormControl>
-            <Button colorScheme={'twitter'} onClick={handlePasswordReset}>Done</Button>
+            <Button colorScheme={'orange'} onClick={handlePasswordReset}>Done</Button>
           </VStack>
         </Box>
       </DashboardWrapper>

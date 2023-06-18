@@ -194,7 +194,7 @@ const Index = () => {
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
     )
   }
@@ -232,7 +232,7 @@ const Index = () => {
         <HStack>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
         </HStack>
-        <Box p={2} bg={'twitter.500'}>
+        <Box p={2} bg={'orange.500'}>
           <Text color={'#FFF'}>Search Transactions</Text>
         </Box>
         <Stack
@@ -257,38 +257,38 @@ const Index = () => {
         <HStack mb={4} justifyContent={'flex-end'}>
           <Button
             onClick={() => fetchTransactions()}
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
           >Search</Button>
         </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.first_page_url)}
           ><BsChevronDoubleLeft />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.prev_page_url)}
           ><BsChevronLeft />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'solid'}
           >{pagination.current_page}</Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.next_page_url)}
           ><BsChevronRight />
           </Button>
           <Button
-            colorScheme={'twitter'}
+            colorScheme={'orange'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.last_page_url)}
@@ -398,7 +398,7 @@ const Index = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'twitter'}
+                    colorScheme={'orange'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download

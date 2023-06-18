@@ -460,7 +460,7 @@ const Aeps = () => {
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
       </HStack>
     )
   }
@@ -563,7 +563,7 @@ const Aeps = () => {
               </HStack>
             </FormControl>
 
-            <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
+            <Button colorScheme={'orange'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
 
           <Box w={['full', 'full', 'sm']}>
@@ -664,7 +664,7 @@ const Aeps = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'twitter'}
+                    colorScheme={'orange'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download

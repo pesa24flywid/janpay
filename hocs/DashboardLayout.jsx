@@ -244,7 +244,7 @@ const DashboardWrapper = (props) => {
                             </HStack>
                             <Show below='md'>
                                 <Link href={'/dashboard/profile?pageId=prfile'}>
-                                    <HStack p={2} rounded={'full'} bgColor={'twitter.500'}>
+                                    <HStack p={2} rounded={'full'} bgColor={'orange.500'}>
                                         <Text fontSize={'md'} fontWeight={'semibold'}>₹ {wallet}</Text>
                                         <BsPlusCircleFill size={20} />
                                     </HStack>

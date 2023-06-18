@@ -167,7 +167,7 @@ const Pan = () => {
                         <Input name='email' onChange={Formik.handleChange} />
                     </FormControl>
                     <HStack justifyContent={'flex-end'}>
-                        <Button colorScheme='twitter' onClick={Formik.handleSubmit}>Submit</Button>
+                        <Button colorScheme='orange' onClick={Formik.handleSubmit}>Submit</Button>
                     </HStack>
                 </Box>
             </DashboardWrapper>

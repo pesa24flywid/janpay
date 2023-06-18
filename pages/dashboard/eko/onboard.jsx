@@ -108,7 +108,7 @@ const OnboardEko = () => {
               <Text>You Are Onboarded!</Text>
               <br />
               <Link href={'/dashboard?pageId=dashboard'}>
-                <Button colorScheme='twitter' variant={'outline'} >Go To Dashboard</Button>
+                <Button colorScheme='orange' variant={'outline'} >Go To Dashboard</Button>
               </Link>
             </VStack>
             :
@@ -126,13 +126,13 @@ const OnboardEko = () => {
                       <Text textAlign={'center'}>
                         Click the button below to start onboarding process.
                       </Text>
-                      <Button colorScheme='twitter' onClick={onboardMe} >Onboard Now</Button>
+                      <Button colorScheme='orange' onClick={onboardMe} >Onboard Now</Button>
                     </VStack> :
-                    <Button colorScheme='twitter' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
+                    <Button colorScheme='orange' variant={'outline'} onClick={sendOtp} >{isOtpSent ? "Resend" : "Send"} OTP</Button>
                 }
                 {
                   isOtpSent ?
-                    <Button colorScheme='twitter' onClick={verifyOtp}>Confirm</Button>
+                    <Button colorScheme='orange' onClick={verifyOtp}>Confirm</Button>
                     : null
                 }
               </HStack>

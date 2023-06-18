@@ -199,7 +199,7 @@ const Fastag = () => {
                         {
                             billFetched ?
                                 <Button colorScheme='whatsapp' onClick={onOpen}>Pay Bill</Button> :
-                                <Button colorScheme='twitter' onClick={Formik.handleSubmit}>Fetch Bill</Button>
+                                <Button colorScheme='orange' onClick={Formik.handleSubmit}>Fetch Bill</Button>
                         }
                     </HStack>
                 </Box>
@@ -226,7 +226,7 @@ const Fastag = () => {
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'}>
-                            <Button colorScheme='twitter' onClick={payBill}>Confirm</Button>
+                            <Button colorScheme='orange' onClick={payBill}>Confirm</Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>
@@ -313,7 +313,7 @@ const Fastag = () => {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
                                         size={'sm'}
-                                        colorScheme={'twitter'}
+                                        colorScheme={'orange'}
                                         leftIcon={<BsDownload />}
                                         onClick={toPdf}
                                     >Download

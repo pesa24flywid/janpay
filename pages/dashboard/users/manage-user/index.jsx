@@ -623,7 +623,7 @@ const Index = () => {
                         p={4} bg={'aqua'}
                         justifyContent={'flex-end'}
                     >
-                        <Button type={'submit'} colorScheme={'twitter'}>Update Details</Button>
+                        <Button type={'submit'} colorScheme={'orange'}>Update Details</Button>
                     </HStack>
                 </DashboardWrapper>
             </form>

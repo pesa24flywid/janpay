@@ -459,7 +459,7 @@ const Bbps = () => {
                             return (
                               <Button
                                 rounded={'full'}
-                                colorScheme={'twitter'}
+                                colorScheme={'orange'}
                                 variant={'outline'}
                                 key={key}
                                 onClick={() => { setSelectedPlanCategory(true); setAvailablePlans(planValues[planCategory]) }}
@@ -526,7 +526,7 @@ const Bbps = () => {
                     fetchBillBtn && <Button colorScheme={'facebook'} onClick={() => fetchBill()}>Fetch Bill</Button>
                   }
                   {
-                    fetchInfoBtn && <Button colorScheme={'twitter'} onClick={() => hlrRequest()}>Fetch Info</Button>
+                    fetchInfoBtn && <Button colorScheme={'orange'} onClick={() => hlrRequest()}>Fetch Info</Button>
                   }
 
                 </form> : null
@@ -555,7 +555,7 @@ const Bbps = () => {
           </ModalBody>
           <ModalFooter>
             <HStack justifyContent={'flex-end'}>
-              <Button colorScheme={'twitter'} onClick={() => doRecharge()}>Confirm</Button>
+              <Button colorScheme={'orange'} onClick={() => doRecharge()}>Confirm</Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
@@ -627,7 +627,7 @@ const Bbps = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'twitter'}
+                    colorScheme={'orange'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download
