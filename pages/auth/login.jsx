@@ -422,7 +422,7 @@ const Login = () => {
                                                     <RadioGroup name='loginPreference' value={loginPreference} onChange={(value) => setLoginPreference(value)}>
                                                         <HStack spacing={4}>
                                                             <Radio value='otp'>OTP</Radio>
-                                                            <Radio value='mpin'>MPIN</Radio>
+                                                            {/* <Radio value='mpin'>MPIN</Radio> */}
                                                         </HStack>
                                                     </RadioGroup>
                                                 </HStack>
