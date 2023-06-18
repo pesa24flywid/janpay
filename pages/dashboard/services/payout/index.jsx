@@ -104,6 +104,8 @@ const Payout = () => {
         })
         ).then((res) => {
             setIsLoading(false)
+            onClose()
+            Formik.setFieldValue("mpin", "")
             setReceipt({
                 status: res.data.metadata.status,
                 show: true,
