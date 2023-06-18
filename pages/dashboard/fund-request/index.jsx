@@ -30,6 +30,7 @@ import "jspdf-autotable"
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import { BsEye } from 'react-icons/bs';
 
 const ExportPDF = (currentRowData) => {
     const doc = new jsPDF('landscape')
@@ -178,32 +179,45 @@ const FundRequest = () => {
     const [columnDefs, setColumnDefs] = useState([
         {
             headerName: "Trnxn ID",
-            field: 'transaction_id'
+            field: 'transaction_id',
+            width: 150
         },
         {
             headerName: "Amount",
-            field: 'amount'
+            field: 'amount',
+            width: 150
         },
         {
             headerName: "Status",
-            field: 'status'
+            field: 'status',
+            width: 100
         },
         {
-            headerName: "Transaction Type",
-            field: 'transaction_type'
+            headerName: "Type",
+            field: 'transaction_type',
+            width: 100
         },
         {
-            headerName: "Transaction Date",
-            field: 'transaction_date'
+            headerName: "Trnxn Date",
+            field: 'transaction_date',
+            width: 150
         },
         {
             headerName: "Request Timestamp",
-            field: 'created_at'
+            field: 'created_at',
+            width: 180
         },
         {
             headerName: "Remarks",
             field: 'remarks',
-            defaultMinWidth: 300
+            width: 200
+        },
+        {
+            headerName: "Receipt",
+            field: 'receipt',
+            cellRenderer: 'receiptCellRenderer',
+            pinned: 'right',
+            width: 80
         },
     ])
 
@@ -232,6 +246,23 @@ const FundRequest = () => {
         setUserName(localStorage.getItem("userName"))
     }, [])
 
+
+    const receiptCellRenderer = (params) => {
+        function showReceipt() {
+            if (!params.data.receipt) {
+                Toast({
+                    description: 'No Receipt Available'
+                })
+                return
+            }
+            window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${params.data.receipt}`, "_blank")
+        }
+        return (
+            <HStack height={'full'} w={'full'} gap={4}>
+                <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+            </HStack>
+        )
+    }
 
     const Formik = useFormik({
         initialValues: {
@@ -424,7 +455,11 @@ const FundRequest = () => {
                     </HStack>
                     <Box h={'12'} w={'full'}></Box>
                     <Box py={6}>
-                        <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
+                        <Box
+                            className='ag-theme-alpine ag-theme-pesa24-blue'
+                            w={'full'} h={['2xl']} roundedTop={16}
+                            overflow={'hidden'}
+                        >
                             <AgGridReact
                                 columnDefs={columnDefs}
                                 rowData={rowData}
@@ -433,6 +468,9 @@ const FundRequest = () => {
                                     floatingFilter: true,
                                     resizable: true,
                                     sortable: true,
+                                }}
+                                components={{
+                                    'receiptCellRenderer': receiptCellRenderer
                                 }}
                             >
 
