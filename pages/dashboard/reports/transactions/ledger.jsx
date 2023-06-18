@@ -238,10 +238,10 @@ const Index = () => {
   return (
     <>
       <DashboardWrapper pageTitle={'Transaction Ledger'}>
-        <HStack>
+        <HStack pb={8}>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
         </HStack>
-        <Box p={2} bg={'orange.500'}>
+        <Box p={2} bg={'orange.500'} roundedTop={16}>
           <Text color={'#FFF'}>Search Transactions</Text>
         </Box>
         <Stack
