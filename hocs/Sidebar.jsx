@@ -284,11 +284,16 @@ const Sidebar = ({ userName, userImage }) => {
     setUserType(localStorage.getItem("userType"))
   }, [])
 
-  async function signout() {
-    await BackendAxios.post("/logout").then(() => {
+  function signout() {
+    BackendAxios.post("/logout").then(() => {
       Cookies.remove("verified")
+      Router.push("/auth/login")
+    }).catch(() => {
+      Cookies.remove("verified")
+      Router.push("/auth/login")
+    }).finally(() => {
+      Router.push("/auth/login")
     })
-    Router.push("/auth/login")
   }
 
   useEffect(() => {

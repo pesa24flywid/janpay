@@ -123,6 +123,10 @@ const DashboardWrapper = (props) => {
         }).then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
+            if(err.response.status == 401){
+                signout()
+                return
+            }
             setWallet('0')
             console.log(err)
         })
@@ -144,13 +148,13 @@ const DashboardWrapper = (props) => {
     function signout() {
         BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
+            Router.push("/auth/login")
         }).catch(()=>{
             Cookies.remove("verified")
+            Router.push("/auth/login")
         }).finally(()=>{
             Router.push("/auth/login")
         })
-        Cookies.remove("verified")
-        Router.push("/auth/login")
     }
 
     return (
