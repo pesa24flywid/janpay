@@ -144,8 +144,12 @@ const DashboardWrapper = (props) => {
     async function signout() {
         await BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
+        }).catch(()=>{
+            Cookies.remove("verified")
+        }).finally(()=>{
+            Router.push("/auth/login")
         })
-        Router.push("/auth/login")
+        
     }
 
     return (
