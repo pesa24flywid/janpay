@@ -141,15 +141,16 @@ const DashboardWrapper = (props) => {
     }, [globalNotifications, organisationNotifications, userNotifications])
 
 
-    async function signout() {
-        await BackendAxios.post("/logout").then(() => {
+    function signout() {
+        BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
         }).catch(()=>{
             Cookies.remove("verified")
         }).finally(()=>{
             Router.push("/auth/login")
         })
-        
+        Cookies.remove("verified")
+        Router.push("/auth/login")
     }
 
     return (
