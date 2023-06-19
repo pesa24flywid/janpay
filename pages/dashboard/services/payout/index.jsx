@@ -106,6 +106,7 @@ const Payout = () => {
             setIsLoading(false)
             onClose()
             Formik.setFieldValue("mpin", "")
+            fetchPayouts()
             setReceipt({
                 status: res.data.metadata.status,
                 show: true,
@@ -137,13 +138,16 @@ const Payout = () => {
         }).catch((err) => {
             console.log(err)
         })
+        fetchPayouts()
+    }, [])
 
+    function fetchPayouts(){
         BackendAxios.get(`/api/razorpay/fetch-payout/${serviceId}`).then((res) => {
             setRowdata(res.data)
         }).catch((err) => {
             console.log(err)
         })
-    }, [])
+    }
 
     function showReceipt(data) {
         if (!data) {
@@ -251,7 +255,7 @@ const Payout = () => {
                                                                 amount: item?.amount,
                                                                 account_number: item?.account_number,
                                                                 UTR: item?.utr || " ",
-                                                                timestamp: item?.created_at,
+                                                                date_and_time: item?.created_at,
                                                                 reference_id: item?.reference_id
                                                             })}
                                                         >Receipt</Button>
