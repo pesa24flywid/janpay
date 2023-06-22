@@ -37,6 +37,13 @@ import Pdf from 'react-to-pdf'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 import { toBlob } from 'html-to-image'
+import { TableContainer } from '@chakra-ui/react';
+import { Table } from '@chakra-ui/react';
+import { Thead } from '@chakra-ui/react';
+import { Tr } from '@chakra-ui/react';
+import { Th } from '@chakra-ui/react';
+import { Tbody } from '@chakra-ui/react';
+import { Td } from '@chakra-ui/react';
 
 const ExportPDF = () => {
   const doc = new jsPDF('landscape')
@@ -49,6 +56,8 @@ const Index = () => {
   const Toast = useToast({
     position: 'top-right'
   })
+  const [userName, setUserName] = useState("")
+  const [userId, setUserId] = useState("")
   const [printableRow, setPrintableRow] = useState([])
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -123,7 +132,7 @@ const Index = () => {
       width: 80
     }
   ])
-
+  const [overviewData, setOverviewData] = useState([])
   const [from, setFrom] = useState(null)
   const [to, setTo] = useState(null)
 
@@ -149,6 +158,15 @@ const Index = () => {
     }
   };
 
+  function fetchSum(){
+      // Fetch transactions overview
+      BackendAxios.get(`/api/user/overview?from=${from}&to=${to}`).then(res => {
+        setOverviewData(res.data)
+      }).catch(err => {
+        console.log(err)
+      })
+  }
+
   function fetchTransactions(pageLink) {
     BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`).then((res) => {
       setPagination({
@@ -161,6 +179,7 @@ const Index = () => {
       })
       setPrintableRow(res?.data?.data)
       setRowData(res?.data?.data)
+      fetchSum()
     }).catch((err) => {
       console.log(err)
       Toast({
@@ -228,6 +247,12 @@ const Index = () => {
     )
   }
 
+  const tableRef = React.useRef(null)
+  useEffect(()=>{
+    setUserId(localStorage.getItem("userId"))
+    setUserName(localStorage.getItem("userName"))
+  },[])
+
   return (
     <>
       <DashboardWrapper pageTitle={'Daily Sales'}>
@@ -249,7 +274,7 @@ const Index = () => {
             fetchTransactions(`/api/user/daily-sales?page=1&from=${from}&to=${to}`)
           }}>Search</Button>
         </HStack>
-        <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
+        {/* <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
             colorScheme={'orange'}
             fontSize={12} size={'xs'}
@@ -315,7 +340,73 @@ const Index = () => {
 
             </AgGridReact>
           </Box>
-        </Box>
+        </Box> */}
+        <br /><br />
+        <TableContainer rounded={16}>
+          <Table
+            colorScheme="orange"
+            variant={"striped"}
+            ref={tableRef}
+            id="printable-table"
+          >
+            <Thead bgColor={"orange.500"} color={"#FFF"}>
+              <Tr>
+                <Th color={"#FFF"} rowSpan={2}>
+                  User Info
+                </Th>
+                {/* <Th color={"#FFF"} rowSpan={2}>
+                  Wallet Balance
+                </Th> */}
+                <Th color={"#FFF"} colSpan={4} textAlign={"center"}>
+                  Transactions
+                </Th>
+              </Tr>
+              <Tr>
+                <Th color={"#FFF"}>Payout</Th>
+                <Th color={"#FFF"}>Charge</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+                <Tr>
+                  <Td>
+                    <Box>
+                      <Text fontSize={"lg"} fontWeight={"semibold"}>
+                      ({userId}) - {userName}
+                      </Text>
+                    </Box>
+                  </Td>
+                  {/* <Td>₹ {item?.userWallet || 0}</Td> */}
+                  <Td>
+                  {Math.abs(overviewData[4]?.["payout"]?.credit - overviewData[4]?.["payout"]?.debit) || 0}
+                  </Td>
+                  <Td>
+                  {Math.abs(overviewData[4]?.["payout-commission"]?.credit - overviewData[4]?.["payout-commission"]?.debit) || 0}
+                  </Td>
+                </Tr>
+              <Tr>
+                <Td>
+                  <Text
+                    textAlign={"right"}
+                    fontWeight={"semibold"}
+                    fontSize={"lg"}
+                  >
+                    TOTAL
+                  </Text>
+                </Td>
+                <Td>
+                  <Text textAlign={"left"} fontWeight={"semibold"} fontSize={"lg"}>
+                    {Math.abs(overviewData[4]?.["payout"]?.credit - overviewData[4]?.["payout"]?.debit) || 0}
+                  </Text>
+                </Td>
+                <Td>
+                  <Text textAlign={"left"} fontWeight={"semibold"} fontSize={"lg"}>
+                  {Math.abs(overviewData[4]?.["payout-commission"]?.credit - overviewData[4]?.["payout-commission"]?.debit) || 0}
+                  </Text>
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </TableContainer>
       </DashboardWrapper>
 
 
@@ -400,7 +491,7 @@ const Index = () => {
       </Modal>
 
 
-      <VisuallyHidden>
+      {/* <VisuallyHidden>
         <table id='printable-table'>
           <thead>
             <tr>
@@ -445,7 +536,7 @@ const Index = () => {
             }
           </tbody>
         </table>
-      </VisuallyHidden>
+      </VisuallyHidden> */}
     </>
   )
 }

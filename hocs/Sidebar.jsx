@@ -94,12 +94,12 @@ export const SidebarOptions =
         //   id: "aepsAadhaarPay",
         //   soon: false
         // },
-        {
-          title: 'DMT services',
-          link: '/dashboard/services/dmt?pageId=services',
-          id: "dmtTransaction",
-          soon: false,
-        },
+        // {
+        //   title: 'DMT services',
+        //   link: '/dashboard/services/dmt?pageId=services',
+        //   id: "dmtTransaction",
+        //   soon: false,
+        // },
         // {
         //   title: 'BBPS services',
         //   link: '/dashboard/services/bbps?pageId=services',
@@ -195,12 +195,12 @@ export const SidebarOptions =
         //   id: "rechargeReport",
         //   soon: false,
         // },
-        {
-          title: 'DMT reports',
-          link: '/dashboard/reports/dmt?pageId=reports',
-          id: "dmtReport",
-          soon: false,
-        },
+        // {
+        //   title: 'DMT reports',
+        //   link: '/dashboard/reports/dmt?pageId=reports',
+        //   id: "dmtReport",
+        //   soon: false,
+        // },
         {
           title: 'bigpay reports',
           link: '/dashboard/reports/payout?pageId=reports',
