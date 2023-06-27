@@ -36,7 +36,7 @@ import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 import Register from './register'
 import Loader from '../../hocs/Loader'
-import BackendAxios from '../../lib/axios'
+import BackendAxios, { FormAxios } from '../../lib/axios'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
@@ -239,6 +239,7 @@ const Login = () => {
 
                 Cookies.set('access-token', res.data.token.original.access_token)
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
+                FormAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
 
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
@@ -305,6 +306,7 @@ const Login = () => {
 
                 Cookies.set('access-token', res.data.token.original.access_token)
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
+                FormAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)
