@@ -61,7 +61,7 @@ const DashboardWrapper = (props) => {
             setUserName(localStorage.getItem("userName"))
             setUserType(localStorage.getItem("userType"))
             setProfilePic(localStorage.getItem("profilePic"))
-            Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
+            Cookies.set("verified", Cookies.get("verified"))
         }
     }, [])
 

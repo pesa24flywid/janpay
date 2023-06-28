@@ -40,6 +40,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
+import Cookies from "js-cookie";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -173,6 +174,11 @@ const Index = () => {
         setPrintableRow(res.data.data);
       })
       .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         console.log(err);
         Toast({
           status: "error",

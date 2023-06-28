@@ -71,6 +71,11 @@ const Fastag = () => {
                 setBillInfo(res.data.bill_fetch)
                 setBillFetched(true)
             }).catch(err => {
+                if (err?.response?.status == 401) {
+                  Cookies.remove("verified");
+                  window.location.reload();
+                  return;
+                }
                 setBillFetched(false)
                 Toast({
                     status: 'error',
@@ -94,6 +99,11 @@ const Fastag = () => {
             }
             setOperators(res.data.data)
         }).catch(err => {
+            if (err?.response?.status == 401) {
+              Cookies.remove("verified");
+              window.location.reload();
+              return;
+            }
             Toast({
                 status: 'error',
                 title: "Error while fetching operators",

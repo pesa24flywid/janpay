@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import React, { useState, useEffect, useRef } from "react";
+import DashboardWrapper from "../../../../hocs/DashboardLayout";
 import {
   Box,
   Text,
@@ -21,11 +21,11 @@ import {
   ModalFooter,
   ModalBody,
   ModalContent,
-  useDisclosure
-} from '@chakra-ui/react'
-import { HiServerStack } from 'react-icons/hi2'
-import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
-import { GoMortarBoard } from 'react-icons/go'
+  useDisclosure,
+} from "@chakra-ui/react";
+import { HiServerStack } from "react-icons/hi2";
+import { GiRotaryPhone, GiMoneyStack } from "react-icons/gi";
+import { GoMortarBoard } from "react-icons/go";
 import {
   BsCreditCardFill,
   BsLightningChargeFill,
@@ -35,9 +35,9 @@ import {
   BsCheck2Circle,
   BsXCircle,
   BsDownload,
-} from 'react-icons/bs'
-import { AiFillFire } from 'react-icons/ai'
-import { FiMonitor } from 'react-icons/fi'
+} from "react-icons/bs";
+import { AiFillFire } from "react-icons/ai";
+import { FiMonitor } from "react-icons/fi";
 import {
   FaMobile,
   FaSatelliteDish,
@@ -46,548 +46,707 @@ import {
   FaHeart,
   FaCar,
   FaCity,
-} from 'react-icons/fa'
-import { BiRupee } from 'react-icons/bi'
-import BackendAxios, { FormAxios, ClientAxios } from '../../../../lib/axios'
-import Cookies from 'js-cookie'
-import Pdf from 'react-to-pdf'
-import { useRouter } from 'next/router'
-import Loader from '../../../../hocs/Loader'
-
+} from "react-icons/fa";
+import { BiRupee } from "react-icons/bi";
+import BackendAxios, { FormAxios, ClientAxios } from "../../../../lib/axios";
+import Cookies from "js-cookie";
+import Pdf from "react-to-pdf";
+import { useRouter } from "next/router";
+import Loader from "../../../../hocs/Loader";
 
 const Bbps = () => {
-  const [bbpsProvider, setBbpsProvider] = useState("")
-  const Toast = useToast({ position: 'top-right' })
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const Router = useRouter()
+  const [bbpsProvider, setBbpsProvider] = useState("");
+  const Toast = useToast({ position: "top-right" });
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const Router = useRouter();
 
   useEffect(() => {
-    ClientAxios.post('/api/user/fetch', {
-      user_id: localStorage.getItem('userId')
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+    ClientAxios.post(
+      "/api/user/fetch",
+      {
+        user_id: localStorage.getItem("userId"),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    }).then((res) => {
-      if (res.data[0].allowed_pages.includes('bbpsTransaction') == false) {
-        window.location.assign('/dashboard/not-allowed')
-      }
-    }).catch((err) => {
-      console.log(err)
-    })
+    )
+      .then((res) => {
+        if (res.data[0].allowed_pages.includes("bbpsTransaction") == false) {
+          window.location.assign("/dashboard/not-allowed");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-    ClientAxios.get(`/api/global`).then(res => {
-      setBbpsProvider(res.data[0].bbps_provider)
-      if (!res.data[0].bbps_status) {
-        window.location.href('/dashboard/not-available')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+    ClientAxios.get(`/api/global`)
+      .then((res) => {
+        setBbpsProvider(res.data[0].bbps_provider);
+        if (!res.data[0].bbps_status) {
+          window.location.href("/dashboard/not-available");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-    ClientAxios.get(`/api/organisation`).then(res => {
-      if (!res.data.bbps_status) {
-        window.location.href('/dashboard/not-available')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
-  }, [])
-  const [isLoading, setIsLoading] = useState(false)
-  const [allData, setAllData] = useState([])
+    ClientAxios.get(`/api/organisation`)
+      .then((res) => {
+        if (!res.data.bbps_status) {
+          window.location.href("/dashboard/not-available");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allData, setAllData] = useState([]);
 
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState([]);
 
-  const [operators, setOperators] = useState([])
-  const [selectedOperator, setSelectedOperator] = useState()
+  const [operators, setOperators] = useState([]);
+  const [selectedOperator, setSelectedOperator] = useState();
 
-  const [operatorParams, setOperatorParams] = useState()
+  const [operatorParams, setOperatorParams] = useState();
 
-  const [fetchBillBtn, setFetchBillBtn] = useState(false)
-  const [fetchBillResponse, setFetchBillResponse] = useState({})
+  const [fetchBillBtn, setFetchBillBtn] = useState(false);
+  const [fetchBillResponse, setFetchBillResponse] = useState({});
 
-  const [amount, setAmount] = useState("")
-  const [mpin, setMpin] = useState("")
-  const formRef = useRef(null)
+  const [amount, setAmount] = useState("");
+  const [mpin, setMpin] = useState("");
+  const formRef = useRef(null);
 
-  const [latlong, setLatlong] = useState("")
+  const [latlong, setLatlong] = useState("");
 
   // Fetch all available categories
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
-        setCategories(res.data.data)
-        setIsLoading(false)
-      }).catch((err) => {
-        console.log(err)
-        Toast({
-          status: 'warning',
-          title: "Error while fetching operators",
-          description: err.response?.data?.message || err.response.data || err.message
+      BackendAxios.get(`api/eko/bbps/operators/categories`)
+        .then((res) => {
+          setCategories(res.data.data);
+          setIsLoading(false);
         })
-        setIsLoading(false)
-      })
+        .catch((err) => {
+          console.log(err);
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          Toast({
+            status: "warning",
+            title: "Error while fetching operators",
+            description:
+              err.response?.data?.message || err.response.data || err.message,
+          });
+          setIsLoading(false);
+        });
     }
     if (bbpsProvider == "paysprint") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then(res => {
-        setAllData(Object.keys(res.data).map((item, key) => ({
-          operator_category_name: item,
-          operators: res.data[item],
-          status: 1
-        })))
-        setCategories(Object.keys(res.data).map((item, key) => ({
-          operator_category_name: item,
-          status: 1
-        })))
-        setIsLoading(false)
-      }).catch(err => {
-        console.log(err)
-        Toast({
-          status: 'warning',
-          description: "Error while fetching operators"
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`)
+        .then((res) => {
+          setAllData(
+            Object.keys(res.data).map((item, key) => ({
+              operator_category_name: item,
+              operators: res.data[item],
+              status: 1,
+            }))
+          );
+          setCategories(
+            Object.keys(res.data).map((item, key) => ({
+              operator_category_name: item,
+              status: 1,
+            }))
+          );
+          setIsLoading(false);
         })
-        setIsLoading(false)
-      })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          console.log(err);
+          Toast({
+            status: "warning",
+            description: "Error while fetching operators",
+          });
+          setIsLoading(false);
+        });
     }
-  }, [bbpsProvider])
+  }, [bbpsProvider]);
 
   useEffect(() => {
-    setLatlong(Cookies.get("latlong"))
-    console.log(latlong)
-  }, [])
+    setLatlong(Cookies.get("latlong"));
+    console.log(latlong);
+  }, []);
 
   useEffect(() => {
-    if (!Router.query.passedCategory) return
-    fetchOperators(Router.query.passedCategory)
-  }, [bbpsProvider])
+    if (!Router.query.passedCategory) return;
+    fetchOperators(Router.query.passedCategory);
+  }, [bbpsProvider]);
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
     const data = {
       files: [
-        new File([myFile], 'receipt.jpeg', {
-          type: myFile.type
-        })
+        new File([myFile], "receipt.jpeg", {
+          type: myFile.type,
+        }),
       ],
-      title: 'Receipt',
-      text: 'Receipt'
-    }
+      title: "Receipt",
+      text: "Receipt",
+    };
     try {
-      await navigator.share(data)
+      await navigator.share(data);
     } catch (error) {
-      console.error('Error sharing:', error?.toString());
+      console.error("Error sharing:", error?.toString());
       Toast({
-        status: 'warning',
-        description: error?.toString()
-      })
+        status: "warning",
+        description: error?.toString(),
+      });
     }
   };
 
   function fetchOperators(category_id) {
-    setIsLoading(true)
+    setIsLoading(true);
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/${category_id}`).then((res) => {
-        setOperators(res.data.data)
-        setIsLoading(false)
-      }).catch((err) => {
-        console.log(err)
-        setIsLoading(false)
-      })
+      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/${category_id}`)
+        .then((res) => {
+          setOperators(res.data.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          console.log(err);
+          setIsLoading(false);
+        });
     }
     if (bbpsProvider == "paysprint") {
-      setOperators(allData.filter(data => (category_id == data.operator_category_name))[0].operators)
-      setIsLoading(false)
+      setOperators(
+        allData.filter((data) => category_id == data.operator_category_name)[0]
+          .operators
+      );
+      setIsLoading(false);
     }
   }
 
   function fetchParams(operator_id) {
-    setIsLoading(true)
+    setIsLoading(true);
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/fields/${operator_id}`).then((res) => {
-        setSelectedOperator(operator_id)
-        setOperatorParams(res.data.data)
-        res.data.fetchBill == 1 ? setFetchBillBtn(true) : setFetchBillBtn(false)
-        setIsLoading(false)
-      }).catch((err) => {
-        console.log(err)
-        setIsLoading(false)
-      })
+      BackendAxios.get(
+        `api/${bbpsProvider}/bbps/operators/fields/${operator_id}`
+      )
+        .then((res) => {
+          setSelectedOperator(operator_id);
+          setOperatorParams(res.data.data);
+          res.data.fetchBill == 1
+            ? setFetchBillBtn(true)
+            : setFetchBillBtn(false);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          console.log(err);
+          setIsLoading(false);
+        });
     }
   }
 
   // Fetch Bill
   function fetchBill(e) {
-    e.preventDefault()
-    setIsLoading(true)
-    let formData = new FormData(document.getElementById('bbpsForm'))
+    e.preventDefault();
+    setIsLoading(true);
+    let formData = new FormData(document.getElementById("bbpsForm"));
     if (bbpsProvider == "eko") {
-      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
-        formData
-      ).then(res => {
-        if (res.data.response_type_id == -1) {
-          Toast({
-            description: res.data.invalid_params?.reason || res.data.message || "Unable to fetch bill"
-          })
-          setIsLoading(false)
-          return
-        }
-        setFetchBillResponse(res.data.data)
-        setAmount(res.data.data.amount)
-        setFetchBillBtn(false)
-        setIsLoading(false)
-      }).catch(err => {
-        Toast({
-          status: 'error',
-          title: 'Error while fetching bill',
-          description: err.response?.data?.message || err.response?.data || err.message
+      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`, formData)
+        .then((res) => {
+          if (res.data.response_type_id == -1) {
+            Toast({
+              description:
+                res.data.invalid_params?.reason ||
+                res.data.message ||
+                "Unable to fetch bill",
+            });
+            setIsLoading(false);
+            return;
+          }
+          setFetchBillResponse(res.data.data);
+          setAmount(res.data.data.amount);
+          setFetchBillBtn(false);
+          setIsLoading(false);
         })
-        setIsLoading(false)
-      })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          Toast({
+            status: "error",
+            title: "Error while fetching bill",
+            description:
+              err.response?.data?.message || err.response?.data || err.message,
+          });
+          setIsLoading(false);
+        });
     }
     if (bbpsProvider == "paysprint") {
-      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
-        formData
-      ).then(res => {
-        setFetchBillResponse(res.data)
-        if (res.data.status == false && parseInt(res.data.response_code) == 0) {
-          Toast({
-            description: res.data.message
-          })
-          setIsLoading(false)
-          return
-        }
-        setFetchBillBtn(false)
-        setAmount(res.data.amount)
-        setIsLoading(false)
-      }).catch(err => {
-        Toast({
-          status: 'error',
-          description: err.response.data.message || err.response.data || err.message
+      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`, formData)
+        .then((res) => {
+          setFetchBillResponse(res.data);
+          if (
+            res.data.status == false &&
+            parseInt(res.data.response_code) == 0
+          ) {
+            Toast({
+              description: res.data.message,
+            });
+            setIsLoading(false);
+            return;
+          }
+          setFetchBillBtn(false);
+          setAmount(res.data.amount);
+          setIsLoading(false);
         })
-        setIsLoading(false)
-      })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          Toast({
+            status: "error",
+            description:
+              err.response.data.message || err.response.data || err.message,
+          });
+          setIsLoading(false);
+        });
     }
   }
 
   // Pay Bill
   function payBill(e) {
-    e.preventDefault()
-    setIsLoading(true)
-    let formData = new FormData(document.getElementById('bbpsForm'))
+    e.preventDefault();
+    setIsLoading(true);
+    let formData = new FormData(document.getElementById("bbpsForm"));
     if (bbpsProvider == "eko") {
       var object = {};
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
-        {
-          ...object,
-          mpin: mpin,
-          ...(fetchBillResponse.length ? { bill: fetchBillResponse } : {}),
-          utility_acc_no: object.utility_acc_no,
-          confirmation_mobile_no: object.confirmation_mobile_no,
-          amount: amount,
-          latitude: latlong.split(",")[0],
-          longitude: latlong.split(",")[1],
-          latlong: latlong
-        }
-      ).then(res => {
-        setIsLoading(false)
-        setReceipt({
-          status: res.data.metadata?.status,
-          show: true,
-          data: res.data.metadata
-        })
-        onClose()
-      }).catch(err => {
-        if (err.response.status == 406) {
-          Toast({
-            status: 'error',
-            description: 'MPIN is incorrect'
-          })
-          setIsLoading(false)
-          return
-        }
-        setIsLoading(false)
-        setReceipt({
-          status: err.response.data?.metadata?.status,
-          show: true,
-          data: err.response.data?.metadata
-        })
-        onClose()
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`, {
+        ...object,
+        mpin: mpin,
+        ...(fetchBillResponse.length ? { bill: fetchBillResponse } : {}),
+        utility_acc_no: object.utility_acc_no,
+        confirmation_mobile_no: object.confirmation_mobile_no,
+        amount: amount,
+        latitude: latlong.split(",")[0],
+        longitude: latlong.split(",")[1],
+        latlong: latlong,
       })
+        .then((res) => {
+          setIsLoading(false);
+          setReceipt({
+            status: res.data.metadata?.status,
+            show: true,
+            data: res.data.metadata,
+          });
+          onClose();
+        })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          if (err.response.status == 406) {
+            Toast({
+              status: "error",
+              description: "MPIN is incorrect",
+            });
+            setIsLoading(false);
+            return;
+          }
+          setIsLoading(false);
+          setReceipt({
+            status: err.response.data?.metadata?.status,
+            show: true,
+            data: err.response.data?.metadata,
+          });
+          onClose();
+        });
     }
     if (bbpsProvider == "paysprint") {
       var object = {};
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
-        {
-          ...object,
-          mpin: mpin,
-          bill: fetchBillResponse,
-          amount: amount,
-          latitude: latlong.split(",")[0],
-          longitude: latlong.split(",")[1]
-        }
-      ).then(res => {
-        setIsLoading(false)
-        setReceipt({
-          status: res.data.metadata?.status,
-          show: true,
-          data: res.data.metadata
-        })
-        onClose()
-      }).catch(err => {
-        if (err.response.status == 406) {
-          Toast({
-            status: 'error',
-            description: 'MPIN is incorrect'
-          })
-          setIsLoading(false)
-          return
-        }
-        setIsLoading(false)
-        setReceipt({
-          status: err.response.data?.metadata?.status,
-          show: true,
-          data: err.response.data?.metadata
-        })
-        onClose()
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`, {
+        ...object,
+        mpin: mpin,
+        bill: fetchBillResponse,
+        amount: amount,
+        latitude: latlong.split(",")[0],
+        longitude: latlong.split(",")[1],
       })
+        .then((res) => {
+          setIsLoading(false);
+          setReceipt({
+            status: res.data.metadata?.status,
+            show: true,
+            data: res.data.metadata,
+          });
+          onClose();
+        })
+        .catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
+          if (err.response.status == 406) {
+            Toast({
+              status: "error",
+              description: "MPIN is incorrect",
+            });
+            setIsLoading(false);
+            return;
+          }
+          setIsLoading(false);
+          setReceipt({
+            status: err.response.data?.metadata?.status,
+            show: true,
+            data: err.response.data?.metadata,
+          });
+          onClose();
+        });
     }
   }
 
-  const pdfRef = React.createRef()
+  const pdfRef = React.createRef();
   const [receipt, setReceipt] = useState({
     show: false,
     status: "success",
-    data: {}
-  })
+    data: {},
+  });
 
   return (
     <>
-      <DashboardWrapper titleText={'BBPS Transaction'}>
-        {
-          isLoading ? <Loader /> : null
-        }
+      <DashboardWrapper titleText={"BBPS Transaction"}>
+        {isLoading ? <Loader /> : null}
         <Stack
-          w={'full'} bg={'white'}
-          boxShadow={'md'} mt={6}
+          w={"full"}
+          bg={"white"}
+          boxShadow={"md"}
+          mt={6}
           rounded={12}
-          direction={['column', 'row']}
+          direction={["column", "row"]}
         >
           <VStack
-            w={['full', 'xs']}
-            h={['sm', 'xl']}
-            display={['none', 'flex']}
-            overflowY={['scroll']}
-            alignItems={['flex-start']}
-            justifyContent={['flex-start']}
-            spacing={0} borderRightColor={['unset', '#999']}
-            borderBottomColor={['#999', 'unset']}
-            borderRight={[0, '1px']} borderBottom={['1px', 0]}
+            w={["full", "xs"]}
+            h={["sm", "xl"]}
+            display={["none", "flex"]}
+            overflowY={["scroll"]}
+            alignItems={["flex-start"]}
+            justifyContent={["flex-start"]}
+            spacing={0}
+            borderRightColor={["unset", "#999"]}
+            borderBottomColor={["#999", "unset"]}
+            borderRight={[0, "1px"]}
+            borderBottom={["1px", 0]}
           >
-            <Text p={4} pb={2}>Select Category</Text>
-            {
-              categories.map((item, key) => {
-
-                return (
-                  item.status == "1" ?
-                    <Stack w={['full']}
-                      px={4} py={[3, 4]}
-                      _hover={{ bg: "aqua" }}
-                      direction={['row']}
-                      spacing={2} key={key} alignItems={'center'}
-                      cursor={'pointer'}
-                      onClick={() => {
-                        bbpsProvider == "eko" &&
-                          fetchOperators(item.operator_category_id)
-                        bbpsProvider == 'paysprint' &&
-                          fetchOperators(item.operator_category_name)
-
-                      }}
-                    >
-                      {
-                        item.operator_category_name.toLowerCase().includes("mobile")
-                          ? <FaMobile /> :
-                          item.operator_category_name.toLowerCase().includes("broadband")
-                            ? <HiServerStack /> :
-                            item.operator_category_name.toLowerCase().includes("gas") || item.operator_category_name.toLowerCase().includes("lpg")
-                              ? <AiFillFire /> :
-                              item.operator_category_name.toLowerCase().includes("dth")
-                                ? <FaSatelliteDish /> :
-                                item.operator_category_name.toLowerCase().includes("card")
-                                  ? <BsCreditCardFill /> :
-                                  item.operator_category_name.toLowerCase().includes("electricity")
-                                    ? <BsLightningChargeFill /> :
-                                    item.operator_category_name.toLowerCase().includes("landline")
-                                      ? <GiRotaryPhone /> :
-                                      item.operator_category_name.toLowerCase().includes("water")
-                                        ? <BsDropletFill /> :
-                                        item.operator_category_name.toLowerCase().includes("housing") || item.operator_category_name.toLowerCase().includes("rental")
-                                          ? <BsHouseDoorFill /> :
-                                          item.operator_category_name.toLowerCase().includes("education")
-                                            ? <GoMortarBoard /> :
-                                            item.operator_category_name.toLowerCase().includes("tax")
-                                              ? <BiRupee /> :
-                                              item.operator_category_name.toLowerCase().includes("associations")
-                                                ? <FaUsers /> :
-                                                item.operator_category_name.toLowerCase().includes("tv")
-                                                  ? <FiMonitor /> :
-                                                  item.operator_category_name.toLowerCase().includes("hospital") || item.operator_category_name.toLowerCase().includes("donation")
-                                                    ? <FaHeart /> :
-                                                    item.operator_category_name.toLowerCase().includes("insurance")
-                                                      ? <BsEmojiSmileFill /> :
-                                                      item.operator_category_name.toLowerCase().includes("loan")
-                                                        ? <GiMoneyStack /> :
-                                                        item.operator_category_name.toLowerCase().includes("fastag")
-                                                          ? <FaCar /> :
-                                                          item.operator_category_name.toLowerCase().includes("municipal services")
-                                                            ? <FaCity /> :
-                                                            item.operator_category_name.toLowerCase().includes("subscription")
-                                                              ? <FaMoneyBillAlt /> : <BiRupee />
-                      }
-                      <Text textTransform={'capitalize'}>{item.operator_category_name}</Text>
-                    </Stack> : null
-                )
-              })
-            }
+            <Text p={4} pb={2}>
+              Select Category
+            </Text>
+            {categories.map((item, key) => {
+              return item.status == "1" ? (
+                <Stack
+                  w={["full"]}
+                  px={4}
+                  py={[3, 4]}
+                  _hover={{ bg: "aqua" }}
+                  direction={["row"]}
+                  spacing={2}
+                  key={key}
+                  alignItems={"center"}
+                  cursor={"pointer"}
+                  onClick={() => {
+                    bbpsProvider == "eko" &&
+                      fetchOperators(item.operator_category_id);
+                    bbpsProvider == "paysprint" &&
+                      fetchOperators(item.operator_category_name);
+                  }}
+                >
+                  {item.operator_category_name
+                    .toLowerCase()
+                    .includes("mobile") ? (
+                    <FaMobile />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("broadband") ? (
+                    <HiServerStack />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("gas") ||
+                    item.operator_category_name
+                      .toLowerCase()
+                      .includes("lpg") ? (
+                    <AiFillFire />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("dth") ? (
+                    <FaSatelliteDish />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("card") ? (
+                    <BsCreditCardFill />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("electricity") ? (
+                    <BsLightningChargeFill />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("landline") ? (
+                    <GiRotaryPhone />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("water") ? (
+                    <BsDropletFill />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("housing") ||
+                    item.operator_category_name
+                      .toLowerCase()
+                      .includes("rental") ? (
+                    <BsHouseDoorFill />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("education") ? (
+                    <GoMortarBoard />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("tax") ? (
+                    <BiRupee />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("associations") ? (
+                    <FaUsers />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("tv") ? (
+                    <FiMonitor />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("hospital") ||
+                    item.operator_category_name
+                      .toLowerCase()
+                      .includes("donation") ? (
+                    <FaHeart />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("insurance") ? (
+                    <BsEmojiSmileFill />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("loan") ? (
+                    <GiMoneyStack />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("fastag") ? (
+                    <FaCar />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("municipal services") ? (
+                    <FaCity />
+                  ) : item.operator_category_name
+                      .toLowerCase()
+                      .includes("subscription") ? (
+                    <FaMoneyBillAlt />
+                  ) : (
+                    <BiRupee />
+                  )}
+                  <Text textTransform={"capitalize"}>
+                    {item.operator_category_name}
+                  </Text>
+                </Stack>
+              ) : null;
+            })}
           </VStack>
           <Box p={4}>
-
-            {
-              operators.length != 0 &&
-              <FormControl id={'operator'}>
+            {operators.length != 0 && (
+              <FormControl id={"operator"}>
                 <FormLabel>Select Operator</FormLabel>
                 <Select
-                  name={'operator'} w={['full', 'xs']}
+                  name={"operator"}
+                  w={["full", "xs"]}
                   value={selectedOperator}
-                  placeholder='Select Here'
+                  placeholder="Select Here"
                   onChange={(e) => {
                     if (bbpsProvider == "eko") {
-                      fetchParams(e.target.value)
+                      fetchParams(e.target.value);
                     }
                     if (bbpsProvider == "paysprint") {
-                      let selectedOperator = operators.find((item) => (item.id == e.target.value))
-                      setOperatorParams([{
-                        param_type: "AlphaNumeric",
-                        param_label: selectedOperator.displayname,
-                        regex: "",
-                        param_name: "canumber"
-                      }])
+                      let selectedOperator = operators.find(
+                        (item) => item.id == e.target.value
+                      );
+                      setOperatorParams([
+                        {
+                          param_type: "AlphaNumeric",
+                          param_label: selectedOperator.displayname,
+                          regex: "",
+                          param_name: "canumber",
+                        },
+                      ]);
                       if (selectedOperator.viewbill == "1") {
-                        setFetchBillBtn(true)
+                        setFetchBillBtn(true);
                       }
                       if (selectedOperator.viewbill == "0") {
-                        setFetchBillBtn(false)
+                        setFetchBillBtn(false);
                       }
-                      setSelectedOperator(e.target.value)
+                      setSelectedOperator(e.target.value);
                     }
                   }}
                 >
-                  {
-                    operators.map((operator) => {
-                      return (
-                        <option value={operator.operator_id || operator.id}>{operator.name}</option>
-                      )
-                    })
-                  }
+                  {operators.map((operator) => {
+                    return (
+                      <option value={operator.operator_id || operator.id}>
+                        {operator.name}
+                      </option>
+                    );
+                  })}
                 </Select>
               </FormControl>
-            }
+            )}
 
-
-            {
-              operatorParams ?
-                <form action="" method='POST' ref={formRef} id={'bbpsForm'}>
-                  <input type="hidden" name="operator_id" value={selectedOperator} />
-                  <Stack
-                    my={6}
-                    direction={['column']}
-                    spacing={6}
-                  >
+            {operatorParams ? (
+              <form action="" method="POST" ref={formRef} id={"bbpsForm"}>
+                <input
+                  type="hidden"
+                  name="operator_id"
+                  value={selectedOperator}
+                />
+                <Stack my={6} direction={["column"]} spacing={6}>
+                  {operatorParams.map((parameter, key) => {
                     {
-                      operatorParams.map((parameter, key) => {
+                      if (parameter.param_type == "Numeric") {
+                        return (
+                          <FormControl
+                            id={parameter.param_name}
+                            w={["full", "xs"]}
+                          >
+                            <FormLabel>{parameter.param_label}</FormLabel>
+                            <Input
+                              type={"number"}
+                              pattern={parameter.regex}
+                              name={parameter.param_name}
+                            />
+                          </FormControl>
+                        );
+                      }
 
-                        {
+                      if (parameter.param_type == "AlphaNumeric") {
+                        return (
+                          <FormControl
+                            id={parameter.param_name}
+                            w={["full", "xs"]}
+                          >
+                            <FormLabel>
+                              {parameter.param_label || "CA Number"}
+                            </FormLabel>
+                            <Input
+                              type={"text"}
+                              pattern={parameter.regex}
+                              name={parameter.param_name}
+                            />
+                          </FormControl>
+                        );
+                      }
 
-                          if (parameter.param_type == "Numeric") {
-                            return (
-                              <FormControl id={parameter.param_name} w={['full', 'xs']}>
-                                <FormLabel>{parameter.param_label}</FormLabel>
-                                <Input type={'number'} pattern={parameter.regex} name={parameter.param_name} />
-                              </FormControl>
-                            )
-                          }
-
-                          if (parameter.param_type == "AlphaNumeric") {
-                            return (
-                              <FormControl id={parameter.param_name} w={['full', 'xs']}>
-                                <FormLabel>{parameter.param_label || "CA Number"}</FormLabel>
-                                <Input type={'text'} pattern={parameter.regex} name={parameter.param_name} />
-                              </FormControl>
-                            )
-                          }
-
-                          if (parameter.param_type == "List") {
-                            return (
-                              <FormControl id={parameter.param_name} w={['full', 'xs']}>
-                                <FormLabel>{parameter.param_label}</FormLabel>
-                                <Select name={parameter.param_name}>
-                                  <option value="1">Option 1</option>
-                                  <option value="2">Option 2</option>
-                                </Select>
-                              </FormControl>
-                            )
-                          }
-
-                        }
-
-                      })
+                      if (parameter.param_type == "List") {
+                        return (
+                          <FormControl
+                            id={parameter.param_name}
+                            w={["full", "xs"]}
+                          >
+                            <FormLabel>{parameter.param_label}</FormLabel>
+                            <Select name={parameter.param_name}>
+                              <option value="1">Option 1</option>
+                              <option value="2">Option 2</option>
+                            </Select>
+                          </FormControl>
+                        );
+                      }
                     }
+                  })}
 
-                    {
-                      fetchBillBtn && bbpsProvider == "eko" &&
-                      <>
-                        <FormControl id={'senderName'} w={['full', 'xs']} pb={6}>
-                          <FormLabel>Sender Name</FormLabel>
-                          <Input name='sender_name' />
-                        </FormControl>
-                        <FormControl id={'confirmation_mobile_no'} w={['full', 'xs']} pb={6}>
-                          <FormLabel>Confirmation Mobile Number</FormLabel>
-                          <Input type={'tel'} maxLength={10} name='confirmation_mobile_no' />
-                        </FormControl>
-                        <input type="hidden" name='latlong' value={latlong} />
-                      </>
-                    }
-                    {
-                      fetchBillBtn ||
-                      <FormControl id={'amount'} w={['full', 'xs']} pb={6}>
-                        <FormLabel>Bill Amount</FormLabel>
-                        <Input type={'tel'} isDisabled={fetchBillBtn} name='amount' value={amount} onChange={e => setAmount(e.target.value)} />
+                  {fetchBillBtn && bbpsProvider == "eko" && (
+                    <>
+                      <FormControl id={"senderName"} w={["full", "xs"]} pb={6}>
+                        <FormLabel>Sender Name</FormLabel>
+                        <Input name="sender_name" />
                       </FormControl>
-                    }
-                  </Stack>
-                  {
-                    fetchBillBtn ?
-                      <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'orange'} onClick={onOpen}>Pay (₹{amount})</Button>
-                  }
-                </form> : null
-            }
+                      <FormControl
+                        id={"confirmation_mobile_no"}
+                        w={["full", "xs"]}
+                        pb={6}
+                      >
+                        <FormLabel>Confirmation Mobile Number</FormLabel>
+                        <Input
+                          type={"tel"}
+                          maxLength={10}
+                          name="confirmation_mobile_no"
+                        />
+                      </FormControl>
+                      <input type="hidden" name="latlong" value={latlong} />
+                    </>
+                  )}
+                  {fetchBillBtn || (
+                    <FormControl id={"amount"} w={["full", "xs"]} pb={6}>
+                      <FormLabel>Bill Amount</FormLabel>
+                      <Input
+                        type={"tel"}
+                        isDisabled={fetchBillBtn}
+                        name="amount"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                      />
+                    </FormControl>
+                  )}
+                </Stack>
+                {fetchBillBtn ? (
+                  <Button
+                    colorScheme={"facebook"}
+                    onClick={(e) => fetchBill(e)}
+                  >
+                    Fetch Bill
+                  </Button>
+                ) : (
+                  <Button colorScheme={"orange"} onClick={onOpen}>
+                    Pay (₹{amount})
+                  </Button>
+                )}
+              </form>
+            ) : null}
           </Box>
         </Stack>
       </DashboardWrapper>
 
-
       {/* MPIN Modal */}
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Confirm Transaction</ModalHeader>
@@ -595,24 +754,25 @@ const Bbps = () => {
             <VStack>
               <Text>Enter MPIN to confirm transaction</Text>
               <HStack gap={4}>
-                <PinInput onComplete={value => setMpin(value)}>
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
+                <PinInput onComplete={(value) => setMpin(value)}>
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
                 </PinInput>
               </HStack>
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <HStack justifyContent={'flex-end'} gap={6}>
+            <HStack justifyContent={"flex-end"} gap={6}>
               <Button onClick={onClose}>Cancel</Button>
-              <Button colorScheme='orange' onClick={(e) => payBill(e)}>Submit</Button>
+              <Button colorScheme="orange" onClick={(e) => payBill(e)}>
+                Submit
+              </Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
-
 
       {/* Receipt */}
       <Modal
@@ -620,25 +780,38 @@ const Bbps = () => {
         onClose={() => setReceipt({ ...receipt, show: false })}
       >
         <ModalOverlay />
-        <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <ModalContent width={"xs"}>
+          <Box ref={pdfRef} style={{ border: "1px solid #999" }}>
             <ModalHeader p={0}>
-              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
-                {
-                  receipt.status ?
-                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
-                    <BsXCircle color='#FFF' fontSize={72} />
-                }
-                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {bbpsProvider == "paysprint" ? receipt.data.amount : receipt.data.amount}</Text>
-                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
+              <VStack
+                w={"full"}
+                p={8}
+                bg={receipt.status ? "green.500" : "red.500"}
+              >
+                {receipt.status ? (
+                  <BsCheck2Circle color="#FFF" fontSize={72} />
+                ) : (
+                  <BsXCircle color="#FFF" fontSize={72} />
+                )}
+                <Text color={"#FFF"} textTransform={"capitalize"}>
+                  ₹{" "}
+                  {bbpsProvider == "paysprint"
+                    ? receipt.data.amount
+                    : receipt.data.amount}
+                </Text>
+                <Text
+                  color={"#FFF"}
+                  fontSize={"sm"}
+                  textTransform={"uppercase"}
+                >
+                  TRANSACTION {receipt.status ? "success" : "failed"}
+                </Text>
               </VStack>
             </ModalHeader>
-            <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
-                {
-                  receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => {
-
+            <ModalBody p={0} bg={"azure"}>
+              <VStack w={"full"} spacing={0} p={4} bg={"#FFF"}>
+                {receipt.data
+                  ? Object.entries(receipt.data).map((item, key) => {
                       if (
                         item[0].toLowerCase() != "status" &&
                         item[0].toLowerCase() != "user" &&
@@ -648,51 +821,61 @@ const Bbps = () => {
                       )
                         return (
                           <HStack
-                            justifyContent={'space-between'}
-                            gap={8} pb={1} w={'full'} key={key}
-                            borderWidth={'0.75px'} p={2}
+                            justifyContent={"space-between"}
+                            gap={8}
+                            pb={1}
+                            w={"full"}
+                            key={key}
+                            borderWidth={"0.75px"}
+                            p={2}
                           >
                             <Text
-                              fontSize={'xs'}
-                              fontWeight={'medium'}
-                              textTransform={'capitalize'}
-                            >{item[0].replace(/_/g, " ")}</Text>
-                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                              fontSize={"xs"}
+                              fontWeight={"medium"}
+                              textTransform={"capitalize"}
+                            >
+                              {item[0].replace(/_/g, " ")}
+                            </Text>
+                            <Text
+                              fontSize={"xs"}
+                              maxW={"full"}
+                            >{`${item[1]}`}</Text>
                           </HStack>
-                        )
-
-                    }
-                    ) : null
-                }
-
+                        );
+                    })
+                  : null}
               </VStack>
             </ModalBody>
           </Box>
           <ModalFooter>
-            <HStack justifyContent={'center'} gap={4}>
+            <HStack justifyContent={"center"} gap={4}>
               <Button
-                colorScheme='yellow'
-                size={'sm'} rounded={'full'}
+                colorScheme="yellow"
+                size={"sm"}
+                rounded={"full"}
                 onClick={handleShare}
-              >Share</Button>
+              >
+                Share
+              </Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
-                {
-                  ({ toPdf }) => <Button
-                    rounded={'full'}
-                    size={'sm'}
-                    colorScheme={'orange'}
+                {({ toPdf }) => (
+                  <Button
+                    rounded={"full"}
+                    size={"sm"}
+                    colorScheme={"orange"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
-                  >Download
+                  >
+                    Download
                   </Button>
-                }
+                )}
               </Pdf>
             </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default Bbps
+export default Bbps;

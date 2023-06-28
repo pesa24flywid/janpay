@@ -112,6 +112,11 @@ const Lic = () => {
       Formik.setFieldValue("amount", res.data.amount)
       setBeneDetails(res.data.bill_fetch)
     }).catch(err => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: 'error',
         title: "Error while fetching dtails",

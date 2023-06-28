@@ -58,6 +58,11 @@ const Pan = () => {
                 setEncUrl(res.data.data.url)
                 onOpen()
             }).catch(err => {
+                if (err?.response?.status == 401) {
+                  Cookies.remove("verified");
+                  window.location.reload();
+                  return;
+                }
                 Toast({
                     status: 'error',
                     title: 'Error while sending request',

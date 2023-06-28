@@ -39,6 +39,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 import { toBlob } from 'html-to-image'
 import { useFormik } from 'formik';
+import Cookies from 'js-cookie';
 
 function StatementTable({ ministatement }) {
   if (typeof (ministatement) == Array && ministatement.length === 0) {
@@ -193,6 +194,11 @@ const Index = () => {
       setRowData(res.data.data)
       setPrintableRow(res.data.data)
     }).catch((err) => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       console.log(err)
       Toast({
         status: 'error',

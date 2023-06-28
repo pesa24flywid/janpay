@@ -36,6 +36,7 @@ import { useFormik } from "formik";
 import BackendAxios, { ClientAxios } from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
 import { BsCheck2Circle, BsDownload, BsXCircle } from "react-icons/bs";
+import Cookies from "js-cookie";
 
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
@@ -117,6 +118,11 @@ const Payout = () => {
         });
       })
       .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: "error",
           title: "Transaction Failed",

@@ -322,6 +322,11 @@ const Aeps = () => {
           })
           console.log(res.data)
         }).catch((err) => {
+          if (err?.response?.status == 401) {
+            Cookies.remove("verified");
+            window.location.reload();
+            return;
+          }
           setIsBtnLoading(false)
           Toast({
             status: 'warning',
@@ -347,6 +352,11 @@ const Aeps = () => {
       BackendAxios.get(`/api/paysprint/aeps/fetch-bank/${serviceCode}`).then(res => {
         setBanksList(res.data.banklist.data)
       }).catch(err => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: 'error',
           description: err.response?.data?.message || err.response?.data || err.message
@@ -426,6 +436,11 @@ const Aeps = () => {
       setRowData(res.data.data)
     }).catch((err) => {
       console.log(err)
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: 'error',
         description: err.response.data.message || err.response.data || err.message

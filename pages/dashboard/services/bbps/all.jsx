@@ -185,6 +185,11 @@ const Bbps = () => {
         setOperators(res.data.data)
         setIsLoading(false)
       }).catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         console.log(err)
         setIsLoading(false)
       })
@@ -231,6 +236,11 @@ const Bbps = () => {
         setFetchBillBtn(false)
         setIsLoading(false)
       }).catch(err => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: 'error',
           title: 'Error while fetching bill',
@@ -255,6 +265,11 @@ const Bbps = () => {
         setAmount(res.data.amount)
         setIsLoading(false)
       }).catch(err => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: 'error',
           description: err.response.data.message || err.response.data || err.message
@@ -287,6 +302,11 @@ const Bbps = () => {
           latlong: latlong
         }
       ).then(res => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         setIsLoading(false)
         setReceipt({
           status: res.data.metadata?.status,
@@ -295,6 +315,11 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         if (err.response.status == 406) {
           Toast({
             status: 'error',
@@ -317,6 +342,7 @@ const Bbps = () => {
       formData.forEach(function (value, key) {
         object[key] = value;
       });
+      
       BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
         {
           ...object,
@@ -335,6 +361,11 @@ const Bbps = () => {
         })
         onClose()
       }).catch(err => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         if (err.response.status == 406) {
           Toast({
             status: 'error',

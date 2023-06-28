@@ -56,6 +56,7 @@ import {
 import { BiRupee } from 'react-icons/bi'
 import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
 import Pdf from 'react-to-pdf'
+import Cookies from 'js-cookie'
 
 
 const Bbps = () => {
@@ -164,6 +165,11 @@ const Bbps = () => {
       setOperators(Object.values(res.data))
       setOperatorMenuStatus(true)
     }).catch((err) => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: "error",
         title: "Error Occured",
@@ -204,6 +210,11 @@ const Bbps = () => {
       setPlanValues(res.data.info)
       setPlanCategories(Object.keys(res.data.info))
     }).catch((err) => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: "error",
         title: "No plans found",
@@ -232,6 +243,11 @@ const Bbps = () => {
         setHlrResponse()
       }
     }).catch((err) => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: "error",
         title: "We're facing some issues.",
@@ -268,6 +284,11 @@ const Bbps = () => {
         data: res.data.metadata
       })
     }).catch(err => {
+      if (err?.response?.status == 401) {
+        Cookies.remove("verified");
+        window.location.reload();
+        return;
+      }
       Toast({
         status: 'error',
         title: 'Transaction Failed!',
