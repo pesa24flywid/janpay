@@ -429,7 +429,7 @@ const Index = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status}
+                  TRANSACTION {receipt.status == true ? "PROCESSED" : receipt?.status == false ? "FAILED": receipt.status}
                 </Text>
               </VStack>
             </ModalHeader>
