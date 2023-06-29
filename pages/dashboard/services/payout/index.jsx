@@ -379,14 +379,14 @@ const Payout = () => {
                 bg={
                   receipt.status == "processed" || receipt?.status == true
                     ? "green.500"
-                    : receipt.status == "processing"
+                    : receipt.status == "processing" || receipt.status == "queued"
                     ? "orange.500"
                     : "red.500"
                 }
               >
                 {receipt.status == "processed" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : receipt.status == "processing" ? (
+                ) : receipt.status == "processing" || receipt.status == "queued" ? (
                   <BsClockHistory color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
