@@ -272,11 +272,7 @@ const Payout = () => {
                             rounded={"full"}
                             onClick={() =>
                               showReceipt({
-                                status:
-                                  item.status == "processing" ||
-                                  item.status == "processed"
-                                    ? true
-                                    : false,
+                                status: item.status,
                                 amount: item?.amount,
                                 account_number: item?.account_number,
                                 UTR: item?.utr || " ",
@@ -399,7 +395,7 @@ const Payout = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status}
+                  TRANSACTION {receipt.status == true ? "PROCESSED" : receipt?.status == false ? "FAILED": receipt.status}
                 </Text>
               </VStack>
             </ModalHeader>
