@@ -399,7 +399,7 @@ const Payout = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status ? "success" : "failed"}
+                  TRANSACTION {receipt.status}
                 </Text>
               </VStack>
             </ModalHeader>
