@@ -409,14 +409,14 @@ const Index = () => {
                 bg={
                   receipt.status == "processed" || receipt?.status == true
                     ? "green.500"
-                    : receipt.status == "processing"
+                    : receipt.status == "processing" || receipt.status == "queued"
                     ? "orange.500"
                     : "red.500"
                 }
               >
-                {receipt.status == "processed" ? (
+                {receipt.status == "processed" || receipt.status == true ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : receipt.status == "processing" ? (
+                ) : receipt.status == "processing" || receipt.status == "queued" ? (
                   <BsClockHistory color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
@@ -429,7 +429,7 @@ const Index = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status ? "success" : "failed"}
+                  TRANSACTION {receipt.status}
                 </Text>
               </VStack>
             </ModalHeader>
