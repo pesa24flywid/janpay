@@ -373,17 +373,13 @@ const Payout = () => {
                 w={"full"}
                 p={8}
                 bg={
-                  receipt.status == "processed" || receipt?.status == true
+                  receipt.status == "processed" || receipt?.status == true || receipt.status == "processing" || receipt.status == "queued"
                     ? "green.500"
-                    : receipt.status == "processing" || receipt.status == "queued"
-                    ? "orange.500"
                     : "red.500"
                 }
               >
-                {receipt.status == "processed" || receipt.status == true ? (
+                {receipt.status == "processed" || receipt.status == true || receipt.status == "processing" || receipt.status == "queued"  ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : receipt.status == "processing" || receipt.status == "queued" ? (
-                  <BsClockHistory color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
                 )}
@@ -399,44 +395,50 @@ const Payout = () => {
                 </Text>
               </VStack>
             </ModalHeader>
-            <ModalHeader p={0}>
-              <VStack
-                w={"full"}
-                p={8}
-                bg={
-                  receipt.status == "processed" ||
-                  receipt?.status == true ||
-                  receipt.status == "processing" ||
-                  receipt.status == "queued"
-                    ? "green.500"
-                    : "red.500"
-                }
-              >
-                {receipt.status == "processed" ||
-                receipt.status == true ||
-                receipt.status == "processing" ||
-                receipt.status == "queued" ? (
-                  <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : (
-                  <BsXCircle color="#FFF" fontSize={72} />
-                )}
-                <Text color={"#FFF"} textTransform={"capitalize"}>
-                  ₹ {receipt.data.amount || 0}
-                </Text>
-                <Text
-                  color={"#FFF"}
-                  fontSize={"sm"}
-                  textTransform={"uppercase"}
-                >
-                  TRANSACTION{" "}
-                  {receipt.status == true
-                    ? "PROCESSED"
-                    : receipt?.status == false
-                    ? "FAILED"
-                    : receipt.status}
-                </Text>
+            <ModalBody p={0} bg={"azure"}>
+              <VStack w={"full"} spacing={0} p={4} bg={"#FFF"}>
+                {receipt.data
+                  ? Object.entries(receipt.data).map((item, key) => {
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "user" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "amount"
+                      )
+                        return (
+                          <HStack
+                            justifyContent={"space-between"}
+                            gap={8}
+                            pb={1}
+                            w={"full"}
+                            key={key}
+                            borderWidth={"0.75px"}
+                            p={2}
+                          >
+                            <Text
+                              fontSize={"xs"}
+                              fontWeight={"medium"}
+                              textTransform={"capitalize"}
+                            >
+                              {item[0].replace(/_/g, " ")}
+                            </Text>
+                            <Text
+                              fontSize={"xs"}
+                              maxW={"full"}
+                            >{`${item[1]}`}</Text>
+                          </HStack>
+                        );
+                    })
+                  : null}
+                <VStack pt={8} spacing={0} w={"full"}>
+                  <Image src="/logo_long.png" w={"20"} pt={4} />
+                  <Text fontSize={"xs"}>
+                    {process.env.NEXT_PUBLIC_ORGANISATION_NAME}
+                  </Text>
+                </VStack>
               </VStack>
-            </ModalHeader>
+            </ModalBody>
           </Box>
           <ModalFooter>
             <HStack justifyContent={"center"} gap={4}>
