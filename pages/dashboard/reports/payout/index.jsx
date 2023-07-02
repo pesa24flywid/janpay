@@ -407,17 +407,19 @@ const Index = () => {
                 w={"full"}
                 p={8}
                 bg={
-                  receipt.status == "processed" || receipt?.status == true
+                  receipt.status == "processed" ||
+                  receipt?.status == true ||
+                  receipt.status == "processing" ||
+                  receipt.status == "queued"
                     ? "green.500"
-                    : receipt.status == "processing" || receipt.status == "queued"
-                    ? "orange.500"
                     : "red.500"
                 }
               >
-                {receipt.status == "processed" || receipt.status == true ? (
+                {receipt.status == "processed" ||
+                receipt.status == true ||
+                receipt.status == "processing" ||
+                receipt.status == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : receipt.status == "processing" || receipt.status == "queued" ? (
-                  <BsClockHistory color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
                 )}
@@ -429,7 +431,12 @@ const Index = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status == true ? "PROCESSED" : receipt?.status == false ? "FAILED": receipt.status}
+                  TRANSACTION{" "}
+                  {receipt.status == true
+                    ? "PROCESSED"
+                    : receipt?.status == false
+                    ? "FAILED"
+                    : receipt.status}
                 </Text>
               </VStack>
             </ModalHeader>
