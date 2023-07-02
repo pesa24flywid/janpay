@@ -35,7 +35,7 @@ import {
 import { useFormik } from "formik";
 import BackendAxios, { ClientAxios } from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
-import { BsCheck2Circle, BsDownload, BsXCircle } from "react-icons/bs";
+import { BsCheck2Circle, BsClockHistory, BsDownload, BsXCircle } from "react-icons/bs";
 import Cookies from "js-cookie";
 
 const Payout = () => {
