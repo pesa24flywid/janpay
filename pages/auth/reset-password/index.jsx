@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'
 import Navbar from '../../../hocs/Navbar'
 import { useFormik } from 'formik'
-import axios from '../../../lib/axios'
+import axios from 'axios'
 
 const ResetPassword = () => {
     const toast = useToast()
