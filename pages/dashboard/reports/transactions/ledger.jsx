@@ -122,6 +122,7 @@ const Index = () => {
       pinned: "right",
       cellRenderer: "receiptCellRenderer",
       width: 80,
+      hide: true
     },
   ]);
 
