@@ -253,9 +253,13 @@ const Index = () => {
   };
 
   const statusCellRenderer = (params) => {
+    const receipt = JSON.parse(params.data.metadata);
     return (
       <>
-        {JSON.parse(params.data.metadata).status ? (
+        {receipt.status == "processed" ||
+        receipt?.status == true ||
+        receipt.status == "processing" ||
+        receipt.status == "queued" ? (
           <Text color={"green"} fontWeight={"bold"}>
             SUCCESS
           </Text>
