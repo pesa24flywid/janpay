@@ -255,9 +255,13 @@ const Index = () => {
   };
 
   const statusCellRenderer = (params) => {
+    const receipt = JSON.parse(params.data.metadata);
     return (
       <>
-        {JSON.parse(params.data.metadata).status ? (
+        {receipt.status == "processed" ||
+        receipt?.status == true ||
+        receipt.status == "processing" ||
+        receipt.status == "queued" ? (
           <Text color={"green"} fontWeight={"bold"}>
             SUCCESS
           </Text>
@@ -432,11 +436,12 @@ const Index = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {receipt.status == true
-                    ? "PROCESSED"
-                    : receipt?.status == false
-                    ? "FAILED"
-                    : receipt.status}
+                  {receipt.status == "processed" ||
+                  receipt?.status == true ||
+                  receipt.status == "processing" ||
+                  receipt.status == "queued"
+                    ? "SUCCESSFUL"
+                    : "FAILED"}
                 </Text>
               </VStack>
             </ModalHeader>
