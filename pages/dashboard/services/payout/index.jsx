@@ -35,7 +35,12 @@ import {
 import { useFormik } from "formik";
 import BackendAxios, { ClientAxios } from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
-import { BsCheck2Circle, BsClockHistory, BsDownload, BsXCircle } from "react-icons/bs";
+import {
+  BsCheck2Circle,
+  BsClockHistory,
+  BsDownload,
+  BsXCircle,
+} from "react-icons/bs";
 import Cookies from "js-cookie";
 
 const Payout = () => {
@@ -373,12 +378,18 @@ const Payout = () => {
                 w={"full"}
                 p={8}
                 bg={
-                  receipt.status == "processed" || receipt?.status == true || receipt.status == "processing" || receipt.status == "queued"
+                  receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status == true ||
+                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued"
                     ? "green.500"
                     : "red.500"
                 }
               >
-                {receipt.status == "processed" || receipt.status == true || receipt.status == "processing" || receipt.status == "queued"  ? (
+                {receipt?.status?.toLowerCase() == "processed" ||
+                receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "processing" ||
+                receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
@@ -391,7 +402,11 @@ const Payout = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION {receipt.status == "processed" || receipt?.status == true || receipt.status == "processing" || receipt.status == "queued"
+                  TRANSACTION{" "}
+                  {receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status == true ||
+                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued"
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>

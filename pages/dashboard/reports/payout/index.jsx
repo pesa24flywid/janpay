@@ -411,18 +411,18 @@ const Index = () => {
                 w={"full"}
                 p={8}
                 bg={
-                  receipt.status == "processed" ||
+                  receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status == true ||
-                  receipt.status == "processing" ||
-                  receipt.status == "queued"
+                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued"
                     ? "green.500"
                     : "red.500"
                 }
               >
-                {receipt.status == "processed" ||
-                receipt.status == true ||
-                receipt.status == "processing" ||
-                receipt.status == "queued" ? (
+                {receipt?.status?.toLowerCase() == "processed" ||
+                receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "processing" ||
+                receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
@@ -436,10 +436,10 @@ const Index = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {receipt.status == "processed" ||
+                  {receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status == true ||
-                  receipt.status == "processing" ||
-                  receipt.status == "queued"
+                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued"
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>
