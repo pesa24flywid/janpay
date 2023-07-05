@@ -159,7 +159,7 @@ const Index = () => {
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${new Date(new Date(Formik.values.to).setHours(23,59,59,999)).toISOString()}&page=1`
+        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to ? new Date(new Date(Formik.values.to).setHours(23,59,59,999)).toISOString() : new Date().toISOString()}&page=1`
     )
       .then((res) => {
         setPagination({
