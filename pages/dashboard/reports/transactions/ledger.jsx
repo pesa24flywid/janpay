@@ -90,12 +90,11 @@ const Index = () => {
       field: "closing_balance",
       width: 150,
     },
-    // {
-    //   headerName: "Event",
-    //   field: "metadata",
-    //   cellRenderer: 'eventCellRenderer',
-    //   width: 100,
-    // },
+    {
+      headerName: "Description",
+      field: "transaction_for",
+      width: 150,
+    },
     {
       headerName: "Trnxn Type",
       field: "service_type",
