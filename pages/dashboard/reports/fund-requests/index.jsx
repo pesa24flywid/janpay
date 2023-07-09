@@ -71,8 +71,13 @@ const Index = () => {
       field: 'created_at'
     },
     {
-      headerName: "Remarks",
+      headerName: "My Remarks",
       field: 'remarks',
+      defaultMinWidth: 300
+    },
+    {
+      headerName: "Admin Remarks",
+      field: 'admin_remarks',
       defaultMinWidth: 300
     },
     {
