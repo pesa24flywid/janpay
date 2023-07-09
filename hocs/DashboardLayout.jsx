@@ -162,9 +162,9 @@ const DashboardWrapper = (props) => {
         <>
             <Head><title>{`Janpay - ${props.titleText || props.pageTitle}`}</title></Head>
 
-            <Maintenance />
+            {/* <Maintenance /> */}
 
-            {/* <Box
+            <Box
                 bg={'aliceblue'}
                 w={'full'}>
                 <HStack spacing={8} alignItems={'flex-start'}>
@@ -278,7 +278,7 @@ const DashboardWrapper = (props) => {
 
 
                 </HStack>
-            </Box> */}
+            </Box>
 
             {/* Mobile bottom nav */}
             <Show below='md'>
