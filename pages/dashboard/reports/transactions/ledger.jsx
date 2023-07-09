@@ -119,8 +119,8 @@ const Index = () => {
     {
       headerName: "Narration",
       field: "metadata",
-      cellRenderer: 'narrationCellRenderer',
-      width: 200
+      cellRenderer: "narrationCellRenderer",
+      width: 200,
     },
     {
       headerName: "Additional Info",
@@ -133,7 +133,7 @@ const Index = () => {
       pinned: "right",
       cellRenderer: "receiptCellRenderer",
       width: 80,
-      hide: true
+      hide: true,
     },
   ]);
 
@@ -297,7 +297,9 @@ const Index = () => {
     const receipt = JSON.parse(params?.data?.metadata || {});
     return (
       <>
-        <Text fontWeight={"bold"} textTransform={'uppercase'}>{receipt?.event}</Text>
+        <Text fontWeight={"bold"} textTransform={"uppercase"}>
+          {receipt?.event}
+        </Text>
       </>
     );
   };
@@ -534,9 +536,8 @@ const Index = () => {
               {columnDefs
                 .filter((column) => {
                   if (
-                    column.field != "metadata" &&
-                    column.field != "name" &&
-                    column.field != "receipt"
+                    column.headerName != "Additional Info" &&
+                    column.headerName != "Receipt"
                   ) {
                     return column;
                   }
@@ -556,12 +557,15 @@ const Index = () => {
                   <td>{data.credit_amount}</td>
                   <td>{data.opening_balance}</td>
                   <td>{data.closing_balance}</td>
+                  <td>{data.transaction_for}</td>
                   <td>{data.service_type}</td>
                   <td>
                     {JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}
                   </td>
                   <td>{data.created_at}</td>
-                  <td>{data.updated_at}</td>
+                  <td>{data.updated_at}</td><td>
+                    {JSON.parse(data.metadata).remarks}
+                  </td>
                 </tr>
               );
             })}
