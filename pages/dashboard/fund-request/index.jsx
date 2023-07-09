@@ -208,7 +208,7 @@ const FundRequest = () => {
     },
     {
       headerName: "My Remarks",
-      field: "admin_remarks",
+      field: "remarks",
       width: 200,
     },
     {
