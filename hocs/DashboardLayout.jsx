@@ -39,6 +39,7 @@ import SimpleAccordion from './SimpleAccordion';
 import { FaUserAlt } from 'react-icons/fa';
 import { MdContactSupport } from 'react-icons/md'
 import { Image } from '@chakra-ui/react';
+import Maintenance from './Maintenance';
 
 
 const DashboardWrapper = (props) => {
@@ -161,11 +162,13 @@ const DashboardWrapper = (props) => {
         <>
             <Head><title>{`Janpay - ${props.titleText || props.pageTitle}`}</title></Head>
 
-            <Box
+            <Maintenance />
+
+            {/* <Box
                 bg={'aliceblue'}
                 w={'full'}>
                 <HStack spacing={8} alignItems={'flex-start'}>
-                    {/* Sidebar */}
+                    
                     <Sidebar
                         isProfileComplete={isProfileComplete}
                         userName={userName}
@@ -173,7 +176,7 @@ const DashboardWrapper = (props) => {
                         userImage={profilePic}
                     />
 
-                    {/* Main Dashboard Container */}
+                    
                     <Box
                         display={'flex'}
                         flexDir={'column'}
@@ -185,7 +188,7 @@ const DashboardWrapper = (props) => {
                             <Topbar />
                         </Show>
 
-                        {/* Topbar Starts */}
+                        
                         <HStack
                             py={[4, 0]}
                             pb={[4, 2]}
@@ -260,7 +263,7 @@ const DashboardWrapper = (props) => {
                                 </Link>
                             </Show>
                         </HStack>
-                        {/* Topbar Ends */}
+                        
 
                         <Box p={[4, 0]} pr={[4, 4]}>
                             {props.children}
@@ -275,7 +278,7 @@ const DashboardWrapper = (props) => {
 
 
                 </HStack>
-            </Box>
+            </Box> */}
 
             {/* Mobile bottom nav */}
             <Show below='md'>
