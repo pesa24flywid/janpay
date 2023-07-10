@@ -163,13 +163,14 @@ const Index = () => {
     initialValues: {
       from: "",
       to: "",
+      search: "",
     },
   });
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&page=1`
+        `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
     )
       .then((res) => {
         setPagination({
@@ -563,9 +564,8 @@ const Index = () => {
                     {JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}
                   </td>
                   <td>{data.created_at}</td>
-                  <td>{data.updated_at}</td><td>
-                    {JSON.parse(data.metadata).remarks}
-                  </td>
+                  <td>{data.updated_at}</td>
+                  <td>{JSON.parse(data.metadata).remarks}</td>
                 </tr>
               );
             })}

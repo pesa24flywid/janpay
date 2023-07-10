@@ -153,13 +153,14 @@ const Index = () => {
     initialValues: {
       from: "",
       to: "",
+      search: "",
     },
   });
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&page=1`
+        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
     )
       .then((res) => {
         setPagination({
@@ -303,6 +304,10 @@ const Index = () => {
               type="date"
               bg={"white"}
             />
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Ref. ID or Acc. No.</FormLabel>
+            <Input name="search" onChange={Formik.handleChange} bg={"white"} />
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>

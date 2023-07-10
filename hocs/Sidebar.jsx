@@ -210,7 +210,7 @@ export const SidebarOptions =
         {
           title: 'fund requests',
           link: '/dashboard/reports/fund-requests?pageId=reports',
-          id: "fundRequests",
+          id: "basicFundRequesReport",
           soon: false,
         },
         // {
