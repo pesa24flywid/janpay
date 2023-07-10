@@ -437,8 +437,8 @@ const Index = () => {
                 </Td>
                 <Td>
                   {Math.abs(
-                    overviewData[4]?.["payout-commission"]?.credit -
-                      overviewData[4]?.["payout-commission"]?.debit
+                    overviewData[7]?.["payout-commission"]?.credit -
+                      overviewData[7]?.["payout-commission"]?.debit
                   ) || 0}
                 </Td>
               </Tr>
