@@ -565,7 +565,7 @@ const Index = () => {
                   </td>
                   <td>{data.created_at}</td>
                   <td>{data.updated_at}</td>
-                  <td>{JSON.parse(data.metadata).remarks}</td>
+                  <td>{JSON.parse(data.metadata)?.remarks}</td>
                 </tr>
               );
             })}
