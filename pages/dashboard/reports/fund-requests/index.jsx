@@ -332,14 +332,14 @@ const Index = () => {
                 <tr key={key}>
                   <td>{key + 1}</td>
                   <td>{data.transaction_id}</td>
-                  <td>{data.debit_amount}</td>
-                  <td>{data.credit_amount}</td>
-                  <td>{data.opening_balance}</td>
-                  <td>{data.closing_balance}</td>
-                  <td>{data.service_type}</td>
+                  <td>{data.amount}</td>
                   <td>{data.status}</td>
+                  <td>{data.transaction_type}</td>
+                  <td>{data.transaction_date}</td>
                   <td>{data.created_at}</td>
                   <td>{data.updated_at}</td>
+                  <td>{data.remarks}</td>
+                  <td>{data.admin_remarks}</td>
                 </tr>
               );
             })}
