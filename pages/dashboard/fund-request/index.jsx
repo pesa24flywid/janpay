@@ -32,6 +32,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { BsEye } from "react-icons/bs";
 import Loader from "../../../hocs/Loader";
+import { VisuallyHidden } from "@chakra-ui/react";
 
 const ExportPDF = (currentRowData) => {
   const doc = new jsPDF("landscape");
@@ -192,7 +193,7 @@ const FundRequest = () => {
       width: 100,
     },
     {
-      headerName: "Type",
+      headerName: "Trnxn Type",
       field: "transaction_type",
       width: 100,
     },
@@ -202,8 +203,13 @@ const FundRequest = () => {
       width: 150,
     },
     {
-      headerName: "Request Timestamp",
+      headerName: "Requested At",
       field: "created_at",
+      width: 180,
+    },
+    {
+      headerName: "Updated At",
+      field: "updated_at",
       width: 180,
     },
     {
@@ -464,9 +470,9 @@ const FundRequest = () => {
               Your Past Fund Requests
             </Text>
 
-            <Button colorScheme={"red"} onClick={() => ExportPDF(rowData)}>
+            {/* <Button colorScheme={"red"} onClick={() => ExportPDF(rowData)}>
               Export PDF
-            </Button>
+            </Button> */}
           </HStack>
           <Box h={"12"} w={"full"}></Box>
           <Box py={6}>
@@ -494,6 +500,47 @@ const FundRequest = () => {
           </Box>
         </Box>
       </DashboardWrapper>
+
+      <VisuallyHidden>
+        <table id="printable-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              {columnDefs
+                .filter((column) => {
+                  if (
+                    column.field != "metadata" &&
+                    column.field != "name" &&
+                    column.field != "receipt"
+                  ) {
+                    return column;
+                  }
+                })
+                .map((column, key) => {
+                  return <th key={key}>{column.headerName}</th>;
+                })}
+            </tr>
+          </thead>
+          <tbody>
+            {rowData.map((data, key) => {
+              return (
+                <tr key={key}>
+                  <td>{key + 1}</td>
+                  <td>{data.transaction_id}</td>
+                  <td>{data.amount}</td>
+                  <td>{data.status}</td>
+                  <td>{data.transaction_type}</td>
+                  <td>{data.transaction_date}</td>
+                  <td>{data.created_at}</td>
+                  <td>{data.updated_at}</td>
+                  <td>{data.remarks}</td>
+                  <td>{data.admin_remarks}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </VisuallyHidden>
     </>
   );
 };
