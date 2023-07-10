@@ -335,6 +335,14 @@ const Index = () => {
               bg={"white"}
             />
           </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Ref ID or Acc No</FormLabel>
+            <Input
+              name="search"
+              onChange={Formik.handleChange}
+              bg={"white"}
+            />
+          </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>
           <Button onClick={() => fetchTransactions()} colorScheme={"orange"}>
