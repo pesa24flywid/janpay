@@ -437,8 +437,10 @@ const Index = () => {
                 </Td>
                 <Td>
                   {Math.abs(
-                    (overviewData[7]?.["payout-commission"]?.credit + overviewData[10]?.["payout-charge"]?.credit) -
-                      (overviewData[7]?.["payout-commission"]?.debit + overviewData[10]?.["payout-charge"]?.debit)
+                    overviewData[7]?.["payout-commission"]?.credit +
+                      overviewData[10]?.["payout-charge"]?.credit -
+                      (overviewData[7]?.["payout-commission"]?.debit +
+                        overviewData[10]?.["payout-charge"]?.debit)
                   ).toFixed(2) || 0}
                 </Td>
               </Tr>
@@ -471,9 +473,11 @@ const Index = () => {
                     fontSize={"lg"}
                   >
                     {Math.abs(
-                      overviewData[4]?.["payout-commission"]?.credit -
-                        overviewData[4]?.["payout-commission"]?.debit
-                    ) || 0}
+                      overviewData[7]?.["payout-commission"]?.credit +
+                        overviewData[10]?.["payout-charge"]?.credit -
+                        (overviewData[7]?.["payout-commission"]?.debit +
+                          overviewData[10]?.["payout-charge"]?.debit)
+                    ).toFixed(2) || 0}
                   </Text>
                 </Td>
               </Tr>
