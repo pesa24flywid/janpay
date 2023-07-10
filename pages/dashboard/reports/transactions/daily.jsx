@@ -306,7 +306,7 @@ const Index = () => {
               type="date"
               bgColor={"#FFF"}
               name="from"
-              onChange={(e) => setFrom(e.target.value)}
+              onChange={(e) => setFrom(e.target.value + 'T' + '00:00')}
             />
           </FormControl>
           <FormControl w={["full", "xs"]}>
@@ -315,7 +315,7 @@ const Index = () => {
               type="date"
               bgColor={"#FFF"}
               name="to"
-              onChange={(e) => setTo(e.target.value)}
+              onChange={(e) => setTo(e.target.value + 'T' + '23:59')}
             />
           </FormControl>
         </HStack>
