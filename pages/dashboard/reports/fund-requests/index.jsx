@@ -27,6 +27,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
+import { Select } from "@chakra-ui/react";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -57,17 +58,17 @@ const Index = () => {
     {
       headerName: "Amount",
       field: "amount",
-      width: 120
+      width: 120,
     },
     {
       headerName: "Status",
       field: "status",
-      width: 120
+      width: 120,
     },
     {
       headerName: "Trnxn Type",
       field: "transaction_type",
-      width: 120
+      width: 120,
     },
     {
       headerName: "Trnxn Date",
@@ -126,13 +127,19 @@ const Index = () => {
     initialValues: {
       from: "",
       to: "",
+      trnxnId: "",
+      status: "all",
     },
   });
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/fund/fetch-fund?from=${Formik.values.from}&to=${Formik.values.to}&page=1`
+        `/api/fund/fetch-fund?from=${Formik.values.from}&to=${
+          Formik.values.to
+        }&status=${
+          Formik.values.status != "all" ? Formik.values.status : ""
+        }&search=${Formik.values.trnxnId}&page=1`
     )
       .then((res) => {
         setPagination({
@@ -215,6 +222,19 @@ const Index = () => {
               type="date"
               bg={"white"}
             />
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Transaction ID</FormLabel>
+            <Input name="trnxnId" onChange={Formik.handleChange} bg={"white"} isDisabled={Formik.values.status != "all"} />
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Status</FormLabel>
+            <Select bg={'#FFF'} name="status" onChange={Formik.handleChange}>
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="declined">Declined</option>
+            </Select>
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>
@@ -299,7 +319,7 @@ const Index = () => {
                 );
               }}
               components={{
-                receiptCellRenderer: receiptCellRenderer
+                receiptCellRenderer: receiptCellRenderer,
               }}
             ></AgGridReact>
           </Box>

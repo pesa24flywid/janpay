@@ -19,6 +19,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -154,13 +155,14 @@ const Index = () => {
       from: "",
       to: "",
       search: "",
+      status: "all"
     },
   });
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
+        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&status=${Formik.values.status != "all" ? Formik.values.status : ""}&page=1`
     )
       .then((res) => {
         setPagination({
@@ -263,12 +265,12 @@ const Index = () => {
         receipt?.status == true ||
         receipt.status == "processing" ||
         receipt.status == "queued" ? (
-          <Text color={"green"} fontWeight={"bold"}>
-            SUCCESS
+          <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
+            {receipt.status}
           </Text>
         ) : (
-          <Text color={"red"} fontWeight={"bold"}>
-            FAILED
+          <Text color={"red"} textTransform={"uppercase"} fontWeight={"bold"}>
+            {receipt.status}
           </Text>
         )}
       </>
@@ -307,7 +309,17 @@ const Index = () => {
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Ref. ID or Acc. No.</FormLabel>
-            <Input name="search" onChange={Formik.handleChange} bg={"white"} />
+            <Input name="search" onChange={Formik.handleChange} bg={"white"} isDisabled={Formik.values.status != "all"} />
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Status</FormLabel>
+            <Select name="status" onChange={Formik.handleChange} bgColor={'#FFF'}>
+              <option value="all">All</option>
+              <option value="processed">Processed</option>
+              <option value="failed">Failed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="reversed">Reversed</option>
+            </Select>
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>
