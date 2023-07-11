@@ -193,6 +193,11 @@ const FundRequest = () => {
       width: 100,
     },
     {
+      headerName: "Bank",
+      field: "bank_name",
+      width: 160,
+    },
+    {
       headerName: "Trnxn Type",
       field: "transaction_type",
       width: 100,
@@ -529,6 +534,7 @@ const FundRequest = () => {
                   <td>{data.transaction_id}</td>
                   <td>{data.amount}</td>
                   <td>{data.status}</td>
+                  <td>{data.bank_name}</td>
                   <td>{data.transaction_type}</td>
                   <td>{data.transaction_date}</td>
                   <td>{data.created_at}</td>
