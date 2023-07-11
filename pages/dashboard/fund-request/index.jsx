@@ -193,6 +193,11 @@ const FundRequest = () => {
       width: 100,
     },
     {
+      headerName: "Admin Remarks",
+      field: "admin_remarks",
+      width: 200,
+    },
+    {
       headerName: "Bank",
       field: "bank_name",
       width: 160,
@@ -220,11 +225,6 @@ const FundRequest = () => {
     {
       headerName: "My Remarks",
       field: "remarks",
-      width: 200,
-    },
-    {
-      headerName: "Admin Remarks",
-      field: "admin_remarks",
       width: 200,
     },
     {
@@ -534,13 +534,13 @@ const FundRequest = () => {
                   <td>{data.transaction_id}</td>
                   <td>{data.amount}</td>
                   <td>{data.status}</td>
+                  <td>{data.admin_remarks}</td>
                   <td>{data.bank_name}</td>
                   <td>{data.transaction_type}</td>
                   <td>{data.transaction_date}</td>
                   <td>{data.created_at}</td>
                   <td>{data.updated_at}</td>
                   <td>{data.remarks}</td>
-                  <td>{data.admin_remarks}</td>
                 </tr>
               );
             })}
