@@ -43,7 +43,7 @@ import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import { DownloadTableExcel } from "react-export-table-to-excel";
-import {SiMicrosoftexcel} from 'react-icons/si'
+import { SiMicrosoftexcel } from "react-icons/si";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -157,14 +157,20 @@ const Index = () => {
       from: "",
       to: "",
       search: "",
-      status: "all"
+      status: "all",
     },
   });
 
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger/${transactionKeyword}?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&status=${Formik.values.status != "all" ? Formik.values.status : ""}&page=1`
+        `/api/user/ledger/${transactionKeyword}?from=${
+          Formik.values.from + (Formik.values.from && "T" + "00:00")
+        }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
+          Formik.values.search
+        }&status=${
+          Formik.values.status != "all" ? Formik.values.status : ""
+        }&page=1`
     )
       .then((res) => {
         setPagination({
@@ -279,7 +285,7 @@ const Index = () => {
     );
   };
 
-  const tableRef = React.useRef(null)
+  const tableRef = React.useRef(null);
   return (
     <>
       <DashboardWrapper pageTitle={"Payout Reports"}>
@@ -288,18 +294,18 @@ const Index = () => {
             Export PDF
           </Button>
           <DownloadTableExcel
-              filename="PayoutReports"
-              sheet="sheet1"
-              currentTableRef={tableRef.current}
+            filename="PayoutReports"
+            sheet="sheet1"
+            currentTableRef={tableRef.current}
+          >
+            <Button
+              size={["xs", "sm"]}
+              colorScheme={"whatsapp"}
+              leftIcon={<SiMicrosoftexcel />}
             >
-              <Button
-                size={["xs", "sm"]}
-                colorScheme={"whatsapp"}
-                leftIcon={<SiMicrosoftexcel />}
-              >
-                Excel
-              </Button>
-            </DownloadTableExcel>
+              Excel
+            </Button>
+          </DownloadTableExcel>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
@@ -325,11 +331,20 @@ const Index = () => {
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Ref. ID or Acc. No.</FormLabel>
-            <Input name="search" onChange={Formik.handleChange} bg={"white"} isDisabled={Formik.values.status != "all"} />
+            <Input
+              name="search"
+              onChange={Formik.handleChange}
+              bg={"white"}
+              isDisabled={Formik.values.status != "all"}
+            />
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Status</FormLabel>
-            <Select name="status" onChange={Formik.handleChange} bgColor={'#FFF'}>
+            <Select
+              name="status"
+              onChange={Formik.handleChange}
+              bgColor={"#FFF"}
+            >
               <option value="all">All</option>
               <option value="processed">Processed</option>
               <option value="failed">Failed</option>
