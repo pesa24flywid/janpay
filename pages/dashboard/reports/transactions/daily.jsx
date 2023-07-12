@@ -159,7 +159,7 @@ const Index = () => {
 
   function fetchSum() {
     // Fetch transactions overview
-    BackendAxios.get(`/api/user/overview?from=${from}&to=${to}`)
+    BackendAxios.get(`/api/user/overview?from=${from + (from && ("T" + "00:00"))}&to=${to (to && ("T" + "23:59"))}`)
       .then((res) => {
         setOverviewData(res.data);
       })
