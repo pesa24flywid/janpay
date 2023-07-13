@@ -42,12 +42,14 @@ import {
   BsXCircle,
 } from "react-icons/bs";
 import Cookies from "js-cookie";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
   const { isOpen, onClose, onOpen } = useDisclosure();
   const Toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
@@ -164,11 +166,14 @@ const Payout = () => {
   }, []);
 
   function fetchPayouts() {
+    setBtnLoading(true);
     BackendAxios.get(`/api/razorpay/fetch-payout/${serviceId}`)
       .then((res) => {
+        setBtnLoading(false);
         setRowdata(res.data);
       })
       .catch((err) => {
+        setBtnLoading(false);
         console.log(err);
       });
   }
@@ -251,7 +256,19 @@ const Payout = () => {
             w={["full", "lg"]}
             h={"auto"}
           >
-            <Text>Recent Payouts</Text>
+            <HStack pb={4} w={"full"} justifyContent={"space-between"}>
+              <Text>Recent Payouts</Text>
+              <Button
+                colorScheme="blue"
+                variant={"ghost"}
+                onClick={() => fetchPayouts()}
+                leftIcon={<FiRefreshCcw />}
+                isLoading={btnLoading}
+                size={"sm"}
+              >
+                Click To Reload Data
+              </Button>
+            </HStack>
             <TableContainer h={"full"}>
               <Table>
                 <Thead>
