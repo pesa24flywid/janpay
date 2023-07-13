@@ -30,6 +30,7 @@ import { useFormik } from "formik";
 import { Select } from "@chakra-ui/react";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -42,6 +43,7 @@ const Index = () => {
   const Toast = useToast({
     position: "top-right",
   });
+  const [loading, setLoading] = useState(false)
   const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -140,17 +142,19 @@ const Index = () => {
   });
 
   function fetchTransactions(pageLink) {
+    setLoading(true)
     BackendAxios.get(
       pageLink ||
         `/api/fund/fetch-fund?from=${Formik.values.from + (
           Formik.values.from && ("T" + "00:00")
         )}&to=${
-          Formik.values.to + (Formik.values.to && "T" + "23:59")
+          Formik.values.to + (Formik.values.to && ("T" + "23:59"))
         }&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&search=${Formik.values.trnxnId}&page=1`
     )
       .then((res) => {
+        setLoading(false)
         setPagination({
           current_page: res.data.current_page,
           total_pages: parseInt(res.data.last_page),
@@ -163,6 +167,7 @@ const Index = () => {
         setRowData(res.data.data);
       })
       .catch((err) => {
+        setLoading(false)
         console.log(err);
         Toast({
           status: "error",
@@ -270,10 +275,21 @@ const Index = () => {
             Search
           </Button>
         </HStack>
+        <Box mt={8}>
+          <Button
+            colorScheme="blue"
+            isLoading={loading}
+            variant={"ghost"}
+            onClick={() => fetchTransactions()}
+            leftIcon={<FiRefreshCcw />}
+          >
+            Click To Reload Data
+          </Button>
+        </Box>
         <HStack
           spacing={2}
           py={4}
-          mt={24}
+          mt={12}
           bg={"white"}
           justifyContent={"center"}
         >

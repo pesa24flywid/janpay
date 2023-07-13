@@ -42,6 +42,7 @@ import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import {SiMicrosoftexcel} from 'react-icons/si'
 import { DownloadTableExcel } from "react-export-table-to-excel";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -55,6 +56,7 @@ const Index = () => {
     position: "top-right",
   });
   const [printableRow, setPrintableRow] = useState([]);
+  const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -174,6 +176,7 @@ const Index = () => {
   });
 
   function fetchTransactions(pageLink) {
+    setLoading(true)
     BackendAxios.get(
       pageLink ||
         `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
@@ -189,10 +192,12 @@ const Index = () => {
         // });
         // setRowData(res.data.data);
         // setPrintableRow(res.data.data);
+        setLoading(false)
         setRowData(res.data);
         setPrintableRow(res.data);
       })
       .catch((err) => {
+        setLoading(false)
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -423,6 +428,17 @@ const Index = () => {
             <BsChevronDoubleRight />
           </Button>
         </HStack> */}
+        <Box mt={8} mb={4}>
+          <Button
+            colorScheme="blue"
+            isLoading={loading}
+            variant={"ghost"}
+            onClick={() => fetchTransactions()}
+            leftIcon={<FiRefreshCcw />}
+          >
+            Click To Reload Data
+          </Button>
+        </Box>
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"

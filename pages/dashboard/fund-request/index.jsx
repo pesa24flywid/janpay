@@ -33,6 +33,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { BsEye } from "react-icons/bs";
 import Loader from "../../../hocs/Loader";
 import { VisuallyHidden } from "@chakra-ui/react";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const ExportPDF = (currentRowData) => {
   const doc = new jsPDF("landscape");
@@ -75,6 +76,7 @@ const FundRequest = () => {
   const [userName, setUserName] = useState("No Name");
   const [bankDetails, setBankDetails] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const date = new Date();
 
   // let parent
@@ -237,8 +239,10 @@ const FundRequest = () => {
   ]);
 
   function fetchTransactions(pageLink) {
+    setBtnLoading(true)
     BackendAxios.get(pageLink || `/api/fund/fetch-fund?page=1`)
       .then((res) => {
+        setBtnLoading(false)
         setPagination({
           current_page: res.data.current_page,
           total_pages: parseInt(res.data.last_page),
@@ -250,6 +254,7 @@ const FundRequest = () => {
         setRowData(res.data.data);
       })
       .catch((err) => {
+        setBtnLoading(false)
         console.log(err);
         Toast({
           status: "error",
@@ -475,9 +480,15 @@ const FundRequest = () => {
               Your Past Fund Requests
             </Text>
 
-            {/* <Button colorScheme={"red"} onClick={() => ExportPDF(rowData)}>
-              Export PDF
-            </Button> */}
+            <Button
+              colorScheme={"blue"}
+              variant={"ghost"}
+              onClick={() => fetchTransactions()}
+              isLoading={btnLoading}
+              leftIcon={<FiRefreshCcw />}
+            >
+              Refresh Data
+            </Button>
           </HStack>
           <Box h={"12"} w={"full"}></Box>
           <Box py={6}>
