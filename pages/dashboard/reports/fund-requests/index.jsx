@@ -29,7 +29,7 @@ import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
 import { Select } from "@chakra-ui/react";
 import { DownloadTableExcel } from "react-export-table-to-excel";
-import {SiMicrosoftexcel} from 'react-icons/si'
+import { SiMicrosoftexcel } from "react-icons/si";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -142,8 +142,10 @@ const Index = () => {
   function fetchTransactions(pageLink) {
     BackendAxios.get(
       pageLink ||
-        `/api/fund/fetch-fund?from=${Formik.values.from}&to=${
-          Formik.values.to
+        `/api/fund/fetch-fund?from=${Formik.values.from(
+          Formik.values.from && "T" + "00:00"
+        )}&to=${
+          Formik.values.to + (Formik.values.to && "T" + "23:59")
         }&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&search=${Formik.values.trnxnId}&page=1`
@@ -198,7 +200,7 @@ const Index = () => {
     );
   };
 
-  const tableRef = React.useRef(null)
+  const tableRef = React.useRef(null);
   return (
     <>
       <DashboardWrapper pageTitle={"Fund Requests Reports"}>
@@ -207,18 +209,18 @@ const Index = () => {
             Export PDF
           </Button>
           <DownloadTableExcel
-              filename="FundRequests"
-              sheet="sheet1"
-              currentTableRef={tableRef.current}
+            filename="FundRequests"
+            sheet="sheet1"
+            currentTableRef={tableRef.current}
+          >
+            <Button
+              size={["xs", "sm"]}
+              colorScheme={"whatsapp"}
+              leftIcon={<SiMicrosoftexcel />}
             >
-              <Button
-                size={["xs", "sm"]}
-                colorScheme={"whatsapp"}
-                leftIcon={<SiMicrosoftexcel />}
-              >
-                Excel
-              </Button>
-            </DownloadTableExcel>
+              Excel
+            </Button>
+          </DownloadTableExcel>
         </HStack>
         <br />
         <br />
@@ -246,11 +248,16 @@ const Index = () => {
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Transaction ID</FormLabel>
-            <Input name="trnxnId" onChange={Formik.handleChange} bg={"white"} isDisabled={Formik.values.status != "all"} />
+            <Input
+              name="trnxnId"
+              onChange={Formik.handleChange}
+              bg={"white"}
+              isDisabled={Formik.values.status != "all"}
+            />
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Status</FormLabel>
-            <Select bg={'#FFF'} name="status" onChange={Formik.handleChange}>
+            <Select bg={"#FFF"} name="status" onChange={Formik.handleChange}>
               <option value="all">All</option>
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
