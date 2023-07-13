@@ -31,7 +31,6 @@ import Head from 'next/head'
 import Sidebar, { ServicesAccordion, SidebarOptions } from './Sidebar'
 import BankDetails from './BankDetails'
 import Cookies from 'js-cookie';
-let bcrypt = require('bcryptjs')
 import { useRouter } from 'next/router';
 import BackendAxios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
@@ -40,7 +39,7 @@ import { FaUserAlt } from 'react-icons/fa';
 import { MdContactSupport } from 'react-icons/md'
 import { Image } from '@chakra-ui/react';
 import Maintenance from './Maintenance';
-
+let bcrypt = require('bcryptjs')
 
 const DashboardWrapper = (props) => {
     const [availablePages, setAvailablePages] = useState([])
@@ -54,8 +53,10 @@ const DashboardWrapper = (props) => {
                 Cookies.remove("XSRF-TOKEN")
                 Cookies.remove("laravel_session")
                 localStorage.clear()
+            }).catch(err => {
+                console.log(err)
             })
-            setTimeout(() => Router.push("/auth/login"), 2000)
+            setTimeout(() => Router.push("/auth/login"), 500)
         }
         if (authentic) {
             setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
@@ -206,7 +207,7 @@ const DashboardWrapper = (props) => {
                                 <Spacer />
                             </Show>
                             <Show below='md'>
-                                <Text fontSize={'lg'} fontWeight={'500'} color={['#FFF', '#222']}>Hi {userName.split(" ")[0]}</Text>
+                                <Text fontSize={'lg'} fontWeight={'500'} color={['#FFF', '#222']}>Hi {userName?.split(" ")[0]}</Text>
                                 <Spacer />
                             </Show>
                             <HStack

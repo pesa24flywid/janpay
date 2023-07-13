@@ -19,17 +19,19 @@ import {
 import Navbar from '../../hocs/Navbar'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { ClientAxios } from '../../lib/axios'
+var bcrypt = require('bcryptjs')
 
 const Register = () => {
+    const Router = useRouter()
     const [isRetailerDisabled, setIsRetailerDisabled] = useState(false)
     const [isDistributorDisabled, setIsDistributorDisabled] = useState(true)
     const [isSuperDistributorDisabled, setIsSuperDistributorDisabled] = useState(true)
     const [defaultRole, setDefaultRole] = useState("")
     const [isBtnLoading, setIsBtnLoading] = useState(false)
     const toast = useToast()
-
 
     const formik = useFormik({
         initialValues: {

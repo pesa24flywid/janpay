@@ -45,6 +45,7 @@ import { Th } from "@chakra-ui/react";
 import { Tbody } from "@chakra-ui/react";
 import { Td } from "@chakra-ui/react";
 import Cookies from "js-cookie";
+import { useFormik } from "formik";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -134,6 +135,12 @@ const Index = () => {
   const [overviewData, setOverviewData] = useState([]);
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
+  const Formik = useFormik({
+    initialValues: {
+      from: "",
+      to: "",
+    },
+  });
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
@@ -159,7 +166,11 @@ const Index = () => {
 
   function fetchSum() {
     // Fetch transactions overview
-    BackendAxios.get(`/api/user/overview?from=${from + (from && ("T" + "00:00"))}&to=${to (to && ("T" + "23:59"))}`)
+    BackendAxios.get(
+      `/api/user/overview?from=${
+        Formik.values.from + (Formik.values.from && "T" + "00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}`
+    )
       .then((res) => {
         setOverviewData(res.data);
       })
@@ -173,38 +184,39 @@ const Index = () => {
       });
   }
 
-  function fetchTransactions(pageLink) {
-    BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`)
-      .then((res) => {
-        setPagination({
-          current_page: res.data.current_page,
-          total_pages: parseInt(res.data.last_page),
-          first_page_url: res.data.first_page_url,
-          last_page_url: res.data.last_page_url,
-          next_page_url: res.data.next_page_url,
-          prev_page_url: res.data.prev_page_url,
-        });
-        setPrintableRow(res?.data?.data);
-        setRowData(res?.data?.data);
-        fetchSum();
-      })
-      .catch((err) => {
-        if (err?.response?.status == 401) {
-          Cookies.remove("verified");
-          window.location.reload();
-          return;
-        }
-        console.log(err);
-        Toast({
-          status: "error",
-          description:
-            err.response.data.message || err.response.data || err.message,
-        });
-      });
-  }
+  // function fetchTransactions(pageLink) {
+  //   BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`)
+  //     .then((res) => {
+  //       setPagination({
+  //         current_page: res.data.current_page,
+  //         total_pages: parseInt(res.data.last_page),
+  //         first_page_url: res.data.first_page_url,
+  //         last_page_url: res.data.last_page_url,
+  //         next_page_url: res.data.next_page_url,
+  //         prev_page_url: res.data.prev_page_url,
+  //       });
+  //       setPrintableRow(res?.data?.data);
+  //       setRowData(res?.data?.data);
+  //       fetchSum();
+  //     })
+  //     .catch((err) => {
+  //       if (err?.response?.status == 401) {
+  //         Cookies.remove("verified");
+  //         window.location.reload();
+  //         return;
+  //       }
+  //       console.log(err);
+  //       Toast({
+  //         status: "error",
+  //         description:
+  //           err.response.data.message || err.response.data || err.message,
+  //       });
+  //     });
+  // }
 
   useEffect(() => {
-    fetchTransactions();
+    // fetchTransactions();
+    fetchSum();
   }, []);
 
   const pdfRef = React.createRef();
@@ -306,7 +318,7 @@ const Index = () => {
               type="date"
               bgColor={"#FFF"}
               name="from"
-              onChange={(e) => setFrom(e.target.value + 'T' + '00:00')}
+              onChange={Formik.handleChange}
             />
           </FormControl>
           <FormControl w={["full", "xs"]}>
@@ -315,7 +327,7 @@ const Index = () => {
               type="date"
               bgColor={"#FFF"}
               name="to"
-              onChange={(e) => setTo(e.target.value + 'T' + '23:59')}
+              onChange={Formik.handleChange}
             />
           </FormControl>
         </HStack>
@@ -323,9 +335,7 @@ const Index = () => {
           <Button
             colorScheme="orange"
             onClick={() => {
-              fetchTransactions(
-                `/api/user/daily-sales?page=1&from=${from}&to=${to}`
-              );
+              fetchSum();
             }}
           >
             Search

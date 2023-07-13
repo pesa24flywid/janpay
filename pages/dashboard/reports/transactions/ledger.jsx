@@ -75,22 +75,26 @@ const Index = () => {
       field: "debit_amount",
       cellRenderer: "debitCellRenderer",
       width: 150,
+      filter: false
     },
     {
       headerName: "Credit",
       field: "credit_amount",
       cellRenderer: "creditCellRenderer",
       width: 150,
+      filter: false
     },
     {
       headerName: "Opening Balance",
       field: "opening_balance",
       width: 150,
+      filter: false
     },
     {
       headerName: "Closing Balance",
       field: "closing_balance",
       width: 150,
+      filter: false
     },
     {
       headerName: "Description",
@@ -104,9 +108,9 @@ const Index = () => {
     },
     {
       headerName: "Trnxn Status",
-      field: "status",
+      field: "metadata",
       cellRenderer: "statusCellRenderer",
-      width: 100,
+      width: 100
     },
     {
       headerName: "Created At",
@@ -175,16 +179,18 @@ const Index = () => {
         `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
     )
       .then((res) => {
-        setPagination({
-          current_page: res.data.current_page,
-          total_pages: parseInt(res.data.last_page),
-          first_page_url: res.data.first_page_url,
-          last_page_url: res.data.last_page_url,
-          next_page_url: res.data.next_page_url,
-          prev_page_url: res.data.prev_page_url,
-        });
-        setRowData(res.data.data);
-        setPrintableRow(res.data.data);
+        // setPagination({
+        //   current_page: res.data.current_page,
+        //   total_pages: parseInt(res.data.last_page),
+        //   first_page_url: res.data.first_page_url,
+        //   last_page_url: res.data.last_page_url,
+        //   next_page_url: res.data.next_page_url,
+        //   prev_page_url: res.data.prev_page_url,
+        // });
+        // setRowData(res.data.data);
+        // setPrintableRow(res.data.data);
+        setRowData(res.data);
+        setPrintableRow(res.data);
       })
       .catch((err) => {
         if (err?.response?.status == 401) {
@@ -275,12 +281,12 @@ const Index = () => {
         receipt?.status == true ||
         receipt.status == "processing" ||
         receipt.status == "queued" ? (
-          <Text color={"green"} fontWeight={"bold"}>
-            SUCCESS
+          <Text color={"green"} textTransform={'uppercase'} fontWeight={"bold"}>
+            {receipt.status}
           </Text>
         ) : (
-          <Text color={"red"} fontWeight={"bold"}>
-            FAILED
+          <Text color={"red"} textTransform={'uppercase'} fontWeight={"bold"}>
+            {receipt.status}
           </Text>
         )}
       </>
@@ -365,7 +371,7 @@ const Index = () => {
             Search
           </Button>
         </HStack>
-        <HStack
+        {/* <HStack
           spacing={2}
           py={4}
           mt={24}
@@ -416,7 +422,7 @@ const Index = () => {
           >
             <BsChevronDoubleRight />
           </Button>
-        </HStack>
+        </HStack> */}
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"
@@ -434,6 +440,8 @@ const Index = () => {
                 resizable: true,
                 sortable: true,
               }}
+              pagination={true}
+              paginationPageSize={100}
               components={{
                 receiptCellRenderer: receiptCellRenderer,
                 creditCellRenderer: creditCellRenderer,

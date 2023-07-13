@@ -20,6 +20,7 @@ import {
   FormLabel,
   Input,
   Select,
+  Spacer,
 } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -78,22 +79,26 @@ const Index = () => {
       field: "debit_amount",
       cellRenderer: "debitCellRenderer",
       width: 150,
+      filter: false,
     },
     {
       headerName: "Credit",
       field: "credit_amount",
       cellRenderer: "creditCellRenderer",
       width: 150,
+      filter: false,
     },
     {
       headerName: "Opening Balance",
       field: "opening_balance",
       width: 150,
+      filter: false,
     },
     {
       headerName: "Closing Balance",
       field: "closing_balance",
       width: 150,
+      filter: false,
     },
     {
       headerName: "Transaction Type",
@@ -102,7 +107,7 @@ const Index = () => {
     },
     {
       headerName: "Status",
-      field: "status",
+      field: "metadata",
       cellRenderer: "statusCellRenderer",
       width: 100,
     },
@@ -129,6 +134,7 @@ const Index = () => {
       width: 80,
     },
   ]);
+  const [overviewData, setOverviewData] = useState([]);
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
@@ -173,16 +179,19 @@ const Index = () => {
         }&page=1`
     )
       .then((res) => {
-        setPagination({
-          current_page: res.data.current_page,
-          total_pages: parseInt(res.data.last_page),
-          first_page_url: res.data.first_page_url,
-          last_page_url: res.data.last_page_url,
-          next_page_url: res.data.next_page_url,
-          prev_page_url: res.data.prev_page_url,
-        });
-        setRowData(res.data.data);
-        setPrintableRow(res.data.data);
+        // setPagination({
+        //   current_page: res.data.current_page,
+        //   total_pages: parseInt(res.data.last_page),
+        //   first_page_url: res.data.first_page_url,
+        //   last_page_url: res.data.last_page_url,
+        //   next_page_url: res.data.next_page_url,
+        //   prev_page_url: res.data.prev_page_url,
+        // });
+        // setRowData(res.data.data);
+        // setPrintableRow(res.data.data);
+        setRowData(res.data);
+        setPrintableRow(res.data);
+        fetchOverview();
       })
       .catch((err) => {
         if (err?.response?.status == 401) {
@@ -196,6 +205,25 @@ const Index = () => {
           description:
             err.response.data.message || err.response.data || err.message,
         });
+      });
+  }
+
+  function fetchOverview() {
+    BackendAxios.get(
+      `/api/user/overview?from=${
+        Formik.values.from + (Formik.values.from && "T" + "00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}`
+    )
+      .then((res) => {
+        setOverviewData(res.data);
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
       });
   }
 
@@ -358,7 +386,8 @@ const Index = () => {
             Search
           </Button>
         </HStack>
-        <HStack
+
+        {/* <HStack
           spacing={2}
           py={4}
           mt={24}
@@ -409,6 +438,46 @@ const Index = () => {
           >
             <BsChevronDoubleRight />
           </Button>
+        </HStack> */}
+
+        <HStack
+          mt={8}
+          mb={4}
+          p={2}
+          px={4}
+          rounded={2}
+          bgColor={"#FFF"}
+          boxShadow={"sm"}
+          w={"full"}
+        >
+          <Text fontSize={"lg"} fontWeight={"semibold"}>
+            Total
+          </Text>
+          <Spacer />
+          <HStack gap={8}>
+            <Box>
+              <Text fontSize={"10"}>Payouts</Text>
+              <Text fontSize={"md"} fontWeight={"semibold"}>
+                ₹{" "}
+                {Math.abs(
+                  overviewData[4]?.payout?.debit -
+                    overviewData[4]?.payout?.credit
+                ).toFixed(2) || 0}
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize={"10"}>Charges</Text>
+              <Text fontSize={"md"} fontWeight={"semibold"}>
+                ₹{" "}
+                {Math.abs(
+                  overviewData[7]?.["payout-commission"]?.credit +
+                    overviewData[10]?.["payout-charge"]?.credit -
+                    (overviewData[7]?.["payout-commission"]?.debit +
+                      overviewData[10]?.["payout-charge"]?.debit)
+                ).toFixed(2) || 0}
+              </Text>
+            </Box>
+          </HStack>
         </HStack>
         <Box py={6}>
           <Box
@@ -427,6 +496,8 @@ const Index = () => {
                 resizable: true,
                 sortable: true,
               }}
+              pagination={true}
+              paginationPageSize={100}
               components={{
                 receiptCellRenderer: receiptCellRenderer,
                 creditCellRenderer: creditCellRenderer,
@@ -603,6 +674,29 @@ const Index = () => {
                 </tr>
               );
             })}
+            <tr></tr>
+            <tr>
+              <td>
+                <b>Payouts</b>
+              </td>
+              <td>
+                {Math.abs(
+                  overviewData[4]?.payout?.debit -
+                    overviewData[4]?.payout?.credit
+                ).toFixed(2) || 0}
+              </td>
+              <td>
+                <b>Charges</b>
+              </td>
+              <td>
+              {Math.abs(
+                  overviewData[7]?.["payout-commission"]?.credit +
+                    overviewData[10]?.["payout-charge"]?.credit -
+                    (overviewData[7]?.["payout-commission"]?.debit +
+                      overviewData[10]?.["payout-charge"]?.debit)
+                ).toFixed(2) || 0}
+              </td>
+            </tr>
           </tbody>
         </table>
       </VisuallyHidden>

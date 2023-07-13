@@ -338,7 +338,7 @@ const Sidebar = ({ userName, userImage }) => {
                 fontSize={"sm"}
                 color={"#FAFAFA"}
                 textTransform={'capitalize'}
-              >{userType.replace("_", " ")}</Text>
+              >{userType?.replace("_", " ")}</Text>
             </VStack>
           </Link>
 
