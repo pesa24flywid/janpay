@@ -45,6 +45,7 @@ import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -58,6 +59,7 @@ const Index = () => {
   const Toast = useToast({
     position: "top-right",
   });
+  const [loading, setLoading] = useState(false);
   const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -168,6 +170,7 @@ const Index = () => {
   });
 
   function fetchTransactions(pageLink) {
+    setLoading(true);
     BackendAxios.get(
       pageLink ||
         `/api/user/ledger/${transactionKeyword}?from=${
@@ -189,11 +192,13 @@ const Index = () => {
         // });
         // setRowData(res.data.data);
         // setPrintableRow(res.data.data);
+        setLoading(false);
         setRowData(res.data);
         setPrintableRow(res.data);
         fetchOverview();
       })
       .catch((err) => {
+        setLoading(false);
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -209,15 +214,18 @@ const Index = () => {
   }
 
   function fetchOverview() {
+    setLoading(true);
     BackendAxios.get(
       `/api/user/overview?from=${
         Formik.values.from + (Formik.values.from && "T" + "00:00")
       }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}`
     )
       .then((res) => {
+        setLoading(false);
         setOverviewData(res.data);
       })
       .catch((err) => {
+        setLoading(false);
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -439,6 +447,18 @@ const Index = () => {
             <BsChevronDoubleRight />
           </Button>
         </HStack> */}
+
+        <Box mt={8} mb={4}>
+          <Button
+            colorScheme="blue"
+            isLoading={loading}
+            variant={"ghost"}
+            onClick={() => fetchTransactions()}
+            leftIcon={<FiRefreshCcw />}
+          >
+            Click To Reload Data
+          </Button>
+        </Box>
 
         <HStack
           mt={8}
@@ -689,7 +709,7 @@ const Index = () => {
                 <b>Charges</b>
               </td>
               <td>
-              {Math.abs(
+                {Math.abs(
                   overviewData[7]?.["payout-commission"]?.credit +
                     overviewData[10]?.["payout-charge"]?.credit -
                     (overviewData[7]?.["payout-commission"]?.debit +

@@ -671,7 +671,6 @@ const Login = () => {
                 colorScheme={"blue"}
                 bg={"#6C00FF"}
                 autoFocus={false}
-                disabled={loginBtnDisabled}
                 isLoading={isBtnLoading}
               >
                 Login
