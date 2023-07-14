@@ -31,7 +31,6 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Toast,
   Avatar,
 } from "@chakra-ui/react";
 import Link from "next/link";
@@ -47,11 +46,17 @@ import { FaUserAlt } from "react-icons/fa";
 import { MdContactSupport } from "react-icons/md";
 import { Image } from "@chakra-ui/react";
 import Maintenance from "./Maintenance";
+import Pusher from 'pusher-js';
+import { useToast } from "@chakra-ui/react";
 let bcrypt = require("bcryptjs");
+
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+});
 
 const DashboardWrapper = (props) => {
   const [availablePages, setAvailablePages] = useState([]);
-
+  const Toast = useToast({position: 'top-right'})
   useEffect(() => {
     let authentic = bcrypt.compareSync(
       `${localStorage.getItem("userId") + localStorage.getItem("userName")}`,
@@ -81,20 +86,6 @@ const DashboardWrapper = (props) => {
       Cookies.set("verified", Cookies.get("verified"));
     }
   }, []);
-
-  // useEffect(() => {
-  //     ClientAxios.post('/api/user/fetch', {
-  //         user_id: Cookies.get('userId')
-  //     }, {
-  //         headers: {
-  //             'Content-Type': 'application/json'
-  //         }
-  //     }).then((res) => {
-  //         setAvailablePages(res.data[0].allowed_pages)
-  //     }).catch((err) => {
-  //         console.log(err)
-  //     })
-  // }, [])
 
   const [openNotification, setOpenNotification] = useState(false);
   const [newNotification, setNewNotification] = useState(false);
@@ -132,31 +123,46 @@ const DashboardWrapper = (props) => {
     )
       .then((res) => {
         setAvailablePages(res.data[0].allowed_pages);
-        setUserNotifications(res.data[0].notifications);
+        // setUserNotifications(res.data[0].notifications);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
+  useEffect(()=>{
+    if(!sessionStorage.getItem("notifications")) return
+    setUserNotifications(JSON.parse(sessionStorage.getItem("notifications")))
+  },[])
+
   useEffect(() => {
-    // BackendAxios.post('/api/user/wallet', {
-    // }, {
-    //     headers: {
-    //         Authorization: `Bearer ${Cookies.get("access-token")}`
-    //     }
-    // }).then((res) => {
-    //     setWallet(res.data[0].wallet)
-    // }).catch((err) => {
-    //     if(err.response.status == 401){
-    //         signout()
-    //         return
-    //     }
-    //     setWallet('0')
-    //     console.log(err)
-    // })
     fetchWallet();
   }, []);
+
+  useEffect(()=>{
+    const channel = pusher.subscribe(process.env.NEXT_PUBLIC_PUSHER_CHANNEL);
+
+    channel.bind("payout-updated", data => {
+      if(parseInt(data?.user_id) != parseInt(localStorage.getItem("userId"))) return
+      if(!userNotifications || userNotifications?.length == 0){
+        setUserNotifications([data]);
+        sessionStorage.setItem("notifications",JSON.stringify([data]))
+      }
+      else{
+        setUserNotifications([...userNotifications, data]);
+        sessionStorage.setItem("notifications",JSON.stringify([...userNotifications, data]))
+      }
+      Toast({
+        title: data?.title || "New notification",
+        description: data?.content || "Payout updated"
+      })
+    });
+
+    return () => {
+      channel.unbind("payout-updated")
+      pusher.unsubscribe(process.env.NEXT_PUBLIC_PUSHER_CHANNEL);
+    };
+  },[userNotifications])
 
   function fetchWallet() {
     BackendAxios.post(
@@ -190,8 +196,8 @@ const DashboardWrapper = (props) => {
     // Check for new notifications
     if (
       globalNotifications.length != 0 ||
-      organisationNotifications != 0 ||
-      userNotifications != 0
+      organisationNotifications?.length != 0 ||
+      userNotifications?.length != 0
     ) {
       setNewNotification(true);
     }
@@ -641,7 +647,7 @@ const DashboardWrapper = (props) => {
         <DrawerContent>
           <DrawerHeader>Notifications</DrawerHeader>
           <DrawerBody>
-            {globalNotifications.map((notification, key) => {
+            {globalNotifications?.map((notification, key) => {
               return (
                 <SimpleAccordion
                   key={key}
@@ -650,7 +656,7 @@ const DashboardWrapper = (props) => {
                 />
               );
             })}
-            {organisationNotifications.map((notification, key) => {
+            {organisationNotifications?.map((notification, key) => {
               return (
                 <SimpleAccordion
                   key={key}
@@ -659,15 +665,15 @@ const DashboardWrapper = (props) => {
                 />
               );
             })}
-            {userNotifications.map((notification, key) => {
+            {userNotifications?.map((notification, key) => {
               return (
                 <SimpleAccordion
                   key={key}
-                  title={notification.title}
-                  content={notification.content}
+                  title={notification?.title}
+                  content={notification?.content}
                 />
               );
-            })}
+            }).reverse()}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
