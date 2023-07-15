@@ -89,8 +89,6 @@ const DashboardWrapper = (props) => {
     }
   }, []);
 
-  const sound = new Audio("/notification.mp3")
-
   const [openNotification, setOpenNotification] = useState(false);
   const [newNotification, setNewNotification] = useState(false);
   const [globalNotifications, setGlobalNotifications] = useState([]);
@@ -145,7 +143,7 @@ const DashboardWrapper = (props) => {
 
   useEffect(() => {
     const channel = pusher.subscribe(process.env.NEXT_PUBLIC_PUSHER_CHANNEL);
-    
+    const sound = new Audio("/notification.mp3");
     channel.bind("payout-updated", (data) => {
       if (parseInt(data?.user_id) != parseInt(localStorage.getItem("userId")))
         return;
@@ -159,7 +157,7 @@ const DashboardWrapper = (props) => {
           JSON.stringify([...userNotifications, data])
         );
       }
-      sound.play()
+      sound.play();
       Toast({
         title: data?.title || "New notification",
         description: data?.content || "Payout updated",
@@ -686,8 +684,6 @@ const DashboardWrapper = (props) => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-
-
 
       <VisuallyHidden>
         <audio id="notification" src="/notification.mp3"></audio>
