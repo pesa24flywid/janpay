@@ -452,14 +452,14 @@ const Index = () => {
                 </Td>
                 <Td>
                   {Math.abs(
-                    overviewData[7]?.["payout-commission"]?.credit +
+                    overviewData[11]?.["payout-commission"]?.credit +
                       overviewData[10]?.["payout-charge"]?.credit -
-                      (overviewData[7]?.["payout-commission"]?.debit +
+                      (overviewData[11]?.["payout-commission"]?.debit +
                         overviewData[10]?.["payout-charge"]?.debit)
                   ).toFixed(2) || 0}
                 </Td>
               </Tr>
-              <Tr>
+              {/* <Tr>
                 <Td>
                   <Text
                     textAlign={"right"}
@@ -488,14 +488,14 @@ const Index = () => {
                     fontSize={"lg"}
                   >
                     {Math.abs(
-                      overviewData[7]?.["payout-commission"]?.credit +
+                      overviewData[11]?.["payout-commission"]?.credit +
                         overviewData[10]?.["payout-charge"]?.credit -
-                        (overviewData[7]?.["payout-commission"]?.debit +
+                        (overviewData[11]?.["payout-commission"]?.debit +
                           overviewData[10]?.["payout-charge"]?.debit)
                     ).toFixed(2) || 0}
                   </Text>
                 </Td>
-              </Tr>
+              </Tr> */}
             </Tbody>
           </Table>
         </TableContainer>

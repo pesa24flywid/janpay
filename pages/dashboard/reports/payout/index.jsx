@@ -490,11 +490,11 @@ const Index = () => {
               <Text fontSize={"md"} fontWeight={"semibold"}>
                 ₹{" "}
                 {Math.abs(
-                  overviewData[7]?.["payout-commission"]?.credit +
+                  overviewData[11]?.["payout-commission"]?.credit +
                     overviewData[10]?.["payout-charge"]?.credit -
-                    (overviewData[7]?.["payout-commission"]?.debit +
+                    (overviewData[11]?.["payout-commission"]?.debit +
                       overviewData[10]?.["payout-charge"]?.debit)
-                ).toFixed(2) || 0}
+                )?.toFixed(2) || 0}
               </Text>
             </Box>
           </HStack>
