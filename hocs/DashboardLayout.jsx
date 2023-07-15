@@ -46,8 +46,10 @@ import { FaUserAlt } from "react-icons/fa";
 import { MdContactSupport } from "react-icons/md";
 import { Image } from "@chakra-ui/react";
 import Maintenance from "./Maintenance";
-import Pusher from 'pusher-js';
+import Pusher from "pusher-js";
 import { useToast } from "@chakra-ui/react";
+import { VisuallyHidden } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 let bcrypt = require("bcryptjs");
 
 const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
@@ -56,7 +58,7 @@ const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
 
 const DashboardWrapper = (props) => {
   const [availablePages, setAvailablePages] = useState([]);
-  const Toast = useToast({position: 'top-right'})
+  const Toast = useToast({ position: "top-right" });
   useEffect(() => {
     let authentic = bcrypt.compareSync(
       `${localStorage.getItem("userId") + localStorage.getItem("userName")}`,
@@ -86,6 +88,8 @@ const DashboardWrapper = (props) => {
       Cookies.set("verified", Cookies.get("verified"));
     }
   }, []);
+
+  const sound = new Audio("/notification.mp3")
 
   const [openNotification, setOpenNotification] = useState(false);
   const [newNotification, setNewNotification] = useState(false);
@@ -130,39 +134,43 @@ const DashboardWrapper = (props) => {
       });
   }, []);
 
-  useEffect(()=>{
-    if(!sessionStorage.getItem("notifications")) return
-    setUserNotifications(JSON.parse(sessionStorage.getItem("notifications")))
-  },[])
+  useEffect(() => {
+    if (!sessionStorage.getItem("notifications")) return;
+    setUserNotifications(JSON.parse(sessionStorage.getItem("notifications")));
+  }, []);
 
   useEffect(() => {
     fetchWallet();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const channel = pusher.subscribe(process.env.NEXT_PUBLIC_PUSHER_CHANNEL);
-
-    channel.bind("payout-updated", data => {
-      if(parseInt(data?.user_id) != parseInt(localStorage.getItem("userId"))) return
-      if(!userNotifications || userNotifications?.length == 0){
+    
+    channel.bind("payout-updated", (data) => {
+      if (parseInt(data?.user_id) != parseInt(localStorage.getItem("userId")))
+        return;
+      if (!userNotifications || userNotifications?.length == 0) {
         setUserNotifications([data]);
-        sessionStorage.setItem("notifications",JSON.stringify([data]))
-      }
-      else{
+        sessionStorage.setItem("notifications", JSON.stringify([data]));
+      } else {
         setUserNotifications([...userNotifications, data]);
-        sessionStorage.setItem("notifications",JSON.stringify([...userNotifications, data]))
+        sessionStorage.setItem(
+          "notifications",
+          JSON.stringify([...userNotifications, data])
+        );
       }
+      sound.play()
       Toast({
         title: data?.title || "New notification",
-        description: data?.content || "Payout updated"
-      })
+        description: data?.content || "Payout updated",
+      });
     });
 
     return () => {
-      channel.unbind("payout-updated")
+      channel.unbind("payout-updated");
       pusher.unsubscribe(process.env.NEXT_PUBLIC_PUSHER_CHANNEL);
     };
-  },[userNotifications])
+  }, [userNotifications]);
 
   function fetchWallet() {
     BackendAxios.post(
@@ -225,7 +233,6 @@ const DashboardWrapper = (props) => {
       </Head>
 
       {/* <Maintenance /> */}
-
       <Box bg={"aliceblue"} w={"full"}>
         <HStack spacing={8} alignItems={"flex-start"}>
           <Sidebar
@@ -290,7 +297,7 @@ const DashboardWrapper = (props) => {
                   bg={"white"}
                   justifyContent={"flex-start"}
                   onClick={fetchWallet}
-                  cursor={'pointer'}
+                  cursor={"pointer"}
                 >
                   <Box
                     boxSize={"8"}
@@ -665,18 +672,26 @@ const DashboardWrapper = (props) => {
                 />
               );
             })}
-            {userNotifications?.map((notification, key) => {
-              return (
-                <SimpleAccordion
-                  key={key}
-                  title={notification?.title}
-                  content={notification?.content}
-                />
-              );
-            }).reverse()}
+            {userNotifications
+              ?.map((notification, key) => {
+                return (
+                  <SimpleAccordion
+                    key={key}
+                    title={notification?.title}
+                    content={notification?.content}
+                  />
+                );
+              })
+              .reverse()}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+
+
+      <VisuallyHidden>
+        <audio id="notification" src="/notification.mp3"></audio>
+      </VisuallyHidden>
     </>
   );
 };
