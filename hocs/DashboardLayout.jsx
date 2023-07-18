@@ -60,7 +60,7 @@ const DashboardWrapper = (props) => {
   const [availablePages, setAvailablePages] = useState([]);
   const Toast = useToast({ position: "top-right" });
   useEffect(() => {
-    let authentic = bcrypt.compare(
+    let authentic = bcrypt.compareSync(
       `${localStorage.getItem("userId") + localStorage.getItem("userName")}`,
       Cookies.get("verified")
     );
