@@ -311,9 +311,10 @@ const Payout = () => {
                         <Td>{item.amount || "0"}</Td>
                         <Td>{item.created_at || "Non-Format"}</Td>
                         <Td>
-                          {item.status == "processing" ||
+                          {item.status == "processing" ?
+                            <Text color={"green"}>PROCESSING</Text> :
                           item.status == "processed" ? (
-                            <Text color={"green"}>Success</Text>
+                            <Text color={"green"}>SUCCESS</Text>
                           ) : (
                             <Text textTransform={"capitalize"}>
                               {item.status}
@@ -420,10 +421,12 @@ const Payout = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {receipt?.status?.toLowerCase() == "processed" ||
-                  receipt?.status == true ||
+                  {
                   receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
+                    ? "PROCESSING"
+                    : receipt?.status?.toLowerCase() == "processed" ||
+                      receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>

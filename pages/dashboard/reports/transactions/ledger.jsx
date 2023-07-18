@@ -40,7 +40,7 @@ import "jspdf-autotable";
 import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
-import {SiMicrosoftexcel} from 'react-icons/si'
+import { SiMicrosoftexcel } from "react-icons/si";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { FiRefreshCcw } from "react-icons/fi";
 
@@ -56,7 +56,7 @@ const Index = () => {
     position: "top-right",
   });
   const [printableRow, setPrintableRow] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -77,26 +77,26 @@ const Index = () => {
       field: "debit_amount",
       cellRenderer: "debitCellRenderer",
       width: 150,
-      filter: false
+      filter: false,
     },
     {
       headerName: "Credit",
       field: "credit_amount",
       cellRenderer: "creditCellRenderer",
       width: 150,
-      filter: false
+      filter: false,
     },
     {
       headerName: "Opening Balance",
       field: "opening_balance",
       width: 150,
-      filter: false
+      filter: false,
     },
     {
       headerName: "Closing Balance",
       field: "closing_balance",
       width: 150,
-      filter: false
+      filter: false,
     },
     {
       headerName: "Description",
@@ -112,7 +112,7 @@ const Index = () => {
       headerName: "Trnxn Status",
       field: "metadata",
       cellRenderer: "statusCellRenderer",
-      width: 100
+      width: 100,
     },
     {
       headerName: "Created At",
@@ -176,7 +176,7 @@ const Index = () => {
   });
 
   function fetchTransactions(pageLink) {
-    setLoading(true)
+    setLoading(true);
     BackendAxios.get(
       pageLink ||
         `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
@@ -192,12 +192,12 @@ const Index = () => {
         // });
         // setRowData(res.data.data);
         // setPrintableRow(res.data.data);
-        setLoading(false)
+        setLoading(false);
         setRowData(res.data);
         setPrintableRow(res.data);
       })
       .catch((err) => {
-        setLoading(false)
+        setLoading(false);
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -282,15 +282,18 @@ const Index = () => {
     const receipt = JSON.parse(params.data.metadata);
     return (
       <>
-        {receipt.status == "processed" ||
-        receipt?.status == true ||
-        receipt.status == "processing" ||
-        receipt.status == "queued" ? (
-          <Text color={"green"} textTransform={'uppercase'} fontWeight={"bold"}>
+        {receipt.status == "processed" ? (
+          <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
+            success
+          </Text>
+        ) : receipt?.status == true ||
+          receipt.status == "processing" ||
+          receipt.status == "queued" ? (
+          <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
             {receipt.status}
           </Text>
         ) : (
-          <Text color={"red"} textTransform={'uppercase'} fontWeight={"bold"}>
+          <Text color={"red"} textTransform={"uppercase"} fontWeight={"bold"}>
             {receipt.status}
           </Text>
         )}
@@ -318,7 +321,7 @@ const Index = () => {
     );
   };
 
-  const tableRef = React.useRef(null)
+  const tableRef = React.useRef(null);
   return (
     <>
       <DashboardWrapper pageTitle={"Transaction Ledger"}>
@@ -327,18 +330,18 @@ const Index = () => {
             Export PDF
           </Button>
           <DownloadTableExcel
-              filename="Ledger"
-              sheet="sheet1"
-              currentTableRef={tableRef.current}
+            filename="Ledger"
+            sheet="sheet1"
+            currentTableRef={tableRef.current}
+          >
+            <Button
+              size={["xs", "sm"]}
+              colorScheme={"whatsapp"}
+              leftIcon={<SiMicrosoftexcel />}
             >
-              <Button
-                size={["xs", "sm"]}
-                colorScheme={"whatsapp"}
-                leftIcon={<SiMicrosoftexcel />}
-              >
-                Excel
-              </Button>
-            </DownloadTableExcel>
+              Excel
+            </Button>
+          </DownloadTableExcel>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
@@ -364,11 +367,7 @@ const Index = () => {
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Ref ID or Acc No</FormLabel>
-            <Input
-              name="search"
-              onChange={Formik.handleChange}
-              bg={"white"}
-            />
+            <Input name="search" onChange={Formik.handleChange} bg={"white"} />
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>

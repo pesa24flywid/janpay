@@ -305,10 +305,13 @@ const Index = () => {
     const receipt = JSON.parse(params.data.metadata);
     return (
       <>
-        {receipt.status == "processed" ||
-        receipt?.status == true ||
-        receipt.status == "processing" ||
-        receipt.status == "queued" ? (
+        {receipt.status == "processed" ? (
+          <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
+            SUCCESS
+          </Text>
+        ) : receipt?.status == true ||
+          receipt.status == "processing" ||
+          receipt.status == "queued" ? (
           <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
             {receipt.status}
           </Text>
@@ -575,10 +578,11 @@ const Index = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {receipt?.status?.toLowerCase() == "processed" ||
-                  receipt?.status == true ||
-                  receipt?.status?.toLowerCase() == "processing" ||
+                  {receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
+                    ? "PROCESSING"
+                    : receipt?.status?.toLowerCase() == "processed" ||
+                      receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>
