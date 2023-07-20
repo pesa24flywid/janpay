@@ -424,9 +424,8 @@ const Payout = () => {
                   TRANSACTION{" "}
                   {
                   receipt?.status?.toLowerCase() == "processing" ||
-                  receipt?.status?.toLowerCase() == "queued"
-                    ? "PROCESSING"
-                    : receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "queued" ||
+                    receipt?.status?.toLowerCase() == "processed" ||
                       receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
