@@ -311,8 +311,9 @@ const Payout = () => {
                         <Td>{item.amount || "0"}</Td>
                         <Td>{item.created_at || "Non-Format"}</Td>
                         <Td>
-                          {item.status == "processing" ?
-                            <Text color={"green"}>PROCESSING</Text> :
+                          {
+                            // <Text color={"green"}>PROCESSING</Text> :
+                            item.status == "processing" ||
                           item.status == "processed" ? (
                             <Text color={"green"}>SUCCESS</Text>
                           ) : (
