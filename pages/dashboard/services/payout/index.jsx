@@ -50,6 +50,7 @@ const Payout = () => {
   const Toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [serviceStatus, setServiceStatus] = useState(true)
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
@@ -74,16 +75,21 @@ const Payout = () => {
   };
 
   useEffect(() => {
-    ClientAxios.get(`/api/organisation`)
+    fetchServiceStatus();
+  }, []);
+
+  async function fetchServiceStatus() {
+    await ClientAxios.get(`/api/organisation`)
       .then((res) => {
-        if (!res.data.payout_status) {
-          window.location.href("/dashboard/not-available");
-        }
+        // if (!res.data.payout_status) {
+        //   window.location.href("/dashboard/not-available");
+        // }
+        setServiceStatus(res.data.payout_status)
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }
 
   const Formik = useFormik({
     initialValues: {
@@ -101,9 +107,18 @@ const Payout = () => {
     status: "success",
     data: {},
   });
-  function makePayout() {
+
+  async function makePayout() {
+    await fetchServiceStatus()
+    if(!serviceStatus){
+      Toast({
+        status: "warning",
+        description: "Service unavailable!"
+      })
+      return
+    }
     setIsLoading(true);
-    BackendAxios.post(
+    await BackendAxios.post(
       `/api/razorpay/payout/new-payout/${serviceId}`,
       JSON.stringify({
         beneficiaryName: Formik.values.beneficiaryName,
@@ -314,13 +329,14 @@ const Payout = () => {
                           {
                             // <Text color={"green"}>PROCESSING</Text> :
                             item.status == "processing" ||
-                          item.status == "processed" ? (
-                            <Text color={"green"}>SUCCESS</Text>
-                          ) : (
-                            <Text textTransform={"capitalize"}>
-                              {item.status}
-                            </Text>
-                          )}
+                            item.status == "processed" ? (
+                              <Text color={"green"}>SUCCESS</Text>
+                            ) : (
+                              <Text textTransform={"capitalize"}>
+                                {item.status}
+                              </Text>
+                            )
+                          }
                         </Td>
                       </Tr>
                     );
@@ -422,11 +438,10 @@ const Payout = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {
-                  receipt?.status?.toLowerCase() == "processing" ||
+                  {receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued" ||
-                    receipt?.status?.toLowerCase() == "processed" ||
-                      receipt?.status == true
+                  receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>
