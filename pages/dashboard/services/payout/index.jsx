@@ -109,6 +109,7 @@ const Payout = () => {
   });
 
   async function makePayout() {
+    setIsLoading(true);
     await fetchServiceStatus()
     if(!serviceStatus){
       Toast({
@@ -117,7 +118,6 @@ const Payout = () => {
       })
       return
     }
-    setIsLoading(true);
     await BackendAxios.post(
       `/api/razorpay/payout/new-payout/${serviceId}`,
       JSON.stringify({
