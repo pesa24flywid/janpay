@@ -26,17 +26,16 @@ const ResetPassword = () => {
     const toast = useToast()
     const Router = useRouter()
 
-    // useEffect(()=>{
-    //     if(!Cookies.get("verified")){
-    //         return
-    //     }
-    //     let authentic = bcrypt.compare(`${localStorage.getItem("userId") + localStorage.getItem("userName")}`, Cookies.get("verified"))
-    //     if(authentic){
-    //         setTimeout(() => {
-    //             Router.push("/dashboard/home?pageId=home")
-    //         }, 500);
-    //     }
-    // },[])
+    useEffect(() => {
+        if (!Cookies.get("verified")) {
+          return;
+        }
+        if (Cookies.get("verified")) {
+          setTimeout(() => {
+            Router.push("/dashboard/home?pageId=home");
+          }, 500);
+        }
+      }, []);
 
     const formik = useFormik({
         initialValues: {

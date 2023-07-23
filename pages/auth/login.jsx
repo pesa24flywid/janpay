@@ -54,20 +54,16 @@ const Login = () => {
   };
   const swiperRef = useRef(null);
 
-  // useEffect(() => {
-  //   if (!Cookies.get("verified")) {
-  //     return;
-  //   }
-  //   let authentic = bcrypt.compare(
-  //     `${localStorage.getItem("userId") + localStorage.getItem("userName")}`,
-  //     Cookies.get("verified")
-  //   );
-  //   if (authentic) {
-  //     setTimeout(() => {
-  //       Router.push("/dashboard/home?pageId=home");
-  //     }, 500);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!Cookies.get("verified")) {
+      return;
+    }
+    if (Cookies.get("verified")) {
+      setTimeout(() => {
+        Router.push("/dashboard/home?pageId=home");
+      }, 500);
+    }
+  }, []);
 
   useEffect(() => {
     swiperRef.current = new Swiper(".swiper-container", {
