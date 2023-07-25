@@ -33,7 +33,8 @@ const PdfDocument = ({ rowData, columnDefs }) => (
         {columnDefs
           .filter((column) => {
             if (
-              column.field != "metadata" &&
+              column.headerName != "Additional Info" &&
+              column.headerName != "Narration" &&
               column.field != "name" &&
               column.field != "receipt"
             ) {
