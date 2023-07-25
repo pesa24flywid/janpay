@@ -27,7 +27,7 @@ const PdfDocument = ({ rowData, columnDefs }) => (
   <Document>
     <Page size="A4" orientation="landscape" style={styles.page}>
       <View style={styles.column}>
-        <View style={{width: 20}}>
+        <View style={{width: 40, padding: 5}}>
           <Text style={styles.font}>#</Text>
         </View>
         {columnDefs
@@ -50,7 +50,7 @@ const PdfDocument = ({ rowData, columnDefs }) => (
       </View>
       {rowData.map((data, key) => (
         <View style={styles.container} key={key}>
-          <View style={{ padding: 5, width: 20 }}>
+          <View style={{ padding: 5, width: 40 }}>
             <Text style={styles.font}>{key + 1}</Text>
           </View>
           <View style={styles.cell}>

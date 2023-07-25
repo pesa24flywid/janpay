@@ -637,7 +637,7 @@ const Index = () => {
         </ModalContent>
       </Modal>
 
-      <VisuallyHidden>
+      {/* <VisuallyHidden>
         <table id="printable-table" ref={tableRef}>
           <thead>
             <tr>
@@ -679,7 +679,7 @@ const Index = () => {
             })}
           </tbody>
         </table>
-      </VisuallyHidden>
+      </VisuallyHidden> */}
     </>
   );
 };
