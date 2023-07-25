@@ -43,6 +43,8 @@ import Cookies from "js-cookie";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { FiRefreshCcw } from "react-icons/fi";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PdfDocument from "../../../../lib/utils/pdfExport/PdfDocument";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -57,6 +59,7 @@ const Index = () => {
   });
   const [printableRow, setPrintableRow] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false)
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -213,6 +216,7 @@ const Index = () => {
   }
 
   useEffect(() => {
+    setIsClient(true)
     fetchTransactions();
   }, []);
 
@@ -322,14 +326,49 @@ const Index = () => {
   };
 
   const tableRef = React.useRef(null);
+
+  function handleDownloadExcel() {
+    downloadExcel({
+      fileName: `TransactionsLedger`,
+      sheet: "transactions",
+      tablePayload: {
+        header: columnDefs
+          .filter((column) => {
+            if (
+              column.headerName != "Additional Info" &&
+              column.headerName != "Receipt"
+            ) {
+              return column;
+            }
+          })
+          .map((column, key) => {
+            return <th key={key}>{column.headerName}</th>;
+          }),
+        body: rowData.map((data) => [
+          data.transaction_id,
+          data.debit_amount,
+          data.credit_amount,
+          data.opening_balance,
+          data.closing_balance,
+          data.transaction_for,
+          data.service_type,
+          JSON.parse(data.metadata).status,
+          data.created_at,
+          data.updated_at,
+          JSON.parse(data.metadata)?.remarks
+        ]),
+      },
+    });
+  }
+
   return (
     <>
       <DashboardWrapper pageTitle={"Transaction Ledger"}>
         <HStack pb={8}>
-          <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
+          {/* <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
             Export PDF
-          </Button>
-          <DownloadTableExcel
+          </Button> */}
+          {/* <DownloadTableExcel
             filename="Ledger"
             sheet="sheet1"
             currentTableRef={tableRef.current}
@@ -341,7 +380,29 @@ const Index = () => {
             >
               Excel
             </Button>
-          </DownloadTableExcel>
+          </DownloadTableExcel> */}
+          {isClient ? (
+            <PDFDownloadLink
+              document={
+                <PdfDocument rowData={rowData} columnDefs={columnDefs} />
+              }
+              fileName={`TransactionsLedger.pdf`}
+            >
+              {({ blob, url, loading, error }) => (
+                <Button colorScheme={"red"} size={"sm"}>
+                  {loading ? "Generating PDF..." : "Download PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          ) : null}
+          <Button
+              size={["xs", "sm"]}
+              colorScheme={"whatsapp"}
+              leftIcon={<SiMicrosoftexcel />}
+              onClick={handleDownloadExcel}
+            >
+              Excel
+            </Button>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
@@ -576,7 +637,7 @@ const Index = () => {
         </ModalContent>
       </Modal>
 
-      <VisuallyHidden>
+      {/* <VisuallyHidden>
         <table id="printable-table" ref={tableRef}>
           <thead>
             <tr>
@@ -618,7 +679,7 @@ const Index = () => {
             })}
           </tbody>
         </table>
-      </VisuallyHidden>
+      </VisuallyHidden> */}
     </>
   );
 };
