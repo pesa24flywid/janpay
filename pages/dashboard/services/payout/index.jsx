@@ -443,7 +443,7 @@ const Payout = () => {
       <Modal isOpen={otpModal} onClose={() => setOtpModal(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Enter OTP Sent To +91-8982466893</ModalHeader>
+          <ModalHeader>Enter OTP Sent To Senior</ModalHeader>
           <ModalCloseButton />
           <ModalBody
             as={"flex"}
