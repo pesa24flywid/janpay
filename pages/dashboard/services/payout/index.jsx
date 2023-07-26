@@ -113,7 +113,24 @@ const Payout = () => {
 
   async function triggerOtp() {
     setIsLoading(true);
-    await BackendAxios.api(`/api/send-otp/`)
+    await BackendAxios.post(`/api/send-otp/payout`)
+      .then((res) => {
+        setIsLoading(false);
+        Toast({
+          description: "OTP sent to senior",
+        });
+        setOtpModal(true);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        Toast({
+          status: "error",
+          title: "Transaction Failed",
+          description:
+            err.response.data.message || err.response.data || err.message,
+          position: "top-right",
+        });
+      });
   }
 
   async function makePayout() {
@@ -266,7 +283,13 @@ const Payout = () => {
                   />
                 </InputGroup>
               </FormControl>
-              <Button colorScheme={"orange"} onClick={onOpen}>
+              <Button
+                colorScheme={"orange"}
+                onClick={() => {
+                  if (Number(Formik.values.amount) >= 150000) triggerOtp();
+                  else onOpen();
+                }}
+              >
                 Done
               </Button>
             </Stack>
@@ -457,7 +480,7 @@ const Payout = () => {
             >
               Confirm
             </Button>
-            <Button variant="ghost" onClick={onClose}>
+            <Button variant="ghost" onClick={()=>setOtpModal(false)}>
               Cancel
             </Button>
           </ModalFooter>
