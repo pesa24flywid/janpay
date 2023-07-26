@@ -486,8 +486,8 @@ const Payout = () => {
             >
               Confirm
             </Button>
-            <Button variant="ghost" onClick={()=>setOtpModal(false)}>
-              Cancel
+            <Button variant="ghost" onClick={()=>triggerOtp()}>
+              Resend OTP
             </Button>
           </ModalFooter>
         </ModalContent>
