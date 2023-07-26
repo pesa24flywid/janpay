@@ -117,6 +117,7 @@ const Payout = () => {
       .then((res) => {
         setIsLoading(false);
         Toast({
+          position: 'top-right',
           description: "OTP sent to senior",
         });
         setOtpModal(true);
@@ -286,7 +287,7 @@ const Payout = () => {
               <Button
                 colorScheme={"orange"}
                 onClick={() => {
-                  if (Number(Formik.values.amount) >= 150000) triggerOtp();
+                  if (Number(Formik.values.amount) >= 49) triggerOtp();
                   else onOpen();
                 }}
               >

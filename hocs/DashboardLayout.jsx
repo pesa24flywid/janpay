@@ -218,14 +218,15 @@ const DashboardWrapper = (props) => {
     BackendAxios.post("/logout")
       .then(() => {
         Cookies.remove("verified");
-        Router.push("/auth/login");
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err)
         Cookies.remove("verified");
-        Router.push("/auth/login");
       })
       .finally(() => {
-        Router.push("/auth/login");
+        setTimeout(() => {
+          Router.push("/auth/login");
+        }, 500);
       });
   }
 
