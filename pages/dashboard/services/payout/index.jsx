@@ -123,7 +123,11 @@ const Payout = () => {
         setOtpModal(true);
       })
       .catch((err) => {
-        setIsLoading(false);
+        setIsLoading(false);if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: "error",
           title: "Transaction Failed",
@@ -180,6 +184,7 @@ const Payout = () => {
           position: "top-right",
         });
         setIsLoading(false);
+        onClose();
       });
   }
 
