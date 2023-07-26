@@ -287,7 +287,7 @@ const Payout = () => {
               <Button
                 colorScheme={"orange"}
                 onClick={() => {
-                  if (Number(Formik.values.amount) >= 49) triggerOtp();
+                  if (Number(Formik.values.amount) >= 149999) triggerOtp();
                   else onOpen();
                 }}
               >
