@@ -50,7 +50,9 @@ const Payout = () => {
   const Toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [serviceStatus, setServiceStatus] = useState(true)
+  const [serviceStatus, setServiceStatus] = useState(true);
+
+  const [otpModal, setOtpModal] = useState(false);
 
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
@@ -84,7 +86,7 @@ const Payout = () => {
         // if (!res.data.payout_status) {
         //   window.location.href("/dashboard/not-available");
         // }
-        setServiceStatus(res.data.payout_status)
+        setServiceStatus(res.data.payout_status);
       })
       .catch((err) => {
         console.log(err);
@@ -98,6 +100,7 @@ const Payout = () => {
       ifsc: "",
       amount: "",
       mpin: "",
+      otp: "",
     },
   });
 
@@ -108,15 +111,20 @@ const Payout = () => {
     data: {},
   });
 
+  async function triggerOtp() {
+    setIsLoading(true);
+    await BackendAxios.api(`/api/send-otp/`)
+  }
+
   async function makePayout() {
     setIsLoading(true);
-    await fetchServiceStatus()
-    if(!serviceStatus){
+    await fetchServiceStatus();
+    if (!serviceStatus) {
       Toast({
         status: "warning",
-        description: "Service unavailable!"
-      })
-      return
+        description: "Service unavailable!",
+      });
+      return;
     }
     await BackendAxios.post(
       `/api/razorpay/payout/new-payout/${serviceId}`,
@@ -126,6 +134,7 @@ const Payout = () => {
         ifsc: Formik.values.ifsc,
         mpin: Formik.values.mpin,
         amount: Formik.values.amount,
+        otp: Formik.values.otp,
       })
     )
       .then((res) => {
@@ -393,6 +402,60 @@ const Payout = () => {
               onClick={() => makePayout()}
             >
               Confirm and Pay
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* OTP Confirmation Modal */}
+      <Modal isOpen={otpModal} onClose={() => setOtpModal(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enter OTP Sent To +91-8982466893</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody
+            as={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+            justifyContent={"flex-start"}
+            textAlign={"center"}
+          >
+            This transaction requires senior authorisation. Please enter the OTP
+            to continue.
+            <br />
+            <br />
+            <HStack
+              w={"full"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              pt={2}
+              pb={6}
+            >
+              <PinInput
+                otp
+                onComplete={(value) => Formik.setFieldValue("otp", value)}
+              >
+                <PinInputField bg={"aqua"} />
+                <PinInputField bg={"aqua"} />
+                <PinInputField bg={"aqua"} />
+                <PinInputField bg={"aqua"} />
+              </PinInput>
+            </HStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              isLoading={isLoading}
+              onClick={() => {
+                onOpen();
+                setOtpModal(false);
+              }}
+            >
+              Confirm
             </Button>
             <Button variant="ghost" onClick={onClose}>
               Cancel
