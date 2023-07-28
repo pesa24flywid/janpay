@@ -45,6 +45,7 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { FiRefreshCcw } from "react-icons/fi";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "../../../../lib/utils/pdfExport/PdfDocument";
+import fileDownload from "js-file-download";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -59,7 +60,7 @@ const Index = () => {
   });
   const [printableRow, setPrintableRow] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false)
+  const [isClient, setIsClient] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -178,11 +179,47 @@ const Index = () => {
     },
   });
 
+  function generateReport() {
+    if (!Formik.values.from || !Formik.values.to) {
+      return;
+    }
+    BackendAxios.get(
+      `/api/user/print-reports?from=${
+        Formik.values.from + (Formik.values.from && "T00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "23:59")}&search=${
+        Formik.values.search
+      }&type=ledger&name=`,
+      {
+        responseType: "blob",
+      }
+    )
+      .then((res) => {
+        fileDownload(res.data, "TransactionLedger.xlsx");
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
+        Toast({
+          status: "error",
+          description:
+            err.response.data.message || err.response.data || err.message,
+        });
+      });
+  }
+
   function fetchTransactions(pageLink) {
     setLoading(true);
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
+        `/api/user/ledger?from=${
+          Formik.values.from + (Formik.values.from && "T00:00")
+        }&to=${Formik.values.to + (Formik.values.to && "23:59")}&search=${
+          Formik.values.search
+        }&page=1`
     )
       .then((res) => {
         // setPagination({
@@ -197,7 +234,7 @@ const Index = () => {
         // setPrintableRow(res.data.data);
         setLoading(false);
         setRowData(res.data);
-        setPrintableRow(res.data);
+        // setPrintableRow(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -216,7 +253,7 @@ const Index = () => {
   }
 
   useEffect(() => {
-    setIsClient(true)
+    setIsClient(true);
     fetchTransactions();
   }, []);
 
@@ -355,7 +392,7 @@ const Index = () => {
           JSON.parse(data.metadata).status,
           data.created_at,
           data.updated_at,
-          JSON.parse(data.metadata)?.remarks
+          JSON.parse(data.metadata)?.remarks,
         ]),
       },
     });
@@ -396,13 +433,13 @@ const Index = () => {
             </PDFDownloadLink>
           ) : null}
           <Button
-              size={["xs", "sm"]}
-              colorScheme={"whatsapp"}
-              leftIcon={<SiMicrosoftexcel />}
-              onClick={handleDownloadExcel}
-            >
-              Excel
-            </Button>
+            size={["xs", "sm"]}
+            colorScheme={"whatsapp"}
+            leftIcon={<SiMicrosoftexcel />}
+            onClick={generateReport}
+          >
+            Excel
+          </Button>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>

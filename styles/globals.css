@@ -38,6 +38,13 @@
     color: #333;
 }
 
+.ag-theme-pesa24-blue .ag-cell-focus {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
 @media (max-width: 768px) {
     .ag-theme-pesa24-blue .ag-cell {
         min-width: 100px !important;
