@@ -219,7 +219,7 @@ const Index = () => {
           Formik.values.from + (Formik.values.from && "T00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&search=${
           Formik.values.search
-        }&page=1`
+        }&name=all&page=1`
     )
       .then((res) => {
         // setPagination({
