@@ -215,11 +215,11 @@ const Index = () => {
     setLoading(true);
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger?from=${
+        `/api/user/ledger/all?from=${
           Formik.values.from + (Formik.values.from && "T00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&search=${
           Formik.values.search
-        }&name=all&page=1`
+        }&page=1`
     )
       .then((res) => {
         // setPagination({
