@@ -45,6 +45,7 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { FiRefreshCcw } from "react-icons/fi";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "../../../../lib/utils/pdfExport/PdfDocument";
+import fileDownload from "js-file-download";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -178,13 +179,45 @@ const Index = () => {
     },
   });
 
+  function generateReport() {
+    if (!Formik.values.from || !Formik.values.to) {
+      return;
+    }
+    BackendAxios.get(
+      `/api/user/print-reports?from=${
+        Formik.values.from + (Formik.values.from && "T00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "23:59")}&search=${
+        Formik.values.search
+      }&type=ledger&name=`,
+      {
+        responseType: "blob",
+      }
+    )
+      .then((res) => {
+        fileDownload(res.data, "TransactionLedger.xlsx");
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
+        Toast({
+          status: "error",
+          description:
+            err.response.data.message || err.response.data || err.message,
+        });
+      });
+  }
+
   function fetchTransactions(pageLink) {
     setLoading(true);
     BackendAxios.get(
       pageLink ||
         `/api/user/ledger/all?from=${
-          Formik.values.from + (Formik.values.from && +"T00:00")
-        }&to=${Formik.values.to + (Formik.values.to && +"T23:59")}&search=${
+          Formik.values.from + (Formik.values.from && "T00:00")
+        }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&search=${
           Formik.values.search
         }&page=1`
     )
@@ -403,7 +436,7 @@ const Index = () => {
             size={["xs", "sm"]}
             colorScheme={"whatsapp"}
             leftIcon={<SiMicrosoftexcel />}
-            onClick={handleDownloadExcel}
+            onClick={generateReport}
           >
             Excel
           </Button>

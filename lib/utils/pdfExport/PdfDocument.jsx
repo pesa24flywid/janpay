@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     padding: 5,
-    width: 200,
+    width: 180,
   },
   font: {
     fontSize: "8px",
@@ -27,14 +27,13 @@ const PdfDocument = ({ rowData, columnDefs }) => (
   <Document>
     <Page size="A4" orientation="landscape" style={styles.page}>
       <View style={styles.column}>
-        <View style={{width: 40, padding: 5}}>
+        <View style={{width: 80, padding: 5}}>
           <Text style={styles.font}>#</Text>
         </View>
         {columnDefs
           .filter((column) => {
             if (
-              column.headerName != "Additional Info" &&
-              column.headerName != "Narration" &&
+              column.field != "metadata" &&
               column.field != "name" &&
               column.field != "receipt"
             ) {
@@ -51,7 +50,7 @@ const PdfDocument = ({ rowData, columnDefs }) => (
       </View>
       {rowData.map((data, key) => (
         <View style={styles.container} key={key}>
-          <View style={{ padding: 5, width: 40 }}>
+          <View style={{ padding: 5, width: 80 }}>
             <Text style={styles.font}>{key + 1}</Text>
           </View>
           <View style={styles.cell}>

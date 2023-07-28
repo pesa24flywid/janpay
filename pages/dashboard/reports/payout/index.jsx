@@ -46,6 +46,7 @@ import Cookies from "js-cookie";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { FiRefreshCcw } from "react-icons/fi";
+import fileDownload from "js-file-download";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -169,6 +170,40 @@ const Index = () => {
     },
   });
 
+  function generateReport() {
+    if (!Formik.values.from || !Formik.values.to) {
+      return;
+    }
+    BackendAxios.get(
+      `/api/user/print-reports??from=${
+        Formik.values.from + (Formik.values.from && "T" + "00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
+        Formik.values.search
+      }&status=${
+        Formik.values.status != "all" ? Formik.values.status : ""
+      }&type=ledger&name=${transactionKeyword}`,
+      {
+        responseType: "blob",
+      }
+    )
+      .then((res) => {
+        fileDownload(res.data, "Payouts.xlsx");
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
+        Toast({
+          status: "error",
+          description:
+            err.response.data.message || err.response.data || err.message,
+        });
+      });
+  }
+
   function fetchTransactions(pageLink) {
     setLoading(true);
     BackendAxios.get(
@@ -194,7 +229,7 @@ const Index = () => {
         // setPrintableRow(res.data.data);
         setLoading(false);
         setRowData(res.data);
-        setPrintableRow(res.data);
+        // setPrintableRow(res.data);
         fetchOverview();
       })
       .catch((err) => {
@@ -332,7 +367,7 @@ const Index = () => {
           <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
             Export PDF
           </Button>
-          <DownloadTableExcel
+          {/* <DownloadTableExcel
             filename="PayoutReports"
             sheet="sheet1"
             currentTableRef={tableRef.current}
@@ -344,7 +379,15 @@ const Index = () => {
             >
               Excel
             </Button>
-          </DownloadTableExcel>
+          </DownloadTableExcel> */}
+          <Button
+              size={["xs", "sm"]}
+              colorScheme={"whatsapp"}
+              leftIcon={<SiMicrosoftexcel />}
+              onClick={generateReport}
+            >
+              Excel
+            </Button>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
