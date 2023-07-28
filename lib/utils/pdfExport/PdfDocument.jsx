@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     padding: 5,
-    width: 180,
+    width: 200,
   },
   font: {
     fontSize: "8px",
