@@ -59,7 +59,7 @@ const Index = () => {
   });
   const [printableRow, setPrintableRow] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false)
+  const [isClient, setIsClient] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -182,7 +182,11 @@ const Index = () => {
     setLoading(true);
     BackendAxios.get(
       pageLink ||
-        `/api/user/ledger?from=${Formik.values.from}&to=${Formik.values.to}&search=${Formik.values.search}&page=1`
+        `/api/user/ledger/all?from=${
+          Formik.values.from + (Formik.values.from && +"T00:00")
+        }&to=${Formik.values.to + (Formik.values.to && +"T23:59")}&search=${
+          Formik.values.search
+        }&page=1`
     )
       .then((res) => {
         // setPagination({
@@ -216,7 +220,7 @@ const Index = () => {
   }
 
   useEffect(() => {
-    setIsClient(true)
+    setIsClient(true);
     fetchTransactions();
   }, []);
 
@@ -355,7 +359,7 @@ const Index = () => {
           JSON.parse(data.metadata).status,
           data.created_at,
           data.updated_at,
-          JSON.parse(data.metadata)?.remarks
+          JSON.parse(data.metadata)?.remarks,
         ]),
       },
     });
@@ -396,13 +400,13 @@ const Index = () => {
             </PDFDownloadLink>
           ) : null}
           <Button
-              size={["xs", "sm"]}
-              colorScheme={"whatsapp"}
-              leftIcon={<SiMicrosoftexcel />}
-              onClick={handleDownloadExcel}
-            >
-              Excel
-            </Button>
+            size={["xs", "sm"]}
+            colorScheme={"whatsapp"}
+            leftIcon={<SiMicrosoftexcel />}
+            onClick={handleDownloadExcel}
+          >
+            Excel
+          </Button>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
