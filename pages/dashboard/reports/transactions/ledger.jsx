@@ -217,7 +217,7 @@ const Index = () => {
       pageLink ||
         `/api/user/ledger?from=${
           Formik.values.from + (Formik.values.from && "T00:00")
-        }&to=${Formik.values.to + (Formik.values.to && "23:59")}&search=${
+        }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&search=${
           Formik.values.search
         }&page=1`
     )
