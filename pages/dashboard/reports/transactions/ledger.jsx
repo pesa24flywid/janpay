@@ -191,7 +191,7 @@ const Index = () => {
         Formik.values.from + (Formik.values.from && "T00:00")
       }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&search=${
         Formik.values.search
-      }&type=ledger&doctype=${doctype}&name=`,
+      }&type=ledger&doctype=${doctype}&name=all`,
       {
         responseType: "blob",
       }
