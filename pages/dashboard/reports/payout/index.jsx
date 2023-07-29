@@ -170,8 +170,11 @@ const Index = () => {
     },
   });
 
-  function generateReport() {
+  function generateReport(doctype) {
     if (!Formik.values.from || !Formik.values.to) {
+      Toast({
+        description: "Please select dates to generate report"
+      })
       return;
     }
     BackendAxios.get(
@@ -181,13 +184,18 @@ const Index = () => {
         Formik.values.search
       }&status=${
         Formik.values.status != "all" ? Formik.values.status : ""
-      }&type=ledger&name=${transactionKeyword}`,
+      }&type=ledger&name=${transactionKeyword}&doctype=${doctype}`,
       {
         responseType: "blob",
       }
     )
       .then((res) => {
-        fileDownload(res.data, "Payouts.xlsx");
+        if (doctype == "excel") {
+          fileDownload(res.data, "Payouts.xlsx");
+        }
+        else{
+          fileDownload(res.data, "Payouts.pdf");
+        }
       })
       .catch((err) => {
         if (err?.response?.status == 401) {
@@ -364,7 +372,7 @@ const Index = () => {
     <>
       <DashboardWrapper pageTitle={"Payout Reports"}>
         <HStack pb={8}>
-          <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
+          <Button onClick={()=>generateReport("pdf")} colorScheme={"red"} size={"sm"}>
             Export PDF
           </Button>
           {/* <DownloadTableExcel
@@ -381,13 +389,13 @@ const Index = () => {
             </Button>
           </DownloadTableExcel> */}
           <Button
-              size={["xs", "sm"]}
-              colorScheme={"whatsapp"}
-              leftIcon={<SiMicrosoftexcel />}
-              onClick={generateReport}
-            >
-              Excel
-            </Button>
+            size={["xs", "sm"]}
+            colorScheme={"whatsapp"}
+            leftIcon={<SiMicrosoftexcel />}
+            onClick={()=>generateReport("excel")}
+          >
+            Excel
+          </Button>
         </HStack>
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>

@@ -179,8 +179,11 @@ const Index = () => {
     },
   });
 
-  function generateReport() {
+  function generateReport(doctype) {
     if (!Formik.values.from || !Formik.values.to) {
+      Toast({
+        description: "Please select dates to generate report"
+      })
       return;
     }
     BackendAxios.get(
@@ -188,13 +191,18 @@ const Index = () => {
         Formik.values.from + (Formik.values.from && "T00:00")
       }&to=${Formik.values.to + (Formik.values.to && "23:59")}&search=${
         Formik.values.search
-      }&type=ledger&name=`,
+      }&type=ledger&doctype=${doctype}&name=`,
       {
         responseType: "blob",
       }
     )
       .then((res) => {
-        fileDownload(res.data, "TransactionLedger.xlsx");
+        if(doctype=="excel"){
+          fileDownload(res.data, "TransactionLedger.xlsx");
+        }
+        else{
+          fileDownload(res.data, "TransactionLedger.pdf");
+        }
       })
       .catch((err) => {
         if (err?.response?.status == 401) {
@@ -418,7 +426,7 @@ const Index = () => {
               Excel
             </Button>
           </DownloadTableExcel> */}
-          {isClient ? (
+          {/* {isClient ? (
             <PDFDownloadLink
               document={
                 <PdfDocument rowData={rowData} columnDefs={columnDefs} />
@@ -431,12 +439,19 @@ const Index = () => {
                 </Button>
               )}
             </PDFDownloadLink>
-          ) : null}
+          ) : null} */}
+          <Button
+            colorScheme={"red"}
+            size={"sm"}
+            onClick={() => generateReport("pdf")}
+          >
+            PDF
+          </Button>
           <Button
             size={["xs", "sm"]}
             colorScheme={"whatsapp"}
             leftIcon={<SiMicrosoftexcel />}
-            onClick={generateReport}
+            onClick={() => generateReport("excel")}
           >
             Excel
           </Button>
