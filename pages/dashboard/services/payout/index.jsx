@@ -43,6 +43,9 @@ import {
 } from "react-icons/bs";
 import Cookies from "js-cookie";
 import { FiRefreshCcw } from "react-icons/fi";
+import { RadioGroup } from "@chakra-ui/react";
+import { Radio } from "@chakra-ui/react";
+import axios from "axios";
 
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
@@ -101,6 +104,8 @@ const Payout = () => {
       amount: "",
       mpin: "",
       otp: "",
+      bankName: "",
+      mode: "imps",
     },
   });
 
@@ -111,19 +116,32 @@ const Payout = () => {
     data: {},
   });
 
+  function fetchBankDetails() {
+    axios.get(`https://ifsc.razorpay.com/${Formik.values.ifsc}`).then(res=>{
+      Formik.setFieldValue("bankName", res.data['BANK'])
+    }).catch(err=>{
+      Toast({
+        status: 'error',
+        title: "Error while fetching bank details",
+        description: err?.response?.data?.message || err?.response?.data || err?.message
+      })
+    })
+  }
+
   async function triggerOtp() {
     setIsLoading(true);
     await BackendAxios.post(`/api/send-otp/payout`)
       .then((res) => {
         setIsLoading(false);
         Toast({
-          position: 'top-right',
+          position: "top-right",
           description: "OTP sent to senior",
         });
         setOtpModal(true);
       })
       .catch((err) => {
-        setIsLoading(false);if (err?.response?.status == 401) {
+        setIsLoading(false);
+        if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
           return;
@@ -278,6 +296,26 @@ const Payout = () => {
                 />
               </FormControl>
               <FormControl>
+                <HStack>
+                  <FormLabel>Bank Name (optional)</FormLabel>
+                  <Text
+                    fontSize={"xs"}
+                    color={"twitter.500"}
+                    fontWeight={"semibold"}
+                    onClick={fetchBankDetails}
+                  >
+                    Fetch Automatically
+                  </Text>
+                </HStack>
+                <Input
+                  name={"bankName"}
+                  onChange={Formik.handleChange}
+                  placeholder={"Enter Bank Name"}
+                  value={Formik.values.ifsc}
+                  isDisabled={isLoading}
+                />
+              </FormControl>
+              <FormControl>
                 <FormLabel>Enter Amount</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children={"₹"} />
@@ -288,6 +326,22 @@ const Payout = () => {
                     value={Formik.values.amount}
                   />
                 </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Transaction Mode</FormLabel>
+                <RadioGroup
+                  name="mode"
+                  w={"full"}
+                  display={'flex'}
+                  flexDir={"row"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  onChange={Formik.handleChange}
+                  value={Formik.values.mode}
+                >
+                  <Radio value="imps">IMPS</Radio>
+                  <Radio value="neft">NEFT</Radio>
+                </RadioGroup>
               </FormControl>
               <Button
                 colorScheme={"orange"}
@@ -486,7 +540,7 @@ const Payout = () => {
             >
               Confirm
             </Button>
-            <Button variant="ghost" onClick={()=>triggerOtp()}>
+            <Button variant="ghost" onClick={() => triggerOtp()}>
               Resend OTP
             </Button>
           </ModalFooter>
