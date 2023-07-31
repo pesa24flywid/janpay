@@ -60,6 +60,7 @@ const Index = () => {
   });
   const [printableRow, setPrintableRow] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false)
   const [isClient, setIsClient] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -186,6 +187,7 @@ const Index = () => {
       })
       return;
     }
+    setReportLoading(true)
     BackendAxios.get(
       `/api/user/print-reports?from=${
         Formik.values.from + (Formik.values.from && "T00:00")
@@ -197,6 +199,7 @@ const Index = () => {
       }
     )
       .then((res) => {
+        setReportLoading(false)
         if(doctype=="excel"){
           fileDownload(res.data, "TransactionLedger.xlsx");
         }
@@ -205,6 +208,7 @@ const Index = () => {
         }
       })
       .catch((err) => {
+        setReportLoading(false)
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -242,7 +246,6 @@ const Index = () => {
         // setPrintableRow(res.data.data);
         setLoading(false);
         setRowData(res.data);
-        setPrintableRow(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -261,7 +264,6 @@ const Index = () => {
   }
 
   useEffect(() => {
-    setIsClient(true);
     fetchTransactions();
   }, []);
 
@@ -444,6 +446,7 @@ const Index = () => {
             colorScheme={"red"}
             size={"sm"}
             onClick={() => generateReport("pdf")}
+            isLoading={reportLoading}
           >
             PDF
           </Button>
@@ -452,6 +455,7 @@ const Index = () => {
             colorScheme={"whatsapp"}
             leftIcon={<SiMicrosoftexcel />}
             onClick={() => generateReport("excel")}
+            isLoading={reportLoading}
           >
             Excel
           </Button>

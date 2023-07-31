@@ -61,6 +61,7 @@ const Index = () => {
     position: "top-right",
   });
   const [loading, setLoading] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
   const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -173,10 +174,11 @@ const Index = () => {
   function generateReport(doctype) {
     if (!Formik.values.from || !Formik.values.to) {
       Toast({
-        description: "Please select dates to generate report"
-      })
+        description: "Please select dates to generate report",
+      });
       return;
     }
+    setReportLoading(true);
     BackendAxios.get(
       `/api/user/print-reports??from=${
         Formik.values.from + (Formik.values.from && "T" + "00:00")
@@ -190,14 +192,15 @@ const Index = () => {
       }
     )
       .then((res) => {
+        setReportLoading(false);
         if (doctype == "excel") {
           fileDownload(res.data, "Payouts.xlsx");
-        }
-        else{
+        } else {
           fileDownload(res.data, "Payouts.pdf");
         }
       })
       .catch((err) => {
+        setReportLoading(false);
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -372,7 +375,12 @@ const Index = () => {
     <>
       <DashboardWrapper pageTitle={"Payout Reports"}>
         <HStack pb={8}>
-          <Button onClick={()=>generateReport("pdf")} colorScheme={"red"} size={"sm"}>
+          <Button
+            onClick={() => generateReport("pdf")}
+            colorScheme={"red"}
+            size={"sm"}
+            isLoading={reportLoading}
+          >
             Export PDF
           </Button>
           {/* <DownloadTableExcel
@@ -392,7 +400,8 @@ const Index = () => {
             size={["xs", "sm"]}
             colorScheme={"whatsapp"}
             leftIcon={<SiMicrosoftexcel />}
-            onClick={()=>generateReport("excel")}
+            onClick={() => generateReport("excel")}
+            isLoading={reportLoading}
           >
             Excel
           </Button>
@@ -425,13 +434,13 @@ const Index = () => {
               name="search"
               onChange={Formik.handleChange}
               bg={"white"}
-              isDisabled={Formik.values.status != "all"}
+              // isDisabled={Formik.values.status != "all"}
             />
           </FormControl>
           <FormControl w={["full", "xs"]}>
             <FormLabel>Status</FormLabel>
             <Select
-              name="status"
+              name="search"
               onChange={Formik.handleChange}
               bgColor={"#FFF"}
             >
