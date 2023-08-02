@@ -338,7 +338,7 @@ const Bbps = () => {
           rounded={12}
           direction={['column', 'row']}
         >
-          <VStack
+          {/* <VStack
             w={['full', 'xs']} h={['sm', 'xl']}
             overflowY={['scroll']}
             alignItems={['flex-start']}
@@ -404,7 +404,7 @@ const Bbps = () => {
                 )
               })
             }
-          </VStack>
+          </VStack> */}
           <Box p={4} w={['full', '85%']} h={['auto', 'xl']} overflowY={['scroll']}>
 
             {
