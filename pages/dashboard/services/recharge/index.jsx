@@ -57,7 +57,7 @@ import { BiRupee } from 'react-icons/bi'
 import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
 import Pdf from 'react-to-pdf'
 import Cookies from 'js-cookie'
-import PageLoader from 'next/dist/client/page-loader'
+import Loader from '../../../../hocs/Loader'
 
 
 const Bbps = () => {
@@ -329,7 +329,7 @@ const Bbps = () => {
   return (
     <>
     {
-      isLoading ? <PageLoader /> : null
+      isLoading ? <Loader /> : null
     }
       <DashboardWrapper titleText={'PaySprint Transaction'}>
         <Stack
