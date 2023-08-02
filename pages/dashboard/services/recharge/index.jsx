@@ -57,11 +57,14 @@ import { BiRupee } from 'react-icons/bi'
 import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
 import Pdf from 'react-to-pdf'
 import Cookies from 'js-cookie'
+import PageLoader from 'next/dist/client/page-loader'
 
 
 const Bbps = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [keyword, setKeyword] = useState("")
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [categories, setCategories] = useState()
   const [selectedCategory, setSelectedCategory] = useState()
@@ -151,8 +154,12 @@ const Bbps = () => {
     })
   }, [])
 
+  useEffect(()=>{
+    fetchOperators("Prepaid")
+  },[])
 
   function fetchOperators(keyword) {
+    setIsLoading(true)
     setOperatorMenuStatus(false)
     setSelectedOperatorId('')
     setSelectedOperatorName('')
@@ -162,9 +169,11 @@ const Bbps = () => {
     setSelectedPlanCategory(false)
     setKeyword(keyword)
     BackendAxios.get(`api/paysprint/bbps/mobile-operators/${keyword}`).then((res) => {
+      setIsLoading(false)
       setOperators(Object.values(res.data))
       setOperatorMenuStatus(true)
     }).catch((err) => {
+      setIsLoading(false)
       if (err?.response?.status == 401) {
         Cookies.remove("verified");
         window.location.reload();
@@ -200,16 +209,19 @@ const Bbps = () => {
 
 
   function browsePlan() {
+    setIsLoading(true)
     setSelectedPlanCategory(false)
     setPlans()
     BackendAxios.post(`api/paysprint/bbps/mobile-recharge/browse`, {
       selectedOperatorName,
       networkCircle,
     }).then((res) => {
+      setIsLoading(false)
       setPlans(res.data)
       setPlanValues(res.data.info)
       setPlanCategories(Object.keys(res.data.info))
     }).catch((err) => {
+      setIsLoading(false)
       if (err?.response?.status == 401) {
         Cookies.remove("verified");
         window.location.reload();
@@ -225,10 +237,12 @@ const Bbps = () => {
   }
 
   function hlrRequest() {
+    setIsLoading(true)
     BackendAxios.get(`api/paysprint/bbps/mobile-recharge/hlr`, {
       selectedOperatorName,
       networkCircle,
     }).then((res) => {
+      setIsLoading(false)
       if (res.data.status != false) {
         setHlrResponse(res.data)
       }
@@ -243,6 +257,7 @@ const Bbps = () => {
         setHlrResponse()
       }
     }).catch((err) => {
+      setIsLoading(false)
       if (err?.response?.status == 401) {
         Cookies.remove("verified");
         window.location.reload();
@@ -268,6 +283,7 @@ const Bbps = () => {
 
   async function doRecharge() {
     event.preventDefault()
+    setIsLoading(true)
     setIsPaymentProgress(true)
     let formData = new FormData(document.getElementById('psRechargeForm'))
     var object = {};
@@ -278,12 +294,16 @@ const Bbps = () => {
       ...object,
       mpin: mpin
     }).then((res) => {
+      setIsLoading(false)
+      setIsPaymentProgress(false)
       setReceipt({
         status: res.data.metadata.status,
         show: true,
         data: res.data.metadata
       })
     }).catch(err => {
+      setIsLoading(false)
+      setIsPaymentProgress(false)
       if (err?.response?.status == 401) {
         Cookies.remove("verified");
         window.location.reload();
@@ -296,7 +316,6 @@ const Bbps = () => {
         position: 'top-right'
       })
     })
-    setIsPaymentProgress(false)
     onClose()
   }
 
@@ -309,6 +328,9 @@ const Bbps = () => {
 
   return (
     <>
+    {
+      isLoading ? <PageLoader /> : null
+    }
       <DashboardWrapper titleText={'PaySprint Transaction'}>
         <Stack
           w={'full'} bg={'white'}
@@ -463,7 +485,7 @@ const Bbps = () => {
                               <option value="West Bengal">West Bengal</option>
                             </Select>
                           </FormControl>
-                          <Button onClick={() => browsePlan()}>Browse Plans</Button>
+                          <Button onClick={() => browsePlan()} isLoading={isLoading}>Browse Plans</Button>
                         </Stack>
                       </> : null
 
@@ -538,16 +560,16 @@ const Bbps = () => {
                             <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
                           </InputGroup>
                         </FormControl>
-                        <Button colorScheme={'whatsapp'} onClick={onOpen} isLoading={isPaymentProgress}>Pay Now</Button>
+                        <Button colorScheme={'whatsapp'} onClick={onOpen} isLoading={isLoading}>Pay Now</Button>
                       </> : null
                   }
 
 
                   {
-                    fetchBillBtn && <Button colorScheme={'facebook'} onClick={() => fetchBill()}>Fetch Bill</Button>
+                    fetchBillBtn && <Button colorScheme={'facebook'} onClick={() => fetchBill()} isLoading={isLoading}>Fetch Bill</Button>
                   }
                   {
-                    fetchInfoBtn && <Button colorScheme={'orange'} onClick={() => hlrRequest()}>Fetch Info</Button>
+                    fetchInfoBtn && <Button colorScheme={'orange'} onClick={() => hlrRequest()} isLoading={isLoading}>Fetch Info</Button>
                   }
 
                 </form> : null
@@ -576,7 +598,7 @@ const Bbps = () => {
           </ModalBody>
           <ModalFooter>
             <HStack justifyContent={'flex-end'}>
-              <Button colorScheme={'orange'} onClick={() => doRecharge()}>Confirm</Button>
+              <Button colorScheme={'orange'} onClick={() => doRecharge()} isLoading={isLoading}>Confirm</Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
