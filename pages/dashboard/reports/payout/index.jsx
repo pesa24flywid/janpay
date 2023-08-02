@@ -222,25 +222,23 @@ const Index = () => {
         `/api/user/ledger/${transactionKeyword}?from=${
           Formik.values.from + (Formik.values.from && "T" + "00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
-          Formik.values.search
+          Formik.values.search || Formik.values.status != "all" ? Formik.values.status : ""
         }&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&page=1`
     )
       .then((res) => {
-        // setPagination({
-        //   current_page: res.data.current_page,
-        //   total_pages: parseInt(res.data.last_page),
-        //   first_page_url: res.data.first_page_url,
-        //   last_page_url: res.data.last_page_url,
-        //   next_page_url: res.data.next_page_url,
-        //   prev_page_url: res.data.prev_page_url,
-        // });
-        // setRowData(res.data.data);
-        // setPrintableRow(res.data.data);
+        setPagination({
+          current_page: res.data.current_page,
+          total_pages: parseInt(res.data.last_page),
+          first_page_url: res.data.first_page_url,
+          last_page_url: res.data.last_page_url,
+          next_page_url: res.data.next_page_url,
+          prev_page_url: res.data.prev_page_url,
+        });
+        setRowData(res.data.data);
         setLoading(false);
-        setRowData(res.data);
-        // setPrintableRow(res.data);
+        // setRowData(res.data);
         fetchOverview();
       })
       .catch((err) => {
@@ -440,7 +438,7 @@ const Index = () => {
           <FormControl w={["full", "xs"]}>
             <FormLabel>Status</FormLabel>
             <Select
-              name="search"
+              name="status"
               onChange={Formik.handleChange}
               bgColor={"#FFF"}
             >
@@ -458,7 +456,47 @@ const Index = () => {
           </Button>
         </HStack>
 
-        {/* <HStack
+        <HStack
+          mt={8}
+          mb={4}
+          p={2}
+          px={4}
+          rounded={2}
+          bgColor={"#FFF"}
+          boxShadow={"sm"}
+          w={"full"}
+        >
+          <Text fontSize={"lg"} fontWeight={"semibold"}>
+            Total
+          </Text>
+          <Spacer />
+          <HStack gap={8}>
+            <Box>
+              <Text fontSize={"10"}>Payouts</Text>
+              <Text fontSize={"md"} fontWeight={"semibold"}>
+                ₹{" "}
+                {Math.abs(
+                  overviewData[4]?.payout?.debit -
+                    overviewData[4]?.payout?.credit
+                ).toFixed(2) || 0}
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize={"10"}>Charges</Text>
+              <Text fontSize={"md"} fontWeight={"semibold"}>
+                ₹{" "}
+                {Math.abs(
+                  overviewData[11]?.["payout-commission"]?.credit +
+                    overviewData[10]?.["payout-charge"]?.credit -
+                    (overviewData[11]?.["payout-commission"]?.debit +
+                      overviewData[10]?.["payout-charge"]?.debit)
+                )?.toFixed(2) || 0}
+              </Text>
+            </Box>
+          </HStack>
+        </HStack>
+
+        <HStack
           spacing={2}
           py={4}
           mt={24}
@@ -509,9 +547,9 @@ const Index = () => {
           >
             <BsChevronDoubleRight />
           </Button>
-        </HStack> */}
+        </HStack>
 
-        <Box mt={8} mb={4}>
+        <HStack w={"full"} justifyContent={"flex-end"} mt={8} mb={4}>
           <Button
             colorScheme="blue"
             isLoading={loading}
@@ -521,47 +559,8 @@ const Index = () => {
           >
             Click To Reload Data
           </Button>
-        </Box>
-
-        <HStack
-          mt={8}
-          mb={4}
-          p={2}
-          px={4}
-          rounded={2}
-          bgColor={"#FFF"}
-          boxShadow={"sm"}
-          w={"full"}
-        >
-          <Text fontSize={"lg"} fontWeight={"semibold"}>
-            Total
-          </Text>
-          <Spacer />
-          <HStack gap={8}>
-            <Box>
-              <Text fontSize={"10"}>Payouts</Text>
-              <Text fontSize={"md"} fontWeight={"semibold"}>
-                ₹{" "}
-                {Math.abs(
-                  overviewData[4]?.payout?.debit -
-                    overviewData[4]?.payout?.credit
-                ).toFixed(2) || 0}
-              </Text>
-            </Box>
-            <Box>
-              <Text fontSize={"10"}>Charges</Text>
-              <Text fontSize={"md"} fontWeight={"semibold"}>
-                ₹{" "}
-                {Math.abs(
-                  overviewData[11]?.["payout-commission"]?.credit +
-                    overviewData[10]?.["payout-charge"]?.credit -
-                    (overviewData[11]?.["payout-commission"]?.debit +
-                      overviewData[10]?.["payout-charge"]?.debit)
-                )?.toFixed(2) || 0}
-              </Text>
-            </Box>
-          </HStack>
         </HStack>
+
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"
@@ -579,8 +578,6 @@ const Index = () => {
                 resizable: true,
                 sortable: true,
               }}
-              pagination={true}
-              paginationPageSize={100}
               components={{
                 receiptCellRenderer: receiptCellRenderer,
                 creditCellRenderer: creditCellRenderer,
@@ -623,7 +620,7 @@ const Index = () => {
                 }
               >
                 {receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status == true || 
+                receipt?.status == true ||
                 receipt?.status?.toLowerCase() == "success" ||
                 receipt?.status?.toLowerCase() == "processing" ||
                 receipt?.status?.toLowerCase() == "queued" ? (
@@ -644,8 +641,8 @@ const Index = () => {
                   receipt?.status?.toLowerCase() == "queued"
                     ? "PROCESSING"
                     : receipt?.status?.toLowerCase() == "processed" ||
-                      receipt?.status == true || 
-                      receipt?.status?.toLowerCase() == "success" 
+                      receipt?.status == true ||
+                      receipt?.status?.toLowerCase() == "success"
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>
