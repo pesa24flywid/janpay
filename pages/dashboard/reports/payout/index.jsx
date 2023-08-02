@@ -180,7 +180,7 @@ const Index = () => {
     }
     setReportLoading(true);
     BackendAxios.get(
-      `/api/user/print-reports??from=${
+      `/api/user/print-reports?from=${
         Formik.values.from + (Formik.values.from && "T" + "00:00")
       }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
         Formik.values.search
