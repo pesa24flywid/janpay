@@ -459,6 +459,7 @@ const Index = () => {
             Excel
           </Button>
         </HStack>
+        <br /><br />
         <Box p={2} bg={"orange.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
         </Box>
