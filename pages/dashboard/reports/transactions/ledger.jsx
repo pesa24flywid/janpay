@@ -60,7 +60,7 @@ const Index = () => {
   });
   const [printableRow, setPrintableRow] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [reportLoading, setReportLoading] = useState(false)
+  const [reportLoading, setReportLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -183,11 +183,11 @@ const Index = () => {
   function generateReport(doctype) {
     if (!Formik.values.from || !Formik.values.to) {
       Toast({
-        description: "Please select dates to generate report"
-      })
+        description: "Please select dates to generate report",
+      });
       return;
     }
-    setReportLoading(true)
+    setReportLoading(true);
     BackendAxios.get(
       `/api/user/print-reports?from=${
         Formik.values.from + (Formik.values.from && "T00:00")
@@ -199,16 +199,15 @@ const Index = () => {
       }
     )
       .then((res) => {
-        setReportLoading(false)
-        if(doctype=="excel"){
+        setReportLoading(false);
+        if (doctype == "excel") {
           fileDownload(res.data, "TransactionLedger.xlsx");
-        }
-        else{
+        } else {
           fileDownload(res.data, "TransactionLedger.pdf");
         }
       })
       .catch((err) => {
-        setReportLoading(false)
+        setReportLoading(false);
         if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
@@ -234,18 +233,18 @@ const Index = () => {
         }&page=1`
     )
       .then((res) => {
-        // setPagination({
-        //   current_page: res.data.current_page,
-        //   total_pages: parseInt(res.data.last_page),
-        //   first_page_url: res.data.first_page_url,
-        //   last_page_url: res.data.last_page_url,
-        //   next_page_url: res.data.next_page_url,
-        //   prev_page_url: res.data.prev_page_url,
-        // });
-        // setRowData(res.data.data);
+        setPagination({
+          current_page: res.data.current_page,
+          total_pages: parseInt(res.data.last_page),
+          first_page_url: res.data.first_page_url,
+          last_page_url: res.data.last_page_url,
+          next_page_url: res.data.next_page_url,
+          prev_page_url: res.data.prev_page_url,
+        });
+        setRowData(res.data.data);
         // setPrintableRow(res.data.data);
+        // setRowData(res.data);
         setLoading(false);
-        setRowData(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -492,59 +491,60 @@ const Index = () => {
             Search
           </Button>
         </HStack>
-        {/* <HStack
+
+        <HStack
           spacing={2}
           py={4}
           mt={24}
           bg={"white"}
-          justifyContent={"center"}
+          justifyContent={"space-between"}
         >
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.first_page_url)}
-          >
-            <BsChevronDoubleLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.prev_page_url)}
-          >
-            <BsChevronLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"solid"}
-          >
-            {pagination.current_page}
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.next_page_url)}
-          >
-            <BsChevronRight />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.last_page_url)}
-          >
-            <BsChevronDoubleRight />
-          </Button>
-        </HStack> */}
-        <Box mt={8} mb={4}>
+          <HStack spacing={2}>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.first_page_url)}
+            >
+              <BsChevronDoubleLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.prev_page_url)}
+            >
+              <BsChevronLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"solid"}
+            >
+              {pagination.current_page}
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.next_page_url)}
+            >
+              <BsChevronRight />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.last_page_url)}
+            >
+              <BsChevronDoubleRight />
+            </Button>
+          </HStack>
           <Button
             colorScheme="blue"
             isLoading={loading}
@@ -554,7 +554,8 @@ const Index = () => {
           >
             Click To Reload Data
           </Button>
-        </Box>
+        </HStack>
+
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"

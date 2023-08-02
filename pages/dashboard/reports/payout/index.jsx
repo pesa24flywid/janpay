@@ -222,7 +222,9 @@ const Index = () => {
         `/api/user/ledger/${transactionKeyword}?from=${
           Formik.values.from + (Formik.values.from && "T" + "00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
-          Formik.values.search || Formik.values.status != "all" ? Formik.values.status : ""
+          Formik.values.search || Formik.values.status != "all"
+            ? Formik.values.status
+            : ""
         }&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&page=1`
@@ -501,55 +503,54 @@ const Index = () => {
           py={4}
           mt={24}
           bg={"white"}
-          justifyContent={"center"}
+          justifyContent={"space-between"}
         >
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.first_page_url)}
-          >
-            <BsChevronDoubleLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.prev_page_url)}
-          >
-            <BsChevronLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"solid"}
-          >
-            {pagination.current_page}
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.next_page_url)}
-          >
-            <BsChevronRight />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.last_page_url)}
-          >
-            <BsChevronDoubleRight />
-          </Button>
-        </HStack>
-
-        <HStack w={"full"} justifyContent={"flex-end"} mt={8} mb={4}>
+          <HStack spacing={2}>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.first_page_url)}
+            >
+              <BsChevronDoubleLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.prev_page_url)}
+            >
+              <BsChevronLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"solid"}
+            >
+              {pagination.current_page}
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.next_page_url)}
+            >
+              <BsChevronRight />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.last_page_url)}
+            >
+              <BsChevronDoubleRight />
+            </Button>
+          </HStack>
           <Button
             colorScheme="blue"
             isLoading={loading}
