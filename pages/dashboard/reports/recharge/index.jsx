@@ -315,7 +315,6 @@ const Index = () => {
             Export PDF
           </Button>
         </HStack>
-        <br /><br />
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
           <FormControl w={["full", "xs"]}>
             <FormLabel>From Date</FormLabel>
