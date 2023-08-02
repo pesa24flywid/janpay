@@ -346,7 +346,7 @@ const Index = () => {
 
         <HStack
           spacing={2}
-          py={4}
+          p={4}
           mt={24}
           bg={"white"}
           justifyContent={"space-between"}

@@ -461,8 +461,7 @@ const Index = () => {
         <HStack
           mt={8}
           mb={4}
-          p={2}
-          px={4}
+          p={4}
           rounded={2}
           bgColor={"#FFF"}
           boxShadow={"sm"}
