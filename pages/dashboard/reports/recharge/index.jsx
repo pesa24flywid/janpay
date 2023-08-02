@@ -54,6 +54,7 @@ const Index = () => {
     position: "top-right",
   });
   const [loading, setLoading] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
   const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -146,6 +147,51 @@ const Index = () => {
       to: "",
     },
   });
+
+
+  function generateReport(doctype) {
+    if (!Formik.values.from || !Formik.values.to) {
+      Toast({
+        description: "Please select dates to generate report",
+      });
+      return;
+    }
+    setReportLoading(true);
+    BackendAxios.get(
+      `/api/user/print-reports?from=${
+        Formik.values.from + (Formik.values.from && "T" + "00:00")
+      }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
+        Formik.values.search
+      }&status=${
+        Formik.values.status != "all" ? Formik.values.status : ""
+      }&type=ledger&name=${transactionKeyword}&doctype=${doctype}`,
+      {
+        responseType: "blob",
+      }
+    )
+      .then((res) => {
+        setReportLoading(false);
+        if (doctype == "excel") {
+          fileDownload(res.data, "Recharges.xlsx");
+        } else {
+          fileDownload(res.data, "Recharges.pdf");
+        }
+      })
+      .catch((err) => {
+        setReportLoading(false);
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
+        Toast({
+          status: "error",
+          description:
+            err.response.data.message || err.response.data || err.message,
+        });
+      });
+  }
 
   function fetchTransactions(pageLink) {
     setLoading(true);
@@ -265,7 +311,7 @@ const Index = () => {
     <>
       <DashboardWrapper pageTitle={"Recharge Reports"}>
         <HStack>
-          <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
+          <Button onClick={()=>generateReport("pdf")} colorScheme={"red"} size={"sm"}>
             Export PDF
           </Button>
         </HStack>
