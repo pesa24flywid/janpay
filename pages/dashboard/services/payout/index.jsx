@@ -105,7 +105,7 @@ const Payout = () => {
       mpin: "",
       otp: "",
       bankName: "",
-      mode: "imps",
+      mode: "IMPS",
     },
   });
 
@@ -175,6 +175,7 @@ const Payout = () => {
         mpin: Formik.values.mpin,
         amount: Formik.values.amount,
         otp: Formik.values.otp,
+        mode: Formik.values.mode,
       })
     )
       .then((res) => {
@@ -296,7 +297,7 @@ const Payout = () => {
                 />
               </FormControl>
               <FormControl>
-                <HStack>
+                <HStack w={'full'} justifyContent={'space-between'}>
                   <FormLabel>Bank Name (optional)</FormLabel>
                   <Text
                     fontSize={"xs"}
@@ -311,7 +312,7 @@ const Payout = () => {
                   name={"bankName"}
                   onChange={Formik.handleChange}
                   placeholder={"Enter Bank Name"}
-                  value={Formik.values.ifsc}
+                  value={Formik.values.bankName}
                   isDisabled={isLoading}
                 />
               </FormControl>
@@ -335,12 +336,13 @@ const Payout = () => {
                   display={'flex'}
                   flexDir={"row"}
                   alignItems={"center"}
-                  justifyContent={"space-between"}
+                  justifyContent={"flex-start"}
+                  gap={8}
                   onChange={Formik.handleChange}
-                  value={Formik.values.mode}
+                  defaultValue={"IMPS"}
                 >
-                  <Radio value="imps">IMPS</Radio>
-                  <Radio value="neft">NEFT</Radio>
+                  <Radio value="IMPS">IMPS</Radio>
+                  <Radio value="NEFT">NEFT</Radio>
                 </RadioGroup>
               </FormControl>
               <Button
@@ -560,6 +562,7 @@ const Payout = () => {
                 p={8}
                 bg={
                   receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
@@ -569,6 +572,7 @@ const Payout = () => {
               >
                 {receipt?.status?.toLowerCase() == "processed" ||
                 receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "success" ||
                 receipt?.status?.toLowerCase() == "processing" ||
                 receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
@@ -587,6 +591,7 @@ const Payout = () => {
                   {receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued" ||
                   receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}

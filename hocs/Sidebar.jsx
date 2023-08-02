@@ -106,12 +106,12 @@ export const SidebarOptions =
         //   id: "bbpsTransaction",
         //   soon: false,
         // },
-        // {
-        //   title: 'recharge',
-        //   link: '/dashboard/services/recharge?pageId=services',
-        //   id: "rechargeTransaction",
-        //   soon: false,
-        // },
+        {
+          title: 'recharge',
+          link: '/dashboard/services/recharge?pageId=services',
+          id: "rechargeTransaction",
+          soon: false,
+        },
         {
           title: 'bigpay',
           link: '/dashboard/services/payout?pageId=services',
@@ -189,12 +189,12 @@ export const SidebarOptions =
         //   id: "bbpsReport",
         //   soon: false,
         // },
-        // {
-        //   title: 'recharge reports',
-        //   link: '/dashboard/reports/recharge?pageId=reports',
-        //   id: "rechargeReport",
-        //   soon: false,
-        // },
+        {
+          title: 'recharge reports',
+          link: '/dashboard/reports/recharge?pageId=reports',
+          id: "rechargeReport",
+          soon: false,
+        },
         // {
         //   title: 'DMT reports',
         //   link: '/dashboard/reports/dmt?pageId=reports',
@@ -213,6 +213,12 @@ export const SidebarOptions =
           id: "basicFundRequesReport",
           soon: false,
         },
+        // {
+        //   title: 'fund transfers',
+        //   link: '/dashboard/reports/fund-transfers?pageId=reports',
+        //   id: "basicFundTransferReport",
+        //   soon: true,
+        // },
         // {
         //   title: 'LIC reports',
         //   link: '/dashboard/reports/lic?pageId=reports',

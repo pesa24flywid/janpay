@@ -616,13 +616,15 @@ const Index = () => {
                   receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status?.toLowerCase() == "queued"
                     ? "green.500"
                     : "red.500"
                 }
               >
                 {receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status == true ||
+                receipt?.status == true || 
+                receipt?.status?.toLowerCase() == "success" ||
                 receipt?.status?.toLowerCase() == "processing" ||
                 receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
@@ -642,7 +644,8 @@ const Index = () => {
                   receipt?.status?.toLowerCase() == "queued"
                     ? "PROCESSING"
                     : receipt?.status?.toLowerCase() == "processed" ||
-                      receipt?.status == true
+                      receipt?.status == true || 
+                      receipt?.status?.toLowerCase() == "success" 
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>
