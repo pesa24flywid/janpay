@@ -406,9 +406,6 @@ const Index = () => {
             Excel
           </Button>
         </HStack>
-        <Box p={2} bg={"orange.500"} roundedTop={16}>
-          <Text color={"#FFF"}>Search Transactions</Text>
-        </Box>
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
           <FormControl w={["full", "xs"]}>
             <FormLabel>From Date</FormLabel>

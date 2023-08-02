@@ -310,14 +310,12 @@ const Index = () => {
   return (
     <>
       <DashboardWrapper pageTitle={"Recharge Reports"}>
-        <HStack>
+        <HStack mb={4}>
           <Button onClick={()=>generateReport("pdf")} colorScheme={"red"} size={"sm"}>
             Export PDF
           </Button>
         </HStack>
-        <Box p={2} bg={"orange.500"}>
-          <Text color={"#FFF"}>Search Transactions</Text>
-        </Box>
+        <br /><br />
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
           <FormControl w={["full", "xs"]}>
             <FormLabel>From Date</FormLabel>
