@@ -213,6 +213,12 @@ export const SidebarOptions =
           id: "basicFundRequesReport",
           soon: false,
         },
+        {
+          title: 'wallet transfers',
+          link: '/dashboard/reports/fund-transfers?pageId=reports',
+          id: "basicFundRequesReport",
+          soon: false,
+        },
         // {
         //   title: 'LIC reports',
         //   link: '/dashboard/reports/lic?pageId=reports',
