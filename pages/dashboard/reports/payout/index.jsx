@@ -222,25 +222,25 @@ const Index = () => {
         `/api/user/ledger/${transactionKeyword}?from=${
           Formik.values.from + (Formik.values.from && "T" + "00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
-          Formik.values.search
+          Formik.values.search || Formik.values.status != "all"
+            ? Formik.values.status
+            : ""
         }&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&page=1`
     )
       .then((res) => {
-        // setPagination({
-        //   current_page: res.data.current_page,
-        //   total_pages: parseInt(res.data.last_page),
-        //   first_page_url: res.data.first_page_url,
-        //   last_page_url: res.data.last_page_url,
-        //   next_page_url: res.data.next_page_url,
-        //   prev_page_url: res.data.prev_page_url,
-        // });
-        // setRowData(res.data.data);
-        // setPrintableRow(res.data.data);
+        setPagination({
+          current_page: res.data.current_page,
+          total_pages: parseInt(res.data.last_page),
+          first_page_url: res.data.first_page_url,
+          last_page_url: res.data.last_page_url,
+          next_page_url: res.data.next_page_url,
+          prev_page_url: res.data.prev_page_url,
+        });
+        setRowData(res.data.data);
         setLoading(false);
-        setRowData(res.data);
-        // setPrintableRow(res.data);
+        // setRowData(res.data);
         fetchOverview();
       })
       .catch((err) => {
@@ -406,9 +406,6 @@ const Index = () => {
             Excel
           </Button>
         </HStack>
-        <Box p={2} bg={"orange.500"} roundedTop={16}>
-          <Text color={"#FFF"}>Search Transactions</Text>
-        </Box>
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
           <FormControl w={["full", "xs"]}>
             <FormLabel>From Date</FormLabel>
@@ -440,7 +437,7 @@ const Index = () => {
           <FormControl w={["full", "xs"]}>
             <FormLabel>Status</FormLabel>
             <Select
-              name="search"
+              name="status"
               onChange={Formik.handleChange}
               bgColor={"#FFF"}
             >
@@ -458,76 +455,10 @@ const Index = () => {
           </Button>
         </HStack>
 
-        {/* <HStack
-          spacing={2}
-          py={4}
-          mt={24}
-          bg={"white"}
-          justifyContent={"center"}
-        >
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.first_page_url)}
-          >
-            <BsChevronDoubleLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.prev_page_url)}
-          >
-            <BsChevronLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"solid"}
-          >
-            {pagination.current_page}
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.next_page_url)}
-          >
-            <BsChevronRight />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.last_page_url)}
-          >
-            <BsChevronDoubleRight />
-          </Button>
-        </HStack> */}
-
-        <Box mt={8} mb={4}>
-          <Button
-            colorScheme="blue"
-            isLoading={loading}
-            variant={"ghost"}
-            onClick={() => fetchTransactions()}
-            leftIcon={<FiRefreshCcw />}
-          >
-            Click To Reload Data
-          </Button>
-        </Box>
-
         <HStack
           mt={8}
           mb={4}
-          p={2}
-          px={4}
+          p={4}
           rounded={2}
           bgColor={"#FFF"}
           boxShadow={"sm"}
@@ -562,6 +493,71 @@ const Index = () => {
             </Box>
           </HStack>
         </HStack>
+
+        <HStack
+          spacing={2}
+          py={4}
+          mt={24}
+          bg={"white"}
+          justifyContent={"space-between"}
+        >
+          <HStack spacing={2}>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.first_page_url)}
+            >
+              <BsChevronDoubleLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.prev_page_url)}
+            >
+              <BsChevronLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"solid"}
+            >
+              {pagination.current_page}
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.next_page_url)}
+            >
+              <BsChevronRight />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.last_page_url)}
+            >
+              <BsChevronDoubleRight />
+            </Button>
+          </HStack>
+          <Button
+            colorScheme="blue"
+            isLoading={loading}
+            variant={"ghost"}
+            onClick={() => fetchTransactions()}
+            leftIcon={<FiRefreshCcw />}
+          >
+            Click To Reload Data
+          </Button>
+        </HStack>
+
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"
@@ -579,8 +575,6 @@ const Index = () => {
                 resizable: true,
                 sortable: true,
               }}
-              pagination={true}
-              paginationPageSize={100}
               components={{
                 receiptCellRenderer: receiptCellRenderer,
                 creditCellRenderer: creditCellRenderer,
@@ -616,6 +610,7 @@ const Index = () => {
                   receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status?.toLowerCase() == "queued"
                     ? "green.500"
                     : "red.500"
@@ -623,6 +618,7 @@ const Index = () => {
               >
                 {receipt?.status?.toLowerCase() == "processed" ||
                 receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "success" ||
                 receipt?.status?.toLowerCase() == "processing" ||
                 receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
@@ -642,7 +638,8 @@ const Index = () => {
                   receipt?.status?.toLowerCase() == "queued"
                     ? "PROCESSING"
                     : receipt?.status?.toLowerCase() == "processed" ||
-                      receipt?.status == true
+                      receipt?.status == true ||
+                      receipt?.status?.toLowerCase() == "success"
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>

@@ -43,6 +43,9 @@ import {
 } from "react-icons/bs";
 import Cookies from "js-cookie";
 import { FiRefreshCcw } from "react-icons/fi";
+import { RadioGroup } from "@chakra-ui/react";
+import { Radio } from "@chakra-ui/react";
+import axios from "axios";
 
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
@@ -101,6 +104,8 @@ const Payout = () => {
       amount: "",
       mpin: "",
       otp: "",
+      bankName: "",
+      mode: "IMPS",
     },
   });
 
@@ -111,19 +116,32 @@ const Payout = () => {
     data: {},
   });
 
+  function fetchBankDetails() {
+    axios.get(`https://ifsc.razorpay.com/${Formik.values.ifsc}`).then(res=>{
+      Formik.setFieldValue("bankName", res.data['BANK'])
+    }).catch(err=>{
+      Toast({
+        status: 'error',
+        title: "Error while fetching bank details",
+        description: err?.response?.data?.message || err?.response?.data || err?.message
+      })
+    })
+  }
+
   async function triggerOtp() {
     setIsLoading(true);
     await BackendAxios.post(`/api/send-otp/payout`)
       .then((res) => {
         setIsLoading(false);
         Toast({
-          position: 'top-right',
+          position: "top-right",
           description: "OTP sent to senior",
         });
         setOtpModal(true);
       })
       .catch((err) => {
-        setIsLoading(false);if (err?.response?.status == 401) {
+        setIsLoading(false);
+        if (err?.response?.status == 401) {
           Cookies.remove("verified");
           window.location.reload();
           return;
@@ -157,6 +175,7 @@ const Payout = () => {
         mpin: Formik.values.mpin,
         amount: Formik.values.amount,
         otp: Formik.values.otp,
+        mode: Formik.values.mode,
       })
     )
       .then((res) => {
@@ -278,6 +297,26 @@ const Payout = () => {
                 />
               </FormControl>
               <FormControl>
+                <HStack w={'full'} justifyContent={'space-between'}>
+                  <FormLabel>Bank Name (optional)</FormLabel>
+                  <Text
+                    fontSize={"xs"}
+                    color={"twitter.500"}
+                    fontWeight={"semibold"}
+                    onClick={fetchBankDetails}
+                  >
+                    Fetch Automatically
+                  </Text>
+                </HStack>
+                <Input
+                  name={"bankName"}
+                  onChange={Formik.handleChange}
+                  placeholder={"Enter Bank Name"}
+                  value={Formik.values.bankName}
+                  isDisabled={isLoading}
+                />
+              </FormControl>
+              <FormControl>
                 <FormLabel>Enter Amount</FormLabel>
                 <InputGroup>
                   <InputLeftAddon children={"₹"} />
@@ -288,6 +327,23 @@ const Payout = () => {
                     value={Formik.values.amount}
                   />
                 </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Transaction Mode</FormLabel>
+                <RadioGroup
+                  name="mode"
+                  w={"full"}
+                  display={'flex'}
+                  flexDir={"row"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  gap={8}
+                  onChange={Formik.handleChange}
+                  defaultValue={"IMPS"}
+                >
+                  <Radio value="IMPS">IMPS</Radio>
+                  <Radio value="NEFT">NEFT</Radio>
+                </RadioGroup>
               </FormControl>
               <Button
                 colorScheme={"orange"}
@@ -486,7 +542,7 @@ const Payout = () => {
             >
               Confirm
             </Button>
-            <Button variant="ghost" onClick={()=>triggerOtp()}>
+            <Button variant="ghost" onClick={() => triggerOtp()}>
               Resend OTP
             </Button>
           </ModalFooter>
@@ -506,6 +562,7 @@ const Payout = () => {
                 p={8}
                 bg={
                   receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
@@ -515,6 +572,7 @@ const Payout = () => {
               >
                 {receipt?.status?.toLowerCase() == "processed" ||
                 receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "success" ||
                 receipt?.status?.toLowerCase() == "processing" ||
                 receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
@@ -533,6 +591,7 @@ const Payout = () => {
                   {receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued" ||
                   receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
