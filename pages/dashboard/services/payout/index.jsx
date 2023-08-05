@@ -176,6 +176,7 @@ const Payout = () => {
         amount: Formik.values.amount,
         otp: Formik.values.otp,
         mode: Formik.values.mode,
+        bankName: Formik.values.bankName,
       })
     )
       .then((res) => {
