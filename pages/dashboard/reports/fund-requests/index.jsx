@@ -43,7 +43,7 @@ const Index = () => {
   const Toast = useToast({
     position: "top-right",
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
@@ -142,19 +142,17 @@ const Index = () => {
   });
 
   function fetchTransactions(pageLink) {
-    setLoading(true)
+    setLoading(true);
     BackendAxios.get(
       pageLink ||
-        `/api/fund/fetch-fund?from=${Formik.values.from + (
-          Formik.values.from && ("T" + "00:00")
-        )}&to=${
-          Formik.values.to + (Formik.values.to && ("T" + "23:59"))
-        }&status=${
+        `/api/fund/fetch-fund?from=${
+          Formik.values.from + (Formik.values.from && "T" + "00:00")
+        }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&status=${
           Formik.values.status != "all" ? Formik.values.status : ""
         }&search=${Formik.values.trnxnId}&page=1`
     )
       .then((res) => {
-        setLoading(false)
+        setLoading(false);
         setPagination({
           current_page: res.data.current_page,
           total_pages: parseInt(res.data.last_page),
@@ -167,7 +165,7 @@ const Index = () => {
         setRowData(res.data.data);
       })
       .catch((err) => {
-        setLoading(false)
+        setLoading(false);
         console.log(err);
         Toast({
           status: "error",
@@ -229,9 +227,6 @@ const Index = () => {
         </HStack>
         <br />
         <br />
-        <Box p={2} bg={"orange.500"}>
-          <Text color={"#FFF"}>Search Transactions</Text>
-        </Box>
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
           <FormControl w={["full", "xs"]}>
             <FormLabel>From Date</FormLabel>
@@ -275,7 +270,60 @@ const Index = () => {
             Search
           </Button>
         </HStack>
-        <Box mt={8}>
+
+        <HStack
+          spacing={2}
+          p={4}
+          mt={24}
+          bg={"white"}
+          justifyContent={"space-between"}
+        >
+          <HStack spacing={2}>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.first_page_url)}
+            >
+              <BsChevronDoubleLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.prev_page_url)}
+            >
+              <BsChevronLeft />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"solid"}
+            >
+              {pagination.current_page}
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.next_page_url)}
+            >
+              <BsChevronRight />
+            </Button>
+            <Button
+              colorScheme={"orange"}
+              fontSize={12}
+              size={"xs"}
+              variant={"outline"}
+              onClick={() => fetchTransactions(pagination.last_page_url)}
+            >
+              <BsChevronDoubleRight />
+            </Button>
+          </HStack>
           <Button
             colorScheme="blue"
             isLoading={loading}
@@ -285,59 +333,8 @@ const Index = () => {
           >
             Click To Reload Data
           </Button>
-        </Box>
-        <HStack
-          spacing={2}
-          py={4}
-          mt={12}
-          bg={"white"}
-          justifyContent={"center"}
-        >
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.first_page_url)}
-          >
-            <BsChevronDoubleLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.prev_page_url)}
-          >
-            <BsChevronLeft />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"solid"}
-          >
-            {pagination.current_page}
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.next_page_url)}
-          >
-            <BsChevronRight />
-          </Button>
-          <Button
-            colorScheme={"orange"}
-            fontSize={12}
-            size={"xs"}
-            variant={"outline"}
-            onClick={() => fetchTransactions(pagination.last_page_url)}
-          >
-            <BsChevronDoubleRight />
-          </Button>
         </HStack>
+
         <Box py={6}>
           <Box
             className="ag-theme-alpine ag-theme-pesa24-blue"

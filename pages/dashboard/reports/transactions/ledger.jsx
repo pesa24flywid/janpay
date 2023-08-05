@@ -571,8 +571,6 @@ const Index = () => {
                 resizable: true,
                 sortable: true,
               }}
-              pagination={true}
-              paginationPageSize={100}
               components={{
                 receiptCellRenderer: receiptCellRenderer,
                 creditCellRenderer: creditCellRenderer,
