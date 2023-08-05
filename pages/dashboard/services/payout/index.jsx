@@ -167,7 +167,7 @@ const Payout = () => {
       return;
     }
     await BackendAxios.post(
-      `/api/razorpay/payout/new-payout/${serviceId}`,
+      `/api/srk/payout/new-payout/${serviceId}`,
       JSON.stringify({
         beneficiaryName: Formik.values.beneficiaryName,
         account: Formik.values.account,
