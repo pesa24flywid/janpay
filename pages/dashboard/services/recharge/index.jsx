@@ -1,6 +1,6 @@
 // PaySprint Recharge Handling
-import React, { useState, useEffect, useRef } from 'react'
-import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import React, { useState, useEffect, useRef } from "react";
+import DashboardWrapper from "../../../../hocs/DashboardLayout";
 import {
   Box,
   Image,
@@ -27,11 +27,11 @@ import {
   ModalHeader,
   ModalFooter,
   PinInput,
-  PinInputField
-} from '@chakra-ui/react'
-import { HiServerStack } from 'react-icons/hi2'
-import { GiRotaryPhone, GiMoneyStack } from 'react-icons/gi'
-import { GoMortarBoard } from 'react-icons/go'
+  PinInputField,
+} from "@chakra-ui/react";
+import { HiServerStack } from "react-icons/hi2";
+import { GiRotaryPhone, GiMoneyStack } from "react-icons/gi";
+import { GoMortarBoard } from "react-icons/go";
 import {
   BsCreditCardFill,
   BsLightningChargeFill,
@@ -41,9 +41,9 @@ import {
   BsCheck2Circle,
   BsXCircle,
   BsDownload,
-} from 'react-icons/bs'
-import { AiFillFire } from 'react-icons/ai'
-import { FiMonitor } from 'react-icons/fi'
+} from "react-icons/bs";
+import { AiFillFire } from "react-icons/ai";
+import { FiMonitor } from "react-icons/fi";
 import {
   FaMobile,
   FaSatelliteDish,
@@ -52,150 +52,144 @@ import {
   FaHeart,
   FaCar,
   FaCity,
-} from 'react-icons/fa'
-import { BiRupee } from 'react-icons/bi'
-import BackendAxios, { ClientAxios, FormAxios } from '../../../../lib/axios'
-import Pdf from 'react-to-pdf'
-import Cookies from 'js-cookie'
-import Loader from '../../../../hocs/Loader'
-
+} from "react-icons/fa";
+import { BiRupee } from "react-icons/bi";
+import BackendAxios, { ClientAxios, FormAxios } from "../../../../lib/axios";
+import Pdf from "react-to-pdf";
+import Cookies from "js-cookie";
+import Loader from "../../../../hocs/Loader";
 
 const Bbps = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [keyword, setKeyword] = useState("")
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [rechargeProvider, setRechargeProvider] = useState("");
+  const [keyword, setKeyword] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [categories, setCategories] = useState()
-  const [selectedCategory, setSelectedCategory] = useState()
+  const [categories, setCategories] = useState();
+  const [selectedCategory, setSelectedCategory] = useState();
 
-  const [operators, setOperators] = useState()
-  const [selectedOperatorId, setSelectedOperatorId] = useState('')
-  const [selectedOperatorName, setSelectedOperatorName] = useState('')
-  const [networkCircle, setNetworkCircle] = useState("")
-  const [operatorMenuStatus, setOperatorMenuStatus] = useState(true)
+  const [operators, setOperators] = useState();
+  const [selectedOperatorId, setSelectedOperatorId] = useState("");
+  const [selectedOperatorName, setSelectedOperatorName] = useState("");
+  const [networkCircle, setNetworkCircle] = useState("");
+  const [operatorMenuStatus, setOperatorMenuStatus] = useState(true);
 
-  const [operatorParams, setOperatorParams] = useState()
+  const [operatorParams, setOperatorParams] = useState();
 
-  const [circleForm, setCircleForm] = useState(false)
+  const [circleForm, setCircleForm] = useState(false);
 
-  const [hlrResponse, setHlrResponse] = useState([])
+  const [hlrResponse, setHlrResponse] = useState([]);
 
-  const [plans, setPlans] = useState()
-  const [planCategories, setPlanCategories] = useState([])
-  const [planValues, setPlanValues] = useState([])
+  const [plans, setPlans] = useState();
+  const [planCategories, setPlanCategories] = useState([]);
+  const [planValues, setPlanValues] = useState([]);
 
-  const [availablePlans, setAvailablePlans] = useState(null)
+  const [availablePlans, setAvailablePlans] = useState(null);
 
-  const [selectedPlan, setSelectedPlan] = useState('')
-  const [selectedPlanCategory, setSelectedPlanCategory] = useState()
-  const [selectedPlanValue, setSelectedPlanValue] = useState("")
-  const [amount, setAmount] = useState(selectedPlan)
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedPlanCategory, setSelectedPlanCategory] = useState();
+  const [selectedPlanValue, setSelectedPlanValue] = useState("");
+  const [amount, setAmount] = useState(selectedPlan);
 
-  const [fetchBillBtn, setFetchBillBtn] = useState(false)
-  const [fetchInfoBtn, setFetchInfoBtn] = useState(false)
-  const [isPaymentProgress, setIsPaymentProgress] = useState(false)
+  const [fetchBillBtn, setFetchBillBtn] = useState(false);
+  const [fetchInfoBtn, setFetchInfoBtn] = useState(false);
+  const [isPaymentProgress, setIsPaymentProgress] = useState(false);
 
-  const [mpin, setMpin] = useState("")
+  const [mpin, setMpin] = useState("");
 
-  const formRef = useRef()
-  const Toast = useToast({ position: 'top-right' })
+  const formRef = useRef();
+  const Toast = useToast({ position: "top-right" });
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, { quality: 0.95 })
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
     const data = {
       files: [
-        new File([myFile], 'receipt.jpeg', {
-          type: myFile.type
-        })
+        new File([myFile], "receipt.jpeg", {
+          type: myFile.type,
+        }),
       ],
-      title: 'Receipt',
-      text: 'Receipt'
-    }
+      title: "Receipt",
+      text: "Receipt",
+    };
     try {
-      await navigator.share(data)
+      await navigator.share(data);
     } catch (error) {
-      console.error('Error sharing:', error?.toString());
+      console.error("Error sharing:", error?.toString());
       Toast({
-        status: 'warning',
-        description: error?.toString()
-      })
+        status: "warning",
+        description: error?.toString(),
+      });
     }
   };
 
   useEffect(() => {
-    ClientAxios.post("/api/paysprint/category/all").then((res) => {
-      setCategories(res.data)
-    }).catch((err) => {
-      Toast({
-        status: "error",
-        title: "Error Occured",
-        description: err.message,
+    ClientAxios.get(`/api/global`)
+      .then((res) => {
+        setRechargeProvider(res.data[0]?.recharge_provider || "paysprint");
+        if (!res.data[0].recharge_status) {
+          window.location.href("/dashboard/not-available");
+        }
       })
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err);
+      });
 
+    ClientAxios.get(`/api/organisation`)
+      .then((res) => {
+        if (!res.data.recharge_status) {
+          window.location.href("/dashboard/not-available");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
-    ClientAxios.get(`/api/global`).then(res => {
-      if (!res.data[0].recharge_status) {
-        window.location.href('/dashboard/not-available')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
-
-
-    ClientAxios.get(`/api/organisation`).then(res => {
-      if (!res.data.recharge_status) {
-        window.location.href('/dashboard/not-available')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
-  }, [])
-
-  useEffect(()=>{
-    fetchOperators("Prepaid")
-  },[])
+  useEffect(() => {
+    fetchOperators("Prepaid");
+  }, []);
 
   function fetchOperators(keyword) {
-    setIsLoading(true)
-    setOperatorMenuStatus(false)
-    setSelectedOperatorId('')
-    setSelectedOperatorName('')
-    setOperatorParams()
-    setCircleForm(false)
-    setPlans()
-    setSelectedPlanCategory(false)
-    setKeyword(keyword)
-    BackendAxios.get(`api/paysprint/bbps/mobile-operators/${keyword}`).then((res) => {
-      setIsLoading(false)
-      setOperators(Object.values(res.data))
-      setOperatorMenuStatus(true)
-    }).catch((err) => {
-      setIsLoading(false)
-      if (err?.response?.status == 401) {
-        Cookies.remove("verified");
-        window.location.reload();
-        return;
-      }
-      Toast({
-        status: "error",
-        title: "Error Occured",
-        description: err.message,
+    setIsLoading(true);
+    setOperatorMenuStatus(false);
+    setSelectedOperatorId("");
+    setSelectedOperatorName("");
+    setOperatorParams();
+    setCircleForm(false);
+    setPlans();
+    setSelectedPlanCategory(false);
+    setKeyword(keyword);
+    BackendAxios.get(`api/paysprint/bbps/mobile-operators/${keyword}`)
+      .then((res) => {
+        setIsLoading(false);
+        setOperators(Object.values(res.data));
+        setOperatorMenuStatus(true);
       })
-      console.log(err)
-    })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        Toast({
+          status: "error",
+          title: "Error Occured",
+          description: err.message,
+        });
+        console.log(err);
+      });
   }
 
   function fetchParams(operator_value) {
-    setOperatorParams()
-    setCircleForm(false)
-    setPlans()
-    setSelectedPlanCategory(false)
-    let operatorValueArray = operator_value.split("|")
-    setSelectedOperatorId(operatorValueArray[0])
-    setSelectedOperatorName(operatorValueArray[1])
+    setOperatorParams();
+    setCircleForm(false);
+    setPlans();
+    setSelectedPlanCategory(false);
+    let operatorValueArray = operator_value.split("|");
+    setSelectedOperatorId(operatorValueArray[0]);
+    setSelectedOperatorName(operatorValueArray[1]);
     // BackendAxios.get(`api/paysprint/bbps/mobile-operators/parameter/${operatorValueArray[0]}`).then((res) => {
     //   setOperatorParams(Object.values(res.data))
     //   keyword == "Postpaid" || keyword == "Landline" ? setFetchBillBtn(true) : setFetchBillBtn(false)
@@ -203,140 +197,156 @@ const Bbps = () => {
     // }).catch((err) => {
     //   console.log(err)
     // })
-    setOperatorParams(true)
+    setOperatorParams(true);
   }
 
-
-
   function browsePlan() {
-    setIsLoading(true)
-    setSelectedPlanCategory(false)
-    setPlans()
+    setIsLoading(true);
+    setSelectedPlanCategory(false);
+    setPlans();
     BackendAxios.post(`api/paysprint/bbps/mobile-recharge/browse`, {
       selectedOperatorName,
       networkCircle,
-    }).then((res) => {
-      setIsLoading(false)
-      setPlans(res.data)
-      setPlanValues(res.data.info)
-      setPlanCategories(Object.keys(res.data.info))
-    }).catch((err) => {
-      setIsLoading(false)
-      if (err?.response?.status == 401) {
-        Cookies.remove("verified");
-        window.location.reload();
-        return;
-      }
-      Toast({
-        status: "error",
-        title: "No plans found",
-        description: err.message
-      })
-      setPlans()
     })
+      .then((res) => {
+        setIsLoading(false);
+        setPlans(res.data);
+        setPlanValues(res.data.info);
+        setPlanCategories(Object.keys(res.data.info));
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        Toast({
+          status: "error",
+          title: "No plans found",
+          description: err.message,
+        });
+        setPlans();
+      });
   }
 
   function hlrRequest() {
-    setIsLoading(true)
+    setIsLoading(true);
     BackendAxios.get(`api/paysprint/bbps/mobile-recharge/hlr`, {
       selectedOperatorName,
       networkCircle,
-    }).then((res) => {
-      setIsLoading(false)
-      if (res.data.status != false) {
-        setHlrResponse(res.data)
-      }
-      else {
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.status != false) {
+          setHlrResponse(res.data);
+        } else {
+          Toast({
+            status: "error",
+            title: "We're facing some issues.",
+            description: "Please enter details manually",
+          });
+          setFetchInfoBtn(false);
+          setCircleForm(true);
+          setHlrResponse();
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
         Toast({
           status: "error",
           title: "We're facing some issues.",
           description: "Please enter details manually",
-        })
-        setFetchInfoBtn(false)
-        setCircleForm(true)
-        setHlrResponse()
-      }
-    }).catch((err) => {
-      setIsLoading(false)
-      if (err?.response?.status == 401) {
-        Cookies.remove("verified");
-        window.location.reload();
-        return;
-      }
-      Toast({
-        status: "error",
-        title: "We're facing some issues.",
-        description: "Please enter details manually",
-      })
-      setFetchInfoBtn(false)
-      setCircleForm(true)
-      setHlrResponse()
-    })
+        });
+        setFetchInfoBtn(false);
+        setCircleForm(true);
+        setHlrResponse();
+      });
   }
 
   function fetchBill() {
-    let formData = new FormData(document.getElementById('psRechargeForm'))
-    FormAxios.post("api/eko/bbps/fetch-bill",
-      formData
-    )
+    let formData = new FormData(document.getElementById("psRechargeForm"));
+    FormAxios.post("api/eko/bbps/fetch-bill", formData);
   }
 
   async function doRecharge() {
-    event.preventDefault()
-    setIsLoading(true)
-    setIsPaymentProgress(true)
-    let formData = new FormData(document.getElementById('psRechargeForm'))
+    event.preventDefault();
+    setIsLoading(true);
+    setIsPaymentProgress(true);
+    let formData = new FormData(document.getElementById("psRechargeForm"));
     var object = {};
     formData.forEach(function (value, key) {
       object[key] = value;
     });
-    await BackendAxios.post('api/paysprint/bbps/mobile-recharge/do-recharge', {
+    await BackendAxios.post("api/paysprint/bbps/mobile-recharge/do-recharge", {
       ...object,
-      mpin: mpin
-    }).then((res) => {
-      setIsLoading(false)
-      setIsPaymentProgress(false)
-      setReceipt({
-        status: res.data.metadata.status,
-        show: true,
-        data: res.data.metadata
-      })
-    }).catch(err => {
-      setIsLoading(false)
-      setIsPaymentProgress(false)
-      if (err?.response?.status == 401) {
-        Cookies.remove("verified");
-        window.location.reload();
-        return;
-      }
-      Toast({
-        status: 'error',
-        title: 'Transaction Failed!',
-        description: err.response.data.message || err.response.data || err.message,
-        position: 'top-right'
-      })
+      mpin: mpin,
+      operatorName: selectedOperatorName,
+      incomeWalletOperatorCode: selectedOperatorName
+        ?.toLowerCase()
+        .includes("airtel")
+        ? "ANG"
+        : selectedOperatorName?.toLowerCase().includes("bsnl")
+        ? "BS"
+        : selectedOperatorName?.toLowerCase().includes("vodafone")
+        ? "VI"
+        : selectedOperatorName?.toLowerCase().includes("idea")
+        ? "VI"
+        : selectedOperatorName?.toLowerCase().includes("jio")
+        ? "RJIO"
+        : "",
     })
-    onClose()
+      .then((res) => {
+        setIsLoading(false);
+        setIsPaymentProgress(false);
+        setReceipt({
+          status: res.data.metadata.status,
+          show: true,
+          data: res.data.metadata,
+        });
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setIsPaymentProgress(false);
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        Toast({
+          status: "error",
+          title: "Transaction Failed!",
+          description:
+            err.response.data.message || err.response.data || err.message,
+          position: "top-right",
+        });
+      });
+    onClose();
   }
 
-  const pdfRef = React.createRef()
+  const pdfRef = React.createRef();
   const [receipt, setReceipt] = useState({
     show: false,
     status: "success",
-    data: {}
-  })
+    data: {},
+  });
 
   return (
     <>
-    {
-      isLoading ? <Loader /> : null
-    }
-      <DashboardWrapper titleText={'PaySprint Transaction'}>
+      {isLoading ? <Loader /> : null}
+      <DashboardWrapper titleText={"PaySprint Transaction"}>
         <Stack
-          w={'full'} bg={'white'}
-          boxShadow={'md'} mt={6}
+          w={"full"}
+          bg={"white"}
+          boxShadow={"md"}
+          mt={6}
           rounded={12}
-          direction={['column', 'row']}
+          direction={["column", "row"]}
         >
           {/* <VStack
             w={['full', 'xs']} h={['sm', 'xl']}
@@ -405,176 +415,232 @@ const Bbps = () => {
               })
             }
           </VStack> */}
-          <Box p={4} w={['full', '85%']} h={['auto', 'xl']} overflowY={['scroll']}>
+          <Box
+            p={4}
+            w={["full", "85%"]}
+            h={["auto", "xl"]}
+            overflowY={["scroll"]}
+          >
+            {operators ? (
+              <FormControl id={"operator"}>
+                <FormLabel>Select Operator</FormLabel>
+                <Select
+                  name={"operator"}
+                  w={["full", "xs"]}
+                  onChange={(e) => {
+                    fetchParams(e.target.value);
+                  }}
+                  isDisabled={!operatorMenuStatus}
+                  placeholder={"Select Operator"}
+                >
+                  {operators
+                    ?.filter(
+                      (operator) =>
+                        (!operator.name?.toLowerCase().includes("mtnl"))
+                    )
+                    .map((operator) => {
+                      return (
+                        <option
+                          value={`${operator.id}|${operator.name}`}
+                          title={operator.name}
+                        >
+                          {operator.name}
+                        </option>
+                      );
+                    })}
+                </Select>
+              </FormControl>
+            ) : null}
 
-            {
-              operators ?
-                <FormControl id={'operator'}>
-                  <FormLabel>Select Operator</FormLabel>
-                  <Select
-                    name={'operator'} w={['full', 'xs']}
-                    onChange={(e) => { fetchParams(e.target.value) }}
-                    isDisabled={!operatorMenuStatus}
-                    placeholder={'Select Operator'}
-                  >
-                    {
-                      operators.map((operator) => {
-                        return (
-                          <option
-                            value={`${operator.id}|${operator.name}`}
-                            title={operator.name}
-                          >
-                            {operator.name}
+            {operatorParams ? (
+              <form action="" method="POST" ref={formRef} id={"psRechargeForm"}>
+                <input
+                  type="hidden"
+                  name="operator"
+                  value={selectedOperatorId}
+                />
+                {operatorParams ? (
+                  <>
+                    <Stack my={6} direction={["column"]} spacing={6}>
+                      <FormControl id={"canumber"} w={["full", "xs"]}>
+                        <FormLabel>Enter Number</FormLabel>
+                        <Input type={"text"} maxLength={10} name={"canumber"} />
+                      </FormControl>
+                    </Stack>
+                    <Stack
+                      my={6}
+                      direction={["column"]}
+                      spacing={6}
+                      w={["full", "xs"]}
+                    >
+                      <FormControl id="location">
+                        <FormLabel>Select Network Circle</FormLabel>
+                        <Select
+                          name="location"
+                          placeholder="Select Circle"
+                          onChange={(e) => setNetworkCircle(e.target.value)}
+                        >
+                          <option value="Andhra Pradesh Mobileangana">
+                            Andhra Pradesh Mobileangana
                           </option>
-                        )
-                      })
-                    }
-                  </Select>
-                </FormControl> : null
-            }
+                          <option value="Assam">Assam</option>
+                          <option value="Bihar Jharkhand">
+                            Bihar Jharkhand
+                          </option>
+                          <option value="Chennai">Chennai</option>
+                          <option value="Delhi NCR">Delhi NCR</option>
+                          <option value="Gujarat">Gujarat</option>
+                          <option value="Haryana">Haryana</option>
+                          <option value="Himachal Pradesh">
+                            Himachal Pradesh
+                          </option>
+                          <option value="Jammu Kashmir">Jammu Kashmir</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Kerala">Kerala</option>
+                          <option value="Kolkata">Kolkata</option>
+                          <option value="Madhya Pradesh Chhattisgarh">
+                            Madhya Pradesh Chhattisgarh
+                          </option>
+                          <option value="Maharashtra Goa">
+                            Maharashtra Goa
+                          </option>
+                          <option value="Mumbai">Mumbai</option>
+                          <option value="North East">North East</option>
+                          <option value="Orissa">Orissa</option>
+                          <option value="Punjab">Punjab</option>
+                          <option value="Rajasthan">Rajasthan</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="UP East">UP East</option>
+                          <option value="UP West">UP West</option>
+                          <option value="West Bengal">West Bengal</option>
+                        </Select>
+                      </FormControl>
+                      <Button
+                        onClick={() => browsePlan()}
+                        isLoading={isLoading}
+                      >
+                        Browse Plans
+                      </Button>
+                    </Stack>
+                  </>
+                ) : null}
 
-
-            {
-              operatorParams ?
-                <form action="" method='POST' ref={formRef} id={'psRechargeForm'}>
-                  <input type="hidden" name="operator" value={selectedOperatorId} />
-                  {
-                    operatorParams ?
-                      <>
-                        <Stack
-                          my={6}
-                          direction={['column']}
-                          spacing={6}
-                        >
-                          <FormControl id={"canumber"} w={['full', 'xs']}>
-                            <FormLabel>Enter Number</FormLabel>
-                            <Input type={'text'} maxLength={10} name={"canumber"} />
-                          </FormControl>
-                        </Stack>
-                        <Stack
-                          my={6}
-                          direction={['column']}
-                          spacing={6}
-                          w={['full', 'xs']}
-                        >
-                          <FormControl id='location'>
-                            <FormLabel>Select Network Circle</FormLabel>
-                            <Select name='location' placeholder='Select Circle' onChange={(e) => setNetworkCircle(e.target.value)}>
-                              <option value="Andhra Pradesh Mobileangana">Andhra Pradesh Mobileangana</option>
-                              <option value="Assam">Assam</option>
-                              <option value="Bihar Jharkhand">Bihar Jharkhand</option>
-                              <option value="Chennai">Chennai</option>
-                              <option value="Delhi NCR">Delhi NCR</option>
-                              <option value="Gujarat">Gujarat</option>
-                              <option value="Haryana">Haryana</option>
-                              <option value="Himachal Pradesh">Himachal Pradesh</option>
-                              <option value="Jammu Kashmir">Jammu Kashmir</option>
-                              <option value="Karnataka">Karnataka</option>
-                              <option value="Kerala">Kerala</option>
-                              <option value="Kolkata">Kolkata</option>
-                              <option value="Madhya Pradesh Chhattisgarh">Madhya Pradesh Chhattisgarh</option>
-                              <option value="Maharashtra Goa">Maharashtra Goa</option>
-                              <option value="Mumbai">Mumbai</option>
-                              <option value="North East">North East</option>
-                              <option value="Orissa">Orissa</option>
-                              <option value="Punjab">Punjab</option>
-                              <option value="Rajasthan">Rajasthan</option>
-                              <option value="Tamil Nadu">Tamil Nadu</option>
-                              <option value="UP East">UP East</option>
-                              <option value="UP West">UP West</option>
-                              <option value="West Bengal">West Bengal</option>
-                            </Select>
-                          </FormControl>
-                          <Button onClick={() => browsePlan()} isLoading={isLoading}>Browse Plans</Button>
-                        </Stack>
-                      </> : null
-
-                  }
-
-
-                  {
-                    plans &&
-                    <>
-                      <FormLabel mt={6}>Select Plan</FormLabel>
-                      <HStack overflowX={'scroll'} py={6}>
-                        {
-                          planCategories.map((planCategory, key) => {
+                {plans && (
+                  <>
+                    <FormLabel mt={6}>Select Plan</FormLabel>
+                    <HStack overflowX={"scroll"} py={6}>
+                      {planCategories.map((planCategory, key) => {
+                        return (
+                          <Button
+                            rounded={"full"}
+                            colorScheme={"orange"}
+                            variant={"outline"}
+                            key={key}
+                            onClick={() => {
+                              setSelectedPlanCategory(true);
+                              setAvailablePlans(planValues[planCategory]);
+                            }}
+                            _focus={{ bg: "facebook.400", color: "white" }}
+                          >
+                            {planCategory}
+                          </Button>
+                        );
+                      })}
+                    </HStack>
+                  </>
+                )}
+                {selectedPlanCategory ? (
+                  <>
+                    <RadioGroup
+                      name="planAmount"
+                      p={4}
+                      id="planAmount"
+                      mb={6}
+                      value={amount}
+                      onChange={(value) => {
+                        setAmount(value);
+                      }}
+                      w={["full"]}
+                      bg={"aqua"}
+                      rounded={12}
+                    >
+                      <VStack w={"full"}>
+                        {availablePlans ? (
+                          availablePlans.map((plan, key) => {
                             return (
-                              <Button
-                                rounded={'full'}
-                                colorScheme={'orange'}
-                                variant={'outline'}
+                              <Box
+                                p={3}
                                 key={key}
-                                onClick={() => { setSelectedPlanCategory(true); setAvailablePlans(planValues[planCategory]) }}
-                                _focus={{ bg: 'facebook.400', color: 'white' }}
+                                w={["full"]}
+                                bg={"white"}
+                                rounded={12}
+                                boxShadow={"lg"}
                               >
-                                {planCategory}
-                              </Button>
-                            )
+                                <Radio value={plan.rs} w={"full"}>
+                                  <Text fontSize={"xl"} fontWeight={"semibold"}>
+                                    ₹ {plan.rs}
+                                  </Text>
+                                  <Text fontSize={"sm"}>{plan.desc}</Text>
+                                </Radio>
+                              </Box>
+                            );
                           })
-                        }
-                      </HStack>
-                    </>
-                  }
-                  {
-                    selectedPlanCategory ?
-                      <>
-                        <RadioGroup
-                          name="planAmount" p={4}
-                          id="planAmount" mb={6}
+                        ) : (
+                          <Text>No plans available</Text>
+                        )}
+                      </VStack>
+                    </RadioGroup>
+
+                    <FormControl
+                      id="amount"
+                      name="amount"
+                      w={["full", "xs"]}
+                      my={6}
+                    >
+                      <FormLabel>or enter custom amount</FormLabel>
+                      <InputGroup>
+                        <InputLeftAddon children={"₹"} />
+                        <Input
+                          type={"number"}
+                          name={"amount"}
                           value={amount}
-                          onChange={(value) => { setAmount(value) }}
-                          w={['full']}
-                          bg={'aqua'}
-                          rounded={12}
-                        >
-                          <VStack w={'full'}>
-                            {
-                              availablePlans ?
-                                availablePlans.map((plan, key) => {
+                          onChange={(e) => {
+                            setAmount(e.target.value);
+                            setSelectedPlan("");
+                          }}
+                        />
+                      </InputGroup>
+                    </FormControl>
+                    <Button
+                      colorScheme={"whatsapp"}
+                      onClick={onOpen}
+                      isLoading={isLoading}
+                    >
+                      Pay Now
+                    </Button>
+                  </>
+                ) : null}
 
-                                  return (
-                                    <Box
-                                      p={3} key={key}
-                                      w={['full']}
-                                      bg={'white'}
-                                      rounded={12}
-                                      boxShadow={'lg'}
-                                    >
-                                      <Radio value={plan.rs} w={'full'}>
-                                        <Text fontSize={'xl'} fontWeight={'semibold'}>₹ {plan.rs}</Text>
-                                        <Text fontSize={'sm'}>{plan.desc}</Text>
-                                      </Radio>
-                                    </Box>
-                                  )
-
-                                }) : <Text>No plans available</Text>
-                            }
-                          </VStack>
-                        </RadioGroup>
-
-                        <FormControl id='amount' name="amount" w={['full', 'xs']} my={6}>
-                          <FormLabel>or enter custom amount</FormLabel>
-                          <InputGroup>
-                            <InputLeftAddon children={'₹'} />
-                            <Input type={'number'} name={'amount'} value={amount} onChange={(e) => { setAmount(e.target.value); setSelectedPlan('') }} />
-                          </InputGroup>
-                        </FormControl>
-                        <Button colorScheme={'whatsapp'} onClick={onOpen} isLoading={isLoading}>Pay Now</Button>
-                      </> : null
-                  }
-
-
-                  {
-                    fetchBillBtn && <Button colorScheme={'facebook'} onClick={() => fetchBill()} isLoading={isLoading}>Fetch Bill</Button>
-                  }
-                  {
-                    fetchInfoBtn && <Button colorScheme={'orange'} onClick={() => hlrRequest()} isLoading={isLoading}>Fetch Info</Button>
-                  }
-
-                </form> : null
-            }
-
+                {fetchBillBtn && (
+                  <Button
+                    colorScheme={"facebook"}
+                    onClick={() => fetchBill()}
+                    isLoading={isLoading}
+                  >
+                    Fetch Bill
+                  </Button>
+                )}
+                {fetchInfoBtn && (
+                  <Button
+                    colorScheme={"orange"}
+                    onClick={() => hlrRequest()}
+                    isLoading={isLoading}
+                  >
+                    Fetch Info
+                  </Button>
+                )}
+              </form>
+            ) : null}
           </Box>
         </Stack>
       </DashboardWrapper>
@@ -587,48 +653,63 @@ const Bbps = () => {
             <VStack>
               <Text>Enter MPIN to confirm this transaction</Text>
               <HStack>
-                <PinInput onComplete={value => setMpin(value)}>
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
-                  <PinInputField bg={'aqua'} />
+                <PinInput onComplete={(value) => setMpin(value)}>
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
+                  <PinInputField bg={"aqua"} />
                 </PinInput>
               </HStack>
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <HStack justifyContent={'flex-end'}>
-              <Button colorScheme={'orange'} onClick={() => doRecharge()} isLoading={isLoading}>Confirm</Button>
+            <HStack justifyContent={"flex-end"}>
+              <Button
+                colorScheme={"orange"}
+                onClick={() => doRecharge()}
+                isLoading={isLoading}
+              >
+                Confirm
+              </Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
-
 
       <Modal
         isOpen={receipt.show}
         onClose={() => setReceipt({ ...receipt, show: false })}
       >
         <ModalOverlay />
-        <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <ModalContent width={"xs"}>
+          <Box ref={pdfRef} style={{ border: "1px solid #999" }}>
             <ModalHeader p={0}>
-              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
-                {
-                  receipt.status ?
-                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
-                    <BsXCircle color='#FFF' fontSize={72} />
-                }
-                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || "0"}</Text>
-                <Text color={'#FFF'} fontSize={'xs'} textTransform={'uppercase'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+              <VStack
+                w={"full"}
+                p={8}
+                bg={receipt.status ? "green.500" : "red.500"}
+              >
+                {receipt.status ? (
+                  <BsCheck2Circle color="#FFF" fontSize={72} />
+                ) : (
+                  <BsXCircle color="#FFF" fontSize={72} />
+                )}
+                <Text color={"#FFF"} textTransform={"capitalize"}>
+                  ₹ {receipt.data.amount || "0"}
+                </Text>
+                <Text
+                  color={"#FFF"}
+                  fontSize={"xs"}
+                  textTransform={"uppercase"}
+                >
+                  Transaction {receipt.status ? "success" : "failed"}
+                </Text>
               </VStack>
             </ModalHeader>
-            <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
-                {
-                  receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => {
-
+            <ModalBody p={0} bg={"azure"}>
+              <VStack w={"full"} spacing={0} p={4} bg={"#FFF"}>
+                {receipt.data
+                  ? Object.entries(receipt.data).map((item, key) => {
                       if (
                         item[0].toLowerCase() != "status" &&
                         item[0].toLowerCase() != "user" &&
@@ -638,51 +719,61 @@ const Bbps = () => {
                       )
                         return (
                           <HStack
-                            justifyContent={'space-between'}
-                            gap={8} pb={1} w={'full'} key={key}
-                            borderWidth={'0.75px'} p={2}
+                            justifyContent={"space-between"}
+                            gap={8}
+                            pb={1}
+                            w={"full"}
+                            key={key}
+                            borderWidth={"0.75px"}
+                            p={2}
                           >
                             <Text
-                              fontSize={'xs'}
-                              fontWeight={'medium'}
-                              textTransform={'capitalize'}
-                            >{item[0].replace(/_/g, " ")}</Text>
-                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                              fontSize={"xs"}
+                              fontWeight={"medium"}
+                              textTransform={"capitalize"}
+                            >
+                              {item[0].replace(/_/g, " ")}
+                            </Text>
+                            <Text
+                              fontSize={"xs"}
+                              maxW={"full"}
+                            >{`${item[1]}`}</Text>
                           </HStack>
-                        )
-
-                    }
-                    ) : null
-                }
-
+                        );
+                    })
+                  : null}
               </VStack>
             </ModalBody>
           </Box>
           <ModalFooter>
-            <HStack justifyContent={'center'} gap={4}>
+            <HStack justifyContent={"center"} gap={4}>
               <Button
-                colorScheme='yellow'
-                size={'sm'} rounded={'full'}
+                colorScheme="yellow"
+                size={"sm"}
+                rounded={"full"}
                 onClick={handleShare}
-              >Share</Button>
+              >
+                Share
+              </Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
-                {
-                  ({ toPdf }) => <Button
-                    rounded={'full'}
-                    size={'sm'}
-                    colorScheme={'orange'}
+                {({ toPdf }) => (
+                  <Button
+                    rounded={"full"}
+                    size={"sm"}
+                    colorScheme={"orange"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
-                  >Download
+                  >
+                    Download
                   </Button>
-                }
+                )}
               </Pdf>
             </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default Bbps
+export default Bbps;
