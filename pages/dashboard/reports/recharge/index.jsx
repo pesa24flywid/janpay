@@ -73,6 +73,11 @@ const Index = () => {
       field: "transaction_id",
     },
     {
+      headerName: "Mobile No",
+      field: "metadata",
+      cellRenderer: "mobileNumberCellRenderer"
+    },
+    {
       headerName: "Debit Amount",
       field: "debit_amount",
       cellRenderer: "debitCellRenderer",
@@ -314,6 +319,14 @@ const Index = () => {
     );
   };
 
+  const mobileNumberCellRenderer = (params) => {
+    return(
+      <Text>
+        {JSON.parse(params?.data?.metadata)?.mobile_number} ({JSON.parse(params?.data?.metadata)?.operator})
+      </Text>
+    )
+  }
+
   return (
     <>
       <DashboardWrapper pageTitle={"Recharge Reports"}>
@@ -462,6 +475,7 @@ const Index = () => {
                 creditCellRenderer: creditCellRenderer,
                 debitCellRenderer: debitCellRenderer,
                 statusCellRenderer: statusCellRenderer,
+                mobileNumberCellRenderer: mobileNumberCellRenderer
               }}
               onFilterChanged={(params) => {
                 setPrintableRow(
