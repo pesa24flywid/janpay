@@ -692,25 +692,44 @@ const Bbps = () => {
         <ModalContent width={"xs"}>
           <Box ref={pdfRef} style={{ border: "1px solid #999" }}>
             <ModalHeader p={0}>
-              <VStack
+            <VStack
                 w={"full"}
                 p={8}
-                bg={receipt.status ? "green.500" : "red.500"}
+                bg={
+                  receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
+                  receipt?.status == true ||
+                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued"
+                    ? "green.500"
+                    : "red.500"
+                }
               >
-                {receipt.status ? (
+                {receipt?.status?.toLowerCase() == "processed" ||
+                receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "success" ||
+                receipt?.status?.toLowerCase() == "processing" ||
+                receipt?.status?.toLowerCase() == "queued" ? (
                   <BsCheck2Circle color="#FFF" fontSize={72} />
                 ) : (
                   <BsXCircle color="#FFF" fontSize={72} />
                 )}
                 <Text color={"#FFF"} textTransform={"capitalize"}>
-                  ₹ {receipt.data.amount || "0"}
+                  ₹ {receipt.data.amount || 0}
                 </Text>
                 <Text
                   color={"#FFF"}
-                  fontSize={"xs"}
+                  fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  Transaction {receipt.status ? "success" : "failed"}
+                  TRANSACTION{" "}
+                  {receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued" ||
+                  receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
+                  receipt?.status == true
+                    ? "SUCCESSFUL"
+                    : "FAILED"}
                 </Text>
               </VStack>
             </ModalHeader>
