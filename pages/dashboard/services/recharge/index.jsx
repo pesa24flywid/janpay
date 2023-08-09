@@ -288,6 +288,24 @@ const Bbps = () => {
     formData.forEach(function (value, key) {
       object[key] = value;
     });
+    await BackendAxios.post("api/paysprint/bbps/mobile-recharge/do-recharge", {
+      ...object,
+      mpin: mpin,
+      operatorName: selectedOperatorName,
+      incomeWalletOperatorCode: selectedOperatorName
+        ?.toLowerCase()
+        .includes("airtel")
+        ? "AT"
+        : selectedOperatorName?.toLowerCase().includes("bsnl")
+        ? "BT"
+        : selectedOperatorName?.toLowerCase().includes("vodafone")
+        ? "VI"
+        : selectedOperatorName?.toLowerCase().includes("idea")
+        ? "VI"
+        : selectedOperatorName?.toLowerCase().includes("jio")
+        ? "JIO"
+        : "",
+    })
     await BackendAxios.post(
       `api/${rechargeProvider}/bbps/mobile-recharge/do-recharge`,
       {
