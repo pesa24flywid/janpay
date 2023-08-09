@@ -432,6 +432,9 @@ const Index = () => {
               <Tr>
                 <Th color={"#FFF"}>Payout</Th>
                 <Th color={"#FFF"}>Charge</Th>
+                <Th color={"#FFF"}>Reharge</Th>
+                <Th color={"#FFF"}>Recharge Fees</Th>
+                <Th color={"#FFF"}>Recharge Comm.</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -457,6 +460,22 @@ const Index = () => {
                       (overviewData[11]?.["payout-commission"]?.debit +
                         overviewData[10]?.["payout-charge"]?.debit)
                   ).toFixed(2) || 0}
+                </Td>
+                <Td>
+                  {Math.abs(
+                    overviewData[8]?.["recharge"]?.credit -
+                      overviewData[8]?.["recharge"]?.debit
+                  ) || 0}
+                </Td>
+                <Td>
+                  {Math.abs(
+                      overviewData[12]?.["recharge-commission"]?.debit
+                  ) || 0}
+                </Td>
+                <Td>
+                  {Math.abs(
+                      overviewData[12]?.["recharge-commission"]?.credit
+                  ) || 0}
                 </Td>
               </Tr>
               {/* <Tr>
