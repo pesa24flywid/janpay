@@ -202,6 +202,12 @@ const Index = () => {
   }
 
   function fetchTransactions(pageLink) {
+    if(Formik.values.search && Formik.values.search.length != 10) {
+      Toast({
+        description: "Phone number must be of 10 digits"
+      })
+      return
+    }
     setLoading(true);
     BackendAxios.get(
       pageLink ||
@@ -340,7 +346,7 @@ const Index = () => {
           </Button>
           <Button
             onClick={() => generateReport("excel")}
-            colorScheme={"red"}
+            colorScheme={"whatsapp"}
             size={"sm"}
           >
             Export Excel
