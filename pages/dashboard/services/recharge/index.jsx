@@ -294,7 +294,7 @@ const Bbps = () => {
         ...object,
         mpin: mpin,
         operatorName: selectedOperatorName,
-        incomeWalletOperatorCode: selectedOperatorName
+        secondaryOperatorCode: selectedOperatorName
           ?.toLowerCase()
           .includes("airtel")
           ? "AT"
