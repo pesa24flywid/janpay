@@ -138,27 +138,31 @@ const Index = () => {
                 </Text>
               </Box>
             </Stack>
-            {/* <Stack
-                            direction={['column', 'row']}
-                            p={4} boxShadow={'md'}
-                            rounded={8} flex={1}
-                            bgImage={'/greenbg.svg'}
-                            bgSize={'cover'}
-                            bgRepeat={'no-repeat'}
-                            color={'#FFF'}
-                            spacing={4}
-                            alignItems={'center'}
-                            justifyContent={['center', 'flex-start']}
-                        >
-                            <Icon as={FaMobile} fontSize={[28, 48]} />
-                            <Box>
-                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Bill Pay</Text>
-                                <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>
-                                    ₹ {Math.abs(bbpsData.credit - bbpsData.debit) || 0}
-                                </Text>
-                            </Box>
-                        </Stack> */}
             <Stack
+              direction={["column", "row"]}
+              p={4}
+              boxShadow={"md"}
+              rounded={8}
+              flex={1}
+              bgImage={"/greenbg.svg"}
+              bgSize={"cover"}
+              bgRepeat={"no-repeat"}
+              color={"#FFF"}
+              spacing={4}
+              alignItems={"center"}
+              justifyContent={["center", "flex-start"]}
+            >
+              <Icon as={FaMobile} fontSize={[28, 48]} />
+              <Box>
+                <Text fontSize={["sm"]} textAlign={["center", "left"]}>
+                  Recharge
+                </Text>
+                <Text fontSize={["lg", "2xl"]} fontWeight={"semibold"}>
+                  ₹ {Math.abs(rechargeData.credit - rechargeData.debit) || 0}
+                </Text>
+              </Box>
+            </Stack>
+            {/* <Stack
               direction={["column", "row"]}
               p={4}
               boxShadow={"md"}
@@ -181,7 +185,7 @@ const Index = () => {
                   ₹ {Math.abs(dmtData.credit - dmtData.debit) || 0}
                 </Text>
               </Box>
-            </Stack>
+            </Stack> */}
           </HStack>
 
           <Box
@@ -284,7 +288,7 @@ const Index = () => {
                                 </Link>
                             </Box> */}
 
-              <Box
+              {/* <Box
                 w={["27.5%", "20%"]}
                 p={4}
                 _hover={{ bgColor: "rgba(0,0,0,0.2)" }}
@@ -310,27 +314,35 @@ const Index = () => {
                     DMT
                   </Text>
                 </Link>
-              </Box>
+              </Box> */}
 
-              {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
-                                <Link
-                                    href={'/dashboard/services/recharge?pageId=services'}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    <Icon fontSize={36} as={BiMobileAlt} color={'#FFF'} />
-                                    <Text
-                                        textAlign={'center'}
-                                        color={'#FFF'}
-                                        fontSize={['sm', 'md']}
-                                    >Recharge</Text>
-                                </Link>
-                            </Box> */}
+              <Box
+                w={["27.5%", "20%"]}
+                p={4}
+                _hover={{ bgColor: "rgba(0,0,0,0.2)" }}
+                rounded={"full"}
+                transition={"all .3s ease"}
+              >
+                <Link
+                  href={"/dashboard/services/recharge?pageId=services"}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <Icon fontSize={36} as={BiMobileAlt} color={"#FFF"} />
+                  <Text
+                    textAlign={"center"}
+                    color={"#FFF"}
+                    fontSize={["sm", "md"]}
+                  >
+                    Recharge
+                  </Text>
+                </Link>
+              </Box>
 
               {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
