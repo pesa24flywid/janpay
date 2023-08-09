@@ -425,7 +425,7 @@ const Index = () => {
                 {/* <Th color={"#FFF"} rowSpan={2}>
                   Wallet Balance
                 </Th> */}
-                <Th color={"#FFF"} colSpan={4} textAlign={"center"}>
+                <Th color={"#FFF"} textAlign={"center"}>
                   Transactions
                 </Th>
               </Tr>
