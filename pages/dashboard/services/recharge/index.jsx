@@ -599,35 +599,35 @@ const Bbps = () => {
                       </VStack>
                     </RadioGroup>
 
-                    <FormControl
-                      id="amount"
-                      name="amount"
-                      w={["full", "xs"]}
-                      my={6}
-                    >
-                      <FormLabel>or enter custom amount</FormLabel>
-                      <InputGroup>
-                        <InputLeftAddon children={"₹"} />
-                        <Input
-                          type={"number"}
-                          name={"amount"}
-                          value={amount}
-                          onChange={(e) => {
-                            setAmount(e.target.value);
-                            setSelectedPlan("");
-                          }}
-                        />
-                      </InputGroup>
-                    </FormControl>
-                    <Button
-                      colorScheme={"whatsapp"}
-                      onClick={onOpen}
-                      isLoading={isLoading}
-                    >
-                      Pay Now
-                    </Button>
                   </>
                 ) : null}
+                <FormControl
+                  id="amount"
+                  name="amount"
+                  w={["full", "xs"]}
+                  my={6}
+                >
+                  <FormLabel>or enter custom amount</FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon children={"₹"} />
+                    <Input
+                      type={"number"}
+                      name={"amount"}
+                      value={amount}
+                      onChange={(e) => {
+                        setAmount(e.target.value);
+                        setSelectedPlan("");
+                      }}
+                    />
+                  </InputGroup>
+                </FormControl>
+                <Button
+                  colorScheme={"whatsapp"}
+                  onClick={onOpen}
+                  isLoading={isLoading}
+                >
+                  Pay Now
+                </Button>
 
                 {fetchBillBtn && (
                   <Button
@@ -692,7 +692,7 @@ const Bbps = () => {
         <ModalContent width={"xs"}>
           <Box ref={pdfRef} style={{ border: "1px solid #999" }}>
             <ModalHeader p={0}>
-            <VStack
+              <VStack
                 w={"full"}
                 p={8}
                 bg={
