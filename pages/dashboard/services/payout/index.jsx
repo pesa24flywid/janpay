@@ -158,12 +158,12 @@ const Payout = () => {
 
   async function makePayout() {
     setIsLoading(true);
-    await fetchServiceStatus();
     if (!serviceStatus) {
       Toast({
         status: "warning",
         description: "Service unavailable!",
       });
+      setIsLoading(false);
       return;
     }
     await BackendAxios.post(
