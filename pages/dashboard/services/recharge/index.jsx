@@ -126,27 +126,27 @@ const Bbps = () => {
   useEffect(() => {
     setIsLoading(true);
     ClientAxios.get(`/api/global`)
-    .then((res) => {
-        setIsLoading(false)
+      .then((res) => {
+        setIsLoading(false);
         setRechargeProvider(res.data[0]?.recharge_provider);
         if (!res.data[0].recharge_status) {
           window.location.href("/dashboard/not-available");
         }
       })
       .catch((err) => {
-        setIsLoading(false)
+        setIsLoading(false);
         console.log(err);
       });
-      
-      ClientAxios.get(`/api/organisation`)
+
+    ClientAxios.get(`/api/organisation`)
       .then((res) => {
-        setIsLoading(false)
+        setIsLoading(false);
         if (!res.data.recharge_status) {
           window.location.href("/dashboard/not-available");
         }
       })
       .catch((err) => {
-        setIsLoading(false)
+        setIsLoading(false);
         console.log(err);
       });
   }, []);
@@ -288,24 +288,6 @@ const Bbps = () => {
     formData.forEach(function (value, key) {
       object[key] = value;
     });
-    await BackendAxios.post("api/paysprint/bbps/mobile-recharge/do-recharge", {
-      ...object,
-      mpin: mpin,
-      operatorName: selectedOperatorName,
-      incomeWalletOperatorCode: selectedOperatorName
-        ?.toLowerCase()
-        .includes("airtel")
-        ? "AT"
-        : selectedOperatorName?.toLowerCase().includes("bsnl")
-        ? "BT"
-        : selectedOperatorName?.toLowerCase().includes("vodafone")
-        ? "VI"
-        : selectedOperatorName?.toLowerCase().includes("idea")
-        ? "VI"
-        : selectedOperatorName?.toLowerCase().includes("jio")
-        ? "JIO"
-        : "",
-    })
     await BackendAxios.post(
       `api/${rechargeProvider}/bbps/mobile-recharge/do-recharge`,
       {
@@ -315,15 +297,15 @@ const Bbps = () => {
         incomeWalletOperatorCode: selectedOperatorName
           ?.toLowerCase()
           .includes("airtel")
-          ? "ANG"
+          ? "AT"
           : selectedOperatorName?.toLowerCase().includes("bsnl")
-          ? "BS"
+          ? "BT"
           : selectedOperatorName?.toLowerCase().includes("vodafone")
           ? "VI"
           : selectedOperatorName?.toLowerCase().includes("idea")
           ? "VI"
           : selectedOperatorName?.toLowerCase().includes("jio")
-          ? "RJIO"
+          ? "JIO"
           : "",
       }
     )
