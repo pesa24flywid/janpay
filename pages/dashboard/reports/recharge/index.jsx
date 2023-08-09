@@ -19,6 +19,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -40,6 +41,7 @@ import "jspdf-autotable";
 import { toBlob } from "html-to-image";
 import { useFormik } from "formik";
 import { FiRefreshCcw } from "react-icons/fi";
+import fileDownload from "js-file-download";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -145,9 +147,10 @@ const Index = () => {
     initialValues: {
       from: "",
       to: "",
+      status: "",
+      search: "",
     },
   });
-
 
   function generateReport(doctype) {
     if (!Formik.values.from || !Formik.values.to) {
@@ -198,8 +201,12 @@ const Index = () => {
     BackendAxios.get(
       pageLink ||
         `/api/user/ledger/${transactionKeyword}?from=${
-          Formik.values.from + (Formik.values.from && "T00:00")
-        }&to=${Formik.values.to + (Formik.values.to && "T23:59")}&page=1`
+          Formik.values.from + (Formik.values.from && "T" + "00:00")
+        }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
+          Formik.values.search
+        }&status=${
+          Formik.values.status != "all" ? Formik.values.status : ""
+        }&page=1`
     )
       .then((res) => {
         setLoading(false);
@@ -269,8 +276,8 @@ const Index = () => {
         px={1}
         flex={"unset"}
         w={"fit-content"}
-        bgColor={params.value > 0 && "green.400"}
-        color={params.value > 0 && "#FFF"}
+        fontWeight={"semibold"}
+        color={params.value > 0 && "green.400"}
       >
         {params.value}
       </Text>
@@ -283,8 +290,8 @@ const Index = () => {
         px={1}
         flex={"unset"}
         w={"fit-content"}
-        bgColor={params.value > 0 && "red.400"}
-        color={params.value > 0 && "#FFF"}
+        fontWeight={"semibold"}
+        color={params.value > 0 && "red.400"}
       >
         {params.value}
       </Text>
@@ -311,8 +318,19 @@ const Index = () => {
     <>
       <DashboardWrapper pageTitle={"Recharge Reports"}>
         <HStack mb={4}>
-          <Button onClick={()=>generateReport("pdf")} colorScheme={"red"} size={"sm"}>
+          <Button
+            onClick={() => generateReport("pdf")}
+            colorScheme={"red"}
+            size={"sm"}
+          >
             Export PDF
+          </Button>
+          <Button
+            onClick={() => generateReport("excel")}
+            colorScheme={"red"}
+            size={"sm"}
+          >
+            Export Excel
           </Button>
         </HStack>
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
@@ -333,6 +351,23 @@ const Index = () => {
               type="date"
               bg={"white"}
             />
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Status</FormLabel>
+            <Select
+              name="status"
+              onChange={Formik.handleChange}
+              bgColor={"#FFF"}
+            >
+              <option value="all">All</option>
+              <option value="success">Processed</option>
+              <option value="failed">Failed</option>
+              <option value="pending">Cancelled</option>
+            </Select>
+          </FormControl>
+          <FormControl w={["full", "xs"]}>
+            <FormLabel>Phone No.</FormLabel>
+            <Input name="search" onChange={Formik.handleChange} bg={"white"} />
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>

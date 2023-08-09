@@ -338,6 +338,8 @@ const Index = () => {
           </Text>
         ) : receipt?.status == true ||
           receipt.status == "processing" ||
+          receipt.status == "processed" ||
+          receipt.status == "success" ||
           receipt.status == "queued" ? (
           <Text color={"green"} textTransform={"uppercase"} fontWeight={"bold"}>
             {receipt.status}
