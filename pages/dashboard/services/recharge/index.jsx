@@ -290,15 +290,15 @@ const Bbps = () => {
       incomeWalletOperatorCode: selectedOperatorName
         ?.toLowerCase()
         .includes("airtel")
-        ? "ANG"
+        ? "AT"
         : selectedOperatorName?.toLowerCase().includes("bsnl")
-        ? "BS"
+        ? "BT"
         : selectedOperatorName?.toLowerCase().includes("vodafone")
         ? "VI"
         : selectedOperatorName?.toLowerCase().includes("idea")
         ? "VI"
         : selectedOperatorName?.toLowerCase().includes("jio")
-        ? "RJIO"
+        ? "JIO"
         : "",
     })
       .then((res) => {
