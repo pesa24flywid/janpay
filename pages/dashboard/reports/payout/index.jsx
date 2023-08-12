@@ -184,6 +184,10 @@ const Index = () => {
         Formik.values.from + (Formik.values.from && "T" + "00:00")
       }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
         Formik.values.search
+          ? Formik.values.search
+          : Formik.values.status != "all"
+          ? Formik.values.status
+          : ""
       }&status=${
         Formik.values.status != "all" ? Formik.values.status : ""
       }&type=ledger&name=${transactionKeyword}&doctype=${doctype}`,
@@ -222,7 +226,9 @@ const Index = () => {
         `/api/user/ledger/${transactionKeyword}?from=${
           Formik.values.from + (Formik.values.from && "T" + "00:00")
         }&to=${Formik.values.to + (Formik.values.to && "T" + "23:59")}&search=${
-          Formik.values.search || Formik.values.status != "all"
+          Formik.values.search
+            ? Formik.values.search
+            : Formik.values.status != "all"
             ? Formik.values.status
             : ""
         }&status=${
