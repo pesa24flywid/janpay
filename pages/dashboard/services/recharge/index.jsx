@@ -138,17 +138,17 @@ const Bbps = () => {
         console.log(err);
       });
 
-    ClientAxios.get(`/api/organisation`)
-      .then((res) => {
-        setIsLoading(false);
-        if (!res.data.recharge_status) {
-          window.location.href("/dashboard/not-available");
-        }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.log(err);
-      });
+    // ClientAxios.get(`/api/organisation`)
+    //   .then((res) => {
+    //     setIsLoading(false);
+    //     if (!res.data.recharge_status) {
+    //       window.location.href("/dashboard/not-available");
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     setIsLoading(false);
+    //     console.log(err);
+    //   });
   }, []);
 
   useEffect(() => {
