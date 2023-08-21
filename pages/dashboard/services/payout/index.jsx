@@ -117,15 +117,19 @@ const Payout = () => {
   });
 
   function fetchBankDetails() {
-    axios.get(`https://ifsc.razorpay.com/${Formik.values.ifsc}`).then(res=>{
-      Formik.setFieldValue("bankName", res.data['BANK'])
-    }).catch(err=>{
-      Toast({
-        status: 'error',
-        title: "Error while fetching bank details",
-        description: err?.response?.data?.message || err?.response?.data || err?.message
+    axios
+      .get(`https://ifsc.razorpay.com/${Formik.values.ifsc}`)
+      .then((res) => {
+        Formik.setFieldValue("bankName", res.data["BANK"]);
       })
-    })
+      .catch((err) => {
+        Toast({
+          status: "error",
+          title: "Error while fetching bank details",
+          description:
+            err?.response?.data?.message || err?.response?.data || err?.message,
+        });
+      });
   }
 
   async function triggerOtp() {
@@ -157,6 +161,15 @@ const Payout = () => {
   }
 
   async function makePayout() {
+    if(isNaN(Formik.values.amount)){
+      Toast({
+        status:"warning",
+        title:'Invalid amount',
+        description:`Please enter a valid amount`
+      })
+      return
+    }
+    const today = new Date()
     setIsLoading(true);
     if (!serviceStatus) {
       Toast({
@@ -196,12 +209,22 @@ const Payout = () => {
           window.location.reload();
           return;
         }
-        Toast({
-          status: "error",
-          title: "Transaction Failed",
-          description:
-            err.response.data.message || err.response.data || err.message,
-          position: "top-right",
+        // Toast({
+        //   status: "error",
+        //   title: "Transaction Failed",
+        //   description:
+        //     err.response.data.message || err.response.data || err.message,
+        //   position: "top-right",
+        // });
+        setReceipt({
+          status: false,
+          show: true,
+          data: {
+            message: "Partner Bank APIs are down. Try again later.",
+            error_code: "501",
+            amount: Formik.values.amount,
+            timestamp: today.toLocaleString()
+          },
         });
         setIsLoading(false);
         onClose();
@@ -298,7 +321,7 @@ const Payout = () => {
                 />
               </FormControl>
               <FormControl>
-                <HStack w={'full'} justifyContent={'space-between'}>
+                <HStack w={"full"} justifyContent={"space-between"}>
                   <FormLabel>Bank Name (optional)</FormLabel>
                   <Text
                     fontSize={"xs"}
@@ -334,7 +357,7 @@ const Payout = () => {
                 <RadioGroup
                   name="mode"
                   w={"full"}
-                  display={'flex'}
+                  display={"flex"}
                   flexDir={"row"}
                   alignItems={"center"}
                   justifyContent={"flex-start"}
