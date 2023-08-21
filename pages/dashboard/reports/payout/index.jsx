@@ -47,6 +47,7 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { FiRefreshCcw } from "react-icons/fi";
 import fileDownload from "js-file-download";
+import Loader from "../../../../hocs/Loader";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -73,6 +74,11 @@ const Index = () => {
   });
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([
+    {
+      headerName: "Action",
+      field: "action",
+      cellRenderer: "actionCellRenderer",
+    },
     {
       headerName: "Trnxn ID",
       field: "transaction_id",
@@ -376,9 +382,46 @@ const Index = () => {
     );
   };
 
+  const actionCellRenderer = (params) => {
+    function updateData() {
+      setLoading(true);
+      BackendAxios.post("api/razorpay/payment-status", {
+        payoutId: params.data.payout_id,
+      })
+        .then((res) => {
+          setLoading(false);
+          Toast({
+            status: "success",
+            description: `Payout ${params.data.payout_id} updated!`,
+          });
+
+          fetchTransactions();
+        })
+        .catch((err) => {
+          setLoading(false);
+          Toast({
+            status: "error",
+            description:
+              err.response?.data?.message || err.response?.data || err.message,
+          });
+        });
+    }
+    return (
+      <>
+        {params.data?.status == "processing" ||
+        params.data?.status == "queued" ? (
+          <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
+            UPDATE
+          </Button>
+        ) : null}
+      </>
+    );
+  };
+
   const tableRef = React.useRef(null);
   return (
     <>
+      {loading ? <Loader /> : null}
       <DashboardWrapper pageTitle={"Payout Reports"}>
         <HStack pb={8}>
           <Button
@@ -448,6 +491,7 @@ const Index = () => {
               bgColor={"#FFF"}
             >
               <option value="all">All</option>
+              <option value="processing">Processing</option>
               <option value="processed">Processed</option>
               <option value="failed">Failed</option>
               <option value="cancelled">Cancelled</option>
@@ -586,6 +630,7 @@ const Index = () => {
                 creditCellRenderer: creditCellRenderer,
                 debitCellRenderer: debitCellRenderer,
                 statusCellRenderer: statusCellRenderer,
+                actionCellRenderer: actionCellRenderer
               }}
               onFilterChanged={(params) => {
                 setPrintableRow(
