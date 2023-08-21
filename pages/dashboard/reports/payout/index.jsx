@@ -385,6 +385,12 @@ const Index = () => {
   const actionCellRenderer = (params) => {
     const receipt = JSON.parse(params.data.metadata);
     function updateData() {
+      if(!receipt?.payout_id){
+        Toast({
+          description: "Please contact admin to update this payout."
+        })
+        return
+      }
       setLoading(true);
       BackendAxios.post("api/razorpay/payment-status", {
         payoutId: receipt?.payout_id,
@@ -412,7 +418,7 @@ const Index = () => {
         {receipt?.status == "processing" ||
         receipt?.status == "queued" ? (
           <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
-            UPDATE
+            {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
           </Button>
         ) : null}
       </>
