@@ -399,7 +399,7 @@ const Index = () => {
           setLoading(false);
           Toast({
             status: "success",
-            description: `Payout ${params.data.payout_id} updated!`,
+            description: `Payout ${receipt?.payout_id} updated!`,
           });
 
           fetchTransactions();
