@@ -387,7 +387,7 @@ const Index = () => {
     function updateData() {
       setLoading(true);
       BackendAxios.post("api/razorpay/payment-status", {
-        payoutId: params.data.payout_id,
+        payoutId: receipt?.payout_id,
       })
         .then((res) => {
           setLoading(false);
