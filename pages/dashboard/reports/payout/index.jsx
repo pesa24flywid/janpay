@@ -383,6 +383,7 @@ const Index = () => {
   };
 
   const actionCellRenderer = (params) => {
+    const receipt = JSON.parse(params.data.metadata);
     function updateData() {
       setLoading(true);
       BackendAxios.post("api/razorpay/payment-status", {
@@ -408,8 +409,8 @@ const Index = () => {
     }
     return (
       <>
-        {params.data?.status == "processing" ||
-        params.data?.status == "queued" ? (
+        {receipt?.status == "processing" ||
+        receipt?.status == "queued" ? (
           <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
             UPDATE
           </Button>
