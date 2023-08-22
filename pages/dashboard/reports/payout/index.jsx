@@ -146,6 +146,27 @@ const Index = () => {
   ]);
   const [overviewData, setOverviewData] = useState([]);
 
+  const [isUpdateDisabled, setIsUpdateDisabled] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      updateBtnStatus();
+    }, 30000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  function updateBtnStatus() {
+    const today = new Date();
+    // If time is between 12 AM to 5 AM then disable the button.
+    if (today.getHours() >= 0 && today.getHours() <= 5) {
+      setIsUpdateDisabled(true);
+    } else {
+      setIsUpdateDisabled(false);
+    }
+  }
+
   const handleShare = async () => {
     const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
     const data = {
@@ -385,11 +406,11 @@ const Index = () => {
   const actionCellRenderer = (params) => {
     const receipt = JSON.parse(params.data.metadata);
     function updateData() {
-      if(!receipt?.payout_id){
+      if (!receipt?.payout_id) {
         Toast({
-          description: "Please contact admin to update this payout."
-        })
-        return
+          description: "Please contact admin to update this payout.",
+        });
+        return;
       }
       setLoading(true);
       BackendAxios.post("api/razorpay/payment-status", {
@@ -415,8 +436,7 @@ const Index = () => {
     }
     return (
       <>
-        {receipt?.status == "processing" ||
-        receipt?.status == "queued" ? (
+        {receipt?.status == "processing" || receipt?.status == "queued" ? (
           <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
             {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
           </Button>
@@ -637,7 +657,7 @@ const Index = () => {
                 creditCellRenderer: creditCellRenderer,
                 debitCellRenderer: debitCellRenderer,
                 statusCellRenderer: statusCellRenderer,
-                actionCellRenderer: actionCellRenderer
+                actionCellRenderer: actionCellRenderer,
               }}
               onFilterChanged={(params) => {
                 setPrintableRow(
