@@ -437,7 +437,7 @@ const Index = () => {
     return (
       <>
         {receipt?.status == "processing" || receipt?.status == "queued" ? (
-          <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
+          <Button size={"xs"} colorScheme="twitter" isDisabled={isUpdateDisabled} onClick={updateData}>
             {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
           </Button>
         ) : null}
