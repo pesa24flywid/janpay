@@ -427,7 +427,6 @@ const Index = () => {
           <Button
             size={"xs"}
             colorScheme="twitter"
-            isDisabled={isUpdateDisabled}
             onClick={updateData}
           >
             {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
