@@ -217,7 +217,7 @@ const Payout = () => {
         //   position: "top-right",
         // });
         setReceipt({
-          status: false,
+          status: "failed",
           show: true,
           data: {
             message: "Partner Bank APIs are down. Try again later.",
