@@ -387,7 +387,7 @@ const Index = () => {
     const today = new Date();
     function updateData() {
       console.log(today.getHours())
-      console.log(today.getHours() >= 21 || today.getHours() <= 5)
+      console.log(today.getHours() >= 0 || today.getHours() <= 5)
       if (today.getHours() >= 0 || today.getHours() <= 5) {
         Toast({
           title: "Self update disabled till 5 AM",
