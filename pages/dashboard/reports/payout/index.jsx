@@ -388,7 +388,7 @@ const Index = () => {
     function updateData() {
       console.log(today.getHours())
       console.log(today.getHours() >= 21 || today.getHours() <= 5)
-      if (today.getHours() >= 21 && today.getHours() <= 5) {
+      if (today.getHours() >= 21 || today.getHours() <= 5) {
         Toast({
           title: "Self update disabled till 5 AM",
           description: "Please contact admin to update this payout.",
