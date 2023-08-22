@@ -384,8 +384,8 @@ const Index = () => {
 
   const actionCellRenderer = (params) => {
     const receipt = JSON.parse(params.data.metadata);
+    const today = new Date();
     function updateData() {
-      const today = new Date();
       if (today.getHours() >= 21 && today.getHours() <= 5) {
         Toast({
           title: "Self update disabled till 5 AM",

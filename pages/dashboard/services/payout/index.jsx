@@ -209,18 +209,18 @@ const Payout = () => {
           window.location.reload();
           return;
         }
-        Toast({
-          status: "error",
-          title: "Transaction Failed",
-          description:
-            err.response.data.message || err.response.data || err.message,
-          position: "top-right",
-        });
+        // Toast({
+        //   status: "error",
+        //   title: "Transaction Failed",
+        //   description:
+        //     err.response.data.message || err.response.data || err.message,
+        //   position: "top-right",
+        // });
         setReceipt({
           status: "failed",
           show: true,
           data: {
-            message: "Partner Bank APIs are down. Try again later.",
+            message: err.response.data.message || err.response.data || err.message,
             error_code: "501",
             amount: Formik.values.amount,
             timestamp: today.toLocaleString()
