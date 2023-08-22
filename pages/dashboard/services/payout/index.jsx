@@ -50,7 +50,7 @@ import axios from "axios";
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const Toast = useToast();
+  const Toast = useToast({position: "top-right"});
   const [isLoading, setIsLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const [serviceStatus, setServiceStatus] = useState(true);
@@ -209,13 +209,13 @@ const Payout = () => {
           window.location.reload();
           return;
         }
-        // Toast({
-        //   status: "error",
-        //   title: "Transaction Failed",
-        //   description:
-        //     err.response.data.message || err.response.data || err.message,
-        //   position: "top-right",
-        // });
+        Toast({
+          status: "error",
+          title: "Transaction Failed",
+          description:
+            err.response.data.message || err.response.data || err.message,
+          position: "top-right",
+        });
         setReceipt({
           status: "failed",
           show: true,
