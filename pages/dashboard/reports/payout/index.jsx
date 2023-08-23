@@ -384,8 +384,8 @@ const Index = () => {
 
   const actionCellRenderer = (params) => {
     const receipt = JSON.parse(params.data.metadata);
-    const today = new Date();
     function updateData() {
+      const today = new Date();
       console.log(today.getHours())
       console.log(today.getHours() <= 5)
       if (today.getHours() <= 5) {
