@@ -433,7 +433,9 @@ const Payout = () => {
                               showReceipt({
                                 status: item.status,
                                 amount: item?.amount,
+                                beneficiary_name: item?.beneficiary_name,
                                 account_number: item?.account_number,
+                                ifsc: item?.ifsc,
                                 UTR: item?.utr || " ",
                                 created_at: item?.created_at,
                                 reference_id: item?.reference_id,
