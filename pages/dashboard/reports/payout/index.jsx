@@ -722,6 +722,7 @@ const Index = () => {
                         item[0].toLowerCase() != "status" &&
                         item[0].toLowerCase() != "user" &&
                         item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "created_at" &&
                         item[0].toLowerCase() != "user_phone" &&
                         item[0].toLowerCase() != "amount"
                       )
@@ -750,6 +751,9 @@ const Index = () => {
                         );
                     })
                   : null}
+                <VStack pt={8} spacing={0} w={"full"}>
+                  <Text fontSize={"xs"}>{receipt?.data?.created_at}</Text>
+                </VStack>
                 {/* <VStack pt={8} spacing={0} w={"full"}>
                   <Image src="/logo_long.png" w={"20"} pt={4} />
                   <Text fontSize={"xs"}>

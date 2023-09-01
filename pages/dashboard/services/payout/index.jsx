@@ -435,7 +435,7 @@ const Payout = () => {
                                 amount: item?.amount,
                                 account_number: item?.account_number,
                                 UTR: item?.utr || " ",
-                                date_and_time: item?.created_at,
+                                created_at: item?.created_at,
                                 reference_id: item?.reference_id,
                               })
                             }
@@ -642,6 +642,7 @@ const Payout = () => {
                         item[0].toLowerCase() != "user" &&
                         item[0].toLowerCase() != "user_id" &&
                         item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "created_at" &&
                         item[0].toLowerCase() != "amount"
                       )
                         return (
@@ -669,6 +670,11 @@ const Payout = () => {
                         );
                     })
                   : null}
+                <VStack pt={8} spacing={0} w={"full"}>
+                  <Text fontSize={"xs"}>
+                    {receipt?.data?.created_at}
+                  </Text>
+                </VStack>
                 {/* <VStack pt={8} spacing={0} w={"full"}>
                   <Image src="/logo_long.png" w={"20"} pt={4} />
                   <Text fontSize={"xs"}>
