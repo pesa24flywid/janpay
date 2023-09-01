@@ -686,17 +686,18 @@ const Index = () => {
                     : "#FFF"
                 }
               >
-                <Text 
-                // color={"#FFF"} 
-                textTransform={"capitalize"}>
+                <Text
+                  // color={"#FFF"}
+                  textTransform={"capitalize"}
+                >
                   ₹ {receipt.data.amount || 0}
                 </Text>
                 {receipt?.status == true ||
                 receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status?.toLowerCase() == "success" ||
-                receipt?.status?.toLowerCase() == "processing" ? (
+                receipt?.status?.toLowerCase() == "success" ? (
                   <BiSolidBadgeCheck color="#25D366" fontSize={72} />
-                ) : receipt?.status?.toLowerCase() == "queued" ? (
+                ) : receipt?.status?.toLowerCase() == "queued" ||
+                  receipt?.status?.toLowerCase() == "processing" ? (
                   <BsClockFill color="orange" fontSize={72} />
                 ) : (
                   <BsExclamationCircleFill color="red" fontSize={72} />
@@ -709,8 +710,7 @@ const Index = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION{" "}
-                  {receipt?.status}
+                  TRANSACTION {receipt?.status}
                 </Text>
               </VStack>
             </ModalHeader>
