@@ -710,13 +710,7 @@ const Index = () => {
                   textTransform={"uppercase"}
                 >
                   TRANSACTION{" "}
-                  {receipt?.status?.toLowerCase() == "processing" ||
-                  receipt?.status?.toLowerCase() == "queued" ||
-                  receipt?.status?.toLowerCase() == "processed" ||
-                  receipt?.status?.toLowerCase() == "success" ||
-                  receipt?.status == true
-                    ? "SUCCESSFUL"
-                    : "FAILED"}
+                  {receipt?.status}
                 </Text>
               </VStack>
             </ModalHeader>
