@@ -37,12 +37,15 @@ import BackendAxios, { ClientAxios } from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
 import {
   BsCheck2Circle,
+  BsClockFill,
   BsClockHistory,
   BsDownload,
+  BsExclamationCircleFill,
   BsXCircle,
 } from "react-icons/bs";
 import Cookies from "js-cookie";
 import { FiRefreshCcw } from "react-icons/fi";
+import { BiSolidBadgeCheck } from "react-icons/bi";
 import { RadioGroup } from "@chakra-ui/react";
 import { Radio } from "@chakra-ui/react";
 import axios from "axios";
@@ -50,7 +53,7 @@ import axios from "axios";
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const Toast = useToast({position: "top-right"});
+  const Toast = useToast({ position: "top-right" });
   const [isLoading, setIsLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const [serviceStatus, setServiceStatus] = useState(true);
@@ -161,15 +164,15 @@ const Payout = () => {
   }
 
   async function makePayout() {
-    if(isNaN(Formik.values.amount)){
+    if (isNaN(Formik.values.amount)) {
       Toast({
-        status:"warning",
-        title:'Invalid amount',
-        description:`Please enter a valid amount`
-      })
-      return
+        status: "warning",
+        title: "Invalid amount",
+        description: `Please enter a valid amount`,
+      });
+      return;
     }
-    const today = new Date()
+    const today = new Date();
     setIsLoading(true);
     if (!serviceStatus) {
       Toast({
@@ -220,10 +223,11 @@ const Payout = () => {
           status: "failed",
           show: true,
           data: {
-            message: err.response.data.message || err.response.data || err.message,
+            message:
+              err.response.data.message || err.response.data || err.message,
             error_code: "501",
             amount: Formik.values.amount,
-            timestamp: today.toLocaleString()
+            timestamp: today.toLocaleString(),
           },
         });
         setIsLoading(false);
@@ -585,27 +589,31 @@ const Payout = () => {
                 w={"full"}
                 p={8}
                 bg={
+                  receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status?.toLowerCase() == "success" ||
-                  receipt?.status == true ||
                   receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
-                    ? "green.500"
-                    : "red.500"
+                    ? "#FFF"
+                    : "#FFF"
                 }
               >
-                {receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status == true ||
-                receipt?.status?.toLowerCase() == "success" ||
-                receipt?.status?.toLowerCase() == "processing" ||
-                receipt?.status?.toLowerCase() == "queued" ? (
-                  <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : (
-                  <BsXCircle color="#FFF" fontSize={72} />
-                )}
                 <Text color={"#FFF"} textTransform={"capitalize"}>
                   ₹ {receipt.data.amount || 0}
                 </Text>
+                {receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "processed" ||
+                receipt?.status?.toLowerCase() == "success" ||
+                receipt?.status?.toLowerCase() == "processing" ? (
+                  <BiSolidBadgeCheck color="#25D366" fontSize={72} />
+                ) : receipt?.status?.toLowerCase() == "queued" ? (
+                  <BsClockFill color="orange" fontSize={72} />
+                ) : (
+                  <BsExclamationCircleFill color="red" fontSize={72} />
+                )}
+                {/* <Text color={"#FFF"} textTransform={"capitalize"}>
+                  ₹ {receipt.data.amount || 0}
+                </Text> */}
                 <Text
                   color={"#FFF"}
                   fontSize={"sm"}
@@ -669,18 +677,18 @@ const Payout = () => {
           </Box>
           <ModalFooter>
             <HStack justifyContent={"center"} gap={4}>
-              <Button
+              {/* <Button
                 colorScheme="yellow"
                 size={"sm"}
                 rounded={"full"}
                 onClick={handleShare}
               >
                 Share
-              </Button>
+              </Button> */}
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
                 {({ toPdf }) => (
                   <Button
-                    rounded={"full"}
+                    // rounded={"full"}
                     size={"sm"}
                     colorScheme={"orange"}
                     leftIcon={<BsDownload />}

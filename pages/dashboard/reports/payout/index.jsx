@@ -35,6 +35,8 @@ import {
   BsXCircle,
   BsEye,
   BsClockHistory,
+  BsClockFill,
+  BsExclamationCircleFill,
 } from "react-icons/bs";
 import BackendAxios from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
@@ -48,6 +50,7 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import { FiRefreshCcw } from "react-icons/fi";
 import fileDownload from "js-file-download";
 import Loader from "../../../../hocs/Loader";
+import { BiSolidBadgeCheck } from "react-icons/bi";
 
 const ExportPDF = () => {
   const doc = new jsPDF("landscape");
@@ -386,8 +389,8 @@ const Index = () => {
     const receipt = JSON.parse(params.data.metadata);
     function updateData() {
       const today = new Date();
-      console.log(today.getHours())
-      console.log(today.getHours() <= 5)
+      console.log(today.getHours());
+      console.log(today.getHours() <= 5);
       if (today.getHours() <= 5) {
         Toast({
           title: "Self update disabled till 5 AM",
@@ -426,11 +429,7 @@ const Index = () => {
     return (
       <>
         {receipt?.status == "processing" || receipt?.status == "queued" ? (
-          <Button
-            size={"xs"}
-            colorScheme="twitter"
-            onClick={updateData}
-          >
+          <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
             {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
           </Button>
         ) : null}
@@ -678,27 +677,31 @@ const Index = () => {
                 w={"full"}
                 p={8}
                 bg={
-                  receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status == true ||
-                  receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status?.toLowerCase() == "success" ||
+                  receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued"
-                    ? "green.500"
-                    : "red.500"
+                    ? "#FFF"
+                    : "#FFF"
                 }
               >
-                {receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status == true ||
-                receipt?.status?.toLowerCase() == "success" ||
-                receipt?.status?.toLowerCase() == "processing" ||
-                receipt?.status?.toLowerCase() == "queued" ? (
-                  <BsCheck2Circle color="#FFF" fontSize={72} />
-                ) : (
-                  <BsXCircle color="#FFF" fontSize={72} />
-                )}
                 <Text color={"#FFF"} textTransform={"capitalize"}>
                   ₹ {receipt.data.amount || 0}
                 </Text>
+                {receipt?.status == true ||
+                receipt?.status?.toLowerCase() == "processed" ||
+                receipt?.status?.toLowerCase() == "success" ||
+                receipt?.status?.toLowerCase() == "processing" ? (
+                  <BiSolidBadgeCheck color="#25D366" fontSize={72} />
+                ) : receipt?.status?.toLowerCase() == "queued" ? (
+                  <BsClockFill color="orange" fontSize={72} />
+                ) : (
+                  <BsExclamationCircleFill color="red" fontSize={72} />
+                )}
+                {/* <Text color={"#FFF"} textTransform={"capitalize"}>
+                  ₹ {receipt.data.amount || 0}
+                </Text> */}
                 <Text
                   color={"#FFF"}
                   fontSize={"sm"}
@@ -706,11 +709,10 @@ const Index = () => {
                 >
                   TRANSACTION{" "}
                   {receipt?.status?.toLowerCase() == "processing" ||
-                  receipt?.status?.toLowerCase() == "queued"
-                    ? "PROCESSING"
-                    : receipt?.status?.toLowerCase() == "processed" ||
-                      receipt?.status == true ||
-                      receipt?.status?.toLowerCase() == "success"
+                  receipt?.status?.toLowerCase() == "queued" ||
+                  receipt?.status?.toLowerCase() == "processed" ||
+                  receipt?.status?.toLowerCase() == "success" ||
+                  receipt?.status == true
                     ? "SUCCESSFUL"
                     : "FAILED"}
                 </Text>

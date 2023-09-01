@@ -50,7 +50,7 @@
     "react-dom": "18.2.0",
     "react-export-table-to-excel": "^1.0.6",
     "react-fast-marquee": "^1.6.0",
-    "react-icons": "^4.7.1",
+    "react-icons": "^4.10.1",
     "react-responsive-carousel": "^3.2.23",
     "react-to-pdf": "^0.0.14",
     "swiper": "^9.3.2",
