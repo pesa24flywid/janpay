@@ -598,7 +598,10 @@ const Payout = () => {
                     : "#FFF"
                 }
               >
-                <Text color={"#FFF"} textTransform={"capitalize"}>
+                <Text
+                  // color={"#FFF"}
+                  textTransform={"capitalize"}
+                >
                   ₹ {receipt.data.amount || 0}
                 </Text>
                 {receipt?.status == true ||
@@ -615,7 +618,7 @@ const Payout = () => {
                   ₹ {receipt.data.amount || 0}
                 </Text> */}
                 <Text
-                  color={"#FFF"}
+                  // color={"#FFF"}
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
