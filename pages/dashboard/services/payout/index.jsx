@@ -609,10 +609,9 @@ const Payout = () => {
                 {receipt?.status == true ||
                 receipt?.status?.toLowerCase() == "processed" ||
                 receipt?.status?.toLowerCase() == "success" ||
-                receipt?.status?.toLowerCase() == "processing" ? (
+                receipt?.status?.toLowerCase() == "processing" ||
+                receipt?.status?.toLowerCase() == "queued" ? (
                   <BiSolidBadgeCheck color="#25D366" fontSize={72} />
-                ) : receipt?.status?.toLowerCase() == "queued" ? (
-                  <BsClockFill color="orange" fontSize={72} />
                 ) : (
                   <BsExclamationCircleFill color="red" fontSize={72} />
                 )}
