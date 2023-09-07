@@ -77,11 +77,11 @@ const Index = () => {
   });
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([
-    {
-      headerName: "Action",
-      field: "action",
-      cellRenderer: "actionCellRenderer",
-    },
+    // {
+    //   headerName: "Action",
+    //   field: "action",
+    //   cellRenderer: "actionCellRenderer",
+    // },
     {
       headerName: "Trnxn ID",
       field: "transaction_id",
@@ -385,57 +385,57 @@ const Index = () => {
     );
   };
 
-  const actionCellRenderer = (params) => {
-    const receipt = JSON.parse(params.data.metadata);
-    function updateData() {
-      const today = new Date();
-      console.log(today.getHours());
-      console.log(today.getHours() <= 5);
-      if (today.getHours() <= 5) {
-        Toast({
-          title: "Self update disabled till 5 AM",
-          description: "Please contact admin to update this payout.",
-        });
-        return;
-      }
-      if (!receipt?.payout_id) {
-        Toast({
-          description: "Please contact admin to update this payout.",
-        });
-        return;
-      }
-      setLoading(true);
-      BackendAxios.post("api/razorpay/payment-status", {
-        payoutId: receipt?.payout_id,
-      })
-        .then((res) => {
-          setLoading(false);
-          Toast({
-            status: "success",
-            description: `Payout ${receipt?.payout_id} updated!`,
-          });
+  // const actionCellRenderer = (params) => {
+  //   const receipt = JSON.parse(params.data.metadata);
+  //   function updateData() {
+  //     const today = new Date();
+  //     console.log(today.getHours());
+  //     console.log(today.getHours() <= 5);
+  //     if (today.getHours() <= 5) {
+  //       Toast({
+  //         title: "Self update disabled till 5 AM",
+  //         description: "Please contact admin to update this payout.",
+  //       });
+  //       return;
+  //     }
+  //     if (!receipt?.payout_id) {
+  //       Toast({
+  //         description: "Please contact admin to update this payout.",
+  //       });
+  //       return;
+  //     }
+  //     setLoading(true);
+  //     BackendAxios.post("api/razorpay/payment-status", {
+  //       payoutId: receipt?.payout_id,
+  //     })
+  //       .then((res) => {
+  //         setLoading(false);
+  //         Toast({
+  //           status: "success",
+  //           description: `Payout ${receipt?.payout_id} updated!`,
+  //         });
 
-          fetchTransactions();
-        })
-        .catch((err) => {
-          setLoading(false);
-          Toast({
-            status: "error",
-            description:
-              err.response?.data?.message || err.response?.data || err.message,
-          });
-        });
-    }
-    return (
-      <>
-        {receipt?.status == "processing" || receipt?.status == "queued" ? (
-          <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
-            {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
-          </Button>
-        ) : null}
-      </>
-    );
-  };
+  //         fetchTransactions();
+  //       })
+  //       .catch((err) => {
+  //         setLoading(false);
+  //         Toast({
+  //           status: "error",
+  //           description:
+  //             err.response?.data?.message || err.response?.data || err.message,
+  //         });
+  //       });
+  //   }
+  //   return (
+  //     <>
+  //       {receipt?.status == "processing" || receipt?.status == "queued" ? (
+  //         <Button size={"xs"} colorScheme="twitter" onClick={updateData}>
+  //           {receipt?.payout_id ? "UPDATE" : "CONTACT ADMIN"}
+  //         </Button>
+  //       ) : null}
+  //     </>
+  //   );
+  // };
 
   const tableRef = React.useRef(null);
   return (
@@ -649,7 +649,7 @@ const Index = () => {
                 creditCellRenderer: creditCellRenderer,
                 debitCellRenderer: debitCellRenderer,
                 statusCellRenderer: statusCellRenderer,
-                actionCellRenderer: actionCellRenderer,
+                // actionCellRenderer: actionCellRenderer,
               }}
               onFilterChanged={(params) => {
                 setPrintableRow(
