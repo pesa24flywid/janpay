@@ -246,7 +246,7 @@ const Payout = () => {
           return;
         }
         setTimeout(async () => {
-          await fetchCurrentStatus(JSON.parse(res?.data?.metadata)?.payout_id);
+          await fetchCurrentStatus(res?.data?.metadata?.payout_id);
         }, 10000);
       })
       .catch((err) => {
