@@ -49,6 +49,7 @@ import { BiSolidBadgeCheck } from "react-icons/bi";
 import { RadioGroup } from "@chakra-ui/react";
 import { Radio } from "@chakra-ui/react";
 import axios from "axios";
+import Loader from "../../../../hocs/Loader";
 
 const Payout = () => {
   const [serviceId, setServiceId] = useState("25");
@@ -163,6 +164,47 @@ const Payout = () => {
       });
   }
 
+  async function fetchCurrentStatus(payoutId) {
+    const today = new Date();
+    if (!payoutId) {
+      Toast({
+        title: "Payout ID not generated.",
+        description: "Please contact admins to get current status",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    await BackendAxios.post("api/razorpay/payment-status", {
+      payoutId: payoutId,
+    })
+      .then((res) => {
+        setIsLoading(false);
+        setReceipt({
+          status: res.data?.metadata?.status,
+          show: true,
+          data: res.data?.metadata,
+        });
+        fetchPayouts();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setReceipt({
+          status: "failed",
+          show: true,
+          data: {
+            message:
+              err.response.data.message ||
+              err.response.data ||
+              err.message + " Any money debited will reflect in your reports.",
+            error_code: "501",
+            amount: Formik.values.amount,
+            timestamp: today.toLocaleString(),
+          },
+        });
+      });
+  }
+
   async function makePayout() {
     if (isNaN(Formik.values.amount)) {
       Toast({
@@ -195,16 +237,17 @@ const Payout = () => {
         bankName: Formik.values.bankName,
       })
     )
-      .then((res) => {
-        setIsLoading(false);
+      .then(async (res) => {
+        // setIsLoading(false);
         onClose();
         Formik.setFieldValue("mpin", "");
-        fetchPayouts();
-        setReceipt({
-          status: res.data.metadata.status,
-          show: true,
-          data: res.data.metadata,
-        });
+        if (typeof res?.data?.metadata != "object") {
+          console.log("Metadata is not an object");
+          return;
+        }
+        setTimeout(async () => {
+          await fetchCurrentStatus(JSON.parse(res?.data?.metadata)?.payout_id);
+        }, 10000);
       })
       .catch((err) => {
         if (err?.response?.status == 401) {
@@ -212,13 +255,7 @@ const Payout = () => {
           window.location.reload();
           return;
         }
-        // Toast({
-        //   status: "error",
-        //   title: "Transaction Failed",
-        //   description:
-        //     err.response.data.message || err.response.data || err.message,
-        //   position: "top-right",
-        // });
+
         setReceipt({
           status: "failed",
           show: true,
@@ -288,6 +325,7 @@ const Payout = () => {
 
   return (
     <>
+      {isLoading ? <Loader /> : null}
       <DashboardWrapper titleText={"Payout"}>
         <Stack
           direction={["column", "row"]}
@@ -608,10 +646,11 @@ const Payout = () => {
                 </Text>
                 {receipt?.status == true ||
                 receipt?.status?.toLowerCase() == "processed" ||
-                receipt?.status?.toLowerCase() == "success" ||
-                receipt?.status?.toLowerCase() == "processing" ||
-                receipt?.status?.toLowerCase() == "queued" ? (
+                receipt?.status?.toLowerCase() == "success" ? (
                   <BiSolidBadgeCheck color="#25D366" fontSize={72} />
+                ) : receipt?.status?.toLowerCase() == "processing" ||
+                  receipt?.status?.toLowerCase() == "queued" ? (
+                  <BsClockFill color="orange" fontSize={72} />
                 ) : (
                   <BsExclamationCircleFill color="red" fontSize={72} />
                 )}
@@ -623,14 +662,14 @@ const Payout = () => {
                   fontSize={"sm"}
                   textTransform={"uppercase"}
                 >
-                  TRANSACTION{" "}
-                  {receipt?.status?.toLowerCase() == "processing" ||
+                  TRANSACTION {receipt?.status}
+                  {/* {receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued" ||
                   receipt?.status?.toLowerCase() == "processed" ||
                   receipt?.status?.toLowerCase() == "success" ||
                   receipt?.status == true
                     ? "SUCCESSFUL"
-                    : "FAILED"}
+                    : "FAILED"} */}
                 </Text>
               </VStack>
             </ModalHeader>
@@ -672,9 +711,7 @@ const Payout = () => {
                     })
                   : null}
                 <VStack pt={8} spacing={0} w={"full"}>
-                  <Text fontSize={"xs"}>
-                    {receipt?.data?.created_at}
-                  </Text>
+                  <Text fontSize={"xs"}>{receipt?.data?.created_at}</Text>
                 </VStack>
                 {/* <VStack pt={8} spacing={0} w={"full"}>
                   <Image src="/logo_long.png" w={"20"} pt={4} />
