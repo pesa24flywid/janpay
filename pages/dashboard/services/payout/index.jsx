@@ -41,6 +41,7 @@ import {
   BsClockHistory,
   BsDownload,
   BsExclamationCircleFill,
+  BsQuestion,
   BsXCircle,
 } from "react-icons/bs";
 import Cookies from "js-cookie";
@@ -171,11 +172,15 @@ const Payout = () => {
         title: "Payout ID not generated.",
         description: "Please contact admins to get current status",
       });
-      setIsLoading(false)
+      setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
+    Toast({
+      title: "Fetching payment status from Razorpay",
+      description: "Please wait.",
+    });
     await BackendAxios.post("api/razorpay/payment-status", {
       payoutId: payoutId,
     })
@@ -194,8 +199,12 @@ const Payout = () => {
           status: "unknown",
           show: true,
           data: {
-            response: err?.response?.data?.message || err?.response?.data || err?.message,
-            remarks: "We were unable to get current status of this payment from Razorpay. Please check your reports, any debited money will reflect there.",
+            response:
+              err?.response?.data?.message ||
+              err?.response?.data ||
+              err?.message,
+            remarks:
+              "We were unable to get current status of this payment from Razorpay. Please check your reports for any debited amount.",
             error_code: "501",
             amount: Formik.values.amount,
             timestamp: today.toLocaleString(),
@@ -242,19 +251,19 @@ const Payout = () => {
         if (typeof res?.data?.metadata != "object") {
           Toast({
             title: "Please check your ledger for any debited amount",
-            description: "We could not fetch current status of this payment."
-          })
+            description: "We could not fetch current status of this payment.",
+          });
           console.log("Metadata is not an object");
           setIsLoading(false);
           return;
         }
-        if(!res?.data?.metadata?.payout_id){
+        if (!res?.data?.metadata?.payout_id) {
           Toast({
             title: "Please check your ledger for any debited amount",
-            description: "Razorpay Payout ID not generated."
-          })
-          setIsLoading(false)
-          return
+            description: "Razorpay Payout ID not generated.",
+          });
+          setIsLoading(false);
+          return;
         }
         setTimeout(async () => {
           await fetchCurrentStatus(res?.data?.metadata?.payout_id);
@@ -662,6 +671,8 @@ const Payout = () => {
                 ) : receipt?.status?.toLowerCase() == "processing" ||
                   receipt?.status?.toLowerCase() == "queued" ? (
                   <BsClockFill color="orange" fontSize={72} />
+                ) : receipt?.status == "unknown" ? (
+                  <BsQuestion color="blue" fontSize={72} />
                 ) : (
                   <BsExclamationCircleFill color="red" fontSize={72} />
                 )}
