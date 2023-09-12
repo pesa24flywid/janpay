@@ -194,7 +194,8 @@ const Payout = () => {
           status: "unknown",
           show: true,
           data: {
-            message: "We were unable to get current status of this payment from Razorpay. Please check your reports, any money debited will reflect there.",
+            response: err?.response?.data?.message || err?.response?.data || err?.message,
+            remarks: "We were unable to get current status of this payment from Razorpay. Please check your reports, any debited money will reflect there.",
             error_code: "501",
             amount: Formik.values.amount,
             timestamp: today.toLocaleString(),
