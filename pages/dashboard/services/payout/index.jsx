@@ -171,6 +171,7 @@ const Payout = () => {
         title: "Payout ID not generated.",
         description: "Please contact admins to get current status",
       });
+      setIsLoading(false)
       return;
     }
 
@@ -190,13 +191,10 @@ const Payout = () => {
       .catch((err) => {
         setIsLoading(false);
         setReceipt({
-          status: "failed",
+          status: "unknown",
           show: true,
           data: {
-            message:
-              err.response.data.message ||
-              err.response.data ||
-              err.message + " Any money debited will reflect in your reports.",
+            message: "We were unable to get current status of this payment from Razorpay. Please check your reports, any money debited will reflect there.",
             error_code: "501",
             amount: Formik.values.amount,
             timestamp: today.toLocaleString(),
@@ -238,12 +236,24 @@ const Payout = () => {
       })
     )
       .then(async (res) => {
-        // setIsLoading(false);
         onClose();
         Formik.setFieldValue("mpin", "");
         if (typeof res?.data?.metadata != "object") {
+          Toast({
+            title: "Please check your ledger for any debited amount",
+            description: "We could not fetch current status of this payment."
+          })
           console.log("Metadata is not an object");
+          setIsLoading(false);
           return;
+        }
+        if(!res?.data?.metadata?.payout_id){
+          Toast({
+            title: "Please check your ledger for any debited amount",
+            description: "Razorpay Payout ID not generated."
+          })
+          setIsLoading(false)
+          return
         }
         setTimeout(async () => {
           await fetchCurrentStatus(res?.data?.metadata?.payout_id);
